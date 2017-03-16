@@ -1,0 +1,16 @@
+These are environment tests for PML. Thses functions are not
+provided by pml, but come from the gcc Tos/Minix library.
+
+Compile using makefiles suplied.
+
+to run a env test enter:
+	TEST < TEST.in > foo
+	diff foo TEST.out
+	where TEST is one of testldexp, testmodf, testfrexp
+
+Please direct your comments and suggestions to:
+--
+bang:   uunet!cadence!bammi			jwahar r. bammi
+domain: bammi@cadence.com
+GEnie:	J.Bammi
+CIS:    71515,155

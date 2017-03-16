@@ -1,0 +1,220 @@
+1. Scope
+
+  This American National Standard defines an input/output bus for 
+interconnecting computers and peripheral devices.  The standard defines 
+extensions to the Small Computer System Interface (X3.131-1986), referred to 
+herein as SCSI-1.  It also provides more complete standardization of the 
+previously defined command sets.  The document includes the necessary 
+specification of the mechanical, electrical, and functional characteristics of 
+the interface to allow inter-operability of devices meeting the standard.  
+This standard is referred to herein as SCSI-2.  The term SCSI is used wherever 
+it is not necessary to distinguish between the two versions of SCSI.
+
+  SCSI is a local I/O bus that can be operated over a wide range of data 
+rates.  The primary objective of the interface is to provide host computers 
+with device independence within a class of devices.  Thus, different disk 
+drives, tape drives, printers, optical media drives, and other devices can be 
+added to the host computers without requiring modifications to generic system 
+hardware or software.  Provision is made for the addition of special features 
+and functions through the use of vendor unique fields and codes.  Reserved 
+fields and codes are provided for future standardization.
+
+  A second key objective of SCSI-2 is to provide compatibility with those 
+SCSI-1 devices that support bus parity and that meet conformance level 2 of 
+SCSI-1.  While some previously vendor unique commands and parameters have been 
+defined by the SCSI-2 standard, devices meeting SCSI-1 and SCSI-2 can co-exist 
+on the same bus.  It is intended that those operating systems providing 
+support for both command sets be able to operate in environments mixing SCSI-1 
+and SCSI-2 devices.  Properly conforming SCSI-1 devices, both initiators and 
+targets, should respond in an acceptable manner to reject SCSI-2 protocol 
+extensions.  All SCSI-2 protocol extensions are designed to be permissive of 
+such rejections and to allow the SCSI-1 device to continue operation without 
+requiring the use of the extension.
+
+  A third key objective of SCSI-2 is to move device-dependent intelligence out 
+to the SCSI-2 devices.  This requires the definition of a command set that 
+allows a sophisticated operating system to obtain all required initialization 
+information from the attached SCSI-2 devices.  The formalized sequence of 
+requests identify the type of attached SCSI-2 device, the characteristics of 
+the device, and all the changeable parameters supported by the device.  
+Further requests can determine the readiness of the device to operate, the 
+types of media supported by the device, and all other pertinent system 
+information.  Those parameters not required by the operating system for 
+operation, initialization, or system tuning are not exposed to the SCSI-2 
+interface, but are managed by the SCSI-2 device itself.
+
+  The interface uses logical rather than physical addressing for all data 
+blocks.  For direct-access devices, each logical unit may be interrogated to 
+determine how many blocks it contains.  A logical unit may coincide with all 
+or part of a peripheral device.
+
+
+
+
+
+
+  The interface protocol includes provision for the connection of multiple 
+initiators (SCSI devices capable of initiating an operation) and multiple 
+targets (SCSI devices capable of responding to a request to perform an 
+operation).  Distributed arbitration (i.e., bus-contention logic) is built 
+into the architecture of SCSI.  A priority system awards interface control to 
+the highest priority SCSI device that is contending for use of the bus.  The 
+time to complete arbitration is independent of the number of devices that are 
+contending and can be completed in less than 10 microseconds.
+
+  The physical characteristics are described in Section 4.  There are two 
+electrical alternatives: single-ended and differential.  Single-ended and 
+differential devices are electrically different and should not be mixed on the 
+same bus.  
+
+  Provision is made for cable lengths up to 25 meters using differential 
+drivers and receivers.  A single-ended driver and receiver configuration is 
+defined for cable lengths of up to 6 meters and is primarily intended for 
+applications within a cabinet.
+
+  Section 5 describes the logical characteristics of the interface.  
+Arbitration is defined to permit multiple initiators and to permit concurrent 
+I/O operations.  All SCSI devices are required to be capable of operating with 
+the defined asynchronous transfer protocol.  In addition, an optional 
+synchronous transfer protocol is defined.  Section 5 also specifies a message 
+protocol for control of the interface.  In most cases, messages are not 
+directly apparent to the host computer software.  
+
+  The SCSI command and status structure is specified in Section 6.  Commands 
+are classified as mandatory (M), optional (O), or vendor unique (V).  SCSI 
+devices are required to implement all mandatory commands defined for the 
+appropriate device type and may implement other commands as well.  SCSI 
+devices contain commands that facilitate the writing of self-configuring 
+software drivers that can "discover" all necessary attributes without prior 
+knowledge of specific peripheral characteristics (such as storage capacity).  
+Many commands also implement a very large logical block address space (232 
+blocks), although some commands implement a somewhat smaller logical block 
+address space (221 blocks). 
+
+  Section 7 specifies those commands that have a consistent meaning for all 
+device types.
+
+  Sections 8 through 17 contain commands for direct-access (e.g., magnetic 
+disk), sequential-access (e.g., magnetic tape), printer, processor, write-once 
+(e.g., optical disk), CD-ROM devices, scanner devices, optical memory devices, 
+medium changer devices, and communications devices, respectively.  The 
+commands in each of these sections are unique to the device type, or they have 
+interpretations, fields, or features that are specific for the device type.  
+Thus, for example, although the WRITE command is used for several device 
+types, it has a somewhat different form for each type, with different 
+parameters and meanings.  Therefore, it is specified separately for each 
+device type.
+
+
+
+
+  Starting with section 7 and for each section on a specific device type the 
+section is constructed of at least four sub sections.  The first subsection is 
+the model for the device type.  The model establishes the framework for 
+interpreting the commands for the device type.  The attributes and 
+capabilities of the device type are discussed and examples are given.  The 
+second subsection defines the commands applicable to the device type.  The 
+third subsection defines the parameters applicable to the device type.  These 
+are the diagnostic parameters, log parameters, mode parameters and vital 
+product data parameters that are transmitted as part of the appropriate 
+commands.  Most of the parameters are formatted into pages.  The fourth 
+subsection is the glossary of terms that apply to the device type. 
+  Appendixes A through C provide examples of SCSI signal sequences, timing, 
+and phase sequences.  Appendix D contains information on other standards 
+related to medium types and density codes for flexible disks and magnetic 
+tapes.  Appendix E describes data integrity in command queuing environments.  
+Appendix F describes normal procedures following a power-on condition.  
+Appendix G describes the worst case skew times for a fast SCSI implementation.  
+Appendix H contains information on other SCSI standardization activities.  
+Appendix I contains the additional sense codes and operation codes in 
+numerical order.  Appendix J contains the vendor identification codes as of 
+the date of this document.  However, the appendixes are not a required part of 
+this standard.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,2860 @@
+9. Sequential-Access Devices
+
+
+9.1. Sequential-Access Device Model
+
+
+9.1.1. Physical Elements
+
+  Sequential-access devices (called devices below) optimize their use in 
+storing or retrieving user data in a sequential manner.  Since access is 
+sequential, position changes typically take a long time, when compared to 
+direct-access devices.
+
+  Sequential-access devices are usually tape devices.  The remainder of this 
+description is from the point of view of a tape device; however, other 
+implementations are not precluded.
+
+  The recording medium for tape devices consists of various widths and lengths 
+of a flexible substrate coated with a semi-permanent magnetic material.  The 
+recording medium may be wound onto single reels or encapsulated into 
+cartridges containing both a supply reel and a take-up reel.  Several American 
+National Standards exist covering the construction of reels and cartridges for 
+interchange as well as recording techniques for many of the format or density 
+combinations.
+
+  A complete unit composed of the recording medium and its physical carrier 
+(e.g., reel, cartridge, cassette) is called a volume.  Volumes have an 
+attribute of being mounted or demounted on a suitable transport mechanism.  
+
+  Mounted is the state of a volume when the device is physically capable of 
+executing commands that cause the the medium to be moved.  A volume is 
+demounted when it is being loaded, threaded, unloaded, unthreaded, or when not 
+attached to the device.  
+
+  Ready is the state of the device when medium access and non-medium access 
+commands can be executed.  The device is not ready when no volume is mounted 
+or, from the initiator's perspective, whenever all medium access commands 
+report CHECK CONDITION status and a NOT READY sense key.  Some devices may 
+have a separate switch function which places the device in a not ready state 
+even when a volume is mounted.  
+
+  The write enabled or write protected state determines when an initiator may 
+write information on a volume.  This attribute is usually controlled by the 
+user of the volume through manual intervention (e.g., thumbwheel switch).
+
+  The recording medium has two physical attributes called beginning-of-medium 
+(BOM) and end-of-medium (EOM).  Beginning-of-medium is at the end of the 
+medium that is attached to the take-up reel.  End-of-medium is at the end of 
+the medium that is attached to the supply reel.  In some cases, the medium is 
+permanently affixed to one or both of the reel hubs.
+
+
+
+
+
+  As shown in Figure 9-1, the entire physical length of medium is not usable 
+for recording data. For most volumes, a length of the medium is reserved 
+before the beginning-of-medium and after the end-of-medium position. This is 
+done to provide sufficient tape wraps onto the reel hub(s) and to ensure that 
+recording starts in an undamaged section of the medium.
+
+       BOM                                                          EOM
+==============================================================================
+          ----------------------------------------------------------
+ Reserved ----------Usable------------------------------------------ Reserved
+  Medium  --------------------------Recording-----------------------  Medium
+   Area   --------------------------------------------Zone----------   Area
+          ----------------------------------------------------------
+==============================================================================
+<--- Take-up Hub                                               Supply Hub --->
+
+                      Figure 9-1: Typical Volume Layout
+
+
+9.1.2. Data Storage Characteristics
+
+  The position on the medium where a pattern of recorded signal may be written 
+by one write component is called a track (Figure 9-2).  A device may write or 
+read from one or more tracks at a time, depending on the format.  
+
+       BOM                                                          EOM   
+==============================================================================
+Track 1   ---------------------------------------------------------- 
+Track 2   ----------------------------------------------------------     
+  :::     ----------------------------------------------------------     
+Track n-1 ----------------------------------------------------------
+Track n   ----------------------------------------------------------
+==============================================================================
+
+                   Figure 9-2: Typical Medium Track Layout
+
+
+  On a new volume, recording of one or more tracks begins after mounting the 
+volume and moving from beginning-of-medium toward end-of-medium. The number of 
+tracks written at one time is called a track group (TrkGrp).  For recorded 
+volumes, reading in the forward direction follows the same course of tracks as 
+when writing.
+
+  If not all tracks are recorded at the same time, and the device reverses 
+direction when approaching end-of-medium and begins writing on remaining 
+tracks, the recording method is called serpentine. For serpentine devices that 
+record only one track at a time, each physical track represents one track 
+group (Figure 9-3).
+
+
+
+
+
+
+
+        BOM                                                         EOM   
+==============================================================================
+ Track 1   --------------------------------------------------------> TrkGrp 1
+ Track 2   <-------------------------------------------------------- TrkGrp 2
+   :::     -------------------------------------------------------->   :::  
+   :::     <--------------------------------------------------------   :::    
+ Track n   --------------------------------------------------------- TrkGrp n
+==============================================================================
+
+                   Figure 9-3: Serpentine Recording Example 
+
+
+  Some multi-track devices have only one track group, using a parallel storage 
+format that supports the simultaneous recording of all available tracks 
+(Figure 9-4).
+
+        BOM                                                         EOM   
+==============================================================================
+ Track 1   -------------------------------------------------------->\       
+ Track 2   --------------------------------------------------------> \      
+   :::     -------------------------------------------------------->  >TrkGrp1
+   :::     --------------------------------------------------------> /        
+ Track n   -------------------------------------------------------->/
+==============================================================================
+
+                    Figure 9-4: Parallel Recording Example
+
+
+  The serpentine and parallel recording formats shown in the previous examples 
+define tracks as longitudinal patterns of recorded information.  One other 
+storage format used by some devices records tracks diagonally across the 
+medium.  This recording technique is known as helical scan (Figure 9-5).
+
+                                                                         
+==============================================================================
+        BOM    / / / / / / / / / / / / / / / / / / / / / / / / / /  EOM    
+              / / / / / / / / / / / / / / / / / / / / / / / / / /           
+             / / / / / / / / / / / / / / / / / / / / / / / / / /            
+            / / / / / / / / / / / / / / / / / / / / / / / / / /               
+Track 1 -->/ / / / / / / / / / / / / / / / / / / / / / / / / /<-- Track n
+==============================================================================
+  
+                  Figure 9-5: Helical Scan Recording Example
+
+
+  For most recording formats, an area at beginning-of-medium contains a format 
+identification in the form of a tone burst or some other recognizable pattern.  
+User data is not recorded in this area.  The format identification is an 
+attribute of a volume used for interchange purposes and is defined in 
+applicable standards. 
+
+
+
+
+
+  When writing, the initiator needs an indication that it is approaching the 
+end of the permissible recording area.  This position, called early-warning 
+(EW), is typically reported to the initiator at a position early enough for 
+the device to write any buffered data to the medium while still leaving enough 
+room for additional recorded labels or filemarks.  Some American National 
+Standards include physical requirements for a marker placed on the medium to 
+be detected by the device as early-warning (Figure 9-6).
+
+                  BOM                           EW       EOM
+                  -------------------------------->-------->                                                 
+
+                      Figure 9-6: Early-Warning Example
+
+
+  For devices which implement large data buffers, the early-warning position 
+defined by a physical marker may be too close to the end of the recording 
+region to permit emptying the data buffer(s).  For these devices, a logical 
+concept of early-warning is often used to signal the initiator at an 
+appropriate location prior to the physical marker.
+
+
+9.1.3. Partitions within a Volume
+
+  Another attribute of a volume is called a partition.  Partitions consist of 
+one or more non-overlapped mini-volumes, each with its own beginning and 
+ending points, occupying a single physical volume.  Each partition (x) within 
+a volume has a defined beginning-of-partition (BOP x), an early-warning 
+position (EW x), and an end-of-partition (EOP x).  
+
+  All volumes have a minimum of one partition called partition zero, the 
+default data partition.  For devices which support only one partition, the 
+beginning-of-partition zero (BOP 0) may be equivalent to the beginning-of-
+medium and the end-of-partition zero (EOP 0) may be equivalent to the end-of-
+medium.
+
+  When a volume is mounted, it is logically positioned to beginning of the 
+default data partition (BOP 0).  When a REWIND command is received in any 
+partition (x), the device positions to the beginning-of-partition (BOP x).
+
+   Partitions on a volume do not need to be recorded in any defined order, nor 
+do all partition numbers in a sequence need to be present on a volume.  It is 
+sufficient for a device to be able to locate a partition, given its code 
+value, or determine that it does not exist on the volume.  For interchange, 
+information about which partitions are present on a volume may be stored on 
+the volume in a device-defined area (possibly unavailable to the initiator) or 
+the information may be an intrinsic attribute of the device implementation.  
+
+
+
+
+
+
+
+
+
+  Figure 9-7 shows a possible partition implementation for a four-track 
+serpentine recording device, assuming that each track group defines a 
+partition.
+
+         BOM                                                            EOM   
+==============================================================================
+TrkGrp1  BOP0 ----------------------------------------------->EW0-----> EOP0 
+TrkGrp2  EOP1 <-----EW1<----------------------------------------------- BOP1 
+TrkGrp3  BOP2 ----------------------------------------------->EW2-----> EOP2
+TrkGrp4  EOP3 <-----EW3<----------------------------------------------- BOP3 
+==============================================================================
+
+       Figure 9-7: Partitioning Example - One Partition per Track Group
+
+
+  Another possible partition implementation for this four-track serpentine 
+recording device is shown in Figure 9-8, using two track groups to define each 
+partition.
+
+         BOM                                                            EOM   
+==============================================================================
+TrkGrp1  BOP0 -------------------------------------------------------->      
+TrkGrp2  EOP0 <-----EW0<-----------------------------------------------      
+TrkGrp3  BOP1 -------------------------------------------------------->     
+TrkGrp4  EOP1 <-----EW1<-----------------------------------------------      
+==============================================================================
+
+    Figure 9-8: Partitioning Example - One Partition per Two Track Groups
+
+
+  The previous examples show the beginning and ending points for a partition 
+aligned with physical bounds of the medium.  This is not a mandatory 
+requirement for partitioning; it is sufficient for a device to be able to 
+locate to and stay in any partition bounded by a BOP x and EOP x.  In this 
+case, a recorded mark or some other device-recognizable attribute could be 
+used to delineate the partitions.  Figure 9-9 shows a possible two-partition 
+implementation for a device with only one track group.
+
+         BOM                                                            EOM   
+==============================================================================
+              --------->------->----------------------------->-------->      
+              --------->------->----------------------------->-------->      
+TrkGrp1  BOP0 --------->EW0---->EOP0/BOP1-------------------->EW1-----> EOP1 
+              --------->------->----------------------------->-------->      
+              --------->------->----------------------------->-------->      
+==============================================================================
+
+      Figure 9-9: Partitioning Example - Two Partitions per Track Group
+
+
+
+
+
+
+
+  Three methods are defined in the MODE SENSE and MODE SELECT commands for 
+managing partitions; each method is progressively more difficult to implement 
+and manage: 
+
+  (1) device-defined fixed locations;
+  (2) device-defined based on an initiator supplied number of partitions and a 
+device specific allocation algorithm; and,
+  (3) definition by name and capacity by an initiator.
+
+
+9.1.4. Logical Elements within a Partition
+
+  The area between BOP x and EOP x on a typical recorded volume contains at 
+least two types of initiator accessible elements, data blocks and tape marks.  
+These elements are controlled and transferred between the initiator and the 
+medium using READ, READ REVERSE, WRITE, and WRITE FILEMARKS commands.
+
+  A unit of data supplied or requested by an initiator is called a logical 
+block.  Logical blocks are stored according to the specifications of the 
+format for the volume and may be recorded as one or more physical blocks on 
+the medium.  When the physical block and the logical block are not recorded in 
+a one-to-one relationship, it is the responsibility of the device to perform 
+all blocking, de-blocking, padding, stripping, splitting or rebuilding of the 
+logical data block(s) sent by an initiator.  
+
+  Filemarks are special recorded elements containing no user data.  The 
+filemark format is defined in some American National Standards.  Initiators 
+traditionally use filemarks to separate user data from labels and logical 
+groupings of data from each other.  Since some format standards do not define 
+an explicit end-of-data (EOD), host software has often used conventions with 
+filemarks to represent an EOD indication.  At least one American National 
+Standard specifically defines filemark use for this purpose.  In some 
+implementations, the device's EOD definition may be specified the initiator 
+using the MODE SELECT command.
+
+  A setmark is another type of special recorded element containing no user 
+data, providing a segmentation scheme hierarchically superior to filemarks. 
+This level of segmentation is useful for some high capacity storage devices to 
+provide concise addressing and fast positioning to specific sets of data 
+within a partition.  In some implementations, the detection and reporting of 
+setmarks may be controlled by the initiator using the MODE SELECT command.
+
+  Inter-block gaps, the gaps between blocks, filemarks, and setmarks, are 
+introduced on the medium at the time a block or mark is written without 
+explicit action by the initiator.  Minimum and maximum lengths for inter-block 
+gaps are defined in some American National Standards.  In some devices, the 
+length of inter-block gaps may be selected by the initiator using the MODE 
+SELECT command while in other devices the gaps are fixed and non-changeable.  
+
+
+
+
+
+
+
+  In addition to blocks, filemarks, and setmarks, erase gaps may be recorded 
+on the medium through use of the ERASE command or device-initiated error 
+recovery actions.  Although explicitly recorded on the medium, there is 
+normally no distinction between two contiguous erase gaps.  An erase gap may 
+be a length of erased medium or a recorded pattern not distinguishable as a 
+block or mark.  Minimum and maximum lengths for erase gaps are defined in some 
+American National Standards while some devices may have no implementation of 
+an erase gap.  
+
+  After writing data from BOP x, the medium is considered to be a contiguous 
+grouping of blocks, filemarks, setmarks, and gaps.  Certain American National 
+Standards define gap lengths which, if exceeded, are to be considered as 
+having reached blank medium.  Depending on the format, this blank medium may 
+be treated as an end-of-data indication, an error recovery area, or an 
+unrecoverable medium error causing an interchange error.  Unrecorded volumes 
+(new or erased) may exhibit blank medium characteristics if an attempt is made 
+to read or space the volume before data has been written.  
+
+  A sequential-access device may be capable of supporting fixed or variable 
+length blocks.  The concept of fixed or variable mode for writing and reading 
+blocks only indicates the method by which the initiator specifies the size of 
+a logical block for transfer and not the method of recording physical blocks 
+on the medium.  However, a device that supports only fixed-length physical 
+blocks may only be capable of supporting logical blocks of the same length.  
+The length of a logical block is always described in bytes.  The length of a 
+physical block may or may not be recorded as an exact byte count, depending on 
+the format.
+
+
+9.1.5. Data Buffering
+
+  A device may contain a temporary storage area capable of holding one or more 
+logical blocks - a data buffer.  A device data buffer may include any 
+combination of blocks, filemarks, and setmarks in the process of being written 
+to the medium, or it may contain read-ahead data blocks transferred from the 
+medium.
+
+  A device with a data buffer may be capable of operating in either a buffered 
+mode or an unbuffered mode.  A device with no data buffer operates only in 
+unbuffered mode.  Either term is only applicable to the manner in which the 
+device manages information to be written to the medium. Buffered mode is not 
+applicable during read commands, regardless of whether read data p asses 
+through a data buffer.
+
+  A device operating in buffered mode may return GOOD status for write 
+operations when all write data has been successfully transferred from the 
+initiator into the device data buffer.  For devices operating in unbuffered 
+mode, GOOD status is not returned until all requested data, filemarks, or 
+setmarks are successfully recorded on the medium.
+
+
+
+
+
+
+  When issuing a buffered WRITE FILEMARKS command with the immediate bit set 
+to one, GOOD status is returned as soon as the command is validated.  A WRITE 
+FILEMARKS command with the immediate bit set to zero causes any buffered 
+blocks, filemarks, and setmarks to be written to the medium.  Upon successful 
+completion of this process, which is called a synchronize operation, no 
+blocks, filemarks, or setmarks remain in the data buffer which have not been 
+written to the medium.  A synchronize operation has no effect on a data buffer 
+which contains only read-ahead data or write data which has already been 
+successfully written to the medium.
+
+  Should an unrecoverable write error occur while in buffered mode, the device 
+generates an error condition to the current active command.  If no command is 
+active, the error may be reported on the next applicable operation as a 
+deferred error (see 7.2.14.2).  For some implementations, asynchronous event 
+notification (AEN) or extended contingent allegiance (ECA) may be required.  
+Refer to 6.5.5 and 6.7 for descriptions of AEN and ECA protocol.
+
+  The READ POSITION command may be used to determine the number and storage 
+space of buffered blocks not written before the unrecoverable error was 
+encountered.
+
+   A device with read-ahead data blocks in the data buffer does not report an 
+unrecovered read error until the data block in error is requested by an 
+initiator.
+
+
+9.1.6. Recorded Object Descriptors (Block Identifiers)
+
+  Some recording formats specify that recorded objects (blocks, filemarks, and 
+setmarks) have identifiers included in the recorded information to help 
+determine write sequence and also to help detect device positioning errors.  
+The identifier values are unique within a partition and may be unique within a 
+volume.
+
+  The use of the term block identifier may imply some arithmetic sequence 
+applied to the assignment of recorded objects.  The block identifier 
+assignment algorithm may be defined in an applicable format standard.
+
+  For some pre-formatted volumes, the identifiers are associated with physical 
+blocks.  In variable-length implementations, the identifier can be associated 
+with a physical block when the logical block and the physical block have a 
+one-to-one relationship on the medium.  
+
+  Some formats may carry both physical and logical block identifiers recorded 
+on the medium.  When a logical block is split over more than one physical 
+block, or multiple logical blocks are concatenated to form a physical block, 
+the logical block identifier and the physical block identifier are not the 
+same.  Filemarks and setmarks may or may not have recorded identifiers, but if 
+identifiers are used in the format, then each mark is assigned a value even if 
+it is not explicitly recorded.
+
+
+
+
+
+  The READ POSITION and LOCATE commands use four-byte fields to hold these 
+format dependent identifiers.  For some implementations, this value may 
+correspond to a real physical location; however, it is sufficient for the 
+device to map the identifier to a value representing the unique recorded 
+object.  With this capability, the READ POSITION command may be used to report 
+a device-defined block identifier and the initiator may use this value with a 
+LOCATE command to position to the same location at some future time (provided 
+the volume has not been rewritten in the interim).  
+
+
+9.1.7. Direction and Position Definitions
+
+  For sequential-access devices, positioning has the connotation of logically 
+being in, at, before, or after some defined place within a volume.  This 
+definition means the position is capable of being repeated under the same 
+circumstances.  The orientation of usage for the four words (in, at, before, 
+or after) is in one direction, from BOP x toward EOP x.  All positioning 
+defined below is worded from this perspective.  Devices without buffers have 
+some physical position which relates to these logical positions.  However, 
+these definitions do not require the medium to have a physical position 
+equivalent to the logical position unless explicitly stated.  
+
+  The forward direction is defined as logically progressing from BOP x toward 
+EOP x. The reverse direction is defined as logically progressing from EOP x 
+toward BOP x.  In serpentine devices, the logical forward or reverse direction 
+has an alternating relationship to the physical motion of the medium.  
+
+  The concept of being "in" some position means not being outside a defined 
+region.  The definition allows the position to be on the boundary of a defined 
+region.  When a volume is first mounted, the logical position is always at the 
+beginning of the default data partition (BOP0).  Whenever a volume is mounted 
+and the medium motion is stopped, the position is in some partition.  While 
+moving between partitions, there is no stable position.  
+
+  The concept of being "at" some position indicates being positioned to a 
+logical or physical extremity of a partition.  A sequential-access device may 
+be positioned at beginning-of-medium, at BOP x, at end-of-data (EOD), at EOP 
+x, or at end-of-medium (EOM), since these are stable positions at extremities 
+of a partition.  
+
+  The concept of being "before" some position indicates that there is some 
+element (data block, filemark, setmark, or other defined point) which may be 
+encountered when moving toward EOP x, if the proper commands are issued.  
+Being positioned before a particular data block means that if the device 
+receives a valid READ command, the data block is transferred to the initiator.  
+This position may also be before EW x and EOP x, since these are defined 
+points within any partition.  However, if data has not been written to the 
+end-of-partition, these points may not be accessible by the initiator.
+
+  The concept of being "after" some position indicates that there is some 
+element (data block, filemark, setmark, or other defined point) on the BOP x 
+side of the current position which may be encountered if the proper commands 
+are issued.  When a READ command for a single data block has been successfully 
+executed, the logical position is after the transferred data block.
+
+9.1.8. Error Reporting
+
+  If any of the following conditions occur during the execution of a command 
+the target shall return CHECK CONDITION status.  The appropriate sense key and 
+additional sense code should be set.  The following table illustrates some 
+error conditions and the applicable sense keys.  The table does not provide an 
+exhaustive enumeration of all conditions that may cause the CHECK CONDITION 
+status.
+
+Condition                                              Sense Key 
+----------------------------------------------------   ---------------
+Invalid logical block address                          ILLEGAL REQUEST
+
+Unsupported option requested                           ILLEGAL REQUEST
+
+Target reset or medium change since
+last command from this initiator                       UNIT ATTENTION
+
+Self diagnostic failed                                 HARDWARE ERROR
+
+Unrecovered read error                                 MEDIUM ERROR
+                                                       HARDWARE ERROR
+
+Recovered read or write error                          RECOVERED ERROR
+
+Overrun or other error that might
+be resolved by repeating the command                   ABORTED COMMAND
+
+Attempt a WRITE, READ, READ REVERSE, VERIFY, or        ILLEGAL REQUEST
+RECOVER BUFFERED DATA command with the fixed bit 
+set to zero and variable block mode is not supported
+
+Attempt a WRITE, READ, READ REVERSE, VERIFY, or        ILLEGAL REQUEST
+RECOVER BUFFERED DATA command with a fixed bit of 
+zero and requested block length is not supported
+
+Attempt a WRITE, READ, READ REVERSE, VERIFY, or        ILLEGAL REQUEST
+RECOVER BUFFERED DATA command with a fixed bit of 
+one and MODE SENSE block length set to zero
+
+Attempt to execute an erase or write-type operation    DATA PROTECT 
+on write protected medium
+
+Deferred write error                                   MEDIUM ERROR
+                                                       VOLUME OVERFLOW
+
+  In the case of an unrecovered read or write error, if the read-write error 
+recovery page (9.3.3.4) is implemented, the current values specify the target 
+error recovery criteria.  If this page is not implemented, the error recovery 
+is vendor specific.
+
+
+
+
+
+  In the case of an unrecovered read error, if the fixed bit is one, the valid 
+bit shall be set to one and the information field shall be set to the 
+requested transfer length minus the actual number of blocks read (not 
+including the unrecovered block).  If the fixed bit is zero, the valid bit 
+shall be set to one and the information field shall be set to the requested 
+transfer length.  Upon termination, the logical position shall be after the 
+unrecovered block.
+
+  In the case of an unrecovered write error, if unbuffered mode is selected 
+and the fixed bit is set to one, the valid bit shall be set to one and the 
+information field shall be set to the requested transfer length minus the 
+actual number of blocks written.  If unbuffered mode is selected and the fixed 
+bit is set to zero, the information field shall be set to the requested 
+transfer length.
+
+  In the case of an unrecovered write error or a deferred write error, if 
+buffered mode is selected and the fixed bit is one, the valid bit shall be set 
+to one and the information field shall be set to the total number of blocks, 
+filemarks, and setmarks not written (the number of blocks not transferred from 
+the initiator plus the number of blocks, filemarks, and setmarks remaining in 
+the target's buffer).  If buffered mode is selected and the fixed bit is zero, 
+the information field shall be set to the total number of bytes, filemarks, 
+and setmarks not written (the number of bytes not transferred from the 
+initiator plus the number of bytes, filemarks, and setmarks remaining in the 
+target's buffer).  In both cases, the value in the information field may 
+exceed the transfer length.
+
+  In the case of an unrecovered write error or a deferred write error, if 
+buffered mode 1h is selected, the error shall be reported to the first 
+initiator issuing a command (other than INQUIRY or REQUEST SENSE) or the first 
+initiator responding to asynchronous event notification.  If buffered mode 2h 
+is selected, the error shall be reported to the initiator with unwritten data 
+in the buffer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9.2. Command Descriptions for Sequential-Access Devices
+
+  The commands for sequential-access devices shall be as shown in Table 9-1.
+
+              Table 9-1: Commands for Sequential-Access Devices
+
+==============================================================================
+                               Operation
+Command Name                     Code         Type    Section
+------------------------------------------------------------------------------
+ CHANGE DEFINITION                40h          O       7.2.1
+ COMPARE                          39h          O       7.2.2
+ COPY                             18h          O       7.2.3
+ COPY AND VERIFY                  3Ah          O       7.2.4
+ ERASE                            19h          M       9.2.1
+ INQUIRY                          12h          M       7.2.5
+ LOAD UNLOAD                      1Bh          O       9.2.2
+ LOCATE                           2Bh          O       9.2.3
+ LOG SELECT                       4Ch          O       7.2.6
+ LOG SENSE                        4Dh          O       7.2.7
+ MODE SELECT(6)                   15h          M       7.2.8
+ MODE SELECT(10)                  55h          O       7.2.9
+ MODE SENSE(6)                    1Ah          M       7.2.10
+ MODE SENSE(10)                   5Ah          O       7.2.11
+ PREVENT ALLOW MEDIUM REMOVAL     1Eh          O       8.2.4
+ READ                             08h          M       9.2.4
+ READ BLOCK LIMITS                05h          M       9.2.5
+ READ BUFFER                      3Ch          O       7.2.12
+ READ POSITION                    34h          O       9.2.6
+ READ REVERSE                     0Fh          O       9.2.7
+ RECEIVE DIAGNOSTIC RESULTS       1Ch          O       7.2.13
+ RECOVER BUFFERED DATA            14h          O       9.2.8
+ RELEASE UNIT                     17h          M       9.2.9
+ REQUEST SENSE                    03h          M       7.2.14
+ RESERVE UNIT                     16h          M       9.2.10
+ REWIND                           01h          M       9.2.11
+ SEND DIAGNOSTIC                  1Dh          M       7.2.15
+ SPACE                            11h          M       9.2.12
+ TEST UNIT READY                  00h          M       7.2.16
+ VERIFY                           13h          O       9.2.13
+ WRITE                            0Ah          M       9.2.14
+ WRITE BUFFER                     3Bh          O       7.2.17
+ WRITE FILEMARKS                  10h          M       9.2.15
+==============================================================================
+
+  Key: M  =  Command implementation is mandatory.
+       O  =  Command implementation is optional.
+
+  The following command codes are vendor specific: 02h, 06h, 07h, 09h, 0Ch, 
+0Dh, 0Eh.  All other command codes for sequential-access devices are reserved 
+for future standardization.
+
+
+
+
+9.2.1. ERASE Command
+
+                          Table 9-2: ERASE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (19h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |         Reserved          | Immed |  Long  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The ERASE command (Table 9-2) causes part or all of the medium to be erased 
+beginning at the current position on the logical unit.  As used here, "erased" 
+means either the medium shall be erased or a pattern shall be written on the 
+medium that appears as a gap to the target.
+
+  An immediate (Immed) bit of zero indicates that the target shall not return 
+status until the erase operation has completed.  An Immed bit of one indicates 
+that the target shall return status as soon as the command has been validated. 
+If CHECK CONDITION status is returned for an ERASE command with an Immed bit 
+of one, the erase operation shall not be performed. 
+
+  A long bit of one indicates that all remaining medium in the current 
+partition shall be erased beginning at the current logical position.  If the 
+Immed bit is one, the target shall return status as soon as all buffered 
+commands have completed execution and the command descriptor block of the 
+ERASE command has been validated.  The logical position following an ERASE 
+command with a long bit of one is not specified by this standard.
+
+  IMPLEMENTORS NOTE:  Some targets may reject an ERASE command with the long 
+  bit set to one if the logical unit is not at beginning-of-partition.
+
+  A long bit of zero specifies an erase gap defined by the gap size field in 
+the device configuration page (9.3.3.1).  If the gap size is zero or the field 
+is not supported, a device defined erase gap operation shall be performed.  If 
+the Immed bit is one, the target shall return status as soon as the command 
+descriptor block has been validated.  Erase gaps may be used in host 
+controlled error recovery or "update in place" applications. 
+
+
+
+
+
+
+  If the logical unit encounters early-warning during an ERASE command, and 
+any buffered data, filemarks, or setmarks remain to be written, the target 
+action shall be as defined for the early-warning condition of the WRITE 
+command (9.2.14).  If the long bit is zero, the erase operation shall 
+terminate with CHECK CONDITION status and return sense data as defined for the 
+WRITE command.  Any buffered erases are not reported as part of the 
+information field.
+
+9.2.2. LOAD UNLOAD Command
+
+                       Table 9-3: LOAD UNLOAD Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (1Bh)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |              Reserved             | Immed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved         |   EOT  | Re-Ten |  Load  |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The LOAD UNLOAD command (Table 9-3) requests that the target enable or 
+disable the logical unit for further operations.  This command may also be 
+used to request a re-tension function.  Prior to performing the load or unload 
+operation, the target shall ensure that all buffered data, filemarks, and 
+setmarks have been transferred to the medium.
+
+  An immediate (Immed) bit of zero indicates that the target shall not return 
+status until the load or unload operation has completed.  An Immed bit of one 
+indicates that the target shall return status as soon as all buffered commands 
+have completed execution and the command descriptor block of the LOAD UNLOAD 
+command has been validated.  If CHECK CONDITION status is returned for a LOAD 
+UNLOAD command with an Immed bit of one, the load or unload operation shall 
+not be performed.
+
+  IMPLEMENTORS NOTE:  For compatibility with devices implemented prior to this 
+  version of the standard, a WRITE FILEMARKS command with an Immed bit of zero 
+  should be used to ensure that all buffered data, filemarks, or setmarks have 
+  been transferred to the medium prior to issuing a LOAD UNLOAD command with 
+  an Immed bit of one.
+
+  An end-of-tape (EOT) bit of one indicates that an unload operation (load bit 
+set to zero) shall position the medium at end-of-medium for removal from the 
+device.  An EOT bit of zero indicates that an unload operation shall position 
+the medium at beginning-of-medium for removal from the device.
+
+  An EOT bit of one and a load bit of one shall cause the target to return 
+CHECK CONDITION status and the sense key shall be set to ILLEGAL REQUEST in 
+the sense data.
+
+  A re-tension (Re-Ten) bit of one indicates that the medium on the logical 
+unit shall be correctly tensioned.  Implementation of the re-tension function 
+is device specific.
+
+  If the load bit is set to one, the medium in the logical unit shall be 
+loaded and positioned to the beginning-of-partition zero.  If the load bit is 
+zero, the medium in the logical unit shall be positioned for removal at the 
+extreme position along the medium specified by the EOT bit.  Following 
+successful completion of an unload operation, the target shall return CHECK 
+CONDITION status with the sense key set to NOT READY for all subsequent 
+medium-access commands until a new volume is mounted or a load operation is 
+successfully completed.
+
+  When operating in buffered mode 1h or 2h (see 9.3.3), the target shall 
+discard any unwritten buffered data after the LOAD UNLOAD command is validated 
+if the previous command was terminated with CHECK CONDITION status and the 
+device is unable to continue successfully writing. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9.2.3. LOCATE Command
+
+                          Table 9-4: LOCATE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (2Bh)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |    Logical Unit Number   |      Reserved   |   BT   |   CP   | Immed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 4   |                                                                       |
+-----|---                        Block Address                            ---|
+ 5   |                                                                       |
+-----|---                                                                 ---|
+ 6   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Partition                                   |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  LOCATE command (Table 9-4) causes the target to position the logical unit to 
+the specified block address in a specified partition.  Upon completion, the 
+logical position shall be before the specified location.  Prior to performing 
+the locate operation, the target shall ensure that all buffered data, 
+filemarks, and setmarks have been transferred to the medium.
+
+  A block address type (BT) bit of one indicates the value in the block 
+address field shall be interpreted as a device-specific value.  A BT bit of 
+zero indicates the value in the block address field shall be interpreted as an 
+SCSI logical block address.
+
+  A change partition (CP) bit of one indicates that a change to the partition 
+specified in the partition field is to occur prior to positioning to the block 
+specified in the block address field.  A CP bit of zero indicates no partition 
+change is to be made and the partition field is to be ignored.
+
+  An immediate (Immed) bit of zero indicates that the target shall not return 
+status until the locate operation has completed.  An Immed bit of one 
+indicates that the target shall return status as soon as all buffered commands 
+have completed execution and the command descriptor block of the LOCATE 
+command has been validated.  If CHECK CONDITION status is returned for a 
+LOCATE command with an Immed bit of one, the locate operation shall not be 
+performed.
+
+
+  The block address field specifies the block address to which the target 
+shall position the medium based on the current setting of the BT bit.
+
+  The partition field specifies which partition to select if the CP bit is 
+one.  Refer to the sequential-access device model (9.1.3) and the medium 
+partition pages (9.3.3.2 and 9.3.3.3) for additional information about 
+partitioning.
+
+9.2.4. READ Command
+
+                           Table 9-5: READ Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (08h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number     |        Reserved         |  SILI  | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The READ command (Table 9-6) requests that the target transfer one or more 
+block(s) of data to the initiator beginning with the next block on the logical 
+unit.
+
+  The fixed bit specifies whether fixed-length or variable-length blocks are 
+to be transferred.  Refer to the READ BLOCK LIMITS command (9.2.5) for 
+additional information about fixed and variable block mode.
+
+  If the fixed bit is one, the transfer length specifies the number of fixed-
+length blocks to be transferred, using the current block length reported in 
+the mode parameters block descriptor (7.3.3).  If the fixed bit is zero, a 
+variable-length block is requested with the transfer length specifying the 
+maximum number of bytes allocated for the returned data.
+
+  A successful READ command with a fixed bit of one shall transfer the 
+requested transfer length times the current block length in bytes to the 
+initiator.  A successful READ command with a fixed bit of zero shall transfer 
+the requested transfer length in bytes to the initiator.  Upon completion, the 
+logical position shall be after the last block transferred (end-of-partition 
+side).
+
+
+
+
+
+  If the suppress incorrect length indicator (SILI) bit is one and the fixed 
+bit is zero, the target shall:
+  (1) report CHECK CONDITION status for an incorrect length condition only if 
+the overlength condition exists (see 9.4) and the block length field in the 
+mode parameter block descriptor is nonzero (see 7.3.3)
+  (2) not report CHECK CONDITION status if the only error is the underlength 
+condition (see 9.4), or if the only error is the overlength condition and the 
+block length field of the mode parameters block descriptor is zero.
+
+  IMPLEMENTORS NOTE:  Since the residue information normally provided in the 
+  information field of the sense data may not be available when the SILI bit 
+  is set, other methods for determining the actual block length should be used 
+  (e.g., including length information in the data block).
+
+  If the SILI bit is one and the fixed bit is one, the target shall terminate 
+the command with CHECK CONDITION status and the sense key shall be set to 
+ILLEGAL REQUEST with an additional sense code of INVALID FIELD IN CDB.
+
+  If the SILI bit is zero and an incorrect length block is read, CHECK 
+CONDITION status shall be returned and the ILI and valid bits shall be set to 
+one in the sense data.  Upon termination, the logical position shall be after 
+the incorrect length block (end-of-partition side).  If the fixed bit is one, 
+the information field shall be set to the requested transfer length minus the 
+actual number of blocks read (not including the incorrect length block).  If 
+the fixed bit is zero, the information field shall be set to the requested 
+transfer length minus the actual block length.  Targets that do not support 
+negative values shall set the information field to zero if the overlength  
+condition exists (see 9.4).
+
+  IMPLEMENTORS NOTE:  In the above case with the fixed bit of one, only the 
+  position of the incorrect-length logical block can be determined from the 
+  sense data.  The actual length of the incorrect block is not reported.  
+  Other means may be used to determine its actual length (e.g., read it again 
+  with the fixed bit set to zero).
+
+  A transfer length of zero indicates that no data shall be transferred.  This 
+condition shall not be considered an error and the logical position shall not 
+be changed.
+
+  If the logical unit encounters a filemark during a READ command, CHECK 
+CONDITION status shall be returned and the filemark and valid bits shall be 
+set to one in the sense data.  The sense key shall be set to NO SENSE or 
+RECOVERED ERROR, as appropriate.  Upon termination, the logical position shall 
+be after the filemark (end-of-partition side).  If the fixed bit is one, the 
+information field shall be set to the requested transfer length minus the 
+actual number of blocks read (not including the filemark).  If the fixed bit 
+is zero, the information field shall be set to the requested transfer length. 
+
+
+
+
+
+
+
+
+  If the logical unit encounters a setmark during a READ command and the RSmk 
+bit is set to one in the device configuration page (9.3.3.1), CHECK CONDITION 
+status shall be returned and the filemark and valid bits shall be set to one 
+in the sense data.  The sense key shall be set to NO SENSE or RECOVERED ERROR, 
+as appropriate, and the additional sense code shall be set to SETMARK 
+DETECTED.  Upon termination, the logical position shall be after the setmark 
+(end-of-partition side).  If the fixed bit is one, the information field shall 
+be set to the requested transfer length minus the actual number of blocks read 
+(not including the setmark).  If the fixed bit is zero, the information field 
+shall be set to the requested transfer length.  The target shall not return 
+CHECK CONDITION when a setmark is encountered if the RSmk bit is set to zero 
+or if this option is not supported.
+
+  If the logical unit encounters early-warning during a READ command and the 
+REW bit is set to one in the device configuration page (see 9.3.3.1), CHECK 
+CONDITION status shall be returned upon completion of the current block.  The 
+sense key shall be set to NO SENSE or RECOVERED ERROR, as appropriate.  The 
+EOM and valid bits shall be set to one in the sense data.  Upon termination, 
+the logical position shall be after the last block transferred (end-of-
+partition side).  If the fixed bit is one, the information field shall be set 
+to the requested transfer length minus the actual number of blocks read.  If 
+the fixed bit is zero, the information field shall be set to the requested 
+transfer length minus the actual block length.  The target shall not return 
+CHECK CONDITION status when early-warning is encountered if the REW bit is 
+zero or if the REW option is not supported.
+
+  IMPLEMENTORS NOTE:  A REW bit of one is not recommended for most system 
+  applications since read data may be present after early-warning. 
+
+  If the logical unit encounters end-of-data during a READ command, CHECK 
+CONDITION status shall be returned, the sense key shall be set to BLANK CHECK, 
+and the valid bit shall be set to one in the sense data.  If end-of-data is 
+encountered at or after early-warning, the EOM bit shall also be set to one. 
+Upon termination, the logical position shall be after the last recorded 
+logical block (end-of-partition side).  If the fixed bit is one, the 
+information field shall be set to the requested transfer length minus the 
+actual number of blocks read.  If the fixed bit is zero, the information field 
+shall be set to the requested transfer length.
+
+  If the logical unit encounters end-of-partition during a READ command, CHECK 
+CONDITION status shall be returned, the sense key shall be set to MEDIUM 
+ERROR, and the EOM and valid bits shall be set to one in the sense data. The 
+medium position following this condition is not defined.  If the fixed bit is 
+one, the information field shall be set to the requested transfer length minus 
+the actual number of blocks read. If the fixed bit is zero, the information 
+field shall be set to the requested transfer length.
+
+
+
+
+
+
+
+
+
+9.2.5. READ BLOCK LIMITS Command
+
+                    Table 9-6: READ BLOCK LIMITS Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (05h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The READ BLOCK LIMITS command (Table 9-6) requests that the logical unit's 
+block length limits capability be returned.  The READ BLOCK LIMITS data shown 
+in Table 9-7 shall be returned during the DATA IN phase of the command.
+
+                      Table 9-7: READ BLOCK LIMITS Data
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 2   |                           Maximum Block Length Limit                  |
+-----|---                                                                 ---|
+ 3   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Minimum Block Length Limit               ---|
+ 5   |                                                                 (LSB) |
+==============================================================================
+
+
+  If the maximum block length limit equals the minimum block length limit, the 
+logical unit supports the transfer of data in the fixed-block mode only, with 
+the block length equal to the given limit.  In this case the fixed bit shall 
+be set to one in the WRITE and READ commands
+
+
+
+
+
+  If the maximum block length limit is not equal to the minimum block length 
+limit, the logical unit supports the transfer of data in either fixed-block or 
+variable-block modes, with the block length constrained between the given 
+limits in either mode.  The transfer mode is controlled by the fixed bit in 
+the WRITE or READ commands. If the maximum block limit is zero a maximum block 
+length is not specified.
+
+9.2.6. READ POSITION Command
+
+                      Table 9-8: READ POSITION Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (34h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |             Reserved              |   BT   |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The READ POSITION command (Table 9-8) reports the current position of the 
+logical unit and any data blocks in the buffer.  No medium movement shall 
+occur as a result of the command.  
+
+  A block address type (BT) bit of one requests the target to return its 
+current first block location and last block location as a device-specific 
+value.  A BT bit of zero requests the target to return the first block 
+location and the last block location as an SCSI logical block address 
+(relative to a partition).  
+
+   If the logical unit is not capable of reporting block locations, the BPU 
+bit shall be set to one in the returned data.  Support for this option of the 
+READ POSITION command is indicated by a BIS bit set to one in the device 
+configuration page (9.3.3.1).
+
+  The READ POSITION data shown in Table 9-9 shall be returned during the DATA 
+IN phase of the command.
+
+                    Table 9-9: READ POSITION Data Format
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |  BOP   |   EOP  |        Reserved          |  BPU   |     Reserved    |
+-----|-----------------------------------------------------------------------|
+ 1   |                          Partition Number                             |
+-----|-----------------------------------------------------------------------|
+ 2   |                          Reserved                                     |
+-----|-----------------------------------------------------------------------|
+ 3   |                          Reserved                                     |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+- - -|- -                       First Block Location                      - -|
+ 7   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 8   | (MSB)                                                                 |
+- - -|- -                       Last Block Location                       - -|
+ 11  |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 12  |                          Reserved                                     |
+-----|-----------------------------------------------------------------------|
+ 13  | (MSB)                                                                 |
+- - -|- -                       Number of Blocks in Buffer                - -|
+ 15  |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 16  | (MSB)                                                                 |
+- - -|- -                       Number of Bytes in Buffer                 - -|
+ 19  |                                                                 (LSB) |
+==============================================================================
+
+
+  A beginning of partition (BOP) bit of one indicates that the logical unit is 
+at the beginning-of-partition in the current partition.  A BOP bit of zero 
+indicates that the current logical position is not at the beginning-of-
+partition.  
+
+  An end of partition (EOP) bit of one indicates that the logical unit is 
+positioned between early-warning and end-of-partition in the current 
+partition.  An EOP bit of zero indicates that the current logical position is 
+not between early-warning and end-of-partition.
+
+  IMPLEMENTORS NOTE:  The BOP and EOP indications are not necessarily a result 
+  of a physical tape marker (e.g., reflective marker). 
+
+  A block position unknown (BPU) bit of one indicates that the first and last 
+block locations are not known or cannot be obtained.  A BPU bit of zero 
+indicates that the first and last block location fields contain valid position 
+information.
+
+  The partition number field reports the partition number for the current 
+logical position.  If the logical unit only supports one partition for the 
+medium, this field shall be set to zero.
+
+  The first block location field indicates the block address associated with 
+the current logical position.  The value shall indicate the block address of 
+the next data block to be transferred between the initiator and the target if 
+a READ or WRITE command is issued.
+
+  The last block location field indicates the block address associated with 
+the next block to be transferred from the buffer to the medium.  The value 
+shall indicate the block address of the next data block to be transferred 
+between the buffer and the medium.  If the buffer does not contain a whole 
+block of data or is empty, the value reported for the last block location 
+shall be equal to the value reported for the first block location.
+
+  IMPLEMENTORS NOTE:  The information provided by the first and last block 
+  location fields can be used in conjunction with the LOCATE command to 
+  position the medium at the appropriate logical block on another device in 
+  the case of unrecoverable errors on the first device.
+
+  The number of blocks in buffer field indicates the number of data blocks in 
+the target's buffer that have not been written to the medium.
+
+  The number of bytes in buffer field indicates the total number of data bytes 
+in the target's buffer that have not been written to the medium.
+
+9.2.7. READ REVERSE Command
+
+                       Table 9-10: READ REVERSE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (0Fh)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |         Reserved         |  SILI  | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The READ REVERSE command (Table 9-10) requests that the target transfer one 
+or more block(s) of data to the initiator beginning at the current position on 
+the logical unit.
+
+
+
+
+
+
+  The execution of this command is similar to the READ command except that 
+medium motion is in the reverse direction.  All block(s), and the byte(s) 
+within the block(s), are transferred in the reverse order.  The order of bits 
+within each byte shall not be changed.  Upon completion of a READ REVERSE 
+command, the logical position shall be before the last block transferred 
+(beginning-of-partition side).
+
+  Refer to the READ command (9.2.4) for a description of the fixed bit, the 
+SILI bit, the transfer length field, and any associated error conditions.
+
+  Filemarks, setmarks, incorrect length blocks, and unrecovered read errors 
+are handled the same as in the READ command, except that upon termination the 
+logical position shall be before the filemark, setmark, incorrect length 
+block, or unrecovered block (beginning-of-partition side).
+
+  If the logical unit encounters beginning-of-partition during a READ REVERSE 
+command, CHECK CONDITION status shall be returned and the EOM and valid bits 
+shall be set to one in the sense data.  The sense key shall be set to NO SENSE 
+or RECOVERED ERROR, as appropriate.  If the fixed bit is one, the information 
+field shall be set to the requested transfer length minus the actual number of 
+blocks transferred.  If the fixed bit is zero, the information field shall be 
+set to the requested transfer length.
+
+
+9.2.8. RECOVER BUFFERED DATA Command
+
+                  Table 9-11: RECOVER BUFFERED DATA Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (14h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |         Reserved         |  SILI  | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The RECOVER BUFFERED DATA command (Table 9-11) is used to recover data that 
+has been transferred to the target's buffer but has not been successfully 
+written to the medium.  It is normally used to recover from error or exception 
+conditions that make it impossible to write the buffered data to the medium. 
+One or more RECOVER BUFFERED DATA commands may be required to recover all 
+unwritten buffered data.
+
+
+
+  The execution of this command is similar to the READ command except that the 
+data is transferred from the target's buffer instead of the medium.  The order 
+in which block(s) are transferred is defined by the RBO bit in the device 
+configuration page (9.3.3.1).  If the RBO bit is not implemented, block(s) are 
+transferred in the same order they would have been transferred to the medium.
+
+  Refer to the READ command (9.2.4) for a description of the fixed bit, the 
+SILI bit, the transfer length field, and any associated error conditions.
+
+  If the fixed bit is zero, no more than the requested transfer length shall 
+be transferred to the initiator.  If the requested transfer length is smaller 
+than the actual length of the logical block to be recovered, only the 
+requested transfer length shall be transferred to the initiator and the 
+remaining data for the current logical block shall be discarded.
+
+  IMPLEMENTORS NOTE:  During recovery operations involving unknown block 
+  sizes, the initiator should select the maximum block length supported by the 
+  target to ensure that all buffered data will be transferred.
+
+  If a buffered filemark is encountered during a RECOVER BUFFERED DATA 
+command, CHECK CONDITION status shall be returned, the sense key shall be set 
+to NO SENSE, and the filemark and valid bits shall be set to one in the sense 
+data.  Upon termination, the logical position shall be after the filemark.  If 
+the fixed bit is one, the information field shall be set to the requested 
+transfer length minus the actual number of blocks transferred (not including 
+the filemark).  If the fixed bit is zero, the information field shall be set 
+to the requested transfer length.  
+
+  If a buffered setmark is encountered during a RECOVER BUFFERED DATA command 
+and the RSmk bit is set to one in the device configuration page (9.3.3.1), 
+CHECK CONDITION status shall be returned and the filemark and valid bits shall 
+be set to one in the sense data.  The sense key shall be set to NO SENSE and 
+the additional sense code shall be set to SETMARK DETECTED.  Upon termination, 
+the logical position shall be after the setmark.  If the fixed bit is one, the 
+information field shall be set to the requested transfer length minus the 
+actual number of blocks transferred (not including the setmark).  If the fixed 
+bit is zero, the information field shall be set to the requested transfer 
+length. The target shall not return CHECK CONDITION when a setmark is 
+encountered if the RSmk bit is zero or if this option is not supported.
+
+  If an attempt is made to recover more logical blocks of data than are 
+contained in the target's buffer, CHECK CONDITION status shall be returned, 
+the sense key shall be set to NO SENSE, and the EOM and valid bits shall be 
+set to one in the sense data.  If the fixed bit is one, the information field 
+shall be set to the requested transfer length minus the actual number of 
+blocks transferred.  If the fixed bit is zero, the information field shall be 
+set to the requested transfer length.
+
+
+
+
+
+
+
+
+9.2.9. RELEASE UNIT Command
+
+                       Table 9-12: RELEASE UNIT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (17h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | 3rdPty | Third Party Device ID    |Reserved|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The RESERVE UNIT and RELEASE UNIT commands provide the basic mechanism for 
+contention resolution in multiple-initiator systems.  The RELEASE UNIT command 
+(Table 9-12) is used to release previously reserved logical units for the 
+requesting initiator, or if it is a third-party release, to another specified 
+SCSI device.  
+
+  If a valid reservation exists for the I_T_L nexus, the target shall release 
+the reservation and return GOOD status.
+
+  It is not an error to attempt to release a reservation that is not currently 
+valid.  In this case, the target shall return GOOD status without altering any 
+other reservation.
+
+9.2.9.1. Third-Party Release 
+  Third-party release allows an initiator to release a logical unit that was 
+previously reserved using a third-party reservation (see 9.2.10.1).  
+
+  If the third party (3rdPty) bit is zero, then a third-party release is not 
+requested.  If the 3rdPty bit is one, and if the reservation was made using a 
+third-party reservation by the initiator that is requesting the release for 
+the same SCSI device as specified in the third-party device ID, then the 
+target shall release the reservation.
+
+  If the 3rdPty bit is one, the target shall not modify the mode parameters 
+for commands received from the third-party device even if the target 
+implements the transfer of mode parameters with a third-party RESERVE UNIT 
+command.
+
+
+
+
+
+
+  IMPLEMENTORS NOTE:  When a target implements independent storage of mode 
+  parameters for each initiator, a third-party RESERVE UNIT command effects a 
+  transfer of the current mode parameters.  Those set up by the initiator of 
+  the RESERVE UNIT are to be set as the mode parameters used for commands from 
+  the third-party device (usually a copy master device).  A unit attention 
+  condition notifies the third-party device of the changed mode parameters.  A 
+  successful third-party RELEASE UNIT command leaves the transferred 
+  parameters intact.  The third-party device can issue MODE SENSE and MODE 
+  SELECT commands to query and modify the mode parameters.   
+
+
+
+9.2.10. RESERVE UNIT Command
+
+                       Table 9-13: RESERVE UNIT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (16h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | 3rdPty | Third Party Device ID    |Reserved|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The RESERVE UNIT and RELEASE UNIT commands provide the basic mechanism for 
+contention resolution in multiple-initiator systems.  The RESERVE UNIT command 
+(Table 9-13) is used to reserve logical units for the exclusive use of the 
+requesting initiator, or if it is a third-party reservation, to another 
+specified SCSI device.  
+
+  This command requests that the entire logical unit be reserved for the 
+exclusive use of the initiator until the reservation is superseded by another 
+valid RESERVE UNIT command from the initiator that made the reservation or 
+until released by a RELEASE UNIT command from the same initiator that made the 
+reservation, by a BUS DEVICE RESET message from any initiator, by a hard reset 
+condition, or by a power on cycle.  The reservation shall not be granted if 
+the logical unit is reserved by another initiator.  It shall be permissible 
+for an initiator to reserve a logical unit that is currently reserved by that 
+initiator.
+
+  If the logical unit is reserved for another initiator, the target shall 
+return RESERVATION CONFLICT status.  
+
+
+
+  If, after honoring the reservation, any other initiator attempts to perform 
+any command on the reserved logical unit other than an INQUIRY, REQUEST SENSE, 
+ALLOW MEDIUM REMOVAL, RESERVE, or a RELEASE UNIT command, the command shall be 
+rejected with RESERVATION CONFLICT status. 
+
+
+9.2.10.1. Third-Party Reservation
+  Third-party reservation allows an initiator to reserve a logical unit for 
+another SCSI device.  This is intended for use in multiple-initiator systems 
+that use the COPY command.  
+
+  If the third-party (3rdPty) bit is zero, a third-party reservation is not 
+requested.  If the 3rdPty bit is one the target shall reserve the logical unit 
+for the SCSI device specified in the third-party device ID field. The target 
+shall preserve the reservation until it is superseded by another valid RESERVE 
+UNIT command from the initiator that made the reservation or until it is 
+released by the same initiator, by a BUS DEVICE RESET message from any 
+initiator, or a hard reset condition.  The target shall ignore any attempt to 
+release the reservation made by any other initiator.
+
+  If independent sets of parameters are implemented, a third party reservation 
+shall cause the target to transfer the set of parameters in effect for the 
+initiator of the RESERVE command to the parameters used for commands from the 
+third party device.  Any subsequent command issued by the third-party device 
+is executed according to the mode parameters in effect for the initiator that 
+sent the RESERVE command.
+
+  If independent sets of parameters are implemented, a third party reservation 
+shall cause the target to transfer the set of parameters in effect for the 
+initiator of the RESERVE command to the parameters used for commands from the 
+third party device.  Any subsequent command issued by the third-party device 
+is executed according to the mode parameters in effect for the initiator that 
+sent the RESERVE command.
+
+  IMPLEMENTORS NOTE:  This transfer of the mode parameters is applicable to 
+  target devices which store mode information independently for different 
+  initiators.  This mechanism allows an initiator to set the mode parameters 
+  of a target for the use of a copy master (i.e., the third-party device).  
+  The third-party copy master may subsequently issue a MODE SELECT command to 
+  modify the mode parameters.
+
+9.2.10.2. Superseding Reservations
+  An initiator that currently has a logical unit reserved may modify the 
+current reservation by issuing another RESERVE UNIT command to the same 
+logical unit.  The superseding reservation shall release the current 
+reservation if the superseding reservation request is granted.  The current 
+reservation shall not be modified if the superseding reservation request 
+cannot be granted.  If the superseding reservation cannot be granted because 
+of conflicts with a previous reservation (other than the current reservation), 
+then the target shall return RESERVATION CONFLICT status.  
+
+  IMPLEMENTORS NOTE:  Superseding reservations allow the SCSI device ID to be 
+  changed on a reservation using the third-party reservation option.  This 
+  capability is necessary for certain situations when using COMPARE, COPY, and 
+  COPY AND VERIFY commands.
+
+9.2.11. REWIND Command
+
+                          Table 9-14: REWIND Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (01h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |              Reserved             | Immed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The REWIND command (Table 9-14) causes the target to position the logical 
+unit to the beginning-of-partition in the current partition.  Prior to 
+performing the rewind operation, the target shall ensure that all buffered 
+data, filemarks, and setmarks have been transferred to the medium.
+
+  An immediate (Immed) bit of zero indicates that the target shall not return 
+status until the rewind operation has completed.  An Immed bit of one 
+indicates that the target shall return status as soon as all buffered commands 
+have completed execution and the command descriptor block of the REWIND 
+command has been validated.  If CHECK CONDITION status is returned for a 
+REWIND command with an Immed bit of one, the rewind operation shall not be 
+performed.
+
+  IMPLEMENTORS NOTE:  For compatibility with devices implemented prior to this 
+  standard, it is suggested that a WRITE FILEMARKS command with an Immed bit 
+  of zero be used to ensure that all buffered data, filemarks, or setmarks 
+  have been transferred to the medium before issuing a REWIND command with an 
+  Immed bit of one.
+
+  When operating in buffered mode 1h or 2h (see 9.3.3), the target shall 
+discard any unwritten buffered data after the REWIND command is validated if 
+the previous command was terminated with CHECK CONDITION status and the device 
+is unable to continue successfully writing. 
+
+
+
+
+
+
+
+
+
+9.2.12. SPACE Command
+
+                          Table 9-15: SPACE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation  (11h)                            |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |     Reserved    |           Code           |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Count                                       |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The SPACE command (Table 9-15) provides a variety of positioning functions 
+that are determined by the code and count.  Both forward and reverse 
+positioning are provided, although some targets may only support a subset of 
+this command.  If an initiator requests an unsupported function, the command 
+shall be terminated with CHECK CONDITION status and the sense key shall be set 
+to ILLEGAL REQUEST.
+
+  The code is defined as follows:
+
+                   Code         Description          Support
+                 ---------  --------------------    ---------
+                   000b     Blocks                  Mandatory
+                   001b     Filemarks               Mandatory
+                   010b     Sequential Filemarks    Optional
+                   011b     End-of-Data             Optional
+                   100b     Setmarks                Optional
+                   101b     Sequential Setmarks     Optional
+                 110b-111b  Reserved
+
+  When spacing over blocks, filemarks, or setmarks, the count field specifies 
+the number of blocks, filemarks, or setmarks to be spaced over in the current 
+partition.  A positive value N in the count field shall cause forward 
+positioning (toward end-of-partition) over N blocks, filemarks, or setmarks 
+ending on the end-of-partition side of the last block, filemark, or setmark.  
+A zero value in the count field shall cause no change of logical position.  A 
+negative value -N (two's complement notation) in the count field shall cause 
+reverse positioning (toward beginning-of-partition) over N blocks, filemarks, 
+or setmarks ending on the beginning-of-partition side of the last block, 
+filemark, or setmark.  Support of spacing in the reverse direction is 
+optional. 
+
+
+
+  If a filemark is encountered while spacing over blocks, the command shall be 
+terminated.  The logical position shall be on the end-of-partition side of the 
+filemark if movement was in the forward direction and on the beginning-of-
+partition side of the filemark if movement was in the reverse direction.  
+CHECK CONDITION status shall be returned to the initiator, the sense key shall 
+be set to NO SENSE, and the filemark and valid bits shall be set to one in the 
+sense data.  The information field shall be set to the requested count minus 
+the actual number of blocks spaced over (not including the filemark).
+
+  If a setmark is encountered while spacing over blocks or filemarks and the 
+RSmk bit is set to one in the device configuration page (9.3.3.1), the command 
+shall be terminated, CHECK CONDITION status shall be returned to the 
+initiator, and the filemark and valid bits shall be set to one in the sense 
+data.  The sense key shall be set to NO SENSE and the additional sense code 
+shall be set to SETMARK DETECTED.  The information field shall be set to the 
+requested count minus the actual number of blocks or filemarks spaced over 
+(not including the setmark).  The logical position shall be on the end-of-
+partition side of the setmark if movement was in the forward direction and on 
+the beginning-of-partition side of the setmark if movement was in the reverse 
+direction.  The target shall not return CHECK CONDITION status when a setmark 
+is encountered if the RSmk bit is set to zero or if this option is not 
+supported.
+
+  If early-warning is encountered while spacing over blocks, filemarks, or 
+setmarks and the REW bit is set to one in the device configuration page 
+(9.3.3.1), CHECK CONDITION status shall be returned, the sense key shall be 
+set to NO SENSE, and the EOM and valid bits shall be set to one in the sense 
+data.  The information field shall be set to the requested count minus the 
+actual number of blocks, filemarks, or setmarks spaced over as defined by the 
+code value.  If the REW bit is zero or the option is not supported by the 
+target, the target shall not report CHECK CONDITION status at the early-
+warning point.
+
+  IMPLEMENTORS NOTE:  Setting the REW bit is not recommended for most system 
+  applications since data may be present after early-warning.
+
+  If end-of-data is encountered while spacing over blocks, filemarks, or 
+setmarks, CHECK CONDITION status shall be returned, the sense key shall be set 
+to BLANK CHECK, and the valid bit shall be set to one in the sense data.  
+Additionally, the EOM bit shall be set to one if end-of-data is encountered at 
+or after early-warning.  The information field shall be set to the requested 
+count minus the actual number of blocks, filemarks, or setmarks spaced over as 
+defined by the code value.
+
+  If the end-of-partition is encountered while spacing forward over blocks, 
+filemarks, or setmarks, CHECK CONDITION status shall be returned, the sense 
+key shall be set to MEDIUM ERROR, the EOM bit shall be set to one, and the 
+valid bit shall be set to one.  The information field shall be set to the 
+requested count minus the actual number of blocks, filemarks, or setmarks 
+spaced over as defined by the code value.
+
+
+
+
+
+  If beginning-of-partition is encountered while spacing over blocks, 
+filemarks, or setmarks in the reverse direction, the target shall return CHECK 
+CONDITION status and shall set the sense key to NO SENSE.  The EOM and valid 
+bits shall be set to one, and the information field set to the total number of 
+blocks, filemarks, or setmarks not spaced over (the requested number of 
+blocks, filemarks, or setmarks minus the actual number of blocks, filemarks, 
+or setmarks spaced over).
+
+  When spacing over sequential filemarks (or setmarks), the count field is 
+interpreted as follows:
+  (1) A positive value N shall cause forward movement to the first occurrence 
+  of N or more consecutive filemarks (or setmarks) being logically positioned 
+  after the Nth filemark (or setmark).
+  (2) A zero value shall cause no change in the logical position.
+  (3) A negative value -N (2's complement notation) shall cause reverse 
+  movement to the first occurrence of N or more consecutive filemarks (or 
+  setmarks) being logically positioned on the beginning-of-partition side of 
+  the Nth filemark (or setmark).
+
+  If a setmark is encountered while spacing to sequential filemarks and the 
+RSmk bit is set to one in the device configuration page (9.3.3.1), CHECK 
+CONDITION status shall be returned, the filemark bit shall be set to one, and 
+the valid bit shall be set to zero.  The sense key shall be set to NO SENSE 
+and the additional sense code shall be set to SETMARK DETECTED.  The target 
+shall not return CHECK CONDITION status when a setmark is encountered if the 
+RSmk bit is set to zero or if this option is not supported.
+
+  If end-of-partition is encountered while spacing to sequential filemarks or 
+setmarks, CHECK CONDITION status shall be returned, the sense key shall be set 
+to MEDIUM ERROR, the EOM bit shall be set to one, and the valid bit shall be 
+set to zero.
+
+  If end-of-data is encountered while spacing to sequential filemarks or 
+setmarks, CHECK CONDITION status shall be returned, the sense key shall be set 
+to BLANK CHECK, and the valid bit shall be set to zero.  Additionally, the EOM 
+bit shall be set to one if end-of-data is encountered at or after early-
+warning.
+
+  When spacing to end-of-data, the count field is ignored.  Upon successful 
+completion, the medium shall be positioned such that a subsequent write 
+operation would append to the last logically recorded information.
+
+  If end-of-partition is encountered while spacing to end-of-data, CHECK 
+CONDITION status shall be returned, the sense key shall be set to MEDIUM 
+ERROR, the EOM bit shall be set to one, and the valid bit shall be set to 
+zero.
+
+
+
+
+
+
+
+
+
+9.2.13. VERIFY Command
+
+                          Table 9-16: VERIFY Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (13h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |    Reserved     | Immed  | BytCmp | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Verification Length                         |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The VERIFY command (Table 9-16) requests that the target verify one or more 
+block(s) beginning with the next block on the logical unit.
+
+  An immediate (Immed) bit of zero indicates that the command shall not return 
+status until the verify operation has completed.  An Immed bit of one 
+indicates that status shall be returned as soon as the command descriptor 
+block has been validated (but after the data transfer from the initiator, if 
+the BytCmp bit is one).  
+
+  IMPLEMENTORS NOTE: In order to ensure that no errors are lost, the initiator 
+  should set the Immed bit to zero on the last VERIFY command when issuing a 
+  series of VERIFY commands.
+
+  A byte compare (BytCmp) bit of zero indicates that the verification shall be 
+simply a medium verification (e.g., CRC, ECC).  No data shall be transferred 
+between the initiator and target.
+
+  A BytCmp bit of one indicates that the target shall perform a byte-by-byte 
+compare of the data on the medium and the data transferred from the initiator 
+during the DATA OUT phase of the VERIFY command.  Data shall be transferred 
+from the initiator to the target as in a WRITE command.  If the BytCmp bit is 
+one and the byte compare option is not supported, the target shall terminate 
+the command with CHECK CONDITION status and the sense key shall be set to 
+ILLEGAL REQUEST.
+
+  The verification length specifies the amount of data to verify, in blocks or 
+bytes, as indicated by the fixed bit. Refer to the READ command (9.2.4) for a 
+description of the fixed bit and any associated error conditions. When the 
+verification length is zero, no data shall be verified and the current logical 
+position shall not be changed.  This condition shall not be considered as an 
+error.
+
+
+  The VERIFY command shall terminate when the verification length has been 
+satisfied, when an incorrect length block is encountered, when a filemark is 
+encountered, when a setmark is encountered (if the RSmk bit is one in the 
+device configuration page, 9.3.3.1), when end-of-data is encountered, when the 
+end-of-partition is encountered, when early-warning is encountered (if the REW 
+bit is one in the device configuration page, 9.3.3.1), or when an 
+unrecoverable read error is encountered.  The status and sense data for each 
+of these conditions are handled in the same manner as in the READ command 
+(9.2.4).  Upon successful completion of a VERIFY command, the logical position 
+shall be after the last block verified.
+
+  If the data does not compare (BytCmp bit of one), the command shall 
+terminate with CHECK CONDITION status, the valid bit shall be set to one, and 
+the sense key shall be set to MISCOMPARE.  If the fixed bit is one, the 
+information field shall be set to the requested verification length minus the 
+actual number of blocks successfully verified.  If the fixed bit is zero, the 
+information field shall be set to the requested verification length minus the 
+actual number of bytes successfully verified.  This number may be larger than 
+the requested verification length if the error occurred on a previous VERIFY 
+command with an Immed bit of one.  Upon termination, the medium shall be 
+positioned after the block containing the miscompare (end-of-partition side).
+
+
+9.2.14. WRITE Command
+
+                          Table 9-17: WRITE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (0Ah)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |              Reserved             | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The WRITE command (Table 9-17) requests that the target write the data that 
+is transferred from the initiator to the current position on the logical unit. 
+
+  The fixed bit specifies whether fixed-length or variable-length blocks are 
+to be transferred.  See the READ BLOCK LIMITS command (9.2.5) for additional 
+information about fixed and variable block mode.
+
+
+
+
+  If the fixed bit is one, the transfer length specifies the number of fixed-
+length blocks to be transferred, using the current block length reported in 
+the mode parameter block descriptor (7.3.3).  If the fixed bit is zero, a 
+single block is transferred with the transfer length specifying the block 
+length in bytes.
+
+  If the transfer length is zero, no data shall be transferred and the current 
+position on the logical unit shall not be changed.  This condition shall not 
+be considered an error.
+
+  A WRITE command may be buffered or unbuffered, as indicated by the buffered 
+mode field of the mode parameter header (9.3.3).  For unbuffered operation 
+(buffered mode 0h), the target shall not return GOOD status until all data 
+block(s) are successfully written to the medium.  For buffered operation 
+(buffered mode 1h or 2h), the target may return GOOD status as soon as all 
+data block(s) are successfully transferred to the target's buffer.
+
+  IMPLEMENTORS NOTE:  For compatibility with devices implemented prior to this 
+  version of the standard, a WRITE FILEMARKS command with the Immed bit set to 
+  zero should be issued when completing a buffered write operation to ensure 
+  that all buffered data, filemarks, and setmarks are written to the medium.
+
+  If the logical unit encounters early-warning during a WRITE command, an 
+attempt to finish writing any data may be made, as determined by the current 
+settings of the REW and SEW bits in the device configuration page (9.3.3.1).  
+The command shall terminate with CHECK CONDITION status and the EOM and valid 
+bits shall be set to one in the sense data.  If all data that is to be written 
+is successfully transferred to the medium, the sense key shall be set to NO 
+SENSE or RECOVERED ERROR, as appropriate.  If any data that is to be written 
+cannot be transferred to the medium when early-warning is encountered, the 
+sense key shall be set to VOLUME OVERFLOW.
+
+  The information field shall be defined as follows:
+  (1)  If unbuffered mode is reported in the mode parameter header and the 
+fixed bit is set to one, the information field shall be set to the requested 
+transfer length minus the actual number of blocks written.
+  (2)  If unbuffered mode is reported and the fixed bit is set to zero, the 
+information field shall be set to the requested transfer length.
+  (3)  If buffered mode is reported in the mode parameter header and the fixed 
+bit is set to one, the information field shall be set to the total number of 
+blocks, filemarks, and setmarks not written (the number of blocks not 
+transferred from the initiator plus the number of blocks, filemarks, and 
+setmarks remaining in the target's buffer).  Note that the value in the 
+information field may exceed the transfer length.
+  (4)  If buffered mode is reported and the fixed bit is set to zero, the 
+information field shall be set to the total number of bytes, filemarks, and 
+setmarks not written (the number of bytes not transferred from the initiator 
+plus the number of bytes, filemarks, and setmarks remaining in the target's 
+buffer).  Note that the value in the information field may exceed the transfer 
+length.
+
+  IMPLEMENTORS NOTE:  The target should ensure that some additional data can 
+  be written to the medium (e.g., labels, filemarks, or setmarks) after the 
+  first early-warning indication has been returned to the initiator.
+
+  If a WRITE command is received while the logical unit is positioned between 
+early-warning and end-of-partition, the target shall return CHECK CONDITION 
+status after attempting to perform the command.  The EOM and valid bits shall 
+be set to one in the sense data.  If all data that is to be written is 
+successfully transferred to the medium, the information field shall be set to 
+zero.  If any data that is to be written is not transferred to the medium 
+prior to encountering end-of-partition, the sense key shall be set to VOLUME 
+OVERFLOW and the information field shall be defined as follows:
+  (1)  If the fixed bit is one, the information field shall be set to the 
+requested transfer length minus the actual number of blocks written to the 
+medium.
+  (2)  If the fixed bit is zero, the information field shall be set to the 
+requested transfer length.
+
+  IMPLEMENTORS NOTE:  In some systems it is important to recognize an error if 
+  end-of-partition is encountered during execution of a WRITE command, without 
+  regard for whether all data that is to be written is successfully 
+  transferred to the medium.  By its definition, the VOLUME OVERFLOW sense key 
+  may always validly be returned if end-of-partition is encountered while 
+  writing, and such usage is recommended.  Reporting the MEDIUM ERROR sense 
+  key, as was done in some SCSI-1 implementations, may cause confusion as to 
+  whether there was really defective medium encountered during execution of 
+  the last write command.
+
+9.2.15. WRITE FILEMARKS Command
+
+                     Table 9-18: WRITE FILEMARKS Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (10h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |         Reserved         |  WSmk  | Immed  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The WRITE FILEMARKS command (Table 9-18) requests that the target write the 
+specified number of filemarks or setmarks to the current position on the 
+logical unit.
+
+  If the Write Setmark (WSmk) bit is one, the transfer length specifies the 
+number of setmarks to be written.  If the WSmk bit is zero, the transfer 
+length specifies the number of filemarks to be written.
+
+
+  An immediate (Immed) bit of one indicates that the target shall return 
+status as soon as the command descriptor block has been validated.  An Immed 
+bit of one is only valid if buffered mode is reported in the mode parameter 
+header (9.3.3).
+
+  An Immed bit of zero indicates that the target shall not return status until 
+the write operation has completed.  Any buffered data, filemarks, and setmarks 
+shall be written to the medium prior to completing the command.
+
+  IMPLEMENTORS NOTE:  Upon completion of any buffered write operation, the 
+  initiator can issue a WRITE FILEMARKS command with the Immed bit set to zero 
+  and the transfer length field set to zero to ensure that all buffered data, 
+  filemarks, and setmarks are successfully written to the medium.
+
+  If the logical unit encounters early-warning during a WRITE FILEMARKS 
+command, an attempt to finish writing any buffered data, filemarks, or 
+setmarks may be made, as determined by the current settings of the REW and SEW 
+bits in the device configuration page (9.3.3.1).  The command shall terminate 
+with CHECK CONDITION status and the EOM and valid bits shall be set to one in 
+the sense data.  If all buffered data, filemarks, and setmarks are 
+successfully transferred to the medium, the sense key shall be set to NO SENSE 
+or RECOVERED ERROR, as appropriate. If any buffered data, filemarks, or 
+setmarks to be written are not transferred to the medium when early-warning is 
+encountered, the sense key shall be set to VOLUME OVERFLOW.
+
+  The information field shall be defined as follows:
+  (1) If unbuffered mode is reported in the mode parameter header, the 
+information field shall be set to the requested transfer length minus the 
+actual number of filemarks or setmarks written.
+  (2) If buffered mode is reported in the mode parameter header and the 
+buffered data was written in variable block mode (see 9.2.14), the information 
+field shall be set to the total number of bytes, filemarks, and setmarks not 
+written (the number of filemarks or setmarks not transferred from the 
+initiator plus the number of bytes, filemarks and setmarks remaining in the 
+target's buffer).  Note that it is possible for the value in the information 
+field to exceed the transfer length.
+  (3) If buffered mode is reported and the buffered data was written in fixed 
+block mode (see 9.2.14), the information field shall be set to the total 
+number of blocks, filemarks, and setmarks not written (the number filemarks or 
+setmarks not transferred from the initiator plus the number of blocks, 
+filemarks, and setmarks remaining in the target's buffer).  Note that it is 
+possible for the value in the information field to exceed the transfer length.
+
+  IMPLEMENTORS NOTE:  The target should ensure that some additional data can 
+  be written to the medium (e.g., labels, filemarks, or setmarks) after the 
+  first early-warning indication has been returned to the initiator.
+
+
+
+
+
+
+
+
+
+  If a WRITE FILEMARKS command is received while the logical unit is 
+positioned between early-warning and end-of-partition, the target shall return 
+CHECK CONDITION status after attempting to perform the command.  The EOM and 
+valid bits shall be set to one in the sense data.  If all filemarks or 
+setmarks to be written are successfully transferred to the medium, the 
+information field shall be set to zero.  If any filemarks or setmarks to be 
+written are not transferred to the medium prior to encountering end-of-
+partition, the sense key shall be set to VOLUME OVERFLOW and the information 
+field shall be set to the requested transfer length minus the actual number of 
+filemarks or setmarks written to the medium.
+
+
+9.3. Parameters for Sequential-Access Devices
+
+9.3.1. Diagnostic Parameters
+
+  This section defines the descriptors and pages for diagnostic parameters 
+used with sequential-access devices. 
+
+  The diagnostic page codes for sequential-access devices are defined in Table 
+9-19.
+
+                      Table 9-19: Diagnostic Page Codes
+
+==============================================================================
+Page Code     Description                                           Section
+------------------------------------------------------------------------------
+   00h        Supported Diagnostic Pages                            7.3.1.1
+01h - 3Fh     Reserved (for all device type pages)                 
+40h - 7Fh     Reserved
+80h - FFh     Vendor-specific pages
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9.3.2. Log Parameters
+
+  This section defines the descriptors and pages for log parameters used with 
+sequential-access devices. 
+
+  The log page codes for sequential-access devices are defined in Table 9-20.
+
+                          Table 9-20: Log Page Codes
+
+==============================================================================
+  Page Code    Description                                          Section
+------------------------------------------------------------------------------
+     01h       Buffer Over-Run/Under-Run Page                       7.3.2.1
+     02h       Error Counter Page (Write) Page                      7.3.2.2
+     03h       Error Counter Page (Read) Page                       7.3.2.2
+     04h       Error Counter Page (Read Reverse) Page               7.3.2.2
+     05h       Error Counter Page (Verify) Page                     7.3.2.2
+     07h       Last n Error Events Page                             7.3.2.3
+     06h       Non-Media Error Page                                 7.3.2.4
+     00h       Supported Log Pages                                  7.3.2.5
+  08h - 2Fh    Reserved                              
+     3Fh       Reserved                              
+  30h - 3Eh    Vendor Specific                       
+==============================================================================
+
+
+9.3.3. Mode Parameters
+
+  This section defines the descriptors and pages for mode parameters used with 
+sequential-access devices. 
+
+  The mode parameter list, including the mode parameter header and mode block 
+descriptor, are described in 7.3.3.
+
+  The medium-type code field in the mode parameter header is reserved for 
+sequential-access devices.
+
+  The device-specific parameter byte of the mode parameter header (see Tables 
+7-61 and 7-62) is defined in Table 9-21 for sequential-access devices.
+
+                      Table 9-21: Device-Specific Parameter 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+==============================================================================
+     |   WP   |      Buffered Mode       |               Speed               |
+==============================================================================
+
+
+  For the MODE SENSE command, a write protect (WP) bit of zero indicates that 
+the medium is write enabled.  A WP bit of one indicates that the medium is 
+write protected.  For the MODE SELECT command, this field is ignored.
+
+
+
+  Values for the buffered mode field are defined as follows:
+  0h       The target shall not report GOOD status on write commands until the 
+           data blocks are actually written on the medium.
+
+  1h       The target may report GOOD status on write commands as soon as all 
+           the data specified in the write command has been transferred to the 
+           target's buffer.  One or more blocks may be buffered prior to 
+           writing the block(s) to the medium.
+
+  2h       The target may report GOOD status on write commands as soon as:
+           (1) All the data specified in the write command has been     
+           successfully transferred to the target's buffer, and 
+           (2) All buffered data from different initiators has been 
+           successfully written to the medium. 
+
+  3h - 7h  Reserved
+
+  Values for the speed field shall be assigned as follows:
+  0h       Default (Use the peripheral device's default speed).
+  1h       Use the peripheral device's lowest speed.
+  2h - Fh  Use increasing peripheral device speeds.
+
+  For the MODE SELECT command, the density code field of the sequential-access 
+device block descriptor (7.3.3) indicates the density selected by the 
+initiator for use in subsequent read and write operations.  For devices 
+capable of automatic density recognition, the density code selected by the 
+initiator may be overridden by the target for a subsequent read operation if 
+the selected value does not match the current recorded density of the medium.  
+If the MODE SELECT command specifies the default density code the device 
+selects the actual density code to be used in a vendor specific manner.  The 
+value is expected to be the principal density code (or an optimal density 
+code).
+
+  For the MODE SENSE command, the density code field reflects the current 
+operating density of the device.  If a current operating density has not been 
+selected, either because no medium is installed or because the density of the 
+installed medium has not been determined, the density code field should be set 
+to the principal density code value.  The principal density code is the 
+highest density code supported, the optimal density code supported, or the 
+most common density code supported.  In some devices, the principal density 
+code value returned in response to a MODE SENSE command may change dynamically 
+to match the most recently selected density.  The density code value returned 
+in response to a MODE SENSE command shall be as described below:
+  (1) Following a UNIT ATTENTION condition for a power on or hard reset 
+condition, while not ready, the target shall report the principal density.
+  (2)  Following a UNIT ATTENTION condition for a not-ready-to-ready 
+transition, the target shall:
+     (a) report the principal density if no attempt has been made by the 
+  target to determine the density.
+     (b) report the principal density if the target cannot automatically 
+  determine the density from the medium.
+     (c) report the current medium density if the target can determine the 
+  density from the medium.
+
+
+  (3) Following a successful read operation at or after beginning-of-medium, 
+the target shall report a density code value reflecting the recorded density 
+of the medium.  For some implementations, the target may automatically 
+determine this value from the medium.  For devices not capable of automatic 
+density determination, the principal density is reported if the density code 
+value is not provided by the preceding MODE SELECT command.
+  (4) Following an unsuccessful read operation or a successful write 
+operation, while at beginning-of-partition, the target shall:
+     (a) report a density code value as described for item (2) if a previous 
+  MODE SELECT command has not established a density code for the currently 
+  mounted volume.
+     (b) report a density code value as provided by the last successful MODE 
+  SELECT command for the currently mounted volume.
+  (5) Following a successful unload operation the target shall report the most 
+recent density code value as determined by items (2) through (4) above.
+
+  Table 9-22 lists the sequential-access device density codes 
+
+                 Table 9-22: Sequential-Access Density Codes
+
+==============================================================================
+Code Value                             Density
+----------  ------------------------------------------------------------------
+   00h      Default density (MODE SELECT command only)
+       
+                                    Magnetic Tapes              
+            Width                  Density                          
+            mm  (Inch)   Tracks  bpmm    bpi   Code  Type  Reference     Note
+            ----------   ------  ------------  ----  ----  ------------  ----
+   01h      12.7 (0.5)      9     32    (800)  NRZI   R    X3.22-1983      2
+   02h      12.7 (0.5)      9     63   (1600)  PE     R    X3.39-1986      2
+   03h      12.7 (0.5)      9    246   (6250)  GCR    R    X3.54-1986      2
+   04h       6.3 (0.25)    4/9   315   (8000)  GCR    C    X3.136-1986    1,3
+   05h       6.3 (0.25)    4/9   315   (8000)  GCR    C    X3.136-1986     1
+   06h      12.7 (0.5)      9    126   (3200)  PE     R    X3.157-1987    2,4
+   07h       6.3 (0.25)     4    252   (6400)  IMFM   C    X3.116-1986     1
+   08h       3.81 (0.15)    4    315   (8000)  GCR    CS   X3.158-1987    1,4
+   09h      12.7 (0.5)     18   1491  (37871)  GCR    C    X3B5/87-099    2,4
+   0Ah      12.7 (0.5)     22    262   (6667)  MFM    C    X3B5/86-199    1,4
+   0Bh       6.3 (0.25)     4     63   (1600)  PE     C    X3.56-1986      1
+   0Ch      12.7 (0.5)     24    500  (12690)  GCR    C    HI-TC1         1,6
+   0Dh      12.7 (0.5)     24    999  (25380)  GCR    C    HI-TC2         1,6
+   0Eh      Reserved for ECMA        
+   0Fh       6.3 (0.25)    15    394  (10000)  GCR    C    QIC-120        1,6
+   10h       6.3 (0.25)    18    394  (10000)  GCR    C    QIC-150        1,6
+   11h       6.3 (0.25)    26    630  (16000)  GCR    C    QIC-320        1,6
+   12h       6.3 (0.25)    30   2034  (51667)  RLL    C    QIC-1350       1,6 
+   13h       3.81 (0.15)    1   2400  (61000)  DDS    CS   X3B5/88-185A    5 
+   14h       8.00 (0.315)   1   2126  (54000)         CS   X3B5/88-036     5
+15h - 7Eh   Reserved
+   7Fh      No change from previous density (NO-OP)                        7
+80h - FFh   Vendor unique
+==============================================================================
+
+
+  Key:
+                 Code                                       Type
+  --------------------------------------------       -----------------------
+  NRZI  Non Return to Zero, change on ones           R   Reel-to-Reel
+  GCR   Group Code Recording                         C   Cartridge
+  PE    Phase Encoded                                CS  Cassette
+  IMFM  Inverted Modified Frequency Modulation
+  MFM   Modified Frequency Modulation
+  DDS   DAT Data Storage
+  RLL   Run Length Limited
+  NOTES:
+  (1)  Serial Recorded.
+  (2)  Parallel Recorded.
+  (3)  Old format known as QIC-11.
+  (4)  See Appendix D for additional standards information.
+  (5)  Helical Scan
+  (6)  This is not an American National Standard.  The reference is based on 
+an industry standard definition of the media format.
+  (7)  This density code value is defined for the MODE SELECT command and   
+shall not be returned by the MODE SENSE command.
+
+
+  The mode page codes for sequential-access devices are defined in Table 9-23.
+
+                         Table 9-23: Mode Page Codes
+
+==============================================================================
+Page Code     Description                                           Section
+------------------------------------------------------------------------------
+   0Ah        Control Mode Page                                     7.3.3.1
+   10h        Device Configuration Page                             9.3.3.1
+   02h        Disconnect-Reconnect Page                             7.3.3.2
+   11h        Medium Partition Page(1)                              9.3.3.2
+   12h        Medium Partition Page(2)                              9.3.3.3
+   13h        Medium Partition Page(3)                              9.3.3.3
+   14h        Medium Partition Page(4)                              9.3.3.3
+   09h        Peripheral Device Page                                7.3.3.3
+   01h        Read-Write Error Recovery Page                        9.3.3.4
+   00h        Vendor specific (does not require page format)        7.3.3
+03h - 08h     Reserved                                              
+0Bh - 10h     Reserved
+15h - 3Eh     Vendor Specific (page format required)
+   3Fh        Returns all pages (valid only for the MODE SENSE command)
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+9.3.3.1. Device Configuration Page
+
+                    Table 9-24: Device Configuration Page
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |   PS   |Reserved|         Page Code (10h)                             |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Page Length (0Eh)                           |
+-----|-----------------------------------------------------------------------|
+ 2   |Reserved|  CAP   |  CAF   |                Active Format               |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Active Partition                            |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Write Buffer Full Ratio                     |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Read Buffer Empty Ratio                     |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                        Write Delay Time                         ---|
+ 7   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 8   |  DBR   |  BIS   |  RSmk  |  AVC   |      SOCF       |   RBO  |  REW   |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Gap Size                                    |
+-----|-----------------------------------------------------------------------|
+ 10  |      EOD Defined         |  EEG   |  SEW   |        Reserved          |
+-----|-----------------------------------------------------------------------|
+ 11  | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 12  |                           Buffer Size at Early Warning                |
+-----|---                                                                 ---|
+ 13  |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 14  |                           Select Data Compression Algorithm           |
+-----|-----------------------------------------------------------------------|
+ 15  |                           Reserved                                    |
+==============================================================================
+
+
+  This page (Table 9-24) is used to specify the appropriate sequential-access 
+device configuration.
+
+  A change active partition (CAP) bit of one indicates that the logical 
+partition is to be changed to the one specified by the active partition field. 
+A CAP bit of zero indicates no partition change is specified.
+
+  A change active format (CAF) bit of one indicates that the active format is 
+to be changed to the value specified in the active format field.  A CAF bit of 
+zero indicates no active format change is specified.  For some devices, the 
+format may only be changed when the logical unit is at beginning-of-partition.
+
+
+   The active format field indicates which recording format is in use for the 
+selected density code when reading or writing data on a logical unit.  The 
+value of the active format field is vendor specific.  
+
+  The active partition field indicates the current logical partition number in 
+use on the medium.
+
+  The write buffer full ratio, on WRITE commands, indicates to the target how 
+full the buffer shall be before writing data to the medium.  A value of zero 
+indicates that the value is not specified.
+
+  The read buffer empty ratio, on READ commands, indicates to the target how 
+empty the buffer shall be before retrieving additional data from the medium.  
+A value of zero indicates that the value is not specified.
+
+  The write delay time indicates the maximum time, in 100 millisecond 
+increments, that the target should wait before any buffered data that is to be 
+written, is forced to the medium after the last buffered WRITE command that 
+did not cause the buffer to exceed the buffer full ratio.  A value of zero 
+indicates that the target shall never force buffered data to the medium under 
+these conditions.
+
+  A data buffer recovery (DBR) bit of one indicates that the target supports 
+data buffer recovery using the RECOVER BUFFERED DATA command.  A DBR bit of 
+zero indicates that the target does not support data buffer recovery.  This 
+bit is target-defined.
+
+  A block identifiers supported (BIS) bit of zero indicates that block IDs are 
+not supported in the format written on the medium.  A BIS bit of one indicates 
+that the format on the medium has recorded information about the block IDs 
+relative to a partition.  This bit is target-defined.
+
+  A report setmarks (RSmk) bit of one indicates that the target shall 
+recognize and report setmarks during appropriate read or space operations.  A 
+RSmk bit of zero indicates that the target shall not report setmarks.
+
+  The automatic velocity control (AVC) bit of one, indicates that the device 
+shall select the speed (if the device supports more than one speed) based on 
+the data transfer rate that should optimize streaming activity and minimize 
+medium repositioning.  An AVC bit of zero indicates the speed chosen should be 
+the device's default speed.
+
+  A stop on consecutive filemarks (SOCF) field of 00b indicates that the 
+device shall pre-read data from the medium in buffered mode to the limits of 
+the buffer capacity without regard for filemarks.  This implies that the 
+device can differentiate between data blocks and filemarks in the buffer.  
+Values 01b, 10b, and 11b specify that the device shall terminate the pre-read 
+operation if 1, 2, or 3 consecutive filemarks are detected, respectively.  If 
+the RSmk bit is one, the target shall interpret this field as stop on 
+consecutive setmarks.
+
+
+
+
+
+  A recover buffer order (RBO) bit of one indicates that data blocks shall be 
+returned from the target's buffer on a RECOVERED BUFFERED DATA command in LIFO 
+order (last-in-first-out) from which they were written to the buffer.  A RBO 
+bit of zero indicates data blocks shall be returned in FIFO (first-in-first-
+out) order.
+
+  A report early-warning (REW) bit of zero indicates that the target shall not 
+report the early-warning condition for read operations and it shall report 
+early-warning at or before any medium-defined early-warning position during 
+write operations. 
+
+  A REW bit of one indicates that the target shall return CHECK CONDITION 
+status with the EOM bit set in the sense data when the early-warning position 
+is encountered during read and write operations.  If the REW bit is one and 
+the SEW bit is zero, the target shall return CHECK CONDITION status with the 
+sense key set to VOLUME OVERFLOW when early-warning is encountered during 
+write operations.  
+   
+  IMPLEMENTORS NOTE: A REW bit of one is intended for compatibility with those 
+  systems using old tape formats that require an early-warning indication 
+  during read operations.  Other systems should set this bit to zero to avoid 
+  potential data loss when interchanging tapes between peripheral devices.
+
+  The GapSize field value determines the size of the inter-block gap when 
+writing data.  A value of 00h specifies the device's defined gap size.  A 
+value of 01h specifies a device defined gap size sufficiently long to support 
+update-in-place.  Values of 02h through 0Fh are multipliers on the device's 
+defined gap size.  Values 10h through 7Fh are reserved.  Values 80h through 
+FFh are vendor specific.
+
+  The end-of-data (EOD) defined field indicates which format type the logical 
+unit shall use to detect and generate the EOD area.  The types of EOD formats 
+are specified below:
+
+           Value                   Description
+         ---------   -----------------------------------------------
+            000b     Logical unit's default EOD definition            
+            001b     Format-defined erased area of medium             
+            010b     As specified in the SOCF field
+            011b     EOD recognition and generation is not supported
+         100b-111b   Reserved                                         
+
+  An enable EOD generation (EEG) bit set to one indicates that the logical 
+unit shall generate the appropriate EOD area, as determined by the EOD defined 
+field. A value of zero indicates that EOD generation is disabled.
+
+  IMPLEMENTORS NOTE:  Some logical units may not generate EOD at the 
+  completion of any write-type operation.
+
+
+
+
+
+
+
+  The synchronize at early-warning (SEW) bit set to one indicates that the 
+target shall cause any buffered write data, filemarks, or setmarks to be 
+transferred to the medium when early-warning is encountered. A value of zero 
+indicates that the target shall retain any unwritten buffered data, filemarks, 
+or setmarks in the buffer when early-warning is encountered (see the WRITE 
+command, 9.2.14, and the WRITE FILEMARKS command, 9.2.15).
+
+  The buffer size at early-warning field indicates the value, in bytes, to 
+which the target shall reduce its logical buffer size when writing.  The 
+target should reduce the buffer size only when the logical unit is positioned 
+between its early-warning and end-of-partition.  A value of zero indicates 
+that the implementation of this function is device specific.  
+
+  NOTE: The intent is to prevent the loss of data by limiting the size of the 
+  buffer when near the end-of-partition.
+
+  The select data compression algorithm field set to 00h indicates that the 
+target shall not use a compression algorithm on any data sent to it prior to 
+writing the data to the medium.  A value of 01h indicates that the data to be 
+written shall be compressed using the target's default compression algorithm.  
+Values 02h through 7Fh are reserved.  Values 80h through FFh are vendor 
+specific.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9.3.3.2. Medium Partition Page(1)
+
+                     Table 9-25: Medium Partition Page(1)
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |   PS   |Reserved|         Page Code (11h)                             |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Page Length (n-1)                           |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Maximum Additional Partitions               |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Additional Partitions Defined               |
+-----|-----------------------------------------------------------------------|
+ 4   |  FDP   |  SDP   |  IDP   |       PSUM      |       Reserved           |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Medium Format Recognition                   |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+==============================================================================
+8 - n|                   Partition Size Descriptor(s)                        |
+==============================================================================
+ 0   | (MSB)                                                                 |
+-----|---                        Partition Size                           ---|
+ 1   |                                                                 (LSB) |
+==============================================================================
+
+
+  This page (Table 9-25) is used to specify the first group of medium 
+partitions.  Additional groups are specified in medium partition pages(2-4).
+
+  The maximum additional partitions field is a target-defined value indicating 
+the maximum number of additional partitions supported by the logical unit.  A 
+value of zero indicates that no value is specified.
+
+  The additional partitions defined field specifies the number of additional 
+partitions to be defined for a volume when the SDP or IDP bit is set to one.  
+The maximum value allowed is the value returned in the maximum additional 
+partitions field.
+
+  A fixed data partitions (FDP) bit of one indicates that the device assigns 
+partitions based on its fixed definition of partitions.  Setting this bit to 
+one may only be valid at beginning-of-partition and is mutually exclusive with 
+the SDP and IDP bits.
+
+  A select data partitions (SDP) bit of one indicates that the device is to 
+partition the medium into the the number of partitions as specified by the 
+additional partitions defined field using partition sizes defined by the 
+device.  Setting this bit to one may only be valid at beginning-of-partition 
+and it is mutually exclusive with the FDP and IDP fields.
+
+  An initiator-defined partitions (IDP) bit of one indicates that the 
+initiator is defining the number and size of the data partitions using the 
+additional partitions defined field and the partition size descriptors. 
+Setting this bit to one may only be valid at beginning-of-partition and is 
+mutually exclusive with the FDP and SDP fields.
+
+  IMPLEMENTORS NOTE: Since defining partitions may require re-formatting the 
+  medium for some implementations, an implicit write to the medium may occur 
+  as a result of a MODE SELECT command that supplies any of these parameters.
+
+  Partition size unit of measure (PSUM) field defines the units in which the 
+partition size descriptors select the partition size.  The values 00b, 01b, 
+and 10b define the units as bytes, kilobytes, and megabytes, respectively.  
+The value 11b is reserved.
+
+   The medium format recognition field is a target-defined value indicating 
+the device's capability to automatically identify the medium format and 
+partition information when reading an unknown volume.
+
+  Values for the medium format recognition field shall be assigned as follows:
+
+  00h    Logical unit is incapable of format or partition recognition.
+  01h    Logical unit is capable of format recognition only.
+  02h    Logical unit is capable of partition recognition only.
+  03h    Logical unit is capable of format and partition recognition.
+04h-FFh  Reserved.
+
+  IMPLEMENTORS NOTE: If a target indicates that it is not capable of medium 
+  format recognition, the initiator must supply all necessary parameters for 
+  the device to identify the specific format.  The value in this field may be 
+  different following a medium change.
+
+  Partition size descriptors define the size of the respective partitions in 
+the units specified in the PSUM field.  Up to 64 partitions may be defined 
+using this page.  If additional partitions need to be defined, up to 64 
+partitions can be defined in each of the medium partition pages(2-4) defined 
+in 9.3.3.3.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9.3.3.3. Medium Partition Page(2-4)
+
+                    Table 9-26: Medium Partition Page(2-4)
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |   PS   |Reserved|         Page Code (p)                               |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Page Length (n-1)                           |
+==============================================================================
+2 - n|                       Partition Size Descriptor(s)                    |
+==============================================================================
+ 0   | (MSB)                                                                 |
+-----|---                        Partition Size                           ---|
+ 1   |                                                                 (LSB) |
+==============================================================================
+
+
+  The medium partition pages (Table 9-26) are used to specify additional 
+groups of medium partitions.  The first group is specified in the medium 
+partition page(1) (see 9.3.3.2).
+
+  The additional page codes (p) defined for partition size definition are 12h, 
+13h, and 14h.  Up to a maximum of 64 partitions can be defined in each of 
+these pages.  The partition size is defined by the value of the partition size 
+field.  The units of size used by the partition size field is specified in the 
+PSUM field of the medium partition page(1) (9.3.3.2).
+
+  IMPLEMENTORS NOTE: Since defining partitions may require re-formatting the 
+  medium for some implementations, an implicit write to the medium may occur 
+  as a result of a MODE SELECT command that supplies these parameters. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9.3.3.4. Read-Write Error Recovery Page
+
+                  Table 9-27: Read-Write Error Recovery Page
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |   PS   |Reserved|         Page Code (01h)                             |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Page Length (0Ah)                           |
+-----|-----------------------------------------------------------------------|
+ 2   |Reserved|Reserved|   TB   |Reserved|  EER   |  PER   |  DTE   |  DCR   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Read Retry Count                            |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Write Retry Count                           |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 10  |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 11  |                           Reserved                                    |
+==============================================================================
+
+
+  The read-write error recovery page (Table 9-27) specifies the error recovery 
+and reporting parameters that the target shall use when transferring data 
+between the initiator and the medium.  These parameters only apply to read-
+write errors and do not affect message system retries or positioning error 
+recovery procedures.
+
+  NOTE: The parameters in this page also apply to verify operations.
+
+  A transfer block (TB) bit of one indicates that a data block that is not 
+recoverable within the specified recovery limits shall be transferred to the 
+initiator before CHECK CONDITION status is returned.  A TB bit of zero 
+indicates that the unrecoverable data block shall not be transferred to the 
+initiator.  Data blocks that can be recovered within the recovery limits are 
+always transferred, regardless of the value of the TB bit.
+
+  An enable early recovery (EER) bit of one indicates that the target shall 
+use the most expedient error recovery algorithm (e.g., attempt error 
+correction prior to retries).  An EER bit of zero indicates that the target 
+shall use the most deliberate error recovery algorithm, within the limits 
+established by the other error recovery parameters (e.g., attempt to recover 
+the block error-free prior to using error correction).
+
+  A post error (PER) bit of one indicates that the target shall return CHECK 
+CONDITION status to report recovered errors.  A PER bit of zero indicates that 
+the target shall not report errors recovered within the limits established by 
+the error recovery parameters.  If this bit is zero, the DTE bit must also be 
+set to zero.
+
+  A disable transfer on error (DTE) bit of one indicates that the target shall 
+terminate the data transfer after a recovered read-write error occurs.  All 
+data from the recovered block shall be transferred prior to terminating the 
+read-write operation.  A DTE bit of zero indicates that the target shall not 
+terminate the transfer for errors recovered within the limits established by 
+the read-write error recovery parameters.
+
+  A disable correction (DCR) bit of one indicates that the target shall not 
+use error correction codes during error recovery.  A DCR bit of zero allows 
+the use of error correction codes for error recovery.
+
+  The read retry count specifies the number of times that the target should 
+attempt its recovery algorithm during a read operation before an unrecoverable 
+error is reported.  A read retry count of zero indicates that the target shall 
+not use its recovery algorithm during read operations.
+
+  The write retry count specifies the number of times that the target should 
+attempt its recovery algorithm during a write operation before an 
+unrecoverable error is reported.  A write retry count of zero indicates that 
+the target shall not use its recovery algorithm during write operations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9.4. Glossary for Sequential Access Devices
+
+beginning-of-partition. The position at the beginning of the permissible 
+recording region of a partition.  If only one partition is defined, this 
+position is typically equivalent to the beginning-of-medium.
+
+beginning-of-medium. The extreme position along the medium in the direction 
+away from the supply reel which can be accessed by the device. 
+
+buffered mode. A mode of data transfer in write operations which facilitates 
+tape streaming (9.1.5), as reported in the mode parameter header device-
+specific parameter (9.3.3).
+
+early-warning. A physical mark or device computed position near but logically 
+before the end-of-partition (independent of physical direction).  See the REW 
+bit in the device configuration page in 9.3.3.1.
+
+end-of-data. End of data in a partition is denoted in format-specific manner. 
+See the EOD defined field in the device configuration page in 9.3.3.1.
+
+end-of-medium. The extreme position along the medium in the direction away 
+from the take-up reel which can be accessed by the device.  This position may 
+be accessed by devices that support the LOAD UNLOAD command with the EOT bit 
+set to one.
+
+end-of-partition. The position at the end of the permissible recording region 
+of a partition.
+
+filemark. A special recorded element within a partition, containing no user 
+data, which provides a segmentation scheme.
+
+overlength. The incorrect length condition that exists after executing a read 
+command when the the length of the actual block read exceeds the requested 
+transfer length in the command descriptor block.
+
+partition. The entire usable region of recording and reading paths in a volume 
+or in a portion of a volume, defined in a device-specific manner.  If there is 
+more than one partition, they shall be numbered starting with zero (i.e., 
+beginning-of-partition-zero).
+
+setmark.  A special recorded element within a partition, containing no user 
+data, which provides a segmentation scheme hierarchically superior to 
+filemarks for use in addressing or fast positioning on high capacity storage 
+devices.
+
+spacing.  The act of positioning the medium on a sequential access device.
+
+underlength. The incorrect length condition that exists after executing a read 
+command when the requested transfer length in the command descriptor block 
+exceeds the length of the actual block read.
+
+volume. A recording medium together with its physical carrier.
+
+
+

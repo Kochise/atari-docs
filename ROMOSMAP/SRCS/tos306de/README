@@ -1,0 +1,119 @@
+*****************************************************************
+* Directory Structure
+*****************************************************************
+
+bin:
+  Prebuild binaries of tools used in the build process. These are
+  essentially identical to the ones from the developer kit, with 
+  modifications as described in alcyon/README. Sources of almost
+  all of these tools are found in the alcyon directory.
+
+include:
+  Include files for the C compiler. Only a few of them are actually
+  needed for TOS itself, most of them are only needed to build the
+  tools.
+
+lib:
+  Prebuild libraries and startup files for the C runtime library.
+  None of these is used to build a ROM image.
+
+doc:
+  Some unsorted documentation.
+
+bios:
+  Source of the BIOS part of TOS.
+
+vdi:
+  Source of the VDI part of TOS.
+
+bdos:
+  Source of the GEMDOS part of TOS.
+
+aes:
+  Source of the AES part of TOS.
+
+desk:
+  Source of the desktop application.
+
+common:
+  Shared include files for the above components.
+
+tools:
+  Source of some small tools used in the build process,
+  namely the one that glues the builtin resources and
+  newdesk/desktop.inf files together. If you are cross-compiling,
+  these must be compiled by your native host compiler.
+
+system:
+  Source of some small Atari tools.
+
+listings:
+  Working versions of disassembler listings of various TOS versions.
+
+glue:
+  The final ROM images will be build here. It also contains link maps
+  for some ROM versions, for reference. The identifiers in those maps
+  are truncated to 8 characters, though (a limitation of the DRI
+  object file format).
+
+alcyon:
+  Source of the (modified) tools of the Alcyon C compiler & tools,
+  as used to compile TOS.
+
+alcyon/orig:
+  Source of the tools of the Alcyon C compiler & tools, that compile to binary
+  identical versions of the ones found in the developer kit.
+
+
+*****************************************************************
+* Assembler sources
+*****************************************************************
+
+- Assembler sources are written in a format that is accepted
+  both by as68 and by the GNU assembler with the --mri option.
+  If you have to use a different assembler, they might need
+  conversion.
+
+- All comments in assembly files are in C-style. The makefile
+  preprocesses them before passing them to the assembler. This
+  avoids problems with different types of comment delimiters in
+  different assemblers, and also works around some bugs of
+  the conditional assembly directives of as68. It also allows
+  using the same files defining some key constants to be
+  used for both assembler and C.
+
+- Don't put comments after constants that are used in assembler
+  expressions. Since it is a K&R preprocessor, the spaces between
+  the constant and the comment will make it to the source, and
+  the assembler does not like spaces in operands.
+
+- Assembling the assembler sources in the bios directory with
+  the original as68 from the developer kit will not work, mostly
+  because it does not support abs.w addressing mode, but also due
+  to numerous bugs. Either use the fixed version from the bin
+  directory or try some other assembler.
+
+*****************************************************************
+* Supported versions
+*****************************************************************
+
+BIOS, VDI, GEMDOS, AES, DESKTOP: 2.06, 2.08, 3.06
+2.08 is 2.06 modified for ST-Book, it identifies itself as 2.06 though
+
+*****************************************************************
+* Supported language versions
+*****************************************************************
+
+us - USA
+de - Germany
+fr - France
+uk - United Kingdom (uses US resources)
+es - Spain (no ROM yet found to verify)
+it - Italy (no ROM yet found to verify)
+sv - Sweden
+fi - Finland (uses swedish keyboard and resources)
+no - Norway (uses swedish keyboard and resources)
+sf - Switzerland (French) (uses french keyboard and resources)
+sg - Switzerland (German) (uses german keyboard and resources)
+
+pl - Poland (only unofficial version 3.06 found on the net)

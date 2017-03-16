@@ -1,0 +1,81 @@
+'
+' YM PLAYER by The Beast/Typhoon (St‚phane Perez)
+' ---------
+'
+' Crappy player quickly written in GFA 3.5
+' Only plays "YM2!" and "YM3!" files
+' (for the moment)
+'
+' *************** Freeware! ***************
+'  Distribute this freely but tell me if
+'  you are programming a new player using
+'  this source: thebeast@caramail.com
+' *****************************************
+'
+' This is version 0.1 from June 16th 1998
+'
+CLS
+REPEAT
+UNTIL INKEY$=""
+ALERT 1," |Please select an|YM file to play.",1,"  OK  ",b|
+'
+SPOKE &H484,PEEK(&H484) AND NOT 1       ! Cut key click
+'
+FILESELECT "G:\TEMP\*.*","",name$
+IF name$<>"" AND EXIST(name$)
+  OPEN "i",#1,name$
+  ym_size%=LOF(#1)
+  DIM buffer|(ym_size%)
+  buffer%=V:buffer|(0)
+  nvbl%=(ym_size%-4)/14
+  BLOAD name$,buffer%
+  '
+  header$=""
+  FOR i%=0 TO 3                 ! header = 4 bytes
+    head$=CHR$(BYTE{buffer%+i%})
+    header$=header$+head$
+  NEXT i%
+  '
+  CLS
+  PRINT "File name: ";name$
+  PRINT "Lenght: ";ym_size%
+  PRINT "Number of VBL: ";nvbl%
+  PRINT "File header: ";header$
+  PRINT AT(1,6);"-Press any key-"
+  ~INP(2)
+  PRINT AT(1,6);"-Press ESC to exit-"
+  '
+  OUT 4,18              ! If I keep the mouse active, the
+  HIDEM                 ! music stops when the mouse moves !  8-)
+  '
+  REPEAT
+    pointeur%=buffer%+4           ! Music start just after the header
+    FOR i%=0 TO nvbl%-1
+      FOR j%=0 TO 13
+        donnee|=BYTE{pointeur%+i%+(j%*nvbl%)}     ! We must select the right
+        ~XBIOS(28,donnee|,128+j%)                 ! data within the file
+      NEXT j%
+      VSYNC
+      EXIT IF PEEK(&HFFFFFC02)=1
+    NEXT i%
+  UNTIL PEEK(&HFFFFFC02)=1
+  '
+  ERASE buffer|()
+ENDIF
+@cutvoices
+SPOKE &H484,PEEK(&H484) OR 1    ! Restore key click
+'
+REPEAT
+UNTIL INKEY$=""
+SHOWM                           ! The return of the mouse
+OUT 4,8
+CLS
+EDIT                            ! See ya, dudez!
+'
+> PROCEDURE cutvoices
+  SLPOKE &H4D2,0
+  SLPOKE &HFFFF8800,&H8080000
+  SLPOKE &HFFFF8800,&H9090000
+  SLPOKE &HFFFF8800,&HA0A0000
+  SPOKE &H484,2
+RETURN

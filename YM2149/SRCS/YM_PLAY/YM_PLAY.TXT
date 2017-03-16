@@ -1,0 +1,20 @@
+YM PLAYER by The Beast/Typhoon (St‚phane Perez)
+---------
+
+This is a very early version (0.1) for YM files.
+It only plays "YM2!" and "YM3!" files for the
+moment, and there are maybe some bad sounds because
+of the YM's register 13...
+
+This player is freeware. It is written in GFA
+Basic 3.5. The source code is available, just
+tell me if you're programming another player
+using this source, or if you're optimising
+this source. Thanks!
+
+Get in touch with me: thebeast@caramail.com
+                   or thebeast@rtel.fr
+
+
+YM Player version 0.1
+June 16th 1998

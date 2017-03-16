@@ -1,0 +1,275 @@
+Appendixes    (These Appendixes are not part of American National Standard 
+              Small Computer System Interface, X3.131.198_, but are included 
+              for information only.)
+
+Appendix A
+
+SCSI Signal Sequence Example
+
+This appendix is included to provide an example of the timing of an SCSI 
+command that includes most of the SCSI bus phases (Figure A1).  In this 
+example, the target does not disconnect from the SCSI bus prior to completing 
+the command.
+
+  The following notes apply to Figure A1:
+
+GENERAL NOTE:
+
+  In a typical system, the computer's host adapter acts as the "initiator" and 
+the peripheral device's controller acts as the "target".  In general, this 
+standard does not attempt to distinguish between a computer and its host 
+adapter.  These functions may be separate or merged.  The term "initiator" 
+encompasses both.  Similarly, the term "target" does not distinguish between 
+the peripheral device and its controller, which may be separate or merged.  
+The term "SCSI device" refers to a device that may be connected to the SCSI 
+bus.  An SCSI device may act as in the initiator role, the target role, or 
+both roles.
+
+TIMING NOTES:
+
+Bus Settle Delay.  The minimum time to wait for the SCSI bus to settle after 
+changing certain control signals.
+
+Bus Free Delay.  The minimum time that an SCSI device must wait from its 
+detection of BUS FREE phase until it may assert BSY and its ID bit.
+
+Bus Set Delay.  The maximum time that an SCSI device may wait to assert BSY 
+and its ID bit after BUS FREE phase was last detected if it intends to 
+participate in the ARBITRATION phase.
+
+Bus Clear Delay.  The maximum time for an SCSI device to stop driving all 
+signals after BUS FREE phase is detected, after SEL is received during 
+ARBITRATION phase, or after RST becomes true.
+
+Arbitration Delay.  The minimum time that an SCSI device must wait after 
+asserting BSY for arbitration until it may examine the DATA BUS to determine 
+whether it won.  There is no maximum time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DATA BUS NOTES:
+
+  (1)  DB(7) is the most significant bit.
+
+  (2)  DB(7) is the highest priority arbitration bit.
+
+  (3)  DB(P) is the data parity bit (odd).  Parity is not valid during the 
+ARBITRATION phase.  Use of parity is a system option (i.e., a system is 
+configured so that all SCSI devices on a bus generate parity and have parity 
+detection enabled, or all SCSI devices have parity detection disabled or not 
+implemented).
+
+BUS PHASE NOTES:
+
+BUS FREE phase.  BUS FREE phase begins when SEL and BSY are both continuously 
+false for a bus settle delay.  It ends when SEL or BSY becomes true.
+
+ARBITRATION phase.  Implementation of this phase is optional.  If there is 
+more than one initiator, then all initiators must implement this phase.  
+Targets that do not implement this phase cannot disconnect from the bus until 
+the command has completed.  SCSI devices that implement the COPY command must 
+implement ARBITRATION phase.
+
+  At least one bus free delay after first detecting BUS FREE phase, but no 
+more than a bus set delay after the bus was last free, the initiator asserts 
+BSY and its assigned SCSI device ID bit on the DATA BUS.  The initiator waits 
+an arbitration delay, then examines the DATA BUS.  If a higher priority SCSI 
+device ID bit is true, the initiator loses arbitration and releases BSY and 
+its ID bit.  Otherwise, the initiator wins arbitration and asserts SEL.  SCSI 
+devices must release BSY and their ID bit within a bus clear delay after SEL 
+becomes true (even if they have not yet examined the DATA BUS).
+
+  The winning SCSI device waits at least a bus clear delay plus a bus settle 
+delay after asserting SEL before changing any signals on the bus.
+
+SELECTION phase.  The I/O signal is false during this phase to distinguish it 
+from the RESELECTION phase.
+
+  NON-ARBITRATING SYSTEMS:  In such systems, the initiator waits at least a 
+bus clear delay after detecting BUS FREE phase, then it asserts the target's 
+ID bit and, optionally, the initiator's ID bit on the DATA BUS.  After at 
+least two deskew delays, the initiator asserts SEL.
+
+  ARBITRATING SYSTEMS:  In such systems, the SCSI device that won arbitration 
+has both BSY and SEL asserted.  After at least a bus clear delay plus a bus 
+settle delay, it places both the target's and the initiator's ID bits on the 
+DATA BUS.  At least two two deskew delays later, it releases BSY.
+
+  ALL SYSTEMS:  The target determines that it is selected when SEL and its 
+SCSI ID bit are true and BSY and I/O are false for at least a bus settle 
+delay.  The target then asserts BSY within a selection abort time after it 
+last determined that it was still being selected.  (The target is not required 
+to respond to a selection within a selection abort time;  but it must insure 
+that it will not assert BSY more than a selection abort time after the 
+initiator aborts a selection attempt.)
+
+  At least two deskew delays after the initiator detects BSY true, it releases 
+SEL and may change or release the DATA BUS.
+
+COMMAND phase.  The target asserts C/D and negates I/O and MSG for all of the 
+bytes transferred during this phase.  The direction of transfer is from the 
+initiator to the target.
+
+  HANDSHAKE PROCEDURE:  The target asserts REQ.  Upon detecting REQ true, the 
+initiator drives the DATA BUS to the desired value, waits at least one deskew 
+delay plus a cable skew delay and then asserts ACK.  The initiator continues 
+to drive the DATA BUS until REQ is false.
+
+  When ACK is true at the target, the target reads the DATA BUS and then 
+negates REQ.
+
+  When REQ becomes false at the initiator, the initiator may change or release 
+the DATA BUS and negate ACK.
+
+  The target may continue to request command bytes by asserting REQ again.  
+The number of command bytes is determined by the group code (most significant 
+3 bits) that is contained in the first command byte.
+
+DATA IN phase.  The target asserts I/O and negates C/D and MSG for all of the 
+bytes transferred during this phase.  The direction of transfer is from the 
+target to the initiator.
+
+  HANDSHAKE PROCEDURE:  The target first drives the DATA BUS to their desired 
+values, waits at least one deskew delay plus a cable skew delay, and then 
+asserts REQ.  The target continues to drive the DATA BUS until ACK is true.
+
+  When REQ is true at the initiator, the initiator reads the DATA BUS and then 
+asserts ACK.
+
+  When ACK is true at the target, the target may change or release the DATA 
+BUS and negate REQ.
+
+  When REQ is false at the initiator, the initiator negates ACK.  After ACK is 
+false, the target may continue the transfer by driving the DATA BUS and 
+asserting REQ as described above.
+
+DATA OUT phase (not shown in the figure).  The target negates C/D, I/O, and 
+MSG for all of the bytes transferred during this phase.  The direction of 
+transfer is from the initiator to the target.  (Refer to the handshake 
+procedure and the timing chart for the COMMAND phase.)
+
+STATUS phase.  The target asserts C/D and I/O and negates MSG for the byte 
+transferred during this phase.  The direction of transfer is from the target 
+to the initiator.  (Refer to the handshake procedure and the timing chart for 
+the DATA IN phase.)
+
+MESSAGE phase.  The target C/D, I/O, and MSG during the byte transferred 
+during this phase.  Typically, a COMMAND COMPLETE message would be sent at 
+this point.  The direction of transfer is from the target to the initiator.  
+(Refer to the handshake procedure and the timing chart for the DATA IN phase.)
+
+BUS FREE phase.  The target returns to BUS FREE phase by releasing BSY.  Both 
+the target and the initiator release all bus signals within a bus clear delay 
+after BSY is continuously false for a bus settle delay.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

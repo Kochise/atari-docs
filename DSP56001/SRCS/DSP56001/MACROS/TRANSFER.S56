@@ -1,0 +1,13 @@
+; Macro d'envoi de donnees.
+send_host	macro		p1
+send_host_wait
+		jclr		#1,x:HSR,send_host_wait
+		movep		#p1,x:HTX
+		endm
+
+; Macro de reception de donnees.
+receive_host	macro		p1
+receive_host_wait
+		jclr		#0,X:HSR,receive_host_wait
+		movep		x:HRX,#p1
+		endm

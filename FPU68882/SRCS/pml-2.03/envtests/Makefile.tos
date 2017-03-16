@@ -1,0 +1,8 @@
+CC = cgcc
+ALL = testfrexp.ttp testldexp.ttp testmodf.ttp
+
+all : 
+	make -f makefile.pml CC=cgcc LD=cgcc
+
+clean:
+	rm -f *.o $(ALL)

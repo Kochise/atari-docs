@@ -1,0 +1,15 @@
+This the test directory for PML (Fred Fish's Portable Math Library)
+
+Before you make the tests
+	- You must have GCC > V1.31
+	- You should have compiled the library again
+	- You should have made and installed libpml.a in ../src
+
+To make tests
+	GCC-TOS	: use Makefile.tos
+	GCC-MINIX : use Makefile.minix
+In both Makefiles adjust CC to suit your environment.
+--
+bang:   {any internet host}!dsrgsun.ces.CWRU.edu!bammi	jwahar r. bammi
+domain: bammi@dsrgsun.ces.CWRU.edu
+GEnie:	J.Bammi

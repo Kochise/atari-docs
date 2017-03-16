@@ -1,0 +1,216 @@
+,------------------------------,------,--------,----------------------------------------------,---------------------------------------------------------------------------------------------------------,
+| Register Name                | Size | Status | Purpose                                      | BitField                            BIT                                                                 |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| DPR                          | LONG | R/W    | DATA PORT REGISTER                           | < ACTIVE HI >                           1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
+|                              | WORD |        |                                              |                                         F E D C B A 9 8 7 6 5 4 3 2 1 0 F E D C B A 9 8 7 6 5 4 3 2 1 0 |
+|                              | BYTE |        |                                              |                                         | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+|                              |      |        | All data transferred between the device data |                                         | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+|                              |      |        | buffer and the host passes through this      | DATA PORT REGISTER ---------------------'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-'-' |
+|                              |      |        | register. Also, the port to which the sector |                                                                                                         |
+|                              |      |        | table is transferred during execution of the |                                                                                                         |
+|                              |      |        | Format command. Transfers of ECC bytes       |                                                                                                         |
+|                              |      |        | during the execution of Read/Write Long      |                                                                                                         |
+|                              |      |        | commands are 8 bit transfers.                |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| ER                           | BYTE | READ   | ERROR REGISTER                               | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | x | x | | | |
+|                              |      |        | Contains status information about the last   |                                                                                         | |   |   | | | |
+|                              |      |        | command executed by the drive. The contents  | BBK ------------------------------------------------------------------------------------' |   |   | | | |
+|                              |      |        | of this register are valid only when the     |   'Bad Block Mark' detected in the requested sector's ID field                            |   |   | | | |
+|                              |      |        | error bit (ERR) in the Status Register is    | UNC --------------------------------------------------------------------------------------'   |   | | | |
+|                              |      |        | set, except at drive power-up or at the      |   'UNCorrectable Data' error encountered                                                      |   | | | |
+|                              |      |        | completion of the drive's internal           | IDNF -----------------------------------------------------------------------------------------'   | | | |
+|                              |      |        | diagnostics, when the register contains a    |   Requested Sector's ID field not found                                                           | | | |
+|                              |      |        | status code. When the error bit (ERR) is     | ABRT ---------------------------------------------------------------------------------------------' | | |
+|                              |      |        | set, Error Register bits are interpreted as  |   Command ABoRTed due to drive status error or invalid command                                      | | |
+|                              |      |        | such :                                       | TK0NF ----------------------------------------------------------------------------------------------' | |
+|                              |      |        |                                              |   'TracK 0 Not Found' during execution of Recalibrate command                                         | |
+|                              |      |        |                                              | AMNF -------------------------------------------------------------------------------------------------' |
+|                              |      |        |                                              |   'Address Mark Not Found' after correct ID field found                                                 |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| SCR                          | BYTE | R/W    | SECTOR COUNT REGISTER                        | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | Defines the number of sectors of data to be  |                                                                                         | | | | | | | | |
+|                              |      |        | transferred across the host bus, for the     | SECTOR COUNT REGISTER ------------------------------------------------------------------'-'-'-'-'-'-'-' |
+|                              |      |        | subsequent command. If the value in this     |                                                                                                         |
+|                              |      |        | register is zero, the sector count is 256    |                                                                                                         |
+|                              |      |        | sectors. If the command executes             |                                                                                                         |
+|                              |      |        | successfully, the value in this register at  |                                                                                                         |
+|                              |      |        | command completion is zero. As each sector   |                                                                                                         |
+|                              |      |        | is transferred, the Sector Count register is |                                                                                                         |
+|                              |      |        | decremented by one to reflect the number of  |                                                                                                         |
+|                              |      |        | sectors remaining to be transferred. If the  |                                                                                                         |
+|                              |      |        | command execution is not successful, this    |                                                                                                         |
+|                              |      |        | register contains the number of sectors that |                                                                                                         |
+|                              |      |        | must be transferred to complete the original |                                                                                                         |
+|                              |      |        | request.                                     |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| SNR                          | BYTE | R/W    | SECTOR NUMBER REGISTER                       | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | Contains the ID number of the first sector   |                                                                                         | | | | | | | | |
+|                              |      |        | to be accessed by the subsequent command.    | SECTOR NUMBER REGISTER -----------------------------------------------------------------'-'-'-'-'-'-'-' |
+|                              |      |        | The sector can be from one to the maximum    |                                                                                                         |
+|                              |      |        | number of sectors per track. See the command |                                                                                                         |
+|                              |      |        | description for additional information about |                                                                                                         |
+|                              |      |        | the contents of the Sector Number Register   |                                                                                                         |
+|                              |      |        | following command completion whether         |                                                                                                         |
+|                              |      |        | successful or unsuccessful.                  |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| CLR                          | BYTE | R/W    | CYLINDER LOW REGISTER                        | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | Contains the eight low order bits of the     |                                                                                         | | | | | | | | |
+|                              |      |        | starting cylinder address for any disk       | CYLINDER LOW REGISTER ------------------------------------------------------------------'-'-'-'-'-'-'-' |
+|                              |      |        | access. On multiple sector transfers that    |                                                                                                         |
+|                              |      |        | cross cylinder boundaries, this register is  |                                                                                                         |
+|                              |      |        | updated at the end of the command to reflect |                                                                                                         |
+|                              |      |        | the current cylinder number. The least       |                                                                                                         |
+|                              |      |        | significant bits of the cylinder address are |                                                                                                         |
+|                              |      |        | loaded into the cylinder low register.       |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| CHR                          | BYTE | R/W    | CYLINDER HIGH REGISTER                       | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | Contains the eight high order bits of the    |                                                                                         | | | | | | | | |
+|                              |      |        | starting cylinder address for any disk       | CYLINDER HIGH REGISTER -----------------------------------------------------------------'-'-'-'-'-'-'-' |
+|                              |      |        | access. On multiple sector transfers that    |                                                                                                         |
+|                              |      |        | cross cylinder boundaries, this register is  |                                                                                                         |
+|                              |      |        | updated at hte end of the command to reflect |                                                                                                         |
+|                              |      |        | the current cylinder number. The most        |                                                                                                         |
+|                              |      |        | significant bits of the cylinder address are |                                                                                                         |
+|                              |      |        | loaded into the cylinder high register.      |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| DHR                          | BYTE | R/W    | DRIVE/HEAD REGISTER                          | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         1 0 1 | | | | | |
+|                              |      |        | Contains the drive ID number and its head    |                                                                                               | | | | | |
+|                              |      |        | number for any disk access. The contents of  | DRV ------------------------------------------------------------------------------------------' | | | | |
+|                              |      |        | the Drive/Head Register are defined on       |                                                                        Primary/Master Drive : 0 | | | | |
+|                              |      |        | execution of the Initialize Drive Parameters |                                                                       Secondary/Slave Drive : 1 | | | | |
+|                              |      |        | command. The bits are defined as follows:    |                                                                                                 | | | | |
+|                              |      |        |                                              | HS3-0 ------------------------------------------------------------------------------------------'-'-'-' |
+|                              |      |        | Upon command completion this register is     |   Head number Select (0-15)                                                                             |
+|                              |      |        | updated to reflect the head number           |                                                                                                         |
+|                              |      |        | currently selected.                          |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| SR                           | BYTE | READ   | STATUS REGISTER                              | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | Contains information about the status of the |                                                                                         | | | | | | | | |
+|                              |      |        | drive and controller. The contents of this   | BUSY -----------------------------------------------------------------------------------' | | | | | | | |
+|                              |      |        | register are updated at the completion of    |   Busy bit. Set by the controller logic of the drive when ever the drive has access to    | | | | | | | |
+|                              |      |        | each command. When the busy bit is set, no   |   and the host is locked out of the Command Block Registers. Set under the following      | | | | | | | |
+|                              |      |        | other bits in the Command Block Registers    |   conditions :                                                                            | | | | | | | |
+|                              |      |        | are valid. When the busy bit is not set, the |                                                                                           | | | | | | | |
+|                              |      |        | information in the Status Register and       |     - Within 400 nsec after the negation of RESET or after SRST is set in the Device      | | | | | | | |
+|                              |      |        | Command Block Registers is valid.            |       Control Register. After a reset it is recomended that BUSY be set no more than      | | | | | | | |
+|                              |      |        |                                              |       30 seconds.                                                                         | | | | | | | |
+|                              |      |        |                                              |     - Within 400 nsec of a host write to the Command Register with a Recalibrate, Read    | | | | | | | |
+|                              |      |        |                                              |       Long, Read Buffer, Read, Read Verify, Initialize Drive Parameters, Seek, Identify   | | | | | | | |
+|                              |      |        |                                              |       Drive, or Execute Drive Diagnostic command.                                         | | | | | | | |
+|                              |      |        |                                              |     - Within 5 microseconds following the transfer of 512 bytes of data during the        | | | | | | | |
+|                              |      |        |                                              |       execution of a Write, Write Buffer or Format Track command; or 512 bytes of data    | | | | | | | |
+|                              |      |        |                                              |       and the appropriate number of ECC bytes during the execution of a Write Long        | | | | | | | |
+|                              |      |        |                                              |       command. When BUSY is set no Command Block Register can be written too and a read   | | | | | | | |
+|                              |      |        |                                              |       of any Command Block Register returns the contents of the Status Register.          | | | | | | | |
+|                              |      |        |                                              |                                                                                           | | | | | | | |
+|                              |      |        |                                              | DRDY -------------------------------------------------------------------------------------' | | | | | | |
+|                              |      |        |                                              |   Drive Ready bit. Indicates that the drive is ready to accept commands. When and error     | | | | | | |
+|                              |      |        |                                              |   occurs, this bit stays unchanged until the host reads the Status Register then again      | | | | | | |
+|                              |      |        |                                              |   indicates that hte drive is ready. On power up, this bit should be cleared and should     | | | | | | |
+|                              |      |        |                                              |   remain cleared until the drive is up to speed and ready to accept a command.              | | | | | | |
+|                              |      |        |                                              |                                                                                             | | | | | | |
+|                              |      |        |                                              | DWF ----------------------------------------------------------------------------------------' | | | | | |
+|                              |      |        |                                              |   Drive Write Fault bit. When an error occurs, this bit remains unchanged until the host      | | | | | |
+|                              |      |        |                                              |   reads the Status Register, then again indicates the current write fault status.             | | | | | |
+|                              |      |        |                                              |                                                                                               | | | | | |
+|                              |      |        |                                              | DSC ------------------------------------------------------------------------------------------' | | | | |
+|                              |      |        |                                              |   Drive Seek Complete bit. This bit is set when a seek operation is complete and the heads are  | | | | |
+|                              |      |        |                                              |   settled over a track. When an error occurs, this bit remains unchanged until the host reads   | | | | |
+|                              |      |        |                                              |   the Status Register, then again it indicates the current seek complete status.                | | | | |
+|                              |      |        |                                              |                                                                                                 | | | | |
+|                              |      |        |                                              | DRQ --------------------------------------------------------------------------------------------' | | | |
+|                              |      |        |                                              |  Data Request bit. When set it indicates that the drive is ready to transfer a word or byte of    | | | |
+|                              |      |        |                                              |  data between the host and the data port.                                                         | | | |
+|                              |      |        |                                              |                                                                                                   | | | |
+|                              |      |        |                                              | CORR ---------------------------------------------------------------------------------------------' | | |
+|                              |      |        |                                              |   Corrected Data bit. When a correctable data error has been encountered and the data has been      | | |
+|                              |      |        |                                              |   corrected, this bit is set. This condition does not terminate a multi sector read operation.      | | |
+|                              |      |        |                                              |                                                                                                     | | |
+|                              |      |        |                                              | INDEX ----------------------------------------------------------------------------------------------' | |
+|                              |      |        |                                              |   Index bit. Set when the index mark is detected once per disk revolution.                            | |
+|                              |      |        |                                              |                                                                                                       | |
+|                              |      |        |                                              | ERROR ------------------------------------------------------------------------------------------------' |
+|                              |      |        |                                              |   Error bit. When set indicates that the previous command ended in an error. The other bits in the      |
+|                              |      |        |                                              |   Error Register and Status Register contain additional information about the cause of the error.       |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| CR                           | BYTE | WRITE  | COMMAND REGISTER                             | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | When the host request a command it is        |                                                                                         | | | | | | | | |
+|                              |      |        | transferred to the hard drive through an     | COMMAND REGISTER -----------------------------------------------------------------------'-'-'-'-'-'-'-' |
+|                              |      |        | eight bit code written to the command        |                                                                                                         |
+|                              |      |        | register. As soon as the drive receives a    |                                                                                                         |
+|                              |      |        | command in its command register, it begins   |                                                                                                         |
+|                              |      |        | execution of the command.                    |                                                                                                         |
+|                              |      |        |                                              |                                                                                                         |
+|                              |      |        | NOTE : See in SOFTWARE.LYR\ATAPI for the     |                                                                                                         |
+|                              |      |        |        Command List                          |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| ASR                          | BYTE | READ   | ALTERNATE STATUS REGISTER                    | < ACTIVE HI >                                                                           7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | Contains the same information as the Status  |                                                                                         | | | | | | | | |
+|                              |      |        | Register in the Command Block. Reading the   | ALTERNATE STATUS REG -------------------------------------------------------------------'-'-'-'-'-'-'-' |
+|                              |      |        | Alternate Status Register does not imply an  |                                                                                                         |
+|                              |      |        | interrupt acknowledge from the host or clear |                                                                                                         |
+|                              |      |        | a pending interrupt. See the description of  |                                                                                                         |
+|                              |      |        | the Status Register above for a definition   |                                                                                                         |
+|                              |      |        | of bits in this register.                    |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| DCR                          | BYTE | WRITE  | DEVICE CONTROL REGISTER                      | > ACTIVE LOW/HI <                                                                       7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         x x x x 1 | | 0 |
+|                              |      |        |                                              |                                                                                                   | |   |
+|                              |      |        | When this bit is set the drive is held       | SRST - Host Software Reset Bit--------------------------------------------------------------------+ |   |
+|                              |      |        | reset. If two drives are daisy chained on    |                                                                                          IN USE : 0 |   |
+|                              |      |        | the interface, this bit resets both drives   |                                                                              HELD RESET DEVICES : 1 |   |
+|                              |      |        | simultaneously.                              |                                                                                                     |   |
+|                              |      |        |                                              |                                                                                                     |   |
+|                              |      |        | The enable bit for the drive interrupt to    | /IEN - Drive Interrupt Enable Bit ------------------------------------------------------------------'   |
+|                              |      |        | the host. When nIEN is 0 or the drive is     |                                                                                                         |
+|                              |      |        | selected the host interrupt signal INTRQ is  |                                                                                                         |
+|                              |      |        | enabled through a tri state buffer to the    |                                                                                                         |
+|                              |      |        | host. When nIEN is 1 or the drive is not     |                                                                                                         |
+|                              |      |        | selected the host interrupt signal INTRQ is  |                                                                                                         |
+|                              |      |        | in a hig himpedance state regardless of the  |                                                                                                         |
+|                              |      |        | presence or absence of a pending interrupt.  |                                                                                                         |
++------------------------------+------+--------+----------------------------------------------+---------------------------------------------------------------------------------------------------------+
+| DAR                          | BYTE | READ   | DRIVE ADDRESS REGISTER                       | > ACTIVE LOW/HI <                                                                       7 6 5 4 3 2 1 0 |
+|                              |      |        |                                              |                                                                                         | | | | | | | | |
+|                              |      |        | This port returns the drive select and head  |                                                                                         | | | | | | | | |
+|                              |      |        | select addresses for the drive currently     | HiZ ------------------------------------------------------------------------------------' | | | | | | | |
+|                              |      |        | selected.                                    |   This bit is in high                                                                     | | | | | | | |
+|                              |      |        |                                              |   impedance when read.                                                                    | | | | | | | |
+|                              |      |        |                                              |                                                                                           | | | | | | | |
+|                              |      |        |                                              | /WTG - Write Gate it ---------------------------------------------------------------------' | | | | | | |
+|                              |      |        |                                              |   When a write to the hard                                                                  | | | | | | |
+|                              |      |        |                                              |   drive is in progress,                                                                     | | | | | | |
+|                              |      |        |                                              |   nWTG is 0.                                                                                | | | | | | |
+|                              |      |        |                                              |                                                                                             | | | | | | |
+|                              |      |        |                                              | /HS3-0 -------------------------------------------------------------------------------------'-'-'-' | | |
+|                              |      |        |                                              |   Negated Head Number                                                                               | | |
+|                              |      |        |                                              |                                                                                                     | | |
+|                              |      |        |                                              | /DS1 - Drive 1 Select Bit --------------------------------------------------------------------------+ | |
+|                              |      |        |                                              |                                                                    Secondary/Slave Drive selected : 0 | |
+|                              |      |        |                                              |                                                                                                       | |
+|                              |      |        |                                              | /DS0 - Drive 0 Select Bit ----------------------------------------------------------------------------+ |
+|                              |      |        |                                              |                                                                       Primary/Master Drive selected : 0 |
+'------------------------------'------'--------'----------------------------------------------'---------------------------------------------------------------------------------------------------------'
+
+
+At power-up or after reset, the Command Block Registers are initialized to the
+following values:
+
+  REGISTER          VALUE
+  1F1 Error         : 01 
+  1F2 Sector Count  : 01
+  1F3 Sector Number : 01
+  1F4 Cylinder Low  : 00
+  1F5 Cylinder High : 00
+  1F6 Drive / Head  : 00
+
+

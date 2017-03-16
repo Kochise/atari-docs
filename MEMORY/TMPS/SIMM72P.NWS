@@ -1,0 +1,62 @@
+In article <800208160snx@sectel.com> David Hough <dave@sectel.com> writes:
+> Has anyone got a full set of info for the PD bits? I would hope that all 
+> 72 pin SIMMs are a subset of the above pinouts and just need the PD bits 
+> defined.
+
+I've found info on this in the Toshiba DRAM Components and Modules 1994 data
+book and in the Motorola M68360QUADS User's Manual.
+
+Motorola and Toshiba use different designations for the pins:
+
+  Pin   Toshiba   Motorola
+  ---   -------   --------
+   11     PD4
+   70     PD3       PD4
+   69     PD2       PD3
+   68     PD1       PD2
+   67     PD0       PD1
+
+In the notes below, the pin states are represented as logic 0 or 1, which
+indicate whether the SIMM has them wired to VSS or open, respectively,
+except in the case of pin 11, which was originally defined as a no-connect
+pin.  For pin 11, a logic 0 is implemented on the module by a 2.6 K ohm
+resistor to ground.
+
+I haven't been able to ascertain what exactly pin 11 is supposed to
+indicate.  Toshiba only defines it on their 36-bit "ECC+" SIMMs, which are
+supposed to be optimized for ECC applications (as opposed to parity
+applications) but on some ECC+ SIMMs it is 0 and on others, 1.  This may
+have something to do with symmetric vs. asymmetric address multiplexing.
+
+Pins 70 and 69 are used to indicate the row access time (Trac) of the SIMM:
+
+  Pin   Pin
+   70    69   Trac
+  ---   ---   ------
+   0     0    100 nS
+   0     1     80 nS
+   1     0     70 nS
+   1     1     60 nS
+
+Pins 68 and 67 are used to indicate the capacity of the SIMM:
+
+  Pin   Pin
+   68    67   capacity
+  ---   ---   --------
+   0     0    1 Mword    ( 4 Mbytes, single bank)
+
+   0     1    512 Kword  ( 2 Mbytes  dual bank)
+   0     1    8 Mword    (32 Mbytes, dual bank)
+
+   1     0    256 Kword  ( 1 Mbyte,  single bank)
+   1     0    4 Mword    (16 Mbytes, single bank)
+
+   1     1    2 Mword    ( 8 Mbytes, dual bank)
+
+I don't think anyone is making the 256 Kword or 512 Kword sizes any more.
+Since they have reused these codes, I would probably try to disambiguate the
+code during memory test.
+
+Cheers,
+Eric
+

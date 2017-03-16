@@ -1,0 +1,1488 @@
+From coffin@ROCKY2.ROCKEFELLER.EDU Thu Mar 22 07:13:05 1990
+Flags: 000000000001
+Return-Path: <coffin@ROCKY2.ROCKEFELLER.EDU>
+Received: from ROCKY2.ROCKEFELLER.EDU by rascal.ics.utexas.edu. (4.0/SMI-4.0)
+	id AA28268; Thu, 22 Mar 90 07:12:23 CST
+Received: by ROCKY2.ROCKEFELLER.EDU (5.61/1.34)
+	id AA14317; Thu, 22 Mar 90 08:12:53 -0500
+Message-Id: <9003221312.AA14317@ROCKY2.ROCKEFELLER.EDU>
+To: werner@rascal.ics.utexas.edu
+Subject: scsiDocs-Part2 of 7.
+Date: Thu, 22 Mar 90 08:12:45 -0500
+From: coffin@ROCKY2.ROCKEFELLER.EDU
+
+
+
+.fo Section 5                            #
+ 5. Logical Characteristics 
+
+ 5.1 SCSI Bus Phases.   The SCSI architecture includes eight distinct phases:
+
+  BUS FREE phase
+  ARBITRATION phase
+  SELECTION phase
+  RESELECTION phase
+  COMMAND phase  \
+  DATA phase      \   These phases are collectively termed the
+  STATUS phase    /   information transfer phases.
+  MESSAGE phase  /
+
+  The SCSI bus can never be in more than one phase at any given time.  Unless 
+otherwise noted in the following descriptions, signals that are not mentioned 
+shall not be asserted.
+
+   5.1.1 BUS FREE Phase.   The BUS FREE phase is used to indicate that no SCSI 
+device is actively using the SCSI bus and that it is available for subsequent 
+users.
+
+  SCSI devices shall detect the BUS FREE phase after SEL and BSY are both 
+false for at least a bus settle delay.
+
+  SCSI devices shall release all SCSI bus signals within a bus clear delay 
+after BSY and SEL become continuously false for a bus settle delay.  If an 
+SCSI device requires more than a bus settle delay to detect the BUS FREE phase 
+then it shall release all SCSI bus signals within a bus clear delay minus the 
+excess time to detect the BUS FREE phase.  The total time to clear the SCSI 
+bus shall not exceed a bus settle delay plus a bus clear delay.
+
+   5.1.2 ARBITRATION Phase.   The ARBITRATION phase allows one SCSI device to 
+gain control of the SCSI bus so that it can assume the role of an initiator or 
+target.
+
+NOTE:  Implementation of the ARBITRATION phase is a system option.  Systems 
+that do not implement this option can have only one initiator.  The 
+ARBITRATION phase is required for systems that use the RESELECTION phase.
+
+  The procedure for an SCSI device to obtain control of the SCSI bus is as 
+follows:
+
+  (1)  The SCSI device shall first wait for the BUS FREE phase to occur.  The 
+BUS FREE phase is detected whenever both BSY and SEL are simultaneously and 
+continuously false for a minimum of a bus settle delay.  (Implementors Note:  
+This bus settle delay is necessary because a transmission line phenomenon 
+known as a "wire-OR glitch" may cause BSY to briefly appear false, even though 
+it is being driven true.)
+
+  (2)  The SCSI device shall wait a minimum of a bus free delay after 
+detection of the BUS FREE phase (i.e. after BSY and SEL are both false for a 
+bus settle delay) before driving any signal.
+
+  (3)  Following the bus free delay in Step (2), the SCSI device may arbitrate 
+for the SCSI bus by asserting both BSY and its own SCSI ID, however the SCSI 
+device shall not arbitrate (i.e. assert BSY and its SCSI ID) if more than a 
+
+bus set delay has passed since the BUS FREE phase was last observed.  
+(Implementors Note:  There is no maximum delay before asserting BSY and the 
+SCSI ID following the bus free delay in Step (2) as long as the bus remains in 
+the BUS FREE phase.  However, SCSI devices that delay longer than a bus settle 
+delay plus a bus set delay from the time when BSY and SEL first become false 
+may fail to participate in arbitration when competing with faster SCSI 
+devices.)
+
+  (4)  After waiting at least an arbitration delay (measured from its 
+assertion of BSY) the SCSI device shall examine the DATA BUS.  If a higher 
+priority SCSI ID bit is true on the DATA BUS (DB(7) is the highest), then the 
+SCSI device has lost the arbitration and the SCSI device may release its 
+signals and return to Step (1).  If no higher priority SCSI ID bit is true on 
+the DATA BUS, then the SCSI device has won the arbitration and it shall assert 
+SEL.  Any other SCSI device that is participating in the ARBITRATION phase has 
+lost the arbitration and shall release BSY and its SCSI ID bit within a bus 
+clear delay after SEL becomes true.  An SCSI device that loses arbitration may 
+return to Step (1).
+
+  (5)  The SCSI device that wins arbitration shall wait at least a bus clear 
+delay plus a bus settle delay after asserting SEL before changing any signals.
+
+NOTE:  The SCSI ID bit is a single bit on the DATA BUS that corresponds to the 
+SCSI device's unique SCSI address.  All other seven DATA BUS bits shall be 
+released by the SCSI device.  Parity is not valid during the ARBITRATION 
+phase.  During the ARBITRATION phase, DB(P) may be undriven or driven to the 
+true state, but shall not be driven to the false state.
+
+   5.1.3 SELECTION Phase.   The SELECTION phase allows an initiator to select a 
+target for the purpose of initiating some target function (e.g., READ or WRITE 
+command).
+
+NOTE:  During the SELECTION phase the I/O signal shall be negated so that this 
+phase can be distinguished from the RESELECTION phase.
+
+      5.1.3.1 Nonarbitrating Systems.   In systems with the ARBITRATION phase 
+not implemented, the initiator shall first detect the BUS FREE phase and then 
+wait a minimum of a bus clear delay.  Then, except in certain single initiator 
+environments with initiators employing the single initiator option (see 
+5.1.3.4), the initiator shall assert the desired target's SCSI ID and its own 
+initiator SCSI ID on the DATA BUS.  After two deskew delays the initiator 
+shall assert SEL.
+
+      5.1.3.2 Arbitrating Systems.   In systems with ARBITRATION phase 
+implemented, the SCSI device that won the arbitration has both BSY and SEL 
+asserted and has delayed at least a bus clear delay plus a bus settle delay 
+before ending the ARBITRATION phase.  The SCSI device that won the arbitration 
+becomes an initiator by releasing I/O.  Except in certain single initiator 
+environments with initiators employing the single initiator option (see 
+5.1.3.4), the initiator shall set the DATA BUS to a value which is the OR of 
+its SCSI ID bit and the target's SCSI ID bit.  The initiator shall then wait 
+at least two deskew delays and release BSY.  The initiator shall then wait at 
+least a bus settle delay before looking for a response from the target.
+
+      5.1.3.3 All Systems.   In all systems, the target shall determine that it 
+is selected when SEL and its SCSI ID bit are true and BSY and I/O are false 
+
+for at least a bus settle delay.  The selected target may examine the DATA BUS 
+in order to determine the SCSI ID of the selecting initiator unless the 
+initiator employed the single initiator option (see 5.1.3.4).  The selected 
+target shall then assert BSY within a selection abort time of its most recent 
+detection of being selected; this is required for correct operation of the 
+timeout procedure.  In systems with parity implemented, the target shall not 
+respond to a selection if bad parity is detected.  Also, if more than two SCSI 
+ID bits are on the DATA BUS, the target shall not respond to selection.
+
+  At least two deskew delays after the initiator detects BSY is true, it shall 
+release SEL and may change the DATA BUS.
+
+      5.1.3.4 Single Initiator Option.   Initiators that do not implement the 
+RESELECTION phase and do not operate in the multiple initiator environment are 
+allowed to set only the target's SCSI ID bit during the SELECTION phase.  This 
+makes it impossible for the target to determine the initiator's SCSI ID.
+
+      5.1.3.5 Selection Timeout Procedure.   Two optional selection timeout 
+procedures are specified for clearing the SCSI bus if the initiator waits a 
+minimum of a selection timeout delay and there has been no BSY response from 
+the target:
+
+  (1) Optionally, the initiator shall assert the RST signal (see 5.2.2).
+  (2) Optionally, the initiator shall continue asserting SEL and shall release 
+the DATA BUS.  If the initiator has not detected BSY to be true after at least 
+a selection abort time plus two deskew delays, the initiator shall release SEL 
+allowing the SCSI bus to go to the BUS FREE phase.  SCSI devices shall ensure 
+that when responding to selection that the selection was still valid within a 
+selection abort time of their assertion of BSY.  Failure to comply with this 
+requirement could result in an improper selection (two targets connected to 
+the same initiator, wrong target connected to an initiator, or a target 
+connected to no initiator).
+
+   5.1.4 RESELECTION Phase (Optional).   RESELECTION is an optional phase that 
+allows a target to reconnect to an initiator for the purpose of continuing 
+some operation that was previously started by the initiator but was suspended 
+by the target, (i.e., the target disconnected by allowing a BUS FREE phase to 
+occur before the operation was complete).
+
+      5.1.4.1 RESELECTION.   RESELECTION can only be used in systems that have 
+ARBITRATION phase implemented.
+
+  Upon completing the ARBITRATION phase, the winning SCSI device has both BSY 
+and SEL asserted and has delayed at least a bus clear delay plus a bus settle 
+delay.  The winning SCSI device becomes a target by asserting the I/O signal.  
+The winning SCSI device shall also set the DATA BUS to a value that is the OR 
+of its SCSI ID bit and the initiator's SCSI ID bit.  The target shall wait at 
+least two deskew delays and release BSY.  The target shall then wait at least 
+a bus settle delay before looking for a response from the initiator.
+
+  The initiator shall determine that it is reselected when SEL, I/O, and its 
+SCSI ID bit are true and BSY is false for at least a bus settle delay.  The 
+reselected initiator may examine the DATA BUS in order to determine the SCSI 
+ID of the reselecting target.  The reselected initiator shall then assert BSY 
+within a selection abort time of its most recent detection of being 
+reselected; this is required for correct operation of the timeout procedure.  
+
+In systems with parity implemented, the initiator shall not respond to a 
+RESELECTION if bad parity is detected.  Also, the initiator shall not respond 
+to a RESELECTION if more than two SCSI ID bits are on the DATA BUS. 
+
+  After the target detects BSY, it shall also assert BSY and wait at least two 
+deskew delays and then release SEL.  The target may then change the I/O signal 
+and the DATA BUS.  After the reselected initiator detects SEL false, it shall 
+release BSY.  The target shall continue asserting BSY until the target is 
+ready to relinquish the SCSI bus.
+
+NOTE:  When the target is asserting BSY, a transmission line phenomenon known 
+as a "wire-OR glitch" may cause BSY to appear false for up to a round-trip 
+propagation delay following the release of BSY by the initiator.  This is the 
+reason why the BUS FREE phase is recognized only after both BSY and SEL are 
+continuously false for a minimum of a bus settle delay.  Cables longer than 25 
+meters should not be used even if the chosen driver, receiver, and cable 
+provide adequate noise margins, because they increase the duration of the 
+glitch and could cause SCSI devices to inadvertently detect the BUS FREE 
+phase.
+
+      5.1.4.2 RESELECTION Timeout Procedure.   Two optional RESELECTION timeout 
+procedures are specified for clearing the SCSI bus during a RESELECTION phase 
+if the target waits a minimum of a selection timeout period and there has been 
+no BSY response from the initiator: 
+
+  (1) Optionally, the target shall assert the RST signal (see 5.2.2).
+  (2) Optionally, the target shall continue asserting SEL and I/O and shall 
+release all DATA BUS signals.  If the target has not detected BSY to be true 
+after at least a selection abort time plus two deskew delays, the target shall 
+release SEL and I/O allowing the SCSI bus to go to the BUS FREE phase.  SCSI 
+devices that respond to RESELECTION shall ensure that the RESELECTION was 
+still valid within a selection abort time of their assertion of BSY.  Failure 
+to comply with this requirement could result in an improper reselection (two 
+initiators connected to the same target or the wrong initiator connected to a 
+target).
+
+   5.1.5 Information Transfer Phases. 
+
+NOTE:  The COMMAND, DATA, STATUS, and MESSAGE phases are all grouped together 
+as the information transfer phases because they are all used to transfer data 
+or control information via the DATA BUS.  The actual contents of the 
+information is beyond the scope of this section.
+
+  The C/D, I/O, and MSG signals are used to distinguish between the different 
+information transfer phases.  (See Table 5-1.)  The target drives these three 
+signals and therefore controls all changes from one phase to another.  The 
+initiator can request a MESSAGE OUT phase by asserting ATN, while the target 
+can cause the BUS FREE phase by releasing MSG, C/D, I/O, and BSY.
+
+
+                                   Table 5-1 
+                          Information Transfer Phases 
+
+==============================================================================
+   Signal
+-----------
+
+MSG C/D I/O   Phase Name          Direction Of Transfer         Comment
+------------------------------------------------------------------------------
+ 0   0   0    DATA OUT            Initiator to target     \     Data
+ 0   0   1    DATA IN             Initiator from target   /     Phase
+ 0   1   0    COMMAND             Initiator to target
+ 0   1   1    STATUS              Initiator from target
+ 1   0   0    *
+ 1   0   1    *
+ 1   1   0    MESSAGE OUT         Initiator to target     \     Message
+ 1   1   1    MESSAGE IN          Initiator from target   /     Phase
+==============================================================================
+
+Key:  0 = False,  1 = True,  * = Reserved for future standardization.
+
+  The information transfer phases use one or more REQ/ACK handshakes to 
+control the information transfer.  Each REQ/ACK handshake allows the transfer 
+of one byte of information.  During the information transfer phases BSY shall 
+remain true and SEL shall remain false.  Additionally, during the information 
+transfer phases, the target shall continuously envelope the REQ/ACK 
+handshake(s) with C/D, I/O, and MSG in such a manner that these control 
+signals are valid for a bus settle delay before the assertion of REQ of the 
+first handshake and remain valid until the negation of ACK at the end of the 
+last handshake.
+
+      5.1.5.1 Asynchronous Information Transfer.   The target shall control the 
+direction of information transfer by means of the I/O signal.  When I/O is 
+true, information shall be transferred from the target to the initiator.  When 
+I/O is false, information shall be transferred from the initiator to the 
+target.
+
+  If I/O is true (transfer to the initiator), the target shall first drive 
+DB(7-0,P) to their desired values, delay at least one deskew delay plus a 
+cable skew delay, then assert REQ.  DB(7-0,P) shall remain valid until ACK is 
+true at the target.  The initiator shall read DB(7-0,P) after REQ is true, 
+then signal its acceptance of the data by asserting ACK.  When ACK becomes 
+true at the target, the target may change or release DB(7-0,P) and shall 
+negate REQ.  After REQ is false the initiator shall then negate ACK.  After 
+ACK is false the target may continue the transfer by driving DB(7-0,P) and 
+asserting REQ, as described above.
+
+  If I/O is false (transfer to the target) the target shall request 
+information by asserting REQ.  The initiator shall drive DB(7-0,P) to their 
+desired values, delay at least one deskew delay plus a cable skew delay and 
+assert ACK.  The initiator shall continue to drive DB(7-0,P) until REQ is 
+false.  When ACK becomes true at the target, the target shall read DB(7-0,P), 
+then negate REQ.  When REQ becomes false at the initiator, the initiator may 
+change or release DB(7-0,P) and shall negate ACK.  The target may continue the 
+transfer by asserting REQ, as described above.
+
+      5.1.5.2 Synchronous Data Transfer (Optional).   Synchronous data transfer 
+is optional, and may be used only in the data phase if previously agreed to by 
+the initiator and target through the message system (see SYNCHRONOUS DATA 
+TRANSFER REQUEST message, 5.5.5).  The messages determine the use of 
+synchronous mode by both SCSI devices and establish a REQ/ACK offset and a 
+transfer period.
+
+
+  The REQ/ACK offset specifies the maximum number of REQ pulses that can be 
+sent by the target in advance of the number of ACK pulses received from the 
+initiator, establishing a pacing mechanism.  If the number of REQ pulses 
+exceeds the number of ACK pulses by the REQ/ACK offset, the target shall not 
+assert REQ until the next ACK pulse is received.  A requirement for successful 
+completion of the data phase is that the number of ACK and REQ pulses be 
+equal. 
+
+  The target shall assert the REQ signal for a minimum of an assertion period. 
+The target shall wait at least the greater of a transfer period from the last 
+transition of REQ to true or a minimum of a negation period from the last 
+transition of REQ to false before asserting the REQ signal.
+
+  The initiator shall send one pulse on the ACK signal for each REQ pulse 
+received.  The initiator shall assert the ACK signal for a minimum of an 
+assertion period.  The initiator shall wait at least the greater of a transfer 
+period from the last transition of ACK to true or for a minimum of a negation 
+period from the last transition of ACK to false before asserting the ACK 
+signal.
+
+  If I/O is true (transfer to the initiator), the target shall first drive 
+DB(7-0,P) to their desired values, wait at least one deskew delay plus one 
+cable skew delay, then assert REQ.  DB(7-0,P) shall be held valid for a 
+minimum of one deskew delay plus one cable skew delay plus one hold time after 
+the assertion of REQ.  The target shall assert REQ for a minimum of an 
+assertion period.  The target may then negate REQ and change or release DB(7-
+0,P).  The initiator shall read the value on DB(7-0,P) within one hold time of 
+the transition of REQ to true.  The initiator shall then respond with an ACK 
+pulse.
+
+  If I/O is false (transfer to the target), the initiator shall transfer one 
+byte for each REQ pulse received.  After receiving a REQ pulse, the initiator 
+shall first drive DB(7-0,P) to their desired values, delay at least one deskew 
+delay plus one cable skew delay, then assert ACK.  The initiator shall hold 
+DB(7-0,P) valid for at least one deskew delay plus one cable skew delay plus 
+one hold time after the assertion of ACK.  The initiator shall assert ACK for 
+a minimum of an assertion period.  The initiator may then negate ACK and may 
+change or release DB(7-0,P).  The target shall read the value of DB(7-0,P) 
+within one hold time of the transition of ACK to true.
+
+   5.1.6 COMMAND Phase.   The COMMAND phase allows the target to request command 
+information from the initiator.
+
+  The target shall assert the C/D signal and negate the I/O and MSG signals 
+during the REQ/ACK handshake(s) of this phase.
+
+   5.1.7 Data Phase.   The data phase is a term that encompasses both the DATA 
+IN phase and the DATA OUT phase.
+
+      5.1.7.1 DATA IN Phase.   The DATA IN phase allows the target to request 
+that data be sent to the initiator from the target.
+
+  The target shall assert the I/O signal and negate the C/D and MSG signals 
+during the REQ/ACK handshake(s) of this phase.
+
+      5.1.7.2 DATA OUT Phase.   The DATA OUT phase allows the target to request 
+
+that data be sent from the initiator to the target.
+
+  The target shall negate the C/D, I/O, and MSG signals during the REQ/ACK 
+handshake(s) of this phase.
+
+   5.1.8 STATUS Phase.   The STATUS phase allows the target to request that 
+status information be sent from the target to the initiator.
+
+  The target shall assert C/D and I/O and negate the MSG signal during the 
+REQ/ACK handshake of this phase.
+
+   5.1.9 Message Phase.   The message phase is a term that references either a 
+MESSAGE IN, or a MESSAGE OUT phase.  Multiple messages may be sent during 
+either phase.  The first byte transferred in either of these phases shall be 
+either a single-byte message or the first byte of a multiple-byte message.  
+Multiple-byte messages shall be wholly contained within a single message 
+phase.
+
+      5.1.9.1 MESSAGE IN Phase.   The MESSAGE IN phase allows the target to 
+request that message(s) be sent to the initiator from the target.
+
+  The target shall assert C/D, I/O, and MSG during the REQ/ACK handshake(s) of 
+this phase.
+
+      5.1.9.2 MESSAGE OUT Phase.   The MESSAGE OUT phase allows the target to 
+request that message(s) be sent from the initiator to the target.  The target 
+may invoke this phase at its convenience in response to the ATTENTION 
+condition (see 5.2.1) created by the initiator.
+
+  The target shall assert C/D and MSG and negate I/O during the REQ/ACK 
+handshake(s) of this phase.  The target shall handshake byte(s) in this phase 
+until ATN goes false, unless an error occurs (see MESSAGE REJECT, 5.5.2).
+
+  If the target detects one or more parity error(s) on the message byte(s) 
+received, it may indicate its desire to retry the message(s) by asserting REQ 
+after detecting ATN has gone false and prior to changing to any other phase.  
+The initiator, upon detecting this condition, shall resend all of the previous 
+message byte(s) sent during this phase.  When resending more than one message 
+byte, the initiator shall assert ATN prior to asserting ACK on the first byte 
+and shall maintain ATN asserted until the last byte is sent as described in 
+5.2.1.
+
+  If the target receives all of the message byte(s) successfully (i.e., no 
+parity errors), it shall indicate that it does not wish to retry by changing 
+to any information transfer phase other than the MESSAGE OUT phase and 
+transfer at least one byte.  The target may also indicate that it has 
+successfully received the message byte(s) by changing to the BUS FREE phase 
+(e.g., ABORT or BUS DEVICE RESET messages).
+
+   5.1.10 Signal Restrictions Between Phases.   When the SCSI bus is between two 
+information transfer phases, the following restrictions shall apply to the 
+SCSI bus signals:
+
+  (1) The BSY, SEL, REQ, and ACK signals shall not change.
+  (2) The C/D, I/O, MSG, and DATA BUS signals may change.  When switching the 
+DATA BUS direction from out (initiator driving) to in (target driving), the 
+
+target shall delay driving the DATA BUS by at least a data release delay plus 
+a bus settle delay after asserting the I/O signal and the initiator shall 
+release the DATA BUS no later than a data release delay after the transition 
+of the I/O signal to true.  When switching the DATA BUS direction from in 
+(target driving) to out (initiator driving), the target shall release the DATA 
+BUS no later than a deskew delay after negating the I/O signal.
+  (3) The ATN and RST signals may change as defined under the descriptions for 
+the ATTENTION condition (5.2.1) and RESET condition (5.2.2).
+
+ 5.2 SCSI Bus Conditions.   The SCSI bus has two asynchronous conditions; the 
+ATTENTION condition and the RESET condition.  These conditions cause the SCSI 
+device to perform certain actions and can alter the phase sequence.
+
+   5.2.1 ATTENTION Condition.   The ATTENTION condition allows an initiator to 
+inform a target that the initiator has a message ready.  The target may get 
+this message at its convenience by performing a MESSAGE OUT phase.
+
+  The initiator creates the ATTENTION condition by asserting ATN at any time 
+except during the ARBITRATION or BUS FREE phases.
+
+  The target may respond with the MESSAGE OUT phase.
+
+  The initiator shall keep ATN asserted if more than one byte is to be 
+transferred.  The initiator may negate the ATN signal at any time except it
+shall not negate the ATN signal while the ACK signal is asserted during a 
+MESSAGE OUT phase.  Normally, the initiator negates ATN while REQ is true and 
+ACK is false during the last REQ/ACK handshake of the MESSAGE OUT phase.
+
+   5.2.2 RESET Condition.   The RESET condition is used to immediately clear all 
+SCSI devices from the bus.  This condition shall take precedence over all 
+other phases and conditions.  Any SCSI device may create the RESET condition 
+by asserting RST for a minimum of a reset hold time.  During the RESET 
+condition, the state of all SCSI bus signals other than RST is not defined.
+
+  All SCSI devices shall release all SCSI bus signals (except RST) within a 
+bus clear delay of the transition of RST to true.  The BUS FREE phase always 
+follows the RESET condition.
+
+  The effect of the RESET condition on uncompleted commands, SCSI device 
+reservations, and SCSI device operating modes is determined by whether the 
+SCSI device has implemented the "hard" RESET option or the "soft" RESET option 
+(one of which shall be implemented) as defined in 5.2.2.1 and 5.2.2.2.
+
+      5.2.2.1 "Hard" RESET Option.   SCSI devices that implement the "hard" 
+RESET option, upon detection of the RESET condition, shall:
+
+  (1) Clear all uncompleted commands
+  (2) Release all SCSI device reservations
+  (3) Return any SCSI device operating modes (MODE SELECT, PREVENT/ALLOW 
+MEDIUM REMOVAL commands, etc) to their default conditions.
+
+      5.2.2.2 "Soft" RESET Option.   SCSI devices that implement the "soft" 
+RESET option, upon detection of the RESET condition, shall:
+
+  (1) Attempt to complete any uncompleted commands that were fully identified
+  (2) Preserve all SCSI device reservations
+
+  (3) Preserve any SCSI device operating modes (MODE SELECT, PREVENT/ALLOW 
+MEDIUM REMOVAL commands, etc)
+
+  The "soft" RESET option allows a single initiator to reset the SCSI bus 
+without disturbing the operation of other initiators in a multiple initiator 
+system.  To ensure proper operation the following conditions shall be met:
+
+  (1) An initiator shall not consider a command to be fully identified until 
+the IDENTIFY message is sent to the target and the target responds by changing 
+to any other information transfer phase and requests that at least one byte be 
+transferred.
+
+  (2) A target shall consider a command to be fully identified when it 
+successfully receives the IDENTIFY message.
+
+  (3) If an initiator selects a logical unit for which there already is an 
+active command for the same initiator, the target shall clear the original 
+command and perform the new command.
+
+  (4) If a target reselects an initiator to continue a command for which the 
+initiator has no record, the initiator shall abort that command by sending the 
+ABORT message.
+
+  (5) An initiator shall consider a command to be completed when it negates 
+ACK for a successfully received COMMAND COMPLETE message.
+
+  (6) A target shall consider a command to be completed when it detects the 
+false transition of ACK for the COMMAND COMPLETE message with the ATN signal 
+false.
+
+  (7) An initiator shall not negate ACK for the SAVE DATA POINTER message 
+until it has actually saved the data pointer for the operation.
+
+  (8) A target shall consider the data pointer to be saved when it detects the 
+false transition of ACK for the SAVE DATA POINTER message with the ATN signal 
+false.
+
+  (9) If the RESET condition occurs between the time that the target asserts 
+REQ for the SAVE DATA POINTER message and it detects the false transition of 
+ACK, the target shall terminate the command with a CHECK CONDITION status.  If 
+extended sense is implemented, the target shall set the sense key to ABORTED 
+COMMAND.  This is necessary because the target cannot determine whether the 
+data pointer has actually been saved.
+
+NOTE:  If the ATN signal is true in conditions (6) or (8), the target would 
+normally switch to MESSAGE OUT phase and attempt to transfer a message byte.  
+If the RESET condition  occurs before it is able to successfully receive the 
+message byte, the target shall assume that the initiator may not have 
+successfully received the COMMAND COMPLETE message or the SAVE DATA POINTER 
+message.  In the case of COMMAND COMPLETE message, the target shall reselect 
+the initiator and attempt to send the COMMAND COMPLETE message again.  In the 
+case of the SAVE DATA POINTER message, the target shall reselect the initiator 
+and terminate the command as described in condition (9).
+
+ 5.3 SCSI Bus Phase Sequences.   The order in which phases are used on the SCSI 
+bus follows a prescribed sequence.
+
+
+  In all systems, the RESET condition can abort any phase and is always 
+followed by the BUS FREE phase.  Also, any other phase can be followed by the 
+BUS FREE phase.
+
+   5.3.1 Nonarbitrating Systems.   In systems where the ARBITRATION phase is not 
+implemented, the allowable sequences shall be as shown in Figure 5-1.  The 
+normal progression is from the BUS FREE phase to SELECTION, and from SELECTION 
+to one or more of the information transfer phases (COMMAND, DATA, STATUS, or 
+MESSAGE).
+
+   5.3.2 Arbitrating Systems.   In systems where the ARBITRATION phase is 
+implemented, the allowable sequences shall be as shown in Figure 5-2.  The 
+normal progression is from the BUS FREE phase to ARBITRATION, from ARBITRATION 
+to SELECTION or RESELECTION, and from SELECTION or RESELECTION to one or more 
+of the information transfer phases (COMMAND, DATA, STATUS, or MESSAGE).
+
+   5.3.3 All Systems.   There are no restrictions on the sequences between 
+information transfer phases.  A phase type may even be followed by the same 
+phase type (e.g., a data phase may be followed by another data phase).
+.pa
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                Figure 5-1. Phase Sequences without Arbitration 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  Figure 5-2. Phase Sequences with Arbitration 
+.pa
+
+ 5.4 SCSI Pointers.   Consider the system shown in Figure 5-3 in which an 
+initiator and target communicate on the SCSI bus in order to execute a 
+command. 
+
+ 
+
+     -------------------------                 -------------------------
+     | Function | | Initiator|-----------------| Target   | | Function |
+     | Origin   | | Path     |    SCSI BUS     | Path     | | Execution|
+     |          | | Control  |-----------------| Control  | |          |
+     -------------------------                 -------------------------
+
+             Initiator                                   Target
+
+                       Figure 5-3. Simplified SCSI System 
+
+
+  The SCSI architecture provides for two sets of three pointers within each 
+initiator.  The pointers reside in the initiator path control.  The first set 
+of pointers are known as the current (or active) pointers.  These pointers are 
+used to represent the state of the interface and point to the next command, 
+data, or status byte to be transferred between the initiator's memory and the 
+target.  There is only one set of current pointers in each initiator.  The 
+current pointers are used by the target currently connected to the initiator.
+
+  The second set of pointers are known as the saved pointers.  There is one 
+set of saved pointers for each command that is currently active (whether or 
+not it is currently connected).  The saved command pointer always points to 
+the start of the command descriptor block (see 6.2) for the current command.  
+The saved status pointer always points to the start of the status area for the 
+current command.  At the beginning of each command, the saved data pointer 
+points to the start of the data area.  It remains at this value until the 
+target sends a SAVE DATA POINTER message (see 5.5.2) to the initiator.  In 
+response to this message, the initiator stores the value of the current data 
+pointer into the saved data pointer.  The target may restore the current 
+pointers to their saved values by sending a RESTORE POINTERS message (see 
+5.5.2) to the initiator.  The initiator moves the saved value of each pointer 
+into the corresponding current pointer.  Whenever an SCSI device disconnects 
+>From the bus, only the saved pointer values are retained.  The current pointer 
+values are restored from the saved values upon the next reconnection.
+
+ 5.5 Message System Specification.   The message system allows communication 
+between an initiator and target for the purpose of physical path management.
+
+ 5.5.1 Message Protocol.   All SCSI devices shall implement the COMMAND COMPLETE 
+message.  A functional SCSI device can be constructed without using any of the 
+other messages if the logical unit number is specified in the command 
+descriptor block.  The remainder of this section deals with the additional 
+requirements on SCSI devices that support messages other than COMMAND 
+COMPLETE.
+
+  SCSI devices indicate their ability to accommodate more than the COMMAND 
+COMPLETE message by asserting or responding to the ATN signal.  The initiator 
+indicates this in the SELECTION phase by asserting ATN prior to the SCSI bus 
+condition of SEL true, and BSY false.  The target indicates its ability to 
+accommodate more messages by responding to the ATTENTION condition with the 
+
+MESSAGE OUT phase after going through the SELECTION phase. 
+
+For SCSI devices that support messages other than COMMAND COMPLETE, the first 
+message sent by the initiator after the SELECTION phase shall be the IDENTIFY 
+message.  This allows the establishment of the physical path for a particular 
+logical unit specified by the initiator.  After the RESELECTION phase, the 
+target's first message shall be IDENTIFY.  This allows the physical path to be 
+reestablished for the target's specified logical unit number.  Under some 
+exceptional conditions, an initiator may send the ABORT message or the BUS 
+DEVICE RESET message instead of the IDENTIFY message, as the first message.  
+Only one logical unit number shall be identified for any one selection 
+sequence; a second IDENTIFY message with a new logical unit number shall not 
+be issued before the SCSI bus has been released (BUS FREE phase).
+
+  Whenever a physical path is established in an initiator that can accommodate 
+disconnection and reconnection, the initiator shall ensure that the active 
+pointers of the physical path are equal to the saved pointers for that 
+particular logical unit number.  (An implied restore pointers operation occurs 
+as a result of connect or reconnect.)
+
+  SCSI devices that implement any message other than the COMMAND COMPLETE 
+message shall also implement the MESSAGE REJECT message.
+
+
+                                   Table 5-2 
+                                 Message Codes 
+
+==============================================================================
+Code      Type   Description                             Direction
+------------------------------------------------------------------------------
+00 H         M     COMMAND COMPLETE                        In
+01 H         O     EXTENDED MESSAGE                        In   Out
+02 H         O     SAVE DATA POINTER                       In
+03 H         O     RESTORE POINTERS                        In
+04 H         O     DISCONNECT                              In
+05 H         O     INITIATOR DETECTED ERROR                     Out
+06 H         O     ABORT                                        Out
+07 H         O     MESSAGE REJECT                          In   Out
+08 H         O     NO OPERATION                                 Out
+09 H         O     MESSAGE PARITY ERROR                         Out
+0A H         O     LINKED COMMAND COMPLETE                 In
+0B H         O     LINKED COMMAND COMPLETE (WITH FLAG)     In
+0C H         O     BUS DEVICE RESET                             Out
+0D H   _  7F H   R     Reserved Codes
+80 H   _  FF H   O     IDENTIFY                                In   Out
+==============================================================================
+
+Key:  In = Target to initiator,  Out = Initiator to target.
+
+
+   5.5.2 Messages.   The single byte messages (Table 5-2) are listed along with 
+their code values and their definitions.
+
+ COMMAND COMPLETE 00 H  (Mandatory).   This message is sent from a target to an 
+initiator to indicate that the execution of a command (or series of linked 
+commands) has terminated and that valid status has been sent to the initiator.  
+
+After successfully sending this message, the target shall go to the BUS FREE 
+phase by releasing BSY.
+
+NOTE:  The command may have been executed successfully or unsuccessfully as 
+indicated in the status.
+
+ EXTENDED MESSAGE 01 H  (Optional).   This message is sent from either the 
+initiator or the target as the first byte of a multiple-byte message.  (See 
+5.5.3 for descriptions of extended messages.)
+
+ SAVE DATA POINTER 02 H  (Optional).   This message is sent from a target to 
+direct the initiator to save a copy of the present active data pointer for the 
+currently attached logical unit.  (See 5.4 for a definition of pointers.)
+
+ RESTORE POINTERS 03 H  (Optional).   This message is sent from a target to direct 
+the initiator to restore the most recently saved pointers (for the currently 
+attached logical unit) to the active state.  Pointers to the command, data, 
+and status locations for the logical unit shall be restored to the active 
+pointers.  Command and status pointers shall be restored to the beginning of 
+the present command and status areas.  The data pointer shall be restored to 
+the value at the beginning of the data area in the absence of a SAVE DATA 
+POINTER message or to the value at the point at which the last SAVE DATA 
+POINTER message occurred for that logical unit.
+
+ DISCONNECT 04 H  (Optional).   This message is sent from a target to inform an 
+initiator that the present physical path is going to be broken (the target 
+plans to  disconnect by releasing BSY), but that a later reconnect will be 
+required in order to complete the current operation.  If the initiator detects 
+the BUS FREE phase (other than as a result of a RESET condition) without first 
+receiving a DISCONNECT or COMMAND COMPLETE message, the initiator shall 
+consider this as a catastrophic error condition.  If the target intentionally 
+creates this condition, the target shall clear the current command.  This 
+message shall not cause the initiator to save the data pointer.  Note:  If 
+DISCONNECT messages are used break a long data transfer into two or more 
+shorter transfers, then a SAVE DATA POINTER should be issued before each 
+DISCONNECT message.
+
+ INITIATOR DETECTED ERROR 05 H  (Optional).   This message is sent from an 
+initiator to inform a target that an error (e.g., parity error) has occurred 
+that does not preclude the target from retrying the operation.  Although 
+present pointer integrity is not assured, a RESTORE POINTERS message or a 
+disconnect followed by a reconnect, shall cause the pointers to be restored to 
+their defined prior state.
+
+ ABORT 06 H  (Optional).   This message is sent from the initiator to the target 
+to clear the present operation.  If a logical unit has been identified, all 
+pending data and status for the issuing initiator from the effected logical 
+unit shall be cleared, and the target shall go to the BUS FREE phase.  Pending 
+data and status for other initiators shall not be cleared.  If a logical unit 
+has not been identified, the target shall go to the BUS FREE phase.  No status 
+or ending message shall be sent for the operation.  It is not an error to 
+issue this message to an logical unit that is not currently performing an 
+operation for the initiator.
+
+ MESSAGE REJECT 07 H  (Optional).   This message is sent from either the initiator 
+or target to indicate that the last message it received was inappropriate or 
+
+has not been implemented.
+
+  In order to indicate its intentions of sending this message, the initiator 
+shall assert the ATN signal prior to its release of ACK for the REQ/ACK 
+handshake of the message that is to be rejected.  When a target sends this 
+message, it shall change to MESSAGE IN phase and send this message prior to 
+requesting additional message bytes from the initiator.  This provides an 
+interlock so that the initiator can determine which message is rejected.
+
+  This message shall be implemented if any other optional messages are 
+implemented. 
+
+ NO OPERATION 08 H  (Optional).   This message is sent from an initiator in 
+response to a target's request for a message when the initiator does not 
+currently have any other valid message to send.
+
+ MESSAGE PARITY ERROR 09 H  (Optional).   This message is sent from the initiator 
+to the target to indicate that one or more bytes in the last message it 
+received had a parity error.
+
+  In order to indicate its intentions of sending this message, the initiator 
+shall assert the ATN signal prior to its release of ACK for the REQ/ACK 
+handshake of the message that has the parity error.  This provides an 
+interlock so that the target can determine which message has the parity error.
+
+ LINKED COMMAND COMPLETE 0A H  (Optional).   This message is sent from a target to 
+an initiator to indicate that the execution of a linked command has completed 
+and that status has been sent.  The initiator shall then set the pointers to 
+the initial state for the next linked command.
+
+ LINKED COMMAND COMPLETE (WITH FLAG) 0B H  (Optional).   This message is sent from 
+a target to an initiator to indicate that the execution of a linked command 
+(with the flag bit set to one) has completed and that status has been sent.  
+The initiator shall then set the pointers to the initial state of the next 
+linked command.  Typically this message would be used to cause an interrupt in 
+the initiator between two linked commands.
+
+ BUS DEVICE RESET 0C H  (Optional).   This message is sent from an initiator to 
+direct a target to clear all current commands on that SCSI device.  This 
+message forces the SCSI device to an initial state with no operations pending 
+for any initiator.  Upon recognizing this message, the target shall go to the 
+BUS FREE phase.
+
+ Reserved 0D H  to 7F H .   These message codes are reserved for future 
+standardization.
+
+ IDENTIFY 80 H  to FF H  (Optional).   These messages are sent by either the 
+initiator or the target to establish the physical path connection between an 
+initiator and target for a particular logical unit.
+
+   Bit 7.   This bit is always set to one to distinguish these messages from the 
+other messages.
+ 
+   Bit 6.   This bit is only set to one by the initiator.  When set to one, it 
+indicates that the initiator has the ability to accommodate disconnection and 
+reconnection.
+
+
+   Bits 5-3.   Reserved.
+
+   Bits 2-0.   These bits specify a logical unit number in a target.
+
+  Only one logical unit number shall be identified for any one selection 
+sequence; a second IDENTIFY message with a new logical unit number shall not 
+be issued before the bus has been released (BUS FREE phase).
+
+  When sent from a target to an initiator during reconnection, an implied 
+RESTORE POINTERS message shall be performed by the initiator prior to 
+completion of this message.
+
+   5.5.3 Extended Messages (Optional).   A value of one in the first byte of a 
+message indicates the beginning of a multiple-byte extended message.  The 
+minimum number of bytes sent for an extended message is three.  The extended 
+message format and the extended message codes are shown in Tables 5-3 and 5-4, 
+respectively.
+
+                                   Table 5-3 
+                            Extended Message Format 
+
+==============================================================================
+ Byte     |  Value   |   Description                                         |
+==============================================================================
+  0       |   01 H     |   Extended message                                    |
+----------|----------|-------------------------------------------------------|
+  1       |    n H     |   Extended message length                             |
+----------|----------|-------------------------------------------------------|
+  2       |    y H     |   Extended message code                               |
+----------|----------|-------------------------------------------------------|
+3  _  n H +1  |    x H     |   Extended message arguments                          |
+==============================================================================
+
+  The extended message length specifies the length in bytes of the extended 
+message code plus the extended message arguments to follow.  Therefore, the 
+total length of the message is equal to the extended message length plus two.  
+A value of zero for the extended message length indicates 256 bytes follow.
+
+  The extended message codes are listed in Table 5-4.  The extended message 
+arguments are specified for the defined extended messages in Sections 5.5.4 
+through 5.5.6.
+
+                                   Table 5-4 
+                             Extended Message Codes 
+
+==============================================================================
+Code (y H )      Description
+------------------------------------------------------------------------------
+00 H             MODIFY DATA POINTER (Optional) 
+01 H             SYNCHRONOUS DATA TRANSFER REQUEST (Optional) 
+02 H             EXTENDED IDENTIFY (Optional) 
+03 H   _  7F H       Reserved
+80 H   _  FF H       Vendor Unique
+==============================================================================
+.pa
+
+   5.5.4 MODIFY DATA POINTER Message (Optional) 
+
+                                   Table 5-5 
+                              MODIFY DATA POINTER 
+
+==============================================================================
+Byte |  Value  |    Description                                              |
+==============================================================================
+ 0   |   01 H    |    Extended message                                         |
+-----|---------|-------------------------------------------------------------|
+ 1   |   05 H    |    Extended message length                                  |
+-----|---------|-------------------------------------------------------------|
+ 2   |   00 H    |    MODIFY DATA POINTER code                                 |
+-----|---------|-------------------------------------------------------------|
+ 3   |    x H    |    Argument (MSB)                                           |
+-----|---------|-------------------------------------------------------------|
+ 4   |    x H    |    Argument                                                 |
+-----|---------|-------------------------------------------------------------|
+ 5   |    x H    |    Argument                                                 |
+-----|---------|-------------------------------------------------------------|
+ 6   |    x H    |    Argument (LSB)                                           |
+==============================================================================
+
+  The MODIFY DATA POINTER message (Table 5-5) is sent from the target to the 
+initiator and requests that the signed argument be added (two's complement) to 
+the value of the current data pointer.
+
+   5.5.5 SYNCHRONOUS DATA TRANSFER REQUEST Message (Optional) 
+
+                                   Table 5-6 
+                       SYNCHRONOUS DATA TRANSFER REQUEST 
+
+==============================================================================
+Byte |  Value  |    Description                                              |
+==============================================================================
+ 0   |   01 H    |    Extended message                                         |
+-----|---------|-------------------------------------------------------------|
+ 1   |   03 H    |    Extended message length                                  |
+-----|---------|-------------------------------------------------------------|
+ 2   |   01 H    |    SYNCHRONOUS DATA TRANSFER REQUEST code                   |
+-----|---------|-------------------------------------------------------------|
+ 3   |    m H    |    Transfer period (m H  times 4 nanoseconds)                 |
+-----|---------|-------------------------------------------------------------|
+ 4   |    x H    |    REQ/ACK offset                                           |
+==============================================================================
+
+  A pair of SYNCHRONOUS DATA TRANSFER REQUEST messages (Table 5-6) are 
+exchanged between an initiator and a target whenever an SCSI device that can 
+support synchronous data transfer recognizes that it has not communicated with 
+the other SCSI device since receiving the last "hard" RESET condition or a BUS 
+DEVICE RESET message.  The SCSI devices may also exchange messages to 
+establish synchronous data transfer when requested to do so.  The message 
+exchange establishes the transfer period and the REQ/ACK offset.  The transfer 
+period is the minimum time between leading edges of successive REQ pulses and 
+of successive ACK pulses.  
+
+
+  The REQ/ACK offset is the maximum number of REQ pulses that may be 
+outstanding before its corresponding ACK pulse is received at the target.  A 
+REQ/ACK offset value of zero shall indicate asynchronous mode; a value of FF H  
+shall indicate unlimited offset.
+
+  If the initiator recognizes that negotiation is required, it asserts  ATN 
+and, if the target implements message transfers, sends a SYNCHRONOUS DATA 
+TRANSFER REQUEST message indicating an REQ/ACK offset and minimum transfer 
+period.  The REQ/ACK offset is chosen to prevent initiator buffer overflows, 
+while the minimum transfer period is chosen to meet the data handling 
+requirements of the initiator.  The target responds in any of the following 
+ways:
+
+Target Response                         Implied Agreement
+-------------------------------------   --------------------------------------
+(1) REQ/ACK offset less than or equal   REQ/ACK offset equal to target value.
+    to the requested value.
+    Minimum transfer period equal to    Minimum transfer period equal to 
+    or greater than requested period.   the target value.
+
+(2) REQ/ACK offset equal to zero.       Asynchronous transfer.
+
+(3) MESSAGE REJECT.                     Asynchronous transfer.
+
+  If the target recognizes that negotiation is required, it sends a 
+SYNCHRONOUS DATA TRANSFER REQUEST message to the initiator.  The REQ/ACK 
+offset is selected to prevent buffer and offset counter overflows, while the 
+minimum transfer period is chosen to meet the data handling requirements of 
+the target.  The initiator responds in any of the following ways if the target 
+chooses an REQ/ACK offset equal to FF H :
+
+Initiator Response                      Implied Agreement
+-------------------------------------   --------------------------------------
+(1) REQ/ACK offset equal to FF H .        REQ/ACK offset unlimited.
+    Minimum transfer period equal to    Minimum transfer period equal to
+    or greater than requested period.   the initiator value.
+
+(2) REQ/ACK offset equal to 00 H .        Asynchronous transfer.  The target may 
+                                        renegotiate for an REQ/ACK offset less 
+                                        than FF H  and greater than 00 H .
+
+(3) MESSAGE REJECT.                     Asynchronous transfer.
+
+  The initiator responds in any of the following ways if the target selects an 
+REQ/ACK offset less than FF H :
+
+Initiator Response                      Implied Agreement
+-------------------------------------   --------------------------------------
+(1) REQ/ACK offset less than or equal   REQ/ACK offset equals initiator value.
+   to the requested value.
+   Minimum transfer period equal to     Minimum transfer period equal to the
+   or greater than requested value.     initiator value.
+
+(2) REQ/ACK offset equal to zero.       Asynchronous transfer.
+
+(3) MESSAGE REJECT.                     Asynchronous transfer.
+
+
+  The implied agreement shall remain in effect until a BUS DEVICE RESET 
+message is received, until a "hard" RESET condition occurs, or until one of 
+the two SCSI devices elects to modify the agreement.  Renegotiation at every 
+selection is not recommended, since a significant performance impact is 
+likely.  The default mode of data transfer is asynchronous mode.  The default 
+mode is entered at power on, after a BUS DEVICE RESET message, or after a 
+"hard" RESET condition.  The SYNCHRONOUS DATA TRANSFER REQUEST message 
+exchange can only take place following a SELECTION phase that includes the 
+SCSI IDs for both the initiator and the target.  Violation of this rule may 
+make data transfer impossible owing to disagreements among SCSI devices about 
+the data transfer mode.
+
+   5.5.6 EXTENDED IDENTIFY Message (Optional) 
+
+                                   Table 5-7 
+                               EXTENDED IDENTIFY 
+
+==============================================================================
+Byte |  Value  |    Description                                              |
+==============================================================================
+ 0   |   01 H    |    Extended message                                         |
+-----|---------|-------------------------------------------------------------|
+ 1   |   02 H    |    Extended message length                                  |
+-----|---------|-------------------------------------------------------------|
+ 2   |   02 H    |    EXTENDED IDENTIFY code                                   |
+-----|---------|-------------------------------------------------------------|
+ 3   |   xx H    |    Sub-logical unit number                                  |
+==============================================================================
+
+  The EXTENDED IDENTIFY message (Table 5-7) is optional and may be sent by a 
+target or an initiator.  It may be used in conjunction with the normal 
+IDENTIFY message in order to expand the logical unit number addressing in a 
+target.  The sub-logical unit number specifies the encoded eight-bit sub-
+logical unit number used to identify one of 256 sub-logical units within the 
+logical unit.  This allows up to 2048 units to be addressed on a single 
+target.
+
+                                    
+.fo Section 6                            #
+ 6. SCSI Commands  
+
+This section defines the SCSI command structure and gives several examples.
+
+  The command definitions assume a data structure providing the appearance at 
+the interface of a contiguous set of logical blocks of a fixed or explicitly 
+defined data length.  The SCSI device maps the physical characteristics of the 
+attached peripheral devices to one of several logical structures defined by 
+the device type code.
+
+  A single command may transfer one or more logical blocks of data.  Multiple 
+commands may be linked if they are sent to the same logical unit.  A target 
+may disconnect from the SCSI bus to allow activity by other SCSI devices while 
+a logical unit is being prepared to transfer data.
+
+  Upon command completion (successful or unsuccessful), the target returns a 
+status byte to the initiator.  Since most error and exception conditions 
+cannot be adequately described with a single status byte, one status code, 
+CHECK CONDITION, indicates that additional information is available.  The 
+initiator may issue a REQUEST SENSE command to retrieve this additional 
+information. 
+
+  By keeping to a minimum the functions essential to communicate via this 
+protocol, a wide range of peripheral devices of varying capability can operate 
+in the same environment.
+
+  Because subsets of the full architecture may be implemented, optional 
+functions are noted.
+
+ 6.1 Command Implementation Requirements.   The first byte of any SCSI command 
+shall contain an operation code as defined in this document.  Three bits (bits 
+7 - 5) of the second byte of each SCSI command specify the logical unit if it 
+is not specified using the IDENTIFY message (see 5.5.2).  The last byte of all 
+SCSI commands shall contain a control byte as defined in 6.2.6.
+
+   6.1.1 Reserved.   Reserved bits, fields, bytes, and code values are set aside 
+for future standardization.  Their use and interpretation will be specified by 
+future extensions to this standard.  A reserved bit, field, or byte shall be 
+set to zero, or in accordance with a future extension to this standard.  A 
+target that receives a reserved bit, field, or byte that is not zero or 
+receives a reserved code value shall terminate the command with a CHECK 
+CONDITION status and, if extended sense is implemented, the sense key shall be 
+set to ILLEGAL REQUEST.  It shall also be acceptable for a target to interpret 
+the bit, field, byte, or code value in accordance with a future extension to 
+this standard.
+
+   6.1.2 Operation Code Types 
+
+Operation 
+Code Type  Description
+---------  -------------------------------------------------------------------
+M          Mandatory - Commands so designated shall be implemented in order to 
+           meet the minimum requirement of this standard.
+
+E          Extended - Commands so designated shall be implemented in addition 
+           to mandatory commands to meet the extended requirement of this 
+
+           standard.
+
+O          Optional - Commands so designated, if implemented, shall be 
+           implemented as defined in this standard.
+
+V          Vendor unique - Operation codes so designated are available for 
+           vendor defined commands.  See the vendor specifications where 
+           compatibility is desired.
+
+R          Reserved - Operation codes so designated shall not be used.  They 
+           are reserved for future extensions to this standard.
+
+   6.1.3 Unit Attention Condition.   A unit attention condition for a logical 
+unit shall begin for each initiator whenever the removable medium may have 
+been changed or the target has been reset (by a BUS DEVICE RESET message or a 
+"hard" RESET condition).  The unit attention condition shall persist for each 
+initiator until that initiator issues a command to the logical unit other than 
+REQUEST SENSE or INQUIRY for which the target shall return CHECK CONDITION 
+status.  If the next command from that initiator to the logical unit 
+(following the CHECK CONDITION status) is REQUEST SENSE, and if the target 
+supports extended sense, then the UNIT ATTENTION sense key shall be returned.  
+(If any command other than REQUEST SENSE is received, the unit attention 
+condition is lost.)  
+.fo Section 6                           50.1
+
+  If an INQUIRY command is received from an initiator with a pending unit 
+attention condition (before the target reports CHECK CONDITION status), the 
+target shall perform the INQUIRY command and shall not clear the unit 
+attention condition.
+
+  If a REQUEST SENSE command is received from an initiator with a pending unit 
+attention condition (before the target reports CHECK CONDITION status), then 
+the target may either:
+
+  (1) report any pending sense data and preserve the unit attention condition
+  (2) discard any pending sense data, report UNIT ATTENTION sense key, and 
+clear the unit attention condition for that initiator.
+
+  If an initiator issues a command other than INQUIRY or REQUEST SENSE while a 
+unit attention condition exists for that initiator, the target shall not 
+perform the command and shall report CHECK CONDITION status.
+
+ 6.2 Command Descriptor Block.   A request to a peripheral device is performed 
+by sending a command descriptor block to the target.  For several commands, 
+the request is accompanied by a list of parameters sent during the DATA OUT 
+phase.  See the specific commands for detailed information.
+
+  The command descriptor block always has an operation code as the first byte 
+of the command.  This is followed by a logical unit number, command parameters 
+(if any), and a control byte.
+
+  For all commands, if there is an invalid parameter in the command descriptor 
+block, then the target shall terminate the command without altering the 
+medium.
+
+   6.2.1 Operation Code.   The operation code (Table 6-1) of the command 
+descriptor block has a group code field and a command code field.  The three-
+
+bit group code field provides for eight groups of command codes.  The five-bit 
+command code field provides for thirty-two command codes in each group.  Thus, 
+a total of 256 possible operation codes exist.  Operation codes are defined in 
+Sections 7 through 13.
+
+  The group code specifies one of the following groups:
+
+  Group 0 - six-byte commands (see Table 6-2)
+  Group 1 - ten-byte commands (see Table 6-3)
+  Group 2 - reserved
+  Group 3 - reserved
+  Group 4 - reserved
+  Group 5 - twelve-byte commands (see Table 6-4)
+  Group 6 - vendor unique 
+  Group 7 - vendor unique
+.pa
+
+.fo Section 6                           50.2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     (This page is intentionally blank.)
+.pa
+
+.pn 51
+.fo Section 6                             #
+                                   Table 6-1 
+                                 Operation Code 
+
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |        Group Code        |                Command Code                |
+==============================================================================
+
+
+                                   Table 6-2 
+             Typical Command Descriptor Block for Six-byte Commands 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |Logical Block Address (if required) (MSB)   |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (if required) (LSB)   |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (if required)               |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control Byte                                |
+==============================================================================
+.pa
+
+                                   Table 6-3 
+             Typical Command Descriptor Block for Ten-byte Commands 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |              Reserved             | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (if required) (MSB)   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (if required) (LSB)   |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (if required) (MSB)         |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (if required) (LSB)         |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control Byte                                |
+==============================================================================
+.pa
+
+                                   Table 6-4 
+           Typical Command Descriptor Block for Twelve-byte Commands 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |              Reserved             | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (if required) (MSB)   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (if required) (LSB)   |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Transfer Length (if required) (MSB)         |
+-----|-----------------------------------------------------------------------|
+10   |                           Transfer Length (if required) (LSB)         |
+-----|-----------------------------------------------------------------------|
+11   |                           Control Byte                                |
+==============================================================================
+
+   6.2.2 Logical Unit Number.   The logical unit number addresses one of up to 
+eight physical or virtual devices attached to a target.  This method of 
+addressing is provided for systems that do not implement the IDENTIFY message.  
+A target that accepts an IDENTIFY message shall use the logical unit number 
+specified within the message.  In this case, the target shall ignore the 
+logical unit number specified within the command descriptor block.  
+(Implementors note:  It is a good practice for initiators that implement the 
+IDENTIFY message to specify the same logical unit number in the command 
+descriptor block.)
+
+   6.2.3 Logical Block Address.   The logical block address on logical units 
+shall begin with block zero and be contiguous up to the last logical block on 
+that logical unit.
+
+  Group 0 command descriptor blocks contain 21-bit logical block addresses.  
+Groups 1 and 5 command descriptor blocks contain 32-bit logical block 
+addresses.
+
+  The logical block concept implies that the initiator and target shall have 
+previously established the number of data bytes per logical block.  This may 
+be established through the use of the READ CAPACITY command or the MODE SENSE 
+command or by prior arrangement.
+.pa
+
+   6.2.4 Relative Address Bit.   The relative address (RelAdr) bit of the 
+group 1 and group 5 commands is set to one to indicate that the logical block 
+address portion of the command descriptor block is a two's complement 
+displacement.  This negative or positive displacement is to be added to the 
+logical block address last accessed on the logical unit to form the logical 
+block address for this command.  This feature is only available when linking 
+commands.  The feature requires that a previous command in the linked group 
+have accessed a block of data on the logical unit.  (For an example of the 
+operation of this function, see Section 6.3.3.)
+
+   6.2.5 Transfer Length.   The transfer length specifies the amount of data to 
+be transferred, usually the number of blocks.  For several commands the 
+transfer length indicates the requested number of bytes to be sent as defined 
+in the command description.  For these commands the transfer length field may 
+be identified by a different name.  See the following descriptions and the 
+individual command descriptions for further information.
+
+  Commands that use one byte for transfer length allow up to 256 blocks of 
+data to be transferred by one command.  A transfer length value of 1 to 255 
+indicates the number of blocks that shall transferred.  A value of zero 
+indicates 256 blocks.
+
+  Commands that use two bytes for transfer length allow up to 65,535 blocks of 
+data to be transferred by one command.  In this case, a transfer length of 
+zero indicates that no data transfer shall take place.  A value of 1 to 65,535 
+indicates the number of blocks that shall be transferred. 
+
+  For several commands more than two bytes are allocated for transfer length.  
+Refer to the specific command description for further information.
+
+  The transfer length of the commands that are used to send a list of 
+parameters to a target is called the parameter list length.  The parameter 
+list length specifies the number of bytes sent during the DATA OUT phase.
+
+  The transfer length of the commands that are used to return sense data (e.g. 
+REQUEST SENSE, INQUIRY, MODE SENSE, etc) to an initiator is called the 
+allocation length.  The allocation length specifies the number of bytes that 
+the initiator has allocated for returned data.  The target shall terminate the 
+DATA IN phase when allocation length bytes have been transferred or when all 
+available sense data have been transferred to the initiator, whichever is 
+less.
+
+   6.2.6 Control Byte.   The control byte is the last byte of every command 
+descriptor block.  A typical control byte is described in Table 6-5.
+.pa
+
+                                   Table 6-5 
+                                  Control Byte 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+Last | Vendor unique   |            Reserved               |  Flag  |  Link  |
+==============================================================================
+
+ Bit    Description
+-----   ----------------------------------------------------------------------
+7  _  6   Vendor unique
+
+5  _  2   Reserved
+
+  1     Flag bit - If the link bit is zero, then the flag bit shall be set to 
+        zero.  If the link bit is one, and if the command terminates 
+        successfully, the target shall send LINKED COMMAND COMPLETE message if 
+        the flag bit is zero and shall send LINKED COMMAND COMPLETE (WITH 
+        FLAG) message if the flag bit is one.  Typically, this bit is used to 
+        cause an interrupt in the initiator between linked commands.
+
+  0     Link bit - This bit is set to one to indicate that the initiator 
+        desires an automatic link to the next command upon successful 
+        completion of the current command.  Implementation of linked commands 
+        is optional.  If the link bit is one, targets that implement linked 
+        commands, upon successful termination of the command, shall return 
+        INTERMEDIATE status and shall then send one of the two messages 
+        defined by the flag bit (above).
+
+        Targets that do not implement linked commands shall return a CHECK 
+        CONDITION status and, if extended sense is implemented, shall set the 
+        sense key to ILLEGAL REQUEST if either of the link and flag bits are 
+        set to one.
+
+ 6.3 Command Examples 
+
+   6.3.1 Single Command Example.   A typical operation on the SCSI bus is likely 
+to include a single READ command to a peripheral device.  This operation is 
+described in detail starting with a request from the initiator.  This example 
+assumes that no linked commands and no malfunctions or errors occur.
+
+  The initiator has active pointers and a set of stored pointers representing 
+active disconnected SCSI devices (an initiator without disconnect capability 
+does not require stored pointers).  The initiator sets up the active pointers 
+for the operation requested, arbitrates for the SCSI bus, and selects the 
+target.  Once this process is completed, the target assumes control of the 
+operation.
+
+  The target obtains the command from the initiator (in this case, a READ 
+command).  The target interprets the command and executes it.  In this case, 
+the target gets the data from the peripheral device and sends it to the 
+initiator.  At the completion of the READ command, the target sends a status 
+byte to the initiator.  To end the operation, the target sends a COMMAND 
+COMPLETE message to the initiator.
+
+
+   6.3.2 Disconnect Example.   In the above single command example, the length 
+of time necessary to obtain the data may require a time-consuming physical 
+seek.  In order to improve system throughput, the target may disconnect from 
+the initiator, freeing the SCSI bus to allow other requests to be sent to 
+other logical units.  To do this, the initiator needs to be reselectable and 
+capable of restoring the pointers upon reconnection.  The target needs to be 
+capable of arbitrating for the SCSI bus and reselecting the initiator.
+
+  After the target has received the READ command (and has determined that 
+there will be a delay), it disconnects by sending a DISCONNECT message and 
+releasing BSY.
+
+  When the data are ready to be transferred, the target reconnects to the 
+initiator.  As a result of this reconnection, the initiator restores the 
+pointers to their most recent saved values (which, in this case, are the 
+initial values) and the target continues (as in the single command example) to 
+finish the operation.  The initiator recognizes that the operation is complete 
+when COMMAND COMPLETE message is received.
+
+  If target wishes to disconnect after transferring part of the data (e.g., 
+while crossing a cylinder boundary), it may do so by sending a SAVE DATA 
+POINTER message and a DISCONNECT message to the initiator and then 
+disconnecting.  When reconnection is completed, the current data pointer value 
+is restored to its value immediately prior to the SAVE DATA POINTER message.
+
+  On those occasions when an error or exception condition occurs and the 
+target elects to repeat the information transfer, the target may repeat the 
+transfer by either issuing a RESTORE POINTERS message or by disconnecting 
+without issuing a SAVE DATA POINTER message.  When reconnection is completed, 
+the most recent saved pointer values are restored.
+
+   6.3.3 Linked Command Example.   The link function defines a relationship 
+between commands that when combined with the relative address bit, allows 
+previous operations to modify subsequent operations.  Link makes high-
+performance functions possible by providing a relative addressing capability 
+and allowing multiple command execution without invoking the functional 
+component of the initiator.
+
+  If the desired data address (in the previously described READ command 
+example) is unknown, but a search key defined as some particular bytes of a 
+field is known, then by linking the READ command to a SEARCH DATA EQUAL 
+command, the data can be quickly and effectively transferred to the initiator. 
+
+  A LINKED COMMAND COMPLETE message is sent from the target to the initiator 
+to indicate linked command completion.  The initiator then updates the stored 
+pointers so that subsequent requests from the target will reference the next 
+command of the chain.  Command processing of linked and single commands is 
+simular except that relative addressing is permitted in linked commands.  
+Linked commands shall be addressed to a single logical unit.
+
+  For example, the successful completion of a SEARCH DATA EQUAL command causes 
+the target to fetch the linked READ command from the initiator.  If the 
+relative address bit in the READ command has been set to one, and the address 
+field of the READ command is set to zero, the target transfers the 
+successfully searched block to the initiator. 
+
+                                                      
+

@@ -1,0 +1,489 @@
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>sys/dev/zs/z8530reg.h</title>
+<base href="http://fxr.watson.org/fxr/">
+</head>
+
+<body bgcolor=white>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/zs/z8530reg.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<h1 align=center>
+  FreeBSD/Linux Kernel Cross Reference
+<!--  <a href="http:blurb.html">
+    Cross Reference</a>--><br>
+  <a href="source/">sys</a>/<a href="source/dev/">dev</a>/<a href="source/dev/zs/">zs</a>/<a href="source/dev/zs/z8530reg.h">z8530reg.h</a>
+</h1>
+
+<div align=center>
+  
+  <b>Version:</b>
+   ~ <b>[</b>&nbsp;<b><i>HEAD</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=RELENG52">RELENG52</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=RELENG51">RELENG51</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=RELENG50">RELENG50</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=RELENG49">RELENG49</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=RELENG4">RELENG4</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=RELENG3">RELENG3</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=linux-2.4.22">linux-2.4.22</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=linux-2.6.0">linux-2.6.0</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=linux-2.6.1">linux-2.6.1</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=DFBSD">DFBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=NETBSD">NETBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=OPENBSD">OPENBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=DARWIN7">DARWIN7</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=OPENDARWIN">OPENDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=TRUSTEDBSD-MAC">TRUSTEDBSD-MAC</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=TRUSTEDBSD-CAP">TRUSTEDBSD-CAP</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=TRUSTEDBSD-SEBSD">TRUSTEDBSD-SEBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=TRUSTEDBSD-SEDARWIN">TRUSTEDBSD-SEDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=netperf-socket">netperf-socket</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=rwatson-netperf">rwatson-netperf</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530reg.h?v=TRUSTEDBSD-SEDARWIN73">TRUSTEDBSD-SEDARWIN73</a>&nbsp;<b>]</b> ~
+  <br>
+</div>
+<hr>
+<pre>  <a name=L1 href="source/dev/zs/z8530reg.h#L1">1</a> <b><i>/*      $NetBSD: z8530reg.h,v 1.8 1996/12/13 21:02:39 gwr Exp $ */</i></b>
+  <a name=L2 href="source/dev/zs/z8530reg.h#L2">2</a> 
+  <a name=L3 href="source/dev/zs/z8530reg.h#L3">3</a> <b><i>/*</i></b>
+  <a name=L4 href="source/dev/zs/z8530reg.h#L4">4</a> <b><i> * Copyright (c) 1992, 1993</i></b>
+  <a name=L5 href="source/dev/zs/z8530reg.h#L5">5</a> <b><i> *      The Regents of the University of California.  All rights reserved.</i></b>
+  <a name=L6 href="source/dev/zs/z8530reg.h#L6">6</a> <b><i> *</i></b>
+  <a name=L7 href="source/dev/zs/z8530reg.h#L7">7</a> <b><i> * This software was developed by the Computer Systems Engineering group</i></b>
+  <a name=L8 href="source/dev/zs/z8530reg.h#L8">8</a> <b><i> * at Lawrence Berkeley Laboratory under DARPA contract BG 91-66 and</i></b>
+  <a name=L9 href="source/dev/zs/z8530reg.h#L9">9</a> <b><i> * contributed to Berkeley.</i></b>
+ <a name=L10 href="source/dev/zs/z8530reg.h#L10">10</a> <b><i> *</i></b>
+ <a name=L11 href="source/dev/zs/z8530reg.h#L11">11</a> <b><i> * All advertising materials mentioning features or use of this software</i></b>
+ <a name=L12 href="source/dev/zs/z8530reg.h#L12">12</a> <b><i> * must display the following acknowledgement:</i></b>
+ <a name=L13 href="source/dev/zs/z8530reg.h#L13">13</a> <b><i> *      This product includes software developed by the University of</i></b>
+ <a name=L14 href="source/dev/zs/z8530reg.h#L14">14</a> <b><i> *      California, Lawrence Berkeley Laboratory.</i></b>
+ <a name=L15 href="source/dev/zs/z8530reg.h#L15">15</a> <b><i> *</i></b>
+ <a name=L16 href="source/dev/zs/z8530reg.h#L16">16</a> <b><i> * Redistribution and use in source and binary forms, with or without</i></b>
+ <a name=L17 href="source/dev/zs/z8530reg.h#L17">17</a> <b><i> * modification, are permitted provided that the following conditions</i></b>
+ <a name=L18 href="source/dev/zs/z8530reg.h#L18">18</a> <b><i> * are met:</i></b>
+ <a name=L19 href="source/dev/zs/z8530reg.h#L19">19</a> <b><i> * 1. Redistributions of source code must retain the above copyright</i></b>
+ <a name=L20 href="source/dev/zs/z8530reg.h#L20">20</a> <b><i> *    notice, this list of conditions and the following disclaimer.</i></b>
+ <a name=L21 href="source/dev/zs/z8530reg.h#L21">21</a> <b><i> * 2. Redistributions in binary form must reproduce the above copyright</i></b>
+ <a name=L22 href="source/dev/zs/z8530reg.h#L22">22</a> <b><i> *    notice, this list of conditions and the following disclaimer in the</i></b>
+ <a name=L23 href="source/dev/zs/z8530reg.h#L23">23</a> <b><i> *    documentation and/or other materials provided with the distribution.</i></b>
+ <a name=L24 href="source/dev/zs/z8530reg.h#L24">24</a> <b><i> * 4. Neither the name of the University nor the names of its contributors</i></b>
+ <a name=L25 href="source/dev/zs/z8530reg.h#L25">25</a> <b><i> *    may be used to endorse or promote products derived from this software</i></b>
+ <a name=L26 href="source/dev/zs/z8530reg.h#L26">26</a> <b><i> *    without specific prior written permission.</i></b>
+ <a name=L27 href="source/dev/zs/z8530reg.h#L27">27</a> <b><i> *</i></b>
+ <a name=L28 href="source/dev/zs/z8530reg.h#L28">28</a> <b><i> * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND</i></b>
+ <a name=L29 href="source/dev/zs/z8530reg.h#L29">29</a> <b><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></b>
+ <a name=L30 href="source/dev/zs/z8530reg.h#L30">30</a> <b><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></b>
+ <a name=L31 href="source/dev/zs/z8530reg.h#L31">31</a> <b><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE</i></b>
+ <a name=L32 href="source/dev/zs/z8530reg.h#L32">32</a> <b><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></b>
+ <a name=L33 href="source/dev/zs/z8530reg.h#L33">33</a> <b><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></b>
+ <a name=L34 href="source/dev/zs/z8530reg.h#L34">34</a> <b><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></b>
+ <a name=L35 href="source/dev/zs/z8530reg.h#L35">35</a> <b><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></b>
+ <a name=L36 href="source/dev/zs/z8530reg.h#L36">36</a> <b><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></b>
+ <a name=L37 href="source/dev/zs/z8530reg.h#L37">37</a> <b><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></b>
+ <a name=L38 href="source/dev/zs/z8530reg.h#L38">38</a> <b><i> * SUCH DAMAGE.</i></b>
+ <a name=L39 href="source/dev/zs/z8530reg.h#L39">39</a> <b><i> *</i></b>
+ <a name=L40 href="source/dev/zs/z8530reg.h#L40">40</a> <b><i> *      @(#)zsreg.h     8.1 (Berkeley) 6/11/93</i></b>
+ <a name=L41 href="source/dev/zs/z8530reg.h#L41">41</a> <b><i> *</i></b>
+ <a name=L42 href="source/dev/zs/z8530reg.h#L42">42</a> <b><i> * $FreeBSD: src/sys/dev/zs/z8530reg.h,v 1.3 2004/04/07 20:45:58 imp Exp $</i></b>
+ <a name=L43 href="source/dev/zs/z8530reg.h#L43">43</a> <b><i> */</i></b>
+ <a name=L44 href="source/dev/zs/z8530reg.h#L44">44</a> 
+ <a name=L45 href="source/dev/zs/z8530reg.h#L45">45</a> <b><i>/*</i></b>
+ <a name=L46 href="source/dev/zs/z8530reg.h#L46">46</a> <b><i> * Zilog SCC registers, as implemented on the Sun-4c.</i></b>
+ <a name=L47 href="source/dev/zs/z8530reg.h#L47">47</a> <b><i> *</i></b>
+ <a name=L48 href="source/dev/zs/z8530reg.h#L48">48</a> <b><i> * Each Z8530 implements two channels (called `a' and `b').</i></b>
+ <a name=L49 href="source/dev/zs/z8530reg.h#L49">49</a> <b><i> *</i></b>
+ <a name=L50 href="source/dev/zs/z8530reg.h#L50">50</a> <b><i> * The damnable chip was designed to fit on Z80 I/O ports, and thus</i></b>
+ <a name=L51 href="source/dev/zs/z8530reg.h#L51">51</a> <b><i> * has everything multiplexed out the wazoo.  We have to select</i></b>
+ <a name=L52 href="source/dev/zs/z8530reg.h#L52">52</a> <b><i> * a register, then read or write the register, and so on.  Worse,</i></b>
+ <a name=L53 href="source/dev/zs/z8530reg.h#L53">53</a> <b><i> * the parameter bits are scattered all over the register space.</i></b>
+ <a name=L54 href="source/dev/zs/z8530reg.h#L54">54</a> <b><i> * This thing is full of `miscellaneous' control registers.</i></b>
+ <a name=L55 href="source/dev/zs/z8530reg.h#L55">55</a> <b><i> *</i></b>
+ <a name=L56 href="source/dev/zs/z8530reg.h#L56">56</a> <b><i> * Worse yet, the registers have incompatible functions on read</i></b>
+ <a name=L57 href="source/dev/zs/z8530reg.h#L57">57</a> <b><i> * and write operations.  We describe the registers below according</i></b>
+ <a name=L58 href="source/dev/zs/z8530reg.h#L58">58</a> <b><i> * to whether they are `read registers' (RR) or `write registers' (WR).</i></b>
+ <a name=L59 href="source/dev/zs/z8530reg.h#L59">59</a> <b><i> * As if this were not enough, some of the channel B status bits show</i></b>
+ <a name=L60 href="source/dev/zs/z8530reg.h#L60">60</a> <b><i> * up in channel A, and vice versa.  The blasted thing shares write</i></b>
+ <a name=L61 href="source/dev/zs/z8530reg.h#L61">61</a> <b><i> * registers 2 and 9 across both channels, and reads registers 2 and 3</i></b>
+ <a name=L62 href="source/dev/zs/z8530reg.h#L62">62</a> <b><i> * differently for the two channels.  We can, however, ignore this much</i></b>
+ <a name=L63 href="source/dev/zs/z8530reg.h#L63">63</a> <b><i> * of the time.</i></b>
+ <a name=L64 href="source/dev/zs/z8530reg.h#L64">64</a> <b><i> *</i></b>
+ <a name=L65 href="source/dev/zs/z8530reg.h#L65">65</a> <b><i> * This file also includes flags for the Z85C30 and Z85230 enhanced scc.</i></b>
+ <a name=L66 href="source/dev/zs/z8530reg.h#L66">66</a> <b><i> * The CMOS 8530 includes extra SDLC functionality, and is used in a</i></b>
+ <a name=L67 href="source/dev/zs/z8530reg.h#L67">67</a> <b><i> * number of Macs (often in the Z85C80, an 85C30 combined w/ a SCSI</i></b>
+ <a name=L68 href="source/dev/zs/z8530reg.h#L68">68</a> <b><i> * controller). -wrs</i></b>
+ <a name=L69 href="source/dev/zs/z8530reg.h#L69">69</a> <b><i> *</i></b>
+ <a name=L70 href="source/dev/zs/z8530reg.h#L70">70</a> <b><i> * Some of the names in this files were chosen to make the hsis driver</i></b>
+ <a name=L71 href="source/dev/zs/z8530reg.h#L71">71</a> <b><i> * work unchanged (which means that they will match some in SunOS).</i></b>
+ <a name=L72 href="source/dev/zs/z8530reg.h#L72">72</a> <b><i> *</i></b>
+ <a name=L73 href="source/dev/zs/z8530reg.h#L73">73</a> <b><i> * `S.C.' stands for Special Condition, which is any of these:</i></b>
+ <a name=L74 href="source/dev/zs/z8530reg.h#L74">74</a> <b><i> *      receiver overrun        (aka silo overflow)</i></b>
+ <a name=L75 href="source/dev/zs/z8530reg.h#L75">75</a> <b><i> *      framing error           (missing stop bit, etc)</i></b>
+ <a name=L76 href="source/dev/zs/z8530reg.h#L76">76</a> <b><i> *      end of frame            (in synchronous modes)</i></b>
+ <a name=L77 href="source/dev/zs/z8530reg.h#L77">77</a> <b><i> *      parity error            (when `parity error is S.C.' is set)</i></b>
+ <a name=L78 href="source/dev/zs/z8530reg.h#L78">78</a> <b><i> *</i></b>
+ <a name=L79 href="source/dev/zs/z8530reg.h#L79">79</a> <b><i> * Registers with only a single `numeric value' get a name.</i></b>
+ <a name=L80 href="source/dev/zs/z8530reg.h#L80">80</a> <b><i> * Other registers hold bits and are only numbered; the bit</i></b>
+ <a name=L81 href="source/dev/zs/z8530reg.h#L81">81</a> <b><i> * definitions imply the register number (see below).</i></b>
+ <a name=L82 href="source/dev/zs/z8530reg.h#L82">82</a> <b><i> *</i></b>
+ <a name=L83 href="source/dev/zs/z8530reg.h#L83">83</a> <b><i> * We never use the receive and transmit data registers as</i></b>
+ <a name=L84 href="source/dev/zs/z8530reg.h#L84">84</a> <b><i> * indirects (choosing instead the zc_data register), so they</i></b>
+ <a name=L85 href="source/dev/zs/z8530reg.h#L85">85</a> <b><i> * are not defined here.</i></b>
+ <a name=L86 href="source/dev/zs/z8530reg.h#L86">86</a> <b><i> */</i></b>
+ <a name=L87 href="source/dev/zs/z8530reg.h#L87">87</a> 
+ <a name=L88 href="source/dev/zs/z8530reg.h#L88">88</a> #define <a href="ident?i=ZS_NCHAN">ZS_NCHAN</a>        2
+ <a name=L89 href="source/dev/zs/z8530reg.h#L89">89</a> 
+ <a name=L90 href="source/dev/zs/z8530reg.h#L90">90</a> #define <a href="ident?i=ZSRR_IVEC">ZSRR_IVEC</a>       2       <b><i>/* interrupt vector (channel 0) */</i></b>
+ <a name=L91 href="source/dev/zs/z8530reg.h#L91">91</a> #define <a href="ident?i=ZSRR_IPEND">ZSRR_IPEND</a>      3       <b><i>/* interrupt pending (ch. 0 only) */</i></b>
+ <a name=L92 href="source/dev/zs/z8530reg.h#L92">92</a> #define <a href="ident?i=ZSRR_TXSYNC">ZSRR_TXSYNC</a>     6       <b><i>/* sync transmit char (monosync mode) */</i></b>
+ <a name=L93 href="source/dev/zs/z8530reg.h#L93">93</a> #define <a href="ident?i=ZSRR_RXSYNC">ZSRR_RXSYNC</a>     7       <b><i>/* sync receive char (monosync mode) */</i></b>
+ <a name=L94 href="source/dev/zs/z8530reg.h#L94">94</a> #define <a href="ident?i=ZSRR_SYNCLO">ZSRR_SYNCLO</a>     6       <b><i>/* sync low byte (bisync mode) */</i></b>
+ <a name=L95 href="source/dev/zs/z8530reg.h#L95">95</a> #define <a href="ident?i=ZSRR_SYNCHI">ZSRR_SYNCHI</a>     7       <b><i>/* sync high byte (bisync mode) */</i></b>
+ <a name=L96 href="source/dev/zs/z8530reg.h#L96">96</a> #define <a href="ident?i=ZSRR_SDLC_ADDR">ZSRR_SDLC_ADDR</a>  6       <b><i>/* SDLC address (SDLC mode) */</i></b>
+ <a name=L97 href="source/dev/zs/z8530reg.h#L97">97</a> #define <a href="ident?i=ZSRR_SDLC_FLAG">ZSRR_SDLC_FLAG</a>  7       <b><i>/* SDLC flag 0x7E (SDLC mode) */</i></b>
+ <a name=L98 href="source/dev/zs/z8530reg.h#L98">98</a> #define <a href="ident?i=ZSRR_BAUDLO">ZSRR_BAUDLO</a>     12      <b><i>/* baud rate generator (low half) */</i></b>
+ <a name=L99 href="source/dev/zs/z8530reg.h#L99">99</a> #define <a href="ident?i=ZSRR_BAUDHI">ZSRR_BAUDHI</a>     13      <b><i>/* baud rate generator (high half) */</i></b>
+<a name=L100 href="source/dev/zs/z8530reg.h#L100">100</a> #define <a href="ident?i=ZSRR_ENHANCED">ZSRR_ENHANCED</a>   14      <b><i>/* read address of WR7' - yes, it's not 7!*/</i></b>
+<a name=L101 href="source/dev/zs/z8530reg.h#L101">101</a> 
+<a name=L102 href="source/dev/zs/z8530reg.h#L102">102</a> #define <a href="ident?i=ZSWR_IVEC">ZSWR_IVEC</a>       2       <b><i>/* interrupt vector (shared) */</i></b>
+<a name=L103 href="source/dev/zs/z8530reg.h#L103">103</a> #define <a href="ident?i=ZSWR_TXSYNC">ZSWR_TXSYNC</a>     6       <b><i>/* sync transmit char (monosync mode) */</i></b>
+<a name=L104 href="source/dev/zs/z8530reg.h#L104">104</a> #define <a href="ident?i=ZSWR_RXSYNC">ZSWR_RXSYNC</a>     7       <b><i>/* sync receive char (monosync mode) */</i></b>
+<a name=L105 href="source/dev/zs/z8530reg.h#L105">105</a> #define <a href="ident?i=ZSWR_SYNCLO">ZSWR_SYNCLO</a>     6       <b><i>/* sync low byte (bisync mode) */</i></b>
+<a name=L106 href="source/dev/zs/z8530reg.h#L106">106</a> #define <a href="ident?i=ZSWR_SYNCHI">ZSWR_SYNCHI</a>     7       <b><i>/* sync high byte (bisync mode) */</i></b>
+<a name=L107 href="source/dev/zs/z8530reg.h#L107">107</a> #define <a href="ident?i=ZSWR_SDLC_ADDR">ZSWR_SDLC_ADDR</a>  6       <b><i>/* SDLC address (SDLC mode) */</i></b>
+<a name=L108 href="source/dev/zs/z8530reg.h#L108">108</a> #define <a href="ident?i=ZSWR_SDLC_FLAG">ZSWR_SDLC_FLAG</a>  7       <b><i>/* SDLC flag 0x7E (SDLC mode) */</i></b>
+<a name=L109 href="source/dev/zs/z8530reg.h#L109">109</a> #define <a href="ident?i=ZSWR_BAUDLO">ZSWR_BAUDLO</a>     12      <b><i>/* baud rate generator (low half) */</i></b>
+<a name=L110 href="source/dev/zs/z8530reg.h#L110">110</a> #define <a href="ident?i=ZSWR_BAUDHI">ZSWR_BAUDHI</a>     13      <b><i>/* baud rate generator (high half) */</i></b>
+<a name=L111 href="source/dev/zs/z8530reg.h#L111">111</a> #define <a href="ident?i=ZSWR_ENHANCED">ZSWR_ENHANCED</a>   7       <b><i>/* write address of WR7' */</i></b>
+<a name=L112 href="source/dev/zs/z8530reg.h#L112">112</a> 
+<a name=L113 href="source/dev/zs/z8530reg.h#L113">113</a> <b><i>/*</i></b>
+<a name=L114 href="source/dev/zs/z8530reg.h#L114">114</a> <b><i> * Registers 0 through 7 may be written with any one of the 8 command</i></b>
+<a name=L115 href="source/dev/zs/z8530reg.h#L115">115</a> <b><i> * modifiers, and/or any one of the 4 reset modifiers, defined below.</i></b>
+<a name=L116 href="source/dev/zs/z8530reg.h#L116">116</a> <b><i> * To write registers 8 through 15, however, the command modifier must</i></b>
+<a name=L117 href="source/dev/zs/z8530reg.h#L117">117</a> <b><i> * always be `point high'.  Rather than track this bizzareness all over</i></b>
+<a name=L118 href="source/dev/zs/z8530reg.h#L118">118</a> <b><i> * the driver, we try to avoid using any modifiers, ever (but they are</i></b>
+<a name=L119 href="source/dev/zs/z8530reg.h#L119">119</a> <b><i> * defined here if you want them).</i></b>
+<a name=L120 href="source/dev/zs/z8530reg.h#L120">120</a> <b><i> */</i></b>
+<a name=L121 href="source/dev/zs/z8530reg.h#L121">121</a> #define <a href="ident?i=ZSM_RESET_TXUEOM">ZSM_RESET_TXUEOM</a>        0xc0    <b><i>/* reset xmit underrun / eom latch */</i></b>
+<a name=L122 href="source/dev/zs/z8530reg.h#L122">122</a> #define <a href="ident?i=ZSM_RESET_TXCRC">ZSM_RESET_TXCRC</a>         0x80    <b><i>/* reset xmit crc generator */</i></b>
+<a name=L123 href="source/dev/zs/z8530reg.h#L123">123</a> #define <a href="ident?i=ZSM_RESET_RXCRC">ZSM_RESET_RXCRC</a>         0x40    <b><i>/* reset recv crc checker */</i></b>
+<a name=L124 href="source/dev/zs/z8530reg.h#L124">124</a> #define <a href="ident?i=ZSM_NULL">ZSM_NULL</a>                0x00    <b><i>/* nothing special */</i></b>
+<a name=L125 href="source/dev/zs/z8530reg.h#L125">125</a> 
+<a name=L126 href="source/dev/zs/z8530reg.h#L126">126</a> #define <a href="ident?i=ZSM_RESET_IUS">ZSM_RESET_IUS</a>           0x38    <b><i>/* reset interrupt under service */</i></b>
+<a name=L127 href="source/dev/zs/z8530reg.h#L127">127</a> #define <a href="ident?i=ZSM_RESET_ERR">ZSM_RESET_ERR</a>           0x30    <b><i>/* reset error cond */</i></b>
+<a name=L128 href="source/dev/zs/z8530reg.h#L128">128</a> #define <a href="ident?i=ZSM_RESET_TXINT">ZSM_RESET_TXINT</a>         0x28    <b><i>/* reset xmit interrupt pending */</i></b>
+<a name=L129 href="source/dev/zs/z8530reg.h#L129">129</a> #define <a href="ident?i=ZSM_EI_NEXTRXC">ZSM_EI_NEXTRXC</a>          0x20    <b><i>/* enable int. on next rcvd char */</i></b>
+<a name=L130 href="source/dev/zs/z8530reg.h#L130">130</a> #define <a href="ident?i=ZSM_SEND_ABORT">ZSM_SEND_ABORT</a>          0x18    <b><i>/* send abort (SDLC) */</i></b>
+<a name=L131 href="source/dev/zs/z8530reg.h#L131">131</a> #define <a href="ident?i=ZSM_RESET_STINT">ZSM_RESET_STINT</a>         0x10    <b><i>/* reset external/status interrupt */</i></b>
+<a name=L132 href="source/dev/zs/z8530reg.h#L132">132</a> #define <a href="ident?i=ZSM_POINTHIGH">ZSM_POINTHIGH</a>           0x08    <b><i>/* `point high' (use r8-r15) */</i></b>
+<a name=L133 href="source/dev/zs/z8530reg.h#L133">133</a> #define <a href="ident?i=ZSM_NULL">ZSM_NULL</a>                0x00    <b><i>/* nothing special */</i></b>
+<a name=L134 href="source/dev/zs/z8530reg.h#L134">134</a> 
+<a name=L135 href="source/dev/zs/z8530reg.h#L135">135</a> <b><i>/*</i></b>
+<a name=L136 href="source/dev/zs/z8530reg.h#L136">136</a> <b><i> * Commands for Write Register 0 (`Command Register').</i></b>
+<a name=L137 href="source/dev/zs/z8530reg.h#L137">137</a> <b><i> * These are just the command modifiers or'ed with register number 0</i></b>
+<a name=L138 href="source/dev/zs/z8530reg.h#L138">138</a> <b><i> * (which of course equals the command modifier).</i></b>
+<a name=L139 href="source/dev/zs/z8530reg.h#L139">139</a> <b><i> */</i></b>
+<a name=L140 href="source/dev/zs/z8530reg.h#L140">140</a> #define <a href="ident?i=ZSWR0_RESET_EOM">ZSWR0_RESET_EOM</a>         <a href="ident?i=ZSM_RESET_TXUEOM">ZSM_RESET_TXUEOM</a>
+<a name=L141 href="source/dev/zs/z8530reg.h#L141">141</a> #define <a href="ident?i=ZSWR0_RESET_TXCRC">ZSWR0_RESET_TXCRC</a>       <a href="ident?i=ZSM_RESET_TXCRC">ZSM_RESET_TXCRC</a>
+<a name=L142 href="source/dev/zs/z8530reg.h#L142">142</a> #define <a href="ident?i=ZSWR0_RESET_RXCRC">ZSWR0_RESET_RXCRC</a>       <a href="ident?i=ZSM_RESET_RXCRC">ZSM_RESET_RXCRC</a>
+<a name=L143 href="source/dev/zs/z8530reg.h#L143">143</a> #define <a href="ident?i=ZSWR0_CLR_INTR">ZSWR0_CLR_INTR</a>          <a href="ident?i=ZSM_RESET_IUS">ZSM_RESET_IUS</a>
+<a name=L144 href="source/dev/zs/z8530reg.h#L144">144</a> #define <a href="ident?i=ZSWR0_RESET_ERRORS">ZSWR0_RESET_ERRORS</a>      <a href="ident?i=ZSM_RESET_ERR">ZSM_RESET_ERR</a>
+<a name=L145 href="source/dev/zs/z8530reg.h#L145">145</a> #define <a href="ident?i=ZSWR0_EI_NEXTRXC">ZSWR0_EI_NEXTRXC</a>        <a href="ident?i=ZSM_EI_NEXTRXC">ZSM_EI_NEXTRXC</a>
+<a name=L146 href="source/dev/zs/z8530reg.h#L146">146</a> #define <a href="ident?i=ZSWR0_SEND_ABORT">ZSWR0_SEND_ABORT</a>        <a href="ident?i=ZSM_SEND_ABORT">ZSM_SEND_ABORT</a>
+<a name=L147 href="source/dev/zs/z8530reg.h#L147">147</a> #define <a href="ident?i=ZSWR0_RESET_STATUS">ZSWR0_RESET_STATUS</a>      <a href="ident?i=ZSM_RESET_STINT">ZSM_RESET_STINT</a>
+<a name=L148 href="source/dev/zs/z8530reg.h#L148">148</a> #define <a href="ident?i=ZSWR0_RESET_TXINT">ZSWR0_RESET_TXINT</a>       <a href="ident?i=ZSM_RESET_TXINT">ZSM_RESET_TXINT</a>
+<a name=L149 href="source/dev/zs/z8530reg.h#L149">149</a> 
+<a name=L150 href="source/dev/zs/z8530reg.h#L150">150</a> <b><i>/*</i></b>
+<a name=L151 href="source/dev/zs/z8530reg.h#L151">151</a> <b><i> * Bits in Write Register 1 (`Transmit/Receive Interrupt and Data</i></b>
+<a name=L152 href="source/dev/zs/z8530reg.h#L152">152</a> <b><i> * Transfer Mode Definition').  Note that bits 3 and 4 are taken together</i></b>
+<a name=L153 href="source/dev/zs/z8530reg.h#L153">153</a> <b><i> * as a single unit, and bits 5 and 6 are useful only if bit 7 is set.</i></b>
+<a name=L154 href="source/dev/zs/z8530reg.h#L154">154</a> <b><i> */</i></b>
+<a name=L155 href="source/dev/zs/z8530reg.h#L155">155</a> #define <a href="ident?i=ZSWR1_REQ_WAIT">ZSWR1_REQ_WAIT</a>          0x80    <b><i>/* WAIT*-REQ* pin gives WAIT* */</i></b>
+<a name=L156 href="source/dev/zs/z8530reg.h#L156">156</a> #define <a href="ident?i=ZSWR1_REQ_REQ">ZSWR1_REQ_REQ</a>           0xc0    <b><i>/* WAIT*-REQ* pin gives REQ* */</i></b>
+<a name=L157 href="source/dev/zs/z8530reg.h#L157">157</a> #define <a href="ident?i=ZSWR1_REQ_TX">ZSWR1_REQ_TX</a>            0x00    <b><i>/* WAIT*-REQ* pin follows xmit buf */</i></b>
+<a name=L158 href="source/dev/zs/z8530reg.h#L158">158</a> #define <a href="ident?i=ZSWR1_REQ_RX">ZSWR1_REQ_RX</a>            0x20    <b><i>/* WAIT*-REQ* pin follows recv buf */</i></b>
+<a name=L159 href="source/dev/zs/z8530reg.h#L159">159</a> 
+<a name=L160 href="source/dev/zs/z8530reg.h#L160">160</a> #define <a href="ident?i=ZSWR1_RIE_NONE">ZSWR1_RIE_NONE</a>          0x00    <b><i>/* disable rxint entirely */</i></b>
+<a name=L161 href="source/dev/zs/z8530reg.h#L161">161</a> #define <a href="ident?i=ZSWR1_RIE_FIRST">ZSWR1_RIE_FIRST</a>         0x08    <b><i>/* rxint on first char &amp; on S.C. */</i></b>
+<a name=L162 href="source/dev/zs/z8530reg.h#L162">162</a> #define <a href="ident?i=ZSWR1_RIE">ZSWR1_RIE</a>               0x10    <b><i>/* rxint per char &amp; on S.C. */</i></b>
+<a name=L163 href="source/dev/zs/z8530reg.h#L163">163</a> #define <a href="ident?i=ZSWR1_RIE_SPECIAL_ONLY">ZSWR1_RIE_SPECIAL_ONLY</a>  0x18    <b><i>/* rxint on S.C. only */</i></b>
+<a name=L164 href="source/dev/zs/z8530reg.h#L164">164</a> 
+<a name=L165 href="source/dev/zs/z8530reg.h#L165">165</a> #define <a href="ident?i=ZSWR1_PE_SC">ZSWR1_PE_SC</a>             0x04    <b><i>/* parity error is special condition */</i></b>
+<a name=L166 href="source/dev/zs/z8530reg.h#L166">166</a> #define <a href="ident?i=ZSWR1_TIE">ZSWR1_TIE</a>               0x02    <b><i>/* transmit interrupt enable */</i></b>
+<a name=L167 href="source/dev/zs/z8530reg.h#L167">167</a> #define <a href="ident?i=ZSWR1_SIE">ZSWR1_SIE</a>               0x01    <b><i>/* external/status interrupt enable */</i></b>
+<a name=L168 href="source/dev/zs/z8530reg.h#L168">168</a> 
+<a name=L169 href="source/dev/zs/z8530reg.h#L169">169</a> #define <a href="ident?i=ZSWR1_IMASK">ZSWR1_IMASK</a>     0x1F    <b><i>/* mask of all itr. enable bits. */</i></b>
+<a name=L170 href="source/dev/zs/z8530reg.h#L170">170</a> 
+<a name=L171 href="source/dev/zs/z8530reg.h#L171">171</a> <b><i>/* HSIS compat */</i></b>
+<a name=L172 href="source/dev/zs/z8530reg.h#L172">172</a> #define <a href="ident?i=ZSWR1_REQ_ENABLE">ZSWR1_REQ_ENABLE</a>        (<a href="ident?i=ZSWR1_REQ_WAIT">ZSWR1_REQ_WAIT</a> | <a href="ident?i=ZSWR1_REQ_TX">ZSWR1_REQ_TX</a>)
+<a name=L173 href="source/dev/zs/z8530reg.h#L173">173</a> 
+<a name=L174 href="source/dev/zs/z8530reg.h#L174">174</a> <b><i>/*</i></b>
+<a name=L175 href="source/dev/zs/z8530reg.h#L175">175</a> <b><i> * Bits in Write Register 3 (`Receive Parameters and Control').</i></b>
+<a name=L176 href="source/dev/zs/z8530reg.h#L176">176</a> <b><i> * Bits 7 and 6 are taken as a unit.  Note that the receive bits</i></b>
+<a name=L177 href="source/dev/zs/z8530reg.h#L177">177</a> <b><i> * per character ordering is insane.</i></b>
+<a name=L178 href="source/dev/zs/z8530reg.h#L178">178</a> <b><i> *</i></b>
+<a name=L179 href="source/dev/zs/z8530reg.h#L179">179</a> <b><i> * Here `hardware flow control' means CTS enables the transmitter</i></b>
+<a name=L180 href="source/dev/zs/z8530reg.h#L180">180</a> <b><i> * and DCD enables the receiver.  The latter is neither interesting</i></b>
+<a name=L181 href="source/dev/zs/z8530reg.h#L181">181</a> <b><i> * nor useful, and gets in our way, making it almost unusable.</i></b>
+<a name=L182 href="source/dev/zs/z8530reg.h#L182">182</a> <b><i> */</i></b>
+<a name=L183 href="source/dev/zs/z8530reg.h#L183">183</a> #define <a href="ident?i=ZSWR3_RX_5">ZSWR3_RX_5</a>              0x00    <b><i>/* receive 5 bits per char */</i></b>
+<a name=L184 href="source/dev/zs/z8530reg.h#L184">184</a> #define <a href="ident?i=ZSWR3_RX_7">ZSWR3_RX_7</a>              0x40    <b><i>/* receive 7 bits per char */</i></b>
+<a name=L185 href="source/dev/zs/z8530reg.h#L185">185</a> #define <a href="ident?i=ZSWR3_RX_6">ZSWR3_RX_6</a>              0x80    <b><i>/* receive 6 bits per char */</i></b>
+<a name=L186 href="source/dev/zs/z8530reg.h#L186">186</a> #define <a href="ident?i=ZSWR3_RX_8">ZSWR3_RX_8</a>              0xc0    <b><i>/* receive 8 bits per char */</i></b>
+<a name=L187 href="source/dev/zs/z8530reg.h#L187">187</a> #define <a href="ident?i=ZSWR3_RXSIZE">ZSWR3_RXSIZE</a>            0xc0    <b><i>/* receive char size mask */</i></b>
+<a name=L188 href="source/dev/zs/z8530reg.h#L188">188</a> 
+<a name=L189 href="source/dev/zs/z8530reg.h#L189">189</a> #define <a href="ident?i=ZSWR3_HFC">ZSWR3_HFC</a>               0x20    <b><i>/* hardware flow control */</i></b>
+<a name=L190 href="source/dev/zs/z8530reg.h#L190">190</a> #define <a href="ident?i=ZSWR3_HUNT">ZSWR3_HUNT</a>              0x10    <b><i>/* enter hunt mode */</i></b>
+<a name=L191 href="source/dev/zs/z8530reg.h#L191">191</a> #define <a href="ident?i=ZSWR3_RXCRC_ENABLE">ZSWR3_RXCRC_ENABLE</a>      0x08    <b><i>/* enable recv crc calculation */</i></b>
+<a name=L192 href="source/dev/zs/z8530reg.h#L192">192</a> #define <a href="ident?i=ZSWR3_ADDR_SEARCH_MODE">ZSWR3_ADDR_SEARCH_MODE</a>  0x04    <b><i>/* address search mode (SDLC only) */</i></b>
+<a name=L193 href="source/dev/zs/z8530reg.h#L193">193</a> #define <a href="ident?i=ZSWR3_SDLC_SHORT_ADDR">ZSWR3_SDLC_SHORT_ADDR</a>   0x02    <b><i>/* short address mode (SDLC only) */</i></b>
+<a name=L194 href="source/dev/zs/z8530reg.h#L194">194</a> #define <a href="ident?i=ZSWR3_SYNC_LOAD_INH">ZSWR3_SYNC_LOAD_INH</a>     0x02    <b><i>/* sync character load inhibit */</i></b>
+<a name=L195 href="source/dev/zs/z8530reg.h#L195">195</a> #define <a href="ident?i=ZSWR3_RX_ENABLE">ZSWR3_RX_ENABLE</a>         0x01    <b><i>/* receiver enable */</i></b>
+<a name=L196 href="source/dev/zs/z8530reg.h#L196">196</a> 
+<a name=L197 href="source/dev/zs/z8530reg.h#L197">197</a> <b><i>/*</i></b>
+<a name=L198 href="source/dev/zs/z8530reg.h#L198">198</a> <b><i> * Bits in Write Register 4 (`Transmit/Receive Miscellaneous Parameters</i></b>
+<a name=L199 href="source/dev/zs/z8530reg.h#L199">199</a> <b><i> * and Modes').  Bits 7&amp;6, 5&amp;4, and 3&amp;2 are taken as units.</i></b>
+<a name=L200 href="source/dev/zs/z8530reg.h#L200">200</a> <b><i> */</i></b>
+<a name=L201 href="source/dev/zs/z8530reg.h#L201">201</a> #define <a href="ident?i=ZSWR4_CLK_X1">ZSWR4_CLK_X1</a>            0x00    <b><i>/* clock divisor = 1 */</i></b>
+<a name=L202 href="source/dev/zs/z8530reg.h#L202">202</a> #define <a href="ident?i=ZSWR4_CLK_X16">ZSWR4_CLK_X16</a>           0x40    <b><i>/* clock divisor = 16 */</i></b>
+<a name=L203 href="source/dev/zs/z8530reg.h#L203">203</a> #define <a href="ident?i=ZSWR4_CLK_X32">ZSWR4_CLK_X32</a>           0x80    <b><i>/* clock divisor = 32 */</i></b>
+<a name=L204 href="source/dev/zs/z8530reg.h#L204">204</a> #define <a href="ident?i=ZSWR4_CLK_X64">ZSWR4_CLK_X64</a>           0xc0    <b><i>/* clock divisor = 64 */</i></b>
+<a name=L205 href="source/dev/zs/z8530reg.h#L205">205</a> #define <a href="ident?i=ZSWR4_CLK_MASK">ZSWR4_CLK_MASK</a>          0xc0    <b><i>/* clock divisor mask */</i></b>
+<a name=L206 href="source/dev/zs/z8530reg.h#L206">206</a> 
+<a name=L207 href="source/dev/zs/z8530reg.h#L207">207</a> #define <a href="ident?i=ZSWR4_MONOSYNC">ZSWR4_MONOSYNC</a>          0x00    <b><i>/* 8 bit sync char (sync only) */</i></b>
+<a name=L208 href="source/dev/zs/z8530reg.h#L208">208</a> #define <a href="ident?i=ZSWR4_BISYNC">ZSWR4_BISYNC</a>            0x10    <b><i>/* 16 bit sync char (sync only) */</i></b>
+<a name=L209 href="source/dev/zs/z8530reg.h#L209">209</a> #define <a href="ident?i=ZSWR4_SDLC">ZSWR4_SDLC</a>              0x20    <b><i>/* SDLC mode */</i></b>
+<a name=L210 href="source/dev/zs/z8530reg.h#L210">210</a> #define <a href="ident?i=ZSWR4_EXTSYNC">ZSWR4_EXTSYNC</a>           0x30    <b><i>/* external sync mode */</i></b>
+<a name=L211 href="source/dev/zs/z8530reg.h#L211">211</a> #define <a href="ident?i=ZSWR4_SYNC_MASK">ZSWR4_SYNC_MASK</a>         0x30    <b><i>/* sync mode bit mask */</i></b>
+<a name=L212 href="source/dev/zs/z8530reg.h#L212">212</a> 
+<a name=L213 href="source/dev/zs/z8530reg.h#L213">213</a> #define <a href="ident?i=ZSWR4_SYNCMODE">ZSWR4_SYNCMODE</a>          0x00    <b><i>/* no stop bit (sync mode only) */</i></b>
+<a name=L214 href="source/dev/zs/z8530reg.h#L214">214</a> #define <a href="ident?i=ZSWR4_ONESB">ZSWR4_ONESB</a>             0x04    <b><i>/* 1 stop bit */</i></b>
+<a name=L215 href="source/dev/zs/z8530reg.h#L215">215</a> #define <a href="ident?i=ZSWR4_1P5SB">ZSWR4_1P5SB</a>             0x08    <b><i>/* 1.5 stop bits (clk cannot be 1x) */</i></b>
+<a name=L216 href="source/dev/zs/z8530reg.h#L216">216</a> #define <a href="ident?i=ZSWR4_TWOSB">ZSWR4_TWOSB</a>             0x0c    <b><i>/* 2 stop bits */</i></b>
+<a name=L217 href="source/dev/zs/z8530reg.h#L217">217</a> #define <a href="ident?i=ZSWR4_SBMASK">ZSWR4_SBMASK</a>            0x0c    <b><i>/* mask of all stop bits */</i></b>
+<a name=L218 href="source/dev/zs/z8530reg.h#L218">218</a> 
+<a name=L219 href="source/dev/zs/z8530reg.h#L219">219</a> #define <a href="ident?i=ZSWR4_EVENP">ZSWR4_EVENP</a>             0x02    <b><i>/* check for even parity */</i></b>
+<a name=L220 href="source/dev/zs/z8530reg.h#L220">220</a> #define <a href="ident?i=ZSWR4_PARENB">ZSWR4_PARENB</a>            0x01    <b><i>/* enable parity checking */</i></b>
+<a name=L221 href="source/dev/zs/z8530reg.h#L221">221</a> #define <a href="ident?i=ZSWR4_PARMASK">ZSWR4_PARMASK</a>           0x03    <b><i>/* mask of all parity bits */</i></b>
+<a name=L222 href="source/dev/zs/z8530reg.h#L222">222</a> 
+<a name=L223 href="source/dev/zs/z8530reg.h#L223">223</a> <b><i>/*</i></b>
+<a name=L224 href="source/dev/zs/z8530reg.h#L224">224</a> <b><i> * Bits in Write Register 5 (`Transmit Parameter and Controls').</i></b>
+<a name=L225 href="source/dev/zs/z8530reg.h#L225">225</a> <b><i> * Bits 6 and 5 are taken as a unit; the ordering is, as with RX</i></b>
+<a name=L226 href="source/dev/zs/z8530reg.h#L226">226</a> <b><i> * bits per char, not sensible.</i></b>
+<a name=L227 href="source/dev/zs/z8530reg.h#L227">227</a> <b><i> */</i></b>
+<a name=L228 href="source/dev/zs/z8530reg.h#L228">228</a> #define <a href="ident?i=ZSWR5_DTR">ZSWR5_DTR</a>               0x80    <b><i>/* assert (set to -12V) DTR */</i></b>
+<a name=L229 href="source/dev/zs/z8530reg.h#L229">229</a> 
+<a name=L230 href="source/dev/zs/z8530reg.h#L230">230</a> #define <a href="ident?i=ZSWR5_TX_5">ZSWR5_TX_5</a>              0x00    <b><i>/* transmit 5 or fewer bits */</i></b>
+<a name=L231 href="source/dev/zs/z8530reg.h#L231">231</a> #define <a href="ident?i=ZSWR5_TX_7">ZSWR5_TX_7</a>              0x20    <b><i>/* transmit 7 bits */</i></b>
+<a name=L232 href="source/dev/zs/z8530reg.h#L232">232</a> #define <a href="ident?i=ZSWR5_TX_6">ZSWR5_TX_6</a>              0x40    <b><i>/* transmit 6 bits */</i></b>
+<a name=L233 href="source/dev/zs/z8530reg.h#L233">233</a> #define <a href="ident?i=ZSWR5_TX_8">ZSWR5_TX_8</a>              0x60    <b><i>/* transmit 8 bits */</i></b>
+<a name=L234 href="source/dev/zs/z8530reg.h#L234">234</a> #define <a href="ident?i=ZSWR5_TXSIZE">ZSWR5_TXSIZE</a>            0x60    <b><i>/* transmit char size mask */</i></b>
+<a name=L235 href="source/dev/zs/z8530reg.h#L235">235</a> 
+<a name=L236 href="source/dev/zs/z8530reg.h#L236">236</a> #define <a href="ident?i=ZSWR5_BREAK">ZSWR5_BREAK</a>             0x10    <b><i>/* send break (continuous 0s) */</i></b>
+<a name=L237 href="source/dev/zs/z8530reg.h#L237">237</a> #define <a href="ident?i=ZSWR5_TX_ENABLE">ZSWR5_TX_ENABLE</a>         0x08    <b><i>/* enable transmitter */</i></b>
+<a name=L238 href="source/dev/zs/z8530reg.h#L238">238</a> #define <a href="ident?i=ZSWR5_CRC16">ZSWR5_CRC16</a>             0x04    <b><i>/* use CRC16 (off =&gt; use SDLC) */</i></b>
+<a name=L239 href="source/dev/zs/z8530reg.h#L239">239</a> #define <a href="ident?i=ZSWR5_RTS">ZSWR5_RTS</a>               0x02    <b><i>/* assert RTS */</i></b>
+<a name=L240 href="source/dev/zs/z8530reg.h#L240">240</a> #define <a href="ident?i=ZSWR5_TXCRC_ENABLE">ZSWR5_TXCRC_ENABLE</a>      0x01    <b><i>/* enable xmit crc calculation */</i></b>
+<a name=L241 href="source/dev/zs/z8530reg.h#L241">241</a> 
+<a name=L242 href="source/dev/zs/z8530reg.h#L242">242</a> #ifdef not_done_here
+<a name=L243 href="source/dev/zs/z8530reg.h#L243">243</a> <b><i>/*</i></b>
+<a name=L244 href="source/dev/zs/z8530reg.h#L244">244</a> <b><i> * Bits in Write Register 7 when the chip is in SDLC mode.</i></b>
+<a name=L245 href="source/dev/zs/z8530reg.h#L245">245</a> <b><i> */</i></b>
+<a name=L246 href="source/dev/zs/z8530reg.h#L246">246</a> #define <a href="ident?i=ZSWR7_SDLCFLAG">ZSWR7_SDLCFLAG</a>          0x7e    <b><i>/* this value makes SDLC mode work */</i></b>
+<a name=L247 href="source/dev/zs/z8530reg.h#L247">247</a> #endif
+<a name=L248 href="source/dev/zs/z8530reg.h#L248">248</a> 
+<a name=L249 href="source/dev/zs/z8530reg.h#L249">249</a> <b><i>/*</i></b>
+<a name=L250 href="source/dev/zs/z8530reg.h#L250">250</a> <b><i> * Bits in Write Register 7' (ZSWR_ENHANCED above). This register is</i></b>
+<a name=L251 href="source/dev/zs/z8530reg.h#L251">251</a> <b><i> * only available on the 85230. Dispite the fact it contains flags</i></b>
+<a name=L252 href="source/dev/zs/z8530reg.h#L252">252</a> <b><i> * and not a single value, the register was named as it is read</i></b>
+<a name=L253 href="source/dev/zs/z8530reg.h#L253">253</a> <b><i> * via RR14. Weird.</i></b>
+<a name=L254 href="source/dev/zs/z8530reg.h#L254">254</a> <b><i> */</i></b>
+<a name=L255 href="source/dev/zs/z8530reg.h#L255">255</a>                         <b><i>/*      0x80    unused */</i></b>
+<a name=L256 href="source/dev/zs/z8530reg.h#L256">256</a> #define <a href="ident?i=ZSWR7P_EXTEND_READ">ZSWR7P_EXTEND_READ</a>      0x40    <b><i>/* modify read map; make most regs readable */</i></b>
+<a name=L257 href="source/dev/zs/z8530reg.h#L257">257</a> #define <a href="ident?i=ZSWR7P_TX_FIFO">ZSWR7P_TX_FIFO</a>          0x20    <b><i>/* change level for Tx FIFO empty int */</i></b>
+<a name=L258 href="source/dev/zs/z8530reg.h#L258">258</a> #define <a href="ident?i=ZSWR7P_DTR_TIME">ZSWR7P_DTR_TIME</a>         0x10    <b><i>/* modifies deact. speed of /DTR//REQ */</i></b>
+<a name=L259 href="source/dev/zs/z8530reg.h#L259">259</a> #define <a href="ident?i=ZSWR7P_RX_FIFO">ZSWR7P_RX_FIFO</a>          0x08    <b><i>/* Rx FIFO int on 1/2 full? */</i></b>
+<a name=L260 href="source/dev/zs/z8530reg.h#L260">260</a> #define <a href="ident?i=ZSWR7P_RTS_DEACT">ZSWR7P_RTS_DEACT</a>        0x04    <b><i>/* automatically deassert RTS */</i></b>
+<a name=L261 href="source/dev/zs/z8530reg.h#L261">261</a> #define <a href="ident?i=ZSWR7P_AUTO_EOM_RESET">ZSWR7P_AUTO_EOM_RESET</a>   0x02    <b><i>/* automatically reset EMO/Tx Underrun */</i></b>
+<a name=L262 href="source/dev/zs/z8530reg.h#L262">262</a> #define <a href="ident?i=ZSWR7P_AUTO_TX_FLAG">ZSWR7P_AUTO_TX_FLAG</a>     0x01    <b><i>/* Auto send SDLC flag at transmit start */</i></b>
+<a name=L263 href="source/dev/zs/z8530reg.h#L263">263</a> 
+<a name=L264 href="source/dev/zs/z8530reg.h#L264">264</a> <b><i>/*</i></b>
+<a name=L265 href="source/dev/zs/z8530reg.h#L265">265</a> <b><i> * Bits in Write Register 9 (`Master Interrupt Control').  Bits 7 &amp; 6</i></b>
+<a name=L266 href="source/dev/zs/z8530reg.h#L266">266</a> <b><i> * are taken as a unit and indicate the type of reset; 00 means no reset</i></b>
+<a name=L267 href="source/dev/zs/z8530reg.h#L267">267</a> <b><i> * (and is not defined here).</i></b>
+<a name=L268 href="source/dev/zs/z8530reg.h#L268">268</a> <b><i> */</i></b>
+<a name=L269 href="source/dev/zs/z8530reg.h#L269">269</a> #define <a href="ident?i=ZSWR9_HARD_RESET">ZSWR9_HARD_RESET</a>        0xc0    <b><i>/* force hardware reset */</i></b>
+<a name=L270 href="source/dev/zs/z8530reg.h#L270">270</a> #define <a href="ident?i=ZSWR9_A_RESET">ZSWR9_A_RESET</a>           0x80    <b><i>/* reset channel A (0) */</i></b>
+<a name=L271 href="source/dev/zs/z8530reg.h#L271">271</a> #define <a href="ident?i=ZSWR9_B_RESET">ZSWR9_B_RESET</a>           0x40    <b><i>/* reset channel B (1) */</i></b>
+<a name=L272 href="source/dev/zs/z8530reg.h#L272">272</a> #define <a href="ident?i=ZSWR9_SOFT_INTAC">ZSWR9_SOFT_INTAC</a>        0x20    <b><i>/* Not in NMOS version */</i></b>
+<a name=L273 href="source/dev/zs/z8530reg.h#L273">273</a> 
+<a name=L274 href="source/dev/zs/z8530reg.h#L274">274</a> #define <a href="ident?i=ZSWR9_STATUS_HIGH">ZSWR9_STATUS_HIGH</a>       0x10    <b><i>/* status in high bits of intr vec */</i></b>
+<a name=L275 href="source/dev/zs/z8530reg.h#L275">275</a> #define <a href="ident?i=ZSWR9_MASTER_IE">ZSWR9_MASTER_IE</a>         0x08    <b><i>/* master interrupt enable */</i></b>
+<a name=L276 href="source/dev/zs/z8530reg.h#L276">276</a> #define <a href="ident?i=ZSWR9_DLC">ZSWR9_DLC</a>               0x04    <b><i>/* disable lower chain */</i></b>
+<a name=L277 href="source/dev/zs/z8530reg.h#L277">277</a> #define <a href="ident?i=ZSWR9_NO_VECTOR">ZSWR9_NO_VECTOR</a>         0x02    <b><i>/* no vector */</i></b>
+<a name=L278 href="source/dev/zs/z8530reg.h#L278">278</a> #define <a href="ident?i=ZSWR9_VECTOR_INCL_STAT">ZSWR9_VECTOR_INCL_STAT</a>  0x01    <b><i>/* vector includes status */</i></b>
+<a name=L279 href="source/dev/zs/z8530reg.h#L279">279</a> 
+<a name=L280 href="source/dev/zs/z8530reg.h#L280">280</a> <b><i>/*</i></b>
+<a name=L281 href="source/dev/zs/z8530reg.h#L281">281</a> <b><i> * Bits in Write Register 10 (`Miscellaneous Transmitter/Receiver Control</i></b>
+<a name=L282 href="source/dev/zs/z8530reg.h#L282">282</a> <b><i> * Bits').  Bits 6 &amp; 5 are taken as a unit, and some of the bits are</i></b>
+<a name=L283 href="source/dev/zs/z8530reg.h#L283">283</a> <b><i> * meaningful only in certain modes.  Bleah.</i></b>
+<a name=L284 href="source/dev/zs/z8530reg.h#L284">284</a> <b><i> */</i></b>
+<a name=L285 href="source/dev/zs/z8530reg.h#L285">285</a> #define <a href="ident?i=ZSWR10_PRESET_ONES">ZSWR10_PRESET_ONES</a>      0x80    <b><i>/* preset CRC to all 1 (else all 0) */</i></b>
+<a name=L286 href="source/dev/zs/z8530reg.h#L286">286</a> 
+<a name=L287 href="source/dev/zs/z8530reg.h#L287">287</a> #define <a href="ident?i=ZSWR10_NRZ">ZSWR10_NRZ</a>              0x00    <b><i>/* NRZ encoding */</i></b>
+<a name=L288 href="source/dev/zs/z8530reg.h#L288">288</a> #define <a href="ident?i=ZSWR10_NRZI">ZSWR10_NRZI</a>             0x20    <b><i>/* NRZI encoding */</i></b>
+<a name=L289 href="source/dev/zs/z8530reg.h#L289">289</a> #define <a href="ident?i=ZSWR10_FM1">ZSWR10_FM1</a>              0x40    <b><i>/* FM1 encoding */</i></b>
+<a name=L290 href="source/dev/zs/z8530reg.h#L290">290</a> #define <a href="ident?i=ZSWR10_FM0">ZSWR10_FM0</a>              0x60    <b><i>/* FM0 encoding */</i></b>
+<a name=L291 href="source/dev/zs/z8530reg.h#L291">291</a> 
+<a name=L292 href="source/dev/zs/z8530reg.h#L292">292</a> #define <a href="ident?i=ZSWR10_GA_ON_POLL">ZSWR10_GA_ON_POLL</a>       0x10    <b><i>/* go active on poll (loop mode) */</i></b>
+<a name=L293 href="source/dev/zs/z8530reg.h#L293">293</a> #define <a href="ident?i=ZSWR10_MARK_IDLE">ZSWR10_MARK_IDLE</a>        0x08    <b><i>/* all 1s (vs flag) when idle (SDLC) */</i></b>
+<a name=L294 href="source/dev/zs/z8530reg.h#L294">294</a> #define <a href="ident?i=ZSWR10_ABORT_ON_UNDERRUN">ZSWR10_ABORT_ON_UNDERRUN</a> 0x4    <b><i>/* abort on xmit underrun (SDLC) */</i></b>
+<a name=L295 href="source/dev/zs/z8530reg.h#L295">295</a> #define <a href="ident?i=ZSWR10_LOOP_MODE">ZSWR10_LOOP_MODE</a>        0x02    <b><i>/* loop mode (SDLC) */</i></b>
+<a name=L296 href="source/dev/zs/z8530reg.h#L296">296</a> #define <a href="ident?i=ZSWR10_6_BIT_SYNC">ZSWR10_6_BIT_SYNC</a>       0x01    <b><i>/* 6 bits per sync char (sync modes) */</i></b>
+<a name=L297 href="source/dev/zs/z8530reg.h#L297">297</a> 
+<a name=L298 href="source/dev/zs/z8530reg.h#L298">298</a> <b><i>/*</i></b>
+<a name=L299 href="source/dev/zs/z8530reg.h#L299">299</a> <b><i> * Bits in Write Register 11 (`Clock Mode Control').  Bits 6&amp;5, 4&amp;3, and</i></b>
+<a name=L300 href="source/dev/zs/z8530reg.h#L300">300</a> <b><i> * 1&amp;0 are taken as units.  Various bits depend on other bits in complex</i></b>
+<a name=L301 href="source/dev/zs/z8530reg.h#L301">301</a> <b><i> * ways; see the Zilog manual.</i></b>
+<a name=L302 href="source/dev/zs/z8530reg.h#L302">302</a> <b><i> */</i></b>
+<a name=L303 href="source/dev/zs/z8530reg.h#L303">303</a> #define <a href="ident?i=ZSWR11_XTAL">ZSWR11_XTAL</a>             0x80    <b><i>/* have xtal between RTxC* and SYNC* */</i></b>
+<a name=L304 href="source/dev/zs/z8530reg.h#L304">304</a>                                         <b><i>/* (else have TTL oscil. on RTxC*) */</i></b>
+<a name=L305 href="source/dev/zs/z8530reg.h#L305">305</a> #define <a href="ident?i=ZSWR11_RXCLK_RTXC">ZSWR11_RXCLK_RTXC</a>       0x00    <b><i>/* recv clock taken from RTxC* pin */</i></b>
+<a name=L306 href="source/dev/zs/z8530reg.h#L306">306</a> #define <a href="ident?i=ZSWR11_RXCLK_TRXC">ZSWR11_RXCLK_TRXC</a>       0x20    <b><i>/* recv clock taken from TRxC* pin */</i></b>
+<a name=L307 href="source/dev/zs/z8530reg.h#L307">307</a> #define <a href="ident?i=ZSWR11_RXCLK_BAUD">ZSWR11_RXCLK_BAUD</a>       0x40    <b><i>/* recv clock taken from BRG */</i></b>
+<a name=L308 href="source/dev/zs/z8530reg.h#L308">308</a> #define <a href="ident?i=ZSWR11_RXCLK_DPLL">ZSWR11_RXCLK_DPLL</a>       0x60    <b><i>/* recv clock taken from DPLL */</i></b>
+<a name=L309 href="source/dev/zs/z8530reg.h#L309">309</a> 
+<a name=L310 href="source/dev/zs/z8530reg.h#L310">310</a> #define <a href="ident?i=ZSWR11_TXCLK_RTXC">ZSWR11_TXCLK_RTXC</a>       0x00    <b><i>/* xmit clock taken from RTxC* pin */</i></b>
+<a name=L311 href="source/dev/zs/z8530reg.h#L311">311</a> #define <a href="ident?i=ZSWR11_TXCLK_TRXC">ZSWR11_TXCLK_TRXC</a>       0x08    <b><i>/* xmit clock taken from TRxC* pin */</i></b>
+<a name=L312 href="source/dev/zs/z8530reg.h#L312">312</a> #define <a href="ident?i=ZSWR11_TXCLK_BAUD">ZSWR11_TXCLK_BAUD</a>       0x10    <b><i>/* xmit clock taken from BRG */</i></b>
+<a name=L313 href="source/dev/zs/z8530reg.h#L313">313</a> #define <a href="ident?i=ZSWR11_TXCLK_DPLL">ZSWR11_TXCLK_DPLL</a>       0x18    <b><i>/* xmit clock taken from DPLL */</i></b>
+<a name=L314 href="source/dev/zs/z8530reg.h#L314">314</a> 
+<a name=L315 href="source/dev/zs/z8530reg.h#L315">315</a> #define <a href="ident?i=ZSWR11_TRXC_OUT_ENA">ZSWR11_TRXC_OUT_ENA</a>     0x04    <b><i>/* TRxC* pin will be an output */</i></b>
+<a name=L316 href="source/dev/zs/z8530reg.h#L316">316</a>                                         <b><i>/* (unless it is being used above) */</i></b>
+<a name=L317 href="source/dev/zs/z8530reg.h#L317">317</a> #define <a href="ident?i=ZSWR11_TRXC_XTAL">ZSWR11_TRXC_XTAL</a>        0x00    <b><i>/* TRxC output from xtal oscillator */</i></b>
+<a name=L318 href="source/dev/zs/z8530reg.h#L318">318</a> #define <a href="ident?i=ZSWR11_TRXC_XMIT">ZSWR11_TRXC_XMIT</a>        0x01    <b><i>/* TRxC output from xmit clock */</i></b>
+<a name=L319 href="source/dev/zs/z8530reg.h#L319">319</a> #define <a href="ident?i=ZSWR11_TRXC_BAUD">ZSWR11_TRXC_BAUD</a>        0x02    <b><i>/* TRxC output from BRG */</i></b>
+<a name=L320 href="source/dev/zs/z8530reg.h#L320">320</a> #define <a href="ident?i=ZSWR11_TRXC_DPLL">ZSWR11_TRXC_DPLL</a>        0x03    <b><i>/* TRxC output from DPLL */</i></b>
+<a name=L321 href="source/dev/zs/z8530reg.h#L321">321</a> 
+<a name=L322 href="source/dev/zs/z8530reg.h#L322">322</a> <b><i>/*</i></b>
+<a name=L323 href="source/dev/zs/z8530reg.h#L323">323</a> <b><i> * Formula for Write Registers 12 and 13 (`Lower Byte of Baud Rate</i></b>
+<a name=L324 href="source/dev/zs/z8530reg.h#L324">324</a> <b><i> * Generator Time Constant' and `Upper Byte of ...').  Inputs:</i></b>
+<a name=L325 href="source/dev/zs/z8530reg.h#L325">325</a> <b><i> *</i></b>
+<a name=L326 href="source/dev/zs/z8530reg.h#L326">326</a> <b><i> *      f       BRG input clock frequency (in Hz) AFTER division</i></b>
+<a name=L327 href="source/dev/zs/z8530reg.h#L327">327</a> <b><i> *              by 1, 16, 32, or 64 (per clock divisor in WR4)</i></b>
+<a name=L328 href="source/dev/zs/z8530reg.h#L328">328</a> <b><i> *      bps     desired rate in bits per second (9600, etc)</i></b>
+<a name=L329 href="source/dev/zs/z8530reg.h#L329">329</a> <b><i> *</i></b>
+<a name=L330 href="source/dev/zs/z8530reg.h#L330">330</a> <b><i> * We want</i></b>
+<a name=L331 href="source/dev/zs/z8530reg.h#L331">331</a> <b><i> *</i></b>
+<a name=L332 href="source/dev/zs/z8530reg.h#L332">332</a> <b><i> *        f</i></b>
+<a name=L333 href="source/dev/zs/z8530reg.h#L333">333</a> <b><i> *      ----- + 0.5 - 2</i></b>
+<a name=L334 href="source/dev/zs/z8530reg.h#L334">334</a> <b><i> *      2 bps</i></b>
+<a name=L335 href="source/dev/zs/z8530reg.h#L335">335</a> <b><i> *</i></b>
+<a name=L336 href="source/dev/zs/z8530reg.h#L336">336</a> <b><i> * rounded down to an integer.  This can be computed entirely</i></b>
+<a name=L337 href="source/dev/zs/z8530reg.h#L337">337</a> <b><i> * in integer arithemtic as:</i></b>
+<a name=L338 href="source/dev/zs/z8530reg.h#L338">338</a> <b><i> *</i></b>
+<a name=L339 href="source/dev/zs/z8530reg.h#L339">339</a> <b><i> *      f + bps</i></b>
+<a name=L340 href="source/dev/zs/z8530reg.h#L340">340</a> <b><i> *      ------- - 2</i></b>
+<a name=L341 href="source/dev/zs/z8530reg.h#L341">341</a> <b><i> *       2 bps</i></b>
+<a name=L342 href="source/dev/zs/z8530reg.h#L342">342</a> <b><i> */</i></b>
+<a name=L343 href="source/dev/zs/z8530reg.h#L343">343</a> #define <a href="ident?i=BPS_TO_TCONST">BPS_TO_TCONST</a>(<a href="ident?i=f">f</a>, bps)   ((((<a href="ident?i=f">f</a>) + (bps)) / (2 * (bps))) - 2)
+<a name=L344 href="source/dev/zs/z8530reg.h#L344">344</a> 
+<a name=L345 href="source/dev/zs/z8530reg.h#L345">345</a> <b><i>/* inverse of above: given a BRG Time Constant, return Bits Per Second */</i></b>
+<a name=L346 href="source/dev/zs/z8530reg.h#L346">346</a> #define <a href="ident?i=TCONST_TO_BPS">TCONST_TO_BPS</a>(<a href="ident?i=f">f</a>, tc)    ((<a href="ident?i=f">f</a>) / 2 / ((tc) + 2))
+<a name=L347 href="source/dev/zs/z8530reg.h#L347">347</a> 
+<a name=L348 href="source/dev/zs/z8530reg.h#L348">348</a> <b><i>/*</i></b>
+<a name=L349 href="source/dev/zs/z8530reg.h#L349">349</a> <b><i> * Bits in Write Register 14 (`Miscellaneous Control Bits').</i></b>
+<a name=L350 href="source/dev/zs/z8530reg.h#L350">350</a> <b><i> * Bits 7 through 5 are taken as a unit and make up a `DPLL command'.</i></b>
+<a name=L351 href="source/dev/zs/z8530reg.h#L351">351</a> <b><i> */</i></b>
+<a name=L352 href="source/dev/zs/z8530reg.h#L352">352</a> #define <a href="ident?i=ZSWR14_DPLL_NOOP">ZSWR14_DPLL_NOOP</a>        0x00    <b><i>/* leave DPLL alone */</i></b>
+<a name=L353 href="source/dev/zs/z8530reg.h#L353">353</a> #define <a href="ident?i=ZSWR14_DPLL_SEARCH">ZSWR14_DPLL_SEARCH</a>      0x20    <b><i>/* enter search mode */</i></b>
+<a name=L354 href="source/dev/zs/z8530reg.h#L354">354</a> #define <a href="ident?i=ZSWR14_DPLL_RESET_CM">ZSWR14_DPLL_RESET_CM</a>    0x40    <b><i>/* reset `clock missing' in RR10 */</i></b>
+<a name=L355 href="source/dev/zs/z8530reg.h#L355">355</a> #define <a href="ident?i=ZSWR14_DPLL_DISABLE">ZSWR14_DPLL_DISABLE</a>     0x60    <b><i>/* disable DPLL (continuous search) */</i></b>
+<a name=L356 href="source/dev/zs/z8530reg.h#L356">356</a> #define <a href="ident?i=ZSWR14_DPLL_SRC_BAUD">ZSWR14_DPLL_SRC_BAUD</a>    0x80    <b><i>/* set DPLL src = BRG */</i></b>
+<a name=L357 href="source/dev/zs/z8530reg.h#L357">357</a> #define <a href="ident?i=ZSWR14_DPLL_SRC_RTXC">ZSWR14_DPLL_SRC_RTXC</a>    0xa0    <b><i>/* set DPLL src = RTxC* or xtal osc */</i></b>
+<a name=L358 href="source/dev/zs/z8530reg.h#L358">358</a> #define <a href="ident?i=ZSWR14_DPLL_FM">ZSWR14_DPLL_FM</a>          0xc0    <b><i>/* operate in FM mode */</i></b>
+<a name=L359 href="source/dev/zs/z8530reg.h#L359">359</a> #define <a href="ident?i=ZSWR14_DPLL_NRZI">ZSWR14_DPLL_NRZI</a>        0xe0    <b><i>/* operate in NRZI mode */</i></b>
+<a name=L360 href="source/dev/zs/z8530reg.h#L360">360</a> 
+<a name=L361 href="source/dev/zs/z8530reg.h#L361">361</a> #define <a href="ident?i=ZSWR14_LOCAL_LOOPBACK">ZSWR14_LOCAL_LOOPBACK</a>   0x10    <b><i>/* set local loopback mode */</i></b>
+<a name=L362 href="source/dev/zs/z8530reg.h#L362">362</a> #define <a href="ident?i=ZSWR14_AUTO_ECHO">ZSWR14_AUTO_ECHO</a>        0x08    <b><i>/* set auto echo mode */</i></b>
+<a name=L363 href="source/dev/zs/z8530reg.h#L363">363</a> #define <a href="ident?i=ZSWR14_DTR_REQ">ZSWR14_DTR_REQ</a>          0x04    <b><i>/* DTR* / REQ* pin gives REQ* */</i></b>
+<a name=L364 href="source/dev/zs/z8530reg.h#L364">364</a> #define <a href="ident?i=ZSWR14_BAUD_FROM_PCLK">ZSWR14_BAUD_FROM_PCLK</a>   0x02    <b><i>/* BRG clock taken from PCLK */</i></b>
+<a name=L365 href="source/dev/zs/z8530reg.h#L365">365</a>                                         <b><i>/* (else from RTxC* pin or xtal osc) */</i></b>
+<a name=L366 href="source/dev/zs/z8530reg.h#L366">366</a> #define <a href="ident?i=ZSWR14_BAUD_ENA">ZSWR14_BAUD_ENA</a>         0x01    <b><i>/* enable BRG countdown */</i></b>
+<a name=L367 href="source/dev/zs/z8530reg.h#L367">367</a> 
+<a name=L368 href="source/dev/zs/z8530reg.h#L368">368</a> <b><i>/*</i></b>
+<a name=L369 href="source/dev/zs/z8530reg.h#L369">369</a> <b><i> * Bits in Write Register 15 (`External/Status Interrupt Control').</i></b>
+<a name=L370 href="source/dev/zs/z8530reg.h#L370">370</a> <b><i> * Most of these cause status interrupts whenever the corresponding</i></b>
+<a name=L371 href="source/dev/zs/z8530reg.h#L371">371</a> <b><i> * bit or pin changes state (i.e., any rising or falling edge).</i></b>
+<a name=L372 href="source/dev/zs/z8530reg.h#L372">372</a> <b><i> *</i></b>
+<a name=L373 href="source/dev/zs/z8530reg.h#L373">373</a> <b><i> * NOTE: ZSWR15_SDLC_FIFO &amp; ZSWR15_ENABLE_ENHANCED should not be</i></b>
+<a name=L374 href="source/dev/zs/z8530reg.h#L374">374</a> <b><i> * set on an NMOS 8530. Also, ZSWR15_ENABLE_ENHANCED is only</i></b>
+<a name=L375 href="source/dev/zs/z8530reg.h#L375">375</a> <b><i> * available on the 85230.</i></b>
+<a name=L376 href="source/dev/zs/z8530reg.h#L376">376</a> <b><i> */</i></b>
+<a name=L377 href="source/dev/zs/z8530reg.h#L377">377</a> #define <a href="ident?i=ZSWR15_BREAK_IE">ZSWR15_BREAK_IE</a>         0x80    <b><i>/* enable break/abort status int */</i></b>
+<a name=L378 href="source/dev/zs/z8530reg.h#L378">378</a> #define <a href="ident?i=ZSWR15_TXUEOM_IE">ZSWR15_TXUEOM_IE</a>        0x40    <b><i>/* enable TX underrun/EOM status int */</i></b>
+<a name=L379 href="source/dev/zs/z8530reg.h#L379">379</a> #define <a href="ident?i=ZSWR15_CTS_IE">ZSWR15_CTS_IE</a>           0x20    <b><i>/* enable CTS* pin status int */</i></b>
+<a name=L380 href="source/dev/zs/z8530reg.h#L380">380</a> #define <a href="ident?i=ZSWR15_SYNCHUNT_IE">ZSWR15_SYNCHUNT_IE</a>      0x10    <b><i>/* enable SYNC* pin/hunt status int */</i></b>
+<a name=L381 href="source/dev/zs/z8530reg.h#L381">381</a> #define <a href="ident?i=ZSWR15_DCD_IE">ZSWR15_DCD_IE</a>           0x08    <b><i>/* enable DCD* pin status int */</i></b>
+<a name=L382 href="source/dev/zs/z8530reg.h#L382">382</a> #define <a href="ident?i=ZSWR15_SDLC_FIFO">ZSWR15_SDLC_FIFO</a>        0x04    <b><i>/* enable SDLC FIFO enhancements */</i></b>
+<a name=L383 href="source/dev/zs/z8530reg.h#L383">383</a> #define <a href="ident?i=ZSWR15_ZERO_COUNT_IE">ZSWR15_ZERO_COUNT_IE</a>    0x02    <b><i>/* enable BRG-counter = 0 status int */</i></b>
+<a name=L384 href="source/dev/zs/z8530reg.h#L384">384</a> #define <a href="ident?i=ZSWR15_ENABLE_ENHANCED">ZSWR15_ENABLE_ENHANCED</a>  0x01    <b><i>/* enable writing WR7' at reg 7 */</i></b>
+<a name=L385 href="source/dev/zs/z8530reg.h#L385">385</a> 
+<a name=L386 href="source/dev/zs/z8530reg.h#L386">386</a> <b><i>/*</i></b>
+<a name=L387 href="source/dev/zs/z8530reg.h#L387">387</a> <b><i> * Bits in Read Register 0 (`Transmit/Receive Buffer Status and External</i></b>
+<a name=L388 href="source/dev/zs/z8530reg.h#L388">388</a> <b><i> * Status').</i></b>
+<a name=L389 href="source/dev/zs/z8530reg.h#L389">389</a> <b><i> */</i></b>
+<a name=L390 href="source/dev/zs/z8530reg.h#L390">390</a> #define <a href="ident?i=ZSRR0_BREAK">ZSRR0_BREAK</a>             0x80    <b><i>/* break/abort detected */</i></b>
+<a name=L391 href="source/dev/zs/z8530reg.h#L391">391</a> #define <a href="ident?i=ZSRR0_TXUNDER">ZSRR0_TXUNDER</a>           0x40    <b><i>/* transmit underrun/EOM (sync) */</i></b>
+<a name=L392 href="source/dev/zs/z8530reg.h#L392">392</a> #define <a href="ident?i=ZSRR0_CTS">ZSRR0_CTS</a>               0x20    <b><i>/* clear to send */</i></b>
+<a name=L393 href="source/dev/zs/z8530reg.h#L393">393</a> #define <a href="ident?i=ZSRR0_SYNC_HUNT">ZSRR0_SYNC_HUNT</a>         0x10    <b><i>/* sync/hunt (sync mode) */</i></b>
+<a name=L394 href="source/dev/zs/z8530reg.h#L394">394</a> #define <a href="ident?i=ZSRR0_DCD">ZSRR0_DCD</a>               0x08    <b><i>/* data carrier detect */</i></b>
+<a name=L395 href="source/dev/zs/z8530reg.h#L395">395</a> #define <a href="ident?i=ZSRR0_TX_READY">ZSRR0_TX_READY</a>          0x04    <b><i>/* transmit buffer empty */</i></b>
+<a name=L396 href="source/dev/zs/z8530reg.h#L396">396</a> #define <a href="ident?i=ZSRR0_ZERO_COUNT">ZSRR0_ZERO_COUNT</a>        0x02    <b><i>/* zero count in baud clock */</i></b>
+<a name=L397 href="source/dev/zs/z8530reg.h#L397">397</a> #define <a href="ident?i=ZSRR0_RX_READY">ZSRR0_RX_READY</a>          0x01    <b><i>/* received character ready */</i></b>
+<a name=L398 href="source/dev/zs/z8530reg.h#L398">398</a> 
+<a name=L399 href="source/dev/zs/z8530reg.h#L399">399</a> <b><i>/*</i></b>
+<a name=L400 href="source/dev/zs/z8530reg.h#L400">400</a> <b><i> * Bits in Read Register 1 (the Zilog book does not name this one).</i></b>
+<a name=L401 href="source/dev/zs/z8530reg.h#L401">401</a> <b><i> */</i></b>
+<a name=L402 href="source/dev/zs/z8530reg.h#L402">402</a> #define <a href="ident?i=ZSRR1_EOF">ZSRR1_EOF</a>               0x80    <b><i>/* end of frame (SDLC mode) */</i></b>
+<a name=L403 href="source/dev/zs/z8530reg.h#L403">403</a> #define <a href="ident?i=ZSRR1_FE">ZSRR1_FE</a>                0x40    <b><i>/* CRC/framing error */</i></b>
+<a name=L404 href="source/dev/zs/z8530reg.h#L404">404</a> #define <a href="ident?i=ZSRR1_DO">ZSRR1_DO</a>                0x20    <b><i>/* data (receiver) overrun */</i></b>
+<a name=L405 href="source/dev/zs/z8530reg.h#L405">405</a> #define <a href="ident?i=ZSRR1_PE">ZSRR1_PE</a>                0x10    <b><i>/* parity error */</i></b>
+<a name=L406 href="source/dev/zs/z8530reg.h#L406">406</a> #define <a href="ident?i=ZSRR1_RC0">ZSRR1_RC0</a>               0x08    <b><i>/* residue code 0 (SDLC mode) */</i></b>
+<a name=L407 href="source/dev/zs/z8530reg.h#L407">407</a> #define <a href="ident?i=ZSRR1_RC1">ZSRR1_RC1</a>               0x04    <b><i>/* residue code 1 (SDLC mode) */</i></b>
+<a name=L408 href="source/dev/zs/z8530reg.h#L408">408</a> #define <a href="ident?i=ZSRR1_RC2">ZSRR1_RC2</a>               0x02    <b><i>/* residue code 2 (SDLC mode) */</i></b>
+<a name=L409 href="source/dev/zs/z8530reg.h#L409">409</a> #define <a href="ident?i=ZSRR1_ALL_SENT">ZSRR1_ALL_SENT</a>          0x01    <b><i>/* all chars out of xmitter (async) */</i></b>
+<a name=L410 href="source/dev/zs/z8530reg.h#L410">410</a> 
+<a name=L411 href="source/dev/zs/z8530reg.h#L411">411</a> <b><i>/*</i></b>
+<a name=L412 href="source/dev/zs/z8530reg.h#L412">412</a> <b><i> * Read Register 2 in B channel contains status bits if VECTOR_INCL_STAT</i></b>
+<a name=L413 href="source/dev/zs/z8530reg.h#L413">413</a> <b><i> * is set.</i></b>
+<a name=L414 href="source/dev/zs/z8530reg.h#L414">414</a> <b><i> */</i></b>
+<a name=L415 href="source/dev/zs/z8530reg.h#L415">415</a> 
+<a name=L416 href="source/dev/zs/z8530reg.h#L416">416</a> <b><i>/*</i></b>
+<a name=L417 href="source/dev/zs/z8530reg.h#L417">417</a> <b><i> * Bits in Read Register 3 (`Interrupt Pending').  Only channel A</i></b>
+<a name=L418 href="source/dev/zs/z8530reg.h#L418">418</a> <b><i> * has an RR3.</i></b>
+<a name=L419 href="source/dev/zs/z8530reg.h#L419">419</a> <b><i> */</i></b>
+<a name=L420 href="source/dev/zs/z8530reg.h#L420">420</a>                         <b><i>/*      0x80       unused, returned as 0 */</i></b>
+<a name=L421 href="source/dev/zs/z8530reg.h#L421">421</a>                         <b><i>/*      0x40       unused, returned as 0 */</i></b>
+<a name=L422 href="source/dev/zs/z8530reg.h#L422">422</a> #define <a href="ident?i=ZSRR3_IP_A_RX">ZSRR3_IP_A_RX</a>           0x20    <b><i>/* channel A recv int pending */</i></b>
+<a name=L423 href="source/dev/zs/z8530reg.h#L423">423</a> #define <a href="ident?i=ZSRR3_IP_A_TX">ZSRR3_IP_A_TX</a>           0x10    <b><i>/* channel A xmit int pending */</i></b>
+<a name=L424 href="source/dev/zs/z8530reg.h#L424">424</a> #define <a href="ident?i=ZSRR3_IP_A_STAT">ZSRR3_IP_A_STAT</a>         0x08    <b><i>/* channel A status int pending */</i></b>
+<a name=L425 href="source/dev/zs/z8530reg.h#L425">425</a> #define <a href="ident?i=ZSRR3_IP_B_RX">ZSRR3_IP_B_RX</a>           0x04    <b><i>/* channel B recv int pending */</i></b>
+<a name=L426 href="source/dev/zs/z8530reg.h#L426">426</a> #define <a href="ident?i=ZSRR3_IP_B_TX">ZSRR3_IP_B_TX</a>           0x02    <b><i>/* channel B xmit int pending */</i></b>
+<a name=L427 href="source/dev/zs/z8530reg.h#L427">427</a> #define <a href="ident?i=ZSRR3_IP_B_STAT">ZSRR3_IP_B_STAT</a>         0x01    <b><i>/* channel B status int pending */</i></b>
+<a name=L428 href="source/dev/zs/z8530reg.h#L428">428</a> 
+<a name=L429 href="source/dev/zs/z8530reg.h#L429">429</a> <b><i>/*</i></b>
+<a name=L430 href="source/dev/zs/z8530reg.h#L430">430</a> <b><i> * Bits in Read Register 10 (`contains some miscellaneous status bits').</i></b>
+<a name=L431 href="source/dev/zs/z8530reg.h#L431">431</a> <b><i> */</i></b>
+<a name=L432 href="source/dev/zs/z8530reg.h#L432">432</a> #define <a href="ident?i=ZSRR10_1_CLOCK_MISSING">ZSRR10_1_CLOCK_MISSING</a>  0x80    <b><i>/* 1 clock edge missing (FM mode) */</i></b>
+<a name=L433 href="source/dev/zs/z8530reg.h#L433">433</a> #define <a href="ident?i=ZSRR10_2_CLOCKS_MISSING">ZSRR10_2_CLOCKS_MISSING</a> 0x40    <b><i>/* 2 clock edges missing (FM mode) */</i></b>
+<a name=L434 href="source/dev/zs/z8530reg.h#L434">434</a>                         <b><i>/*      0x20       unused */</i></b>
+<a name=L435 href="source/dev/zs/z8530reg.h#L435">435</a> #define <a href="ident?i=ZSRR10_LOOP_SENDING">ZSRR10_LOOP_SENDING</a>     0x10    <b><i>/* xmitter controls loop (SDLC loop) */</i></b>
+<a name=L436 href="source/dev/zs/z8530reg.h#L436">436</a>                         <b><i>/*      0x08       unused */</i></b>
+<a name=L437 href="source/dev/zs/z8530reg.h#L437">437</a>                         <b><i>/*      0x04       unused */</i></b>
+<a name=L438 href="source/dev/zs/z8530reg.h#L438">438</a> #define <a href="ident?i=ZSRR10_ON_LOOP">ZSRR10_ON_LOOP</a>          0x02    <b><i>/* SCC is on loop (SDLC/X.21 modes) */</i></b>
+<a name=L439 href="source/dev/zs/z8530reg.h#L439">439</a> 
+<a name=L440 href="source/dev/zs/z8530reg.h#L440">440</a> <b><i>/*</i></b>
+<a name=L441 href="source/dev/zs/z8530reg.h#L441">441</a> <b><i> * Bits in Read Register 15.  This register is one of the few that</i></b>
+<a name=L442 href="source/dev/zs/z8530reg.h#L442">442</a> <b><i> * simply reads back the corresponding Write Register.</i></b>
+<a name=L443 href="source/dev/zs/z8530reg.h#L443">443</a> <b><i> */</i></b>
+<a name=L444 href="source/dev/zs/z8530reg.h#L444">444</a> #define <a href="ident?i=ZSRR15_BREAK_IE">ZSRR15_BREAK_IE</a>         0x80    <b><i>/* break/abort status int enable */</i></b>
+<a name=L445 href="source/dev/zs/z8530reg.h#L445">445</a> #define <a href="ident?i=ZSRR15_TXUEOM_IE">ZSRR15_TXUEOM_IE</a>        0x40    <b><i>/* TX underrun/EOM status int enable */</i></b>
+<a name=L446 href="source/dev/zs/z8530reg.h#L446">446</a> #define <a href="ident?i=ZSRR15_CTS_IE">ZSRR15_CTS_IE</a>           0x20    <b><i>/* CTS* pin status int enable */</i></b>
+<a name=L447 href="source/dev/zs/z8530reg.h#L447">447</a> #define <a href="ident?i=ZSRR15_SYNCHUNT_IE">ZSRR15_SYNCHUNT_IE</a>      0x10    <b><i>/* SYNC* pin/hunt status int enable */</i></b>
+<a name=L448 href="source/dev/zs/z8530reg.h#L448">448</a> #define <a href="ident?i=ZSRR15_DCD_IE">ZSRR15_DCD_IE</a>           0x08    <b><i>/* DCD* pin status int enable */</i></b>
+<a name=L449 href="source/dev/zs/z8530reg.h#L449">449</a>                         <b><i>/*      0x04       unused, returned as zero */</i></b>
+<a name=L450 href="source/dev/zs/z8530reg.h#L450">450</a> #define <a href="ident?i=ZSRR15_ZERO_COUNT_IE">ZSRR15_ZERO_COUNT_IE</a>    0x02    <b><i>/* BRG-counter = 0 status int enable */</i></b>
+<a name=L451 href="source/dev/zs/z8530reg.h#L451">451</a>                         <b><i>/*      0x01       unused, returned as zero */</i></b>
+<a name=L452 href="source/dev/zs/z8530reg.h#L452">452</a> </pre><hr>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/zs/z8530reg.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<hr>
+This page was automatically generated by the 
+<a href="http:blurb.html">LXR engine</a>.
+<br>
+Visit the <a href="http://lxr.linux.no/">LXR main site</a> for more
+information.
+</html>

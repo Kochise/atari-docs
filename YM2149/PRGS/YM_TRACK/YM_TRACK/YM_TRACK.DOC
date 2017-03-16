@@ -1,0 +1,1755 @@
+                YM-TRACKER v1.0
+                ===============
+Copyright :     Le YM-Tracker est un programme entiŠrement r‚alis‚ tout
+                seul comme un grand par A. Vidovic en 1992.
+                Toute reproduction non autoris‚e par l'auteur est bien
+                ‚videmment strictement interdite, conform‚ment … la
+                loi nø85-660 du 3 juillet 1985, art. 47 (dura lex sed lex).
+                Ce logiciel fut ‚dit‚ par La Boutique Pressimage en 1993.
+
+                Documentation
+                -------------
+
+POURQUOI UN TRACKER YM ?
+     Bonne question, que je vous remercie d'avoir eu la bonne id‚e de poser... 
+En fait, les sons des musiques "soundchip" ne sont pas trŠs beaux, et sont 
+mˆme plut“t laids, mais la contrepartie est qu'ils ne n‚cessitent pas beaucoup 
+de temps de calcul sur les ATARI ST, ce qui en laisse d'autant plus pour les 
+autres effets utilis‚s, dans les d‚mos, par exemple... Autre avantage: la 
+place requise en m‚moire est minime, mˆme avec beaucoup de sons diff‚rents, 
+contrairement aux modules de Trackers de musique digitalis‚e...
+     Les avantages de ces musique semblent l'avoir remport‚ sur leurs 
+inconv‚nients, car on les retrouve dans presque toutes les d‚mos et les jeux 
+sortis … ce jour sur ST. Des musiciens, comme Jochen Hippel (alias "Mad Max"), 
+Robb Hubbard et David Whittaker ont largement peupl‚ le ST en musiques 
+"SoundChip"... Qui ne connait pas les classiques "Human Race 4", "Chambers of 
+Shaolin", "Starpaws 2" ? Toutes ces musiques font d‚sormais partie int‚grante 
+de l'histoire de l'Atari ST, et donc de l'histoire de l'informatique , qui 
+d‚bute … peine... Qui sait, peut-ˆtre un jour seront-elles encore ‚cout‚es, 
+avec nostalgie par les vieillards d‚cr‚pis et r‚sistants au changement que 
+nous serons devenus, ou avec un brin d'amusement par nos petits enfants, comme 
+nous-mˆme, ‚coutant un vieux "78 tours" ?...
+
+HISTORIQUE ET INTRODUCTION
+     Le d‚veloppement du YM-Tracker a bien demand‚ un bon mois de boulot … 16 
+heures par jour environ... Puis un autre mois, plus "dilu‚"... Oui, je sais, 
+cela peut paraitre ridicule de passer tellement de temps … faire un programme 
+tout juste capable de g‚rer correctement la sortie "caisse enregistreuse" du 
+ST (le YM-2149, d'o— le nom du logiciel), en d‚laissant femme et enfants, 
+mais... Que voulez-vous, c'est plus fort que moi : ayant lu dans un ancien 
+num‚ro de ST-Magazine (nø56 - paru en novembre 1991 - page 138 - Colonne 
+centrale - lignes 27 & 28) que le g‚nial musicien Mad Max ("Ich bin der Max... 
+Mad Max !"), ayant fait des ses petites mains agiles … lui tout seul un 
+programme d'aide … la r‚alisation de musiques "soundchip", refusait de le 
+mettre … la disposition du grand public, mˆme sous forme commerciale, mon sang 
+ne fit qu'un tour : "quoi ?", me dis-je, "Ce petit mozart de l'informatique, 
+disciple du grand Robb Hubbard, cousin de David Whittaker, voisin ‚loign‚ de 
+l'authentiquement g‚nial Anders "An cool" Nilsson, aurait-il peur que d'autres 
+puissent faire mieux que lui, avec les mˆmes outils ? Et bien, c'est ce qu'on 
+va voir !". De l…, partit une longue r‚flexion, s'‚talant sur de nombreuses 
+semaines (le cahier des charges en sait quelque chose !) : Qu'est-ce qu'un son 
+? Quoi ˆtre un instrument de musique ? Comment donner … l'utilisateur la 
+facilit‚ de la souris alli‚e … la puissance de l'entr‚e des dizaines de 
+paramŠtres que n‚cessite la d‚finition d'une forme d'onde ? Et cela, en un 
+minimum d'‚crans, le plus lisibles possibles, et si possible familiers ? A 
+l'‚poque de cette premiŠre r‚flexion, je n'avait pas encore vu … quoi 
+ressemblaient les autres utilitaires de musique "Soundchip"... L'‚criture des 
+formules, l'aide des amis musiciens (ce que je ne suis pas et ne serai jamais: 
+j'ai toujours ‚t‚ nul, au cours de solfŠge !), la marmite cuisait … feu doux 
+le concept qui allait donner naissance au programme qui se trouve … c“t‚ de ce 
+fichier de documentation: le YM-Tracker ! Pour la gestion des commandes 
+souris, GEM devait suffire... Inutile de forger un ‚cran en overscan pour un 
+‚diteur de bandes … trois voies plus une master ! Et puis, il y a des 
+facilit‚s dans les trackers "classiques"  que l'on aimerait retrouver dans un 
+tracker "soundchip"... Les nombres ? En hexad‚cimal, ‡a n'a jamais gˆn‚ 
+personne: presque tous les trackers en font usage : ils sont tellement 
+pratiques … cadrer dans les rigides colonnes qui d‚crivent la musique...
+     Voil… qui me mena … un beau jour de Juin, o— je me dis... "Ben mon vieux, 
+faudrais p'tˆt arrˆter de cogiter et passer … l'action, tu ne trouves pas?"... 
+Jusque l…, en effet, j'avais trouv‚ des millions d'alibis pour ne pas me 
+mettre … la programmation de ce morceau : un antivirus par ci, quelques 
+programmes de simulation num‚rique (sur autre chose qu'un ST !) par l…, la 
+mise au point de la GEMBase II pour le T.F.C., etc... Jusqu'… ce que je me 
+d‚cide … rouvrir le cahier des charges, … avaler une bonne bol‚e de caf‚ fort, 
+… virer le chat du clavier, … passer l'aspirateur sur le clavier (pas … cause 
+de la poussiŠre, … cause des poils du chat !), … allumer le moniteur, le 
+disque, la bˆte (pas le chat, l'ordinateur !), … souffler un grand coup... Et 
+c'‚tait parti ! La version 0.1 fut compl‚t‚e en 20 jours !... Je pris alors le 
+t‚l‚phone, pour avertir deux trois copains de l'aubaine, et pendant qu'eux 
+‚taient sur la route, moi, j'‚tais sous la douche (enfin ! Qu'est ce que je 
+pouvais puer ! Mˆme les gosses avaient fini par se boucher le nez pour venir 
+me souhaiter une bonne soir‚e! 'Pouvez pas savoir ce que ‡a fait du bien de se 
+sentir tout propre!)...
+     La premiŠre question que me posa Philippe, en voyant le tableau de bord, 
+pourtant trŠs simplifi‚, fut : "Ouais... Et comment ‡a marche ?". Zut ! Il 
+fallu que je leur fasse une d‚monstration : effectivement, une fois qu'on a 
+saisi l'affaire de la d‚finition des "instruments" de musique (en fait, des 
+"sons"), tout est … peu prŠs pareil que pour un tracker de son digitalis‚ ! En 
+fait, MERCI A AN COOL, DES T.C.B. !!! Car je me suis inspir‚ des commandes de 
+son excelllllent TCB Tracker (c) An Cool et M.P.H. (au fait, il parait que ce 
+pauvre An Cool n'a pas ‚t‚ pay‚ par M.P.H. pour son Tracker : c'est ce qu'il 
+‚crit dans la page de pr‚sentation de sa M-Demo 4 ! Alors, si vous avez, comme 
+moi, achet‚ son tracker, envoyez-lui ses 50 dollars : il les a bien m‚rit‚s! 
+N'oubliez pas qu'An Cool est su‚dois, que son nom est Anders Nilsson et qu'il 
+habite … Stockholm... Vous pouvez essayer de le joindre … travers les studios 
+SEABEAR (CYBER?)... Voir l'adresse en annexe), pour les commandes de mon 
+YM-Tracker... Je pr‚cise que je ne l'ai pas repomp‚ : pour vous en convaincre, 
+prenez un bon debugger et comparez les deux codes : ils sont fondamentalement 
+diff‚rents : l'un est de l'assembleur 68000 pur (le TCB), l'autre est un 
+m‚lange d'assembleur et de GEMBase II !
+     Donc, vous avez compris : si vous Štes d‚j… familier(e)(s) avec le TCB 
+Tracker ou un autre SoundTracker, vous n'aurez probablement pas de difficult‚ 
+… apprendre … vous servir de celui-ci ! Il est cependant bon de jeter un coup 
+d'oeil aux conventions que j'ai d‚finies, en ce qui concerne la d‚finition des 
+sons et des formes d'ondes.
+     Ah, oui : Je pr‚cise pour ceux qui ne pensent jamais … v‚rifier : la 
+touche <help> vous fait acc‚der … des ‚crans d'aide ! Voil… qui est rudement 
+pratique, quand on n'a pas envie de se trimbaler des pages de doc pour 
+retrouver le raccourci-clavier de la commande "copy track with offset"!
+	Autre chose : pour les habitu‚s de la faute de frappe : la touche <Undo> 
+permet d'annuler la plupart des commandes "dangereuses"... Elle s'annule 
+d'ailleurs aussi elle-mˆme !
+     Bref.
+     Disais-je : ils repartirent, charg‚s comme des rois-mages, avec la 
+version 0.1 … beta-tester (un programmeur ‚tant dans l'incapacit‚ de trouver 
+toutes les ‚tourderies ou oublis dans sa propre cr‚ation, on appelle "alpha 
+test" le test r‚alis‚ en cours de d‚veloppement par le programmeur lui-mˆme, 
+et "beta-test" celui men‚ … bien par ses copains, avant le dernier test, fait 
+lui par les clients … leurs risques et p‚rils : vous avez remarqu‚ la petite 
+remarque assassine, au d‚but des docs, "Ni l'auteur, ni l'‚diteur ne peuvent 
+ˆtre tenus pour responsables des ‚ventuels dommages caus‚s par l'utilisation 
+du logiciel que vous avez achet‚ … ce prix exorbitant" ?)...
+     Une semaine plus tard, … naviguer entre le t‚l‚phone ("Dis-donc, coco... 
+Comment se fait-il que le tempo soit r‚duit de moiti‚ au changement de 
+pattern?" "Ah oui, merde ! J'avais pas remarqu‚, dis !... J'm'en va te 
+corriger ‡a totsvite, mon gaillard ! Clac !") et le clavier, … la pŠche aux 
+bugs aux bugs aux bugueuuus ... Nous d‚cidƒmes de concert que l'affaire ‚tait 
+dans le sac : la version 0.2 ‚tait prˆte !
+     A nous la fortune ! On va le faire ‚diter par... Par... Par qui, tiens ? 
+Judicieuse remarque ... Bon, allez, vu qu'aprŠs tout, c'est pas la d‚couverte 
+du siŠcle, mais qu'il a quand mˆme de la gueule, on va l'envoyer chez 
+Pressimage : Ce sont eux qui font les prix les plus bas du march‚ ! Comme ‡a, 
+on n'aura pas trop l'impression d'ˆtre des escrocs, avec notre Tracker de 
+supermarch‚ ("Gling ! Trente six quatrevingt doze, missi‚ Vincent ! 
+Poiiiinn!!! POUIIIIIIN !!! Il doit convaincre un monde incr‚dule que le 
+cauchemar a d‚j… commenc‚ !!!")...
+     Evidemment, petit … petit, on me demandait, qui une fonction <Undo>, qui 
+un synth‚tiseur, qui un chronomŠtre, etc... On me montra d'autres soudchip 
+trackers, dont un qui avait ‚t‚ diffus‚ dans la disquette gratuite de ST-Mag, 
+et qui n'‚tait pas fameux (programm‚ en GFA-Basic, commandes lourdes, faible 
+interactivit‚, pas de scrolling pendant qu'on le fait jouer, donc pas moyen 
+d'enregistrer en temps r‚el, etc)... Et en … peu prŠs l'‚quivalent d'un autre 
+mois, la version 1.0, avec des modules d'exemples, dont une bonne partie 
+inspir‚s de Mad Max (tiens tiens... Voil…-t-y pas qu'on arriverait … refaire 
+ses modules, et mˆme presque en mieux ?), vit le jour.
+     Et voili voil… comment toute l'histoire a commenc‚ ! MAINTENANT PASSONS 
+AU VIF DU SUJET... C'est pas que je m'emmerde … la lire, votre doc, mais mon 
+imprimante a un ruban … bout de souffle, et le papier commence … se faire 
+rare, dans le quartier !
+
+----------------------------------------------------------------------------
+                        CONVENTIONS DU YM-TRACKER
+                        -------------------------
+
+     Le YM-Tracker vous permet de composer des musiques "SoundChip".
+     C'est … dire : sur trois voies, les trois voies du YM-2149. De plus, vous 
+avez accŠs … toutes les possibilit‚s offertes par ce processeur sonore: volume 
+r‚glable, g‚n‚rateur de bruit blanc, p‚riode d'enveloppe suppl‚mentaire, 
+etc... Les limites ‚tant : votre imagination, vos connaissances en musique, et 
+le 50Hz!
+     Le 50 Hz, car chaque paramŠtre ne pourra ˆtre modifi‚ au maximum que 50 
+fois par seconde ! C'est ce qui est pratiqu‚ en g‚n‚ral, dans les musiques de 
+Mad max : l'unit‚ de temps est le cinquantiŠme de seconde. Le tempo sera un 
+nombre proportionnel … cette unit‚ (exemple : un tempo de 9 correspondra … un 
+battement tous les 9*(1/50)=0.18 secondes). Les courbes de vibrato ou de 
+tremolo (cf plus bas) que vous pourrez dessiner seront telles que chaque point 
+correspondra … 1/50 seconde.
+     Gr…ce … ceci, vous pouvez d‚finir des "instruments de musique" (appel‚s 
+"sound" par le logiciel), qui sont la r‚union de deux courbes d'enveloppes : 
+une courbe en fr‚quence (le vibrato) et une courbe en amplitude (le tremolo). 
+Vous pouvez librement "dessiner" ces courbes … la souris, gr…ce … l'‚diteur de 
+"sounds" int‚gr‚ au YM-Tracker. Pour plus de d‚tails sur cet ‚diteur de sons, 
+voyez le paragraphe sp‚cial de cette doc, ou alors exp‚rimentez par vous-mˆme 
+(il y a un ‚cran d'aide dans cet ‚diteur, accessible par la touche <help>).
+     Si vous n'Štes pas dou‚(e)(s) en dessin de courbes de formes d'onde, un 
+synth‚tiseur (c'est … dire un module presse-boutons) le fait … votre place. Ce 
+synth‚tiseur permet … lui tout seul de refaire tous les effets de Mad Max, ce 
+qui est la moindre des choses. Dites-vous bien que ce que vous dessinez … la 
+main, Mad Max & Co sont INCAPABLES de le reproduire, car les courbes 
+math‚matiques pouvant le reproduire sont trop compliqu‚es pour leurs 
+synth‚tiseurs... Rien qu'… cause de cela, vous disposez d‚ja, gr…ce au 
+YM-Tracker, d'un outil de cr‚ation sup‚rieur … celui de Jochen Hippel... Pour 
+le reste, c'est … vous de cr‚er des musiques qui feront pƒlir les siennes.
+     Vous pouvez vous servir de 256 sons diff‚rents dans un mˆme module de 
+musique, ce qui est certainement un nombre plus que confortable : les autres 
+trackers ne permettent en g‚n‚ral que 16 sons diff‚rents (bien que certains en 
+font quand mˆme 256). Ces sons sont jou‚s sur 8 octaves (comme sur un piano) 
+au moyen du clavier (trois octaves … la fois, et les touches du pav‚ num‚rique 
+<+> et <-> pour faire glisser les octaves accesibles au clavier). Sur trois 
+voies simultan‚es. Il y a une quatriŠme voie, appel‚e "Master", car c'est 
+celle qui permet les effets sp‚ciaux tels que le changement de tempo, la forme 
+et la p‚riode de l'enveloppe du YM-2149, la p‚riode et le "mode" du bruit 
+blanc, la fin anticip‚e de la pattern (avec ou sans saut … une position donn‚e 
+dans la pattern suivante), etc. Pour plus de d‚tails, voyez le paragraphe 
+sp‚cial de cette doc, ou alors exp‚rimentez et aidez-vous de la touche <help> 
+(plusieurs ‚crans d'aide !).
+     Les fichiers sauv‚s sur disque sont : les modules ‚ditables, c'est … dire 
+ceux que vous pouvez cr‚er ou modifier dans le YM-Tracker, et les modules 
+‚xecutables, c'est … dire ceux que vous utilisez comme de petits 
+sous-programmes dans vos propres applications (ils sont sous une forme trŠs 
+compacte ! Attention : il n'est possible d'en faire qu'… partir de la version 
+1.0 du YM-Tracker !). D'autre part, l'‚diteur de sons permet de sauver des 
+fichiers contenant des formes d'onde de tremolos, de vibrato, ou des 
+bibliothŠques entiŠres de sons.
+     L'entr‚e des donn‚es et des commandes se fait … la souris ou au clavier. 
+Certaines commandes s'appellent des deux maniŠres, d'autres, uniquement … la 
+souris ou au clavier. 
+     VOUS AVEZ TOUJOURS LA TOUCHE <HELP> POUR VOUS AIDER !!!
+     "HELP" SIGNIFIE "AIDE" EN ANGLAIS !!!
+     D'OU LE NOM DE LA TOUCHE D'AIDE !!!
+     JE NE LE REPETERAI PAS !!!
+     Les boutons servent ! ils ne sont pas l… pour d‚corer, non mais ! Vous 
+appuyez dessus gr…ce au curseur de la souris et aux boutons de la souris ! 
+Sauf exception (Dans l'‚diteur de sons, cf plus bas), seul le bouton gauche a 
+une action. Dans la plupart des zones num‚riques, vous pouvez modifier les 
+donn‚es avec les boutons-flˆches dispos‚s juste … c“t‚, ou avec le clavier, en 
+cliquant sur la zone et en entrant la donn‚e...
+     Pour entrer dans le mode d'‚dition, ce qui vous permet d'entrer une 
+donn‚e au clavier, cliquez sur la zone en question !
+     Attention ! Il faut bien-s–r vous trouver en mode "REC" !
+     L'entr‚e se fait en tapant au clavier la donn‚e en question (nom ou 
+nombre). La touche <Backspace> permet de corriger une ‚ventuelle faute de 
+frappe.
+     Pour annuler une entr‚e au clavier et sortir du mode d'‚dition, appuyez 
+sur la touche <Esc> ou le bouton droit de la souris.
+     Pour confirmer une entr‚e au clavier et sortir du mode d'‚dition, appuyez 
+sur la touche <Return> ou <Enter> ou sur le bouton gauche de la souris.
+
+POURQUOI LES COMMANDES ET LES BOITES D'ALERTE SONT-ELLES EN ANGLAIS ?
+     Et bien, mon gars, sache qu'il s'agit d'anglais "pauvre", c'est … dire 
+compr‚hensible, mˆme par un vieux fran‡ais en charentaises, avec n'importe 
+quel dico "Lilliput", et d'une !
+     Et de deux : j'ai quand mˆme l'ambition de faire voyager ce logiciel, 
+alors, plut“t que de faire trente mille versions, une pour le Bantoustan Nord, 
+une pour la Slov‚nie, une pour ces messieurs-les-anglais-tirez-les-premiers, 
+une pour An Cool et ses copains Vickings, une pour la Croatie, aucune pour la 
+Serbie... J'ai pr‚f‚r‚ utiliser une langue "internationale", et 
+universellement utilis‚e en informatique : la langue de ces messieurs-les- 
+anglais-tirez-les-premiers !
+     Tiens-le toi pour dit et cours t'acheter un dictionnaire "Lilliput".
+
+----------------------------------------------------------------------------
+                        INSTALLATION DU LOGICIEL
+                        ------------------------
+
+     Titre de rubrique all‚chant, n'est-il pas ? C'est que ‡a rigole pas, on 
+fait comme les pros, ici ! Remarquez, je n'ai pas voulu pousser la connerie 
+jusqu'… pr‚senter la doc sous forme ANSI, avec les formules consacr‚es 
+imbuvables et inesth‚tiques … souhait (si vous avez d‚j… eu le malheur de 
+faire un "man <nom de commande>" sous unix, ou, pire (!), un "help" quelconque 
+sous VMS, vous voyez sans doute de quoi je veux parler) !
+     Bref, pour installer le YM-Tracker, sortez la disquette de son blister 
+super-design, introduisez-la dans la fente du lecteur de disquettes (‚tiquette 
+face dessus), allumez les p‚riph‚riques de votre machine, puis votre 
+machine... Une fois que vous serez parvenu(e)(s) au bureau GEM Desktop, ouvrez 
+le dossier "YM_TRACK" si il y en a un, et/ou d‚clenchez le programme 
+"YM-TRACK.PRG" en double-cliquant sur l'ic“ne "YM_TRACK.PRG".
+     Au bout d'un petit moment (le temps de chargement, en fait), vous verrez 
+apparaitre … l'‚cran une pr‚sentation, qui varie selon la version dont vous 
+disposez.
+     Vous sortez de cette pr‚sentation par une action sur la barre d'espace, 
+et vous vous retrouvez directos sous... L'ECRAN PRINCIPAL !!!
+
+----------------------------------------------------------------------------
+                        L'ECRAN PRINCIPAL
+                        -----------------
+
+     Voil…. Vous venez … grand peine de parvenir … entrer dans le 
+YM-Tracker... Et, si vous n'avez pas cette doc en main, vous vous sentez un 
+peu d‚sempar‚(e)(s)... PAS DE PANIQUE !!!
+     Une lecture attentive du pr‚sent document est assur‚ment le meilleur 
+moyen de parvenir rapidement … maŒtriser le YM-Tracker ! Ce qui est, du reste, 
+d'une ‚tonnante facilit‚ pour un logiciel de cette gamme de prix (Oh Yeah!)...
+     Donc, vous arrivez … l'‚cran de menu principal. Celui-ci se pr‚sente 
+comme beaucoup d'‚crans principaux de trackers : vous reconnaissez, entre 
+autres, les diff‚rents boutons sur lesquels agir avec la souris : Play, Rec, 
+Stop, Save, Load, etc.
+     Vous remarquez aussi le "spectrum", c'est une sorte de graphe en barres 
+(trois barres verticales, en l'occurence) anim‚, de sorte que chaque barre 
+repr‚sente l'amplitude de la voie associ‚e. Message … Bruno : OUI, ILS SAUTENT 
+(UN PEU) ! MAIS T'AS DEJA VU DES RASTERS STABLES QUAND LA SOURIS N'EST PAS 
+DEBRANCHEE, TOI ?
+     Autre chose qui saute aux yeux : en bas de l'‚cran, vous remarquez le 
+centre nerveux du YM-Tracker : une partie de la pattern courante, constitu‚e 
+de 9 lignes et 5 colonnes principales : une colonne dans laquelle est indiqu‚ 
+le pas ("step") courant dans la pattern. Il est compris entre 00 et 3F, car il 
+y a 64 pas par pattern (63 en d‚cimal = 3F en hexad‚cimal). Les trois colonnes 
+suivantes sont la description, pour chacune des trois voies du YM-2149, de la 
+note, de l'instrument et de l'effet sp‚cial surajout‚. La derniŠre colonne 
+correspond … la piste "master", dont nous avons d‚j… parl‚ pr‚c‚demment. Vous 
+remarquerez la ligne centrale, en rouge, qui est celle dans laquelle vous 
+travaillez, et le curseur de pattern, qui occupe sur cette ligne toute une 
+colonne : vous pouvez le d‚placer, et ainsi vous d‚placer dans la pattern, 
+avec les touches du clavier de curseur (flŠches haut, bas, droite et gauche), 
+ou avec la souris, en cliquant dans la colonne et sur la ligne … amener au 
+centre (attention : si vous cliquez sur la ligne du milieu, le curseur de la 
+souris disparait et vous pouvez entrer un effet sp‚cial directement au 
+clavier: pour le moment, appuyez sur la touche <Esc> ou sur le bouton droit de 
+la souris pour annuler : nous verrons les effets sp‚ciaux plus tard !).  
+     Au dessus apparaissent, en hexa et en Ko, la quantit‚ de m‚moire 
+disponible, celle qui est prise par le module en cours, et, en dessous, le nom 
+du module, que vous pouvez modifier en cliquant dessus.
+     Pas loin de l…, en dessous du cadre reserv‚ au "spectrum", se trouve 
+trois ic“nes repr‚sentant des poubelles : une banale, une contenant une note 
+de musiue, et la troisiŠme un clairon; ce sont les trois boutons permettant 
+d'effacer : la m‚moire du tracker, les patterns, ou les sons. Bien ‚videmment, 
+afin d'‚viter tout malencontrueux incident, ces fonctions sont prot‚g‚es par 
+des boŒtes d'alerte.
+     En haut de l'‚cran, au fait (tant que j'y pense) ! Vous avez une barre 
+portant le nom du YM-Tracker ainsi que le num‚ro de version. Vous pouvez 
+obtenir des informations compl‚mentaires en cliquant sur le bouton 
+compl‚tement … droite en en maintenant le bouton de la souris enfonc‚.
+     Vous pouvez quitter le YM-Tracker en cliquant sur le bouton de gauche ou 
+en appuyant sur la touche <Esc> du clavier.
+     A droite des boutons play, rec et stop, vous remarquez trois boutons 
+"A","B" et "C" qui sont d‚j… enfonc‚s : ce sont les s‚lecteurs de voie. Quand 
+un de ces s‚lecteurs est enfonc‚, la voie associ‚e est audible. Sinon, on ne 
+peut pas l'entendre. Ces boutons sont pratiques pour mettre au point une piste 
+en particulier sans ˆtre gˆn‚(e) par l(es) autre(s).
+     En dessous vous avez les boutons "Mon" et "Cycle" : Mon signifie 
+"Monitor" : quand vous vous d‚placez dans la pattern, vous pouvez ou non 
+sonoriser votre d‚placement gr…ce … ce bouton. "Cycle" permet de boucler 
+ind‚finiment la pattern courante, quand vous faites rejouer le morceau.
+     Vers la droite, vous avez le "SO" : un nombre que vous pouvez modifier 
+avec les flŠches dispos‚es … sa gauche ou … sa droite, ou en cliquant dessus: 
+c'est le nombre de pas qui sera franchi … chaque fois que vous enregistrerez 
+une note (mode "record"). Ce nombre peut ˆtre nul (il l'est par d‚faut) si 
+vous ne voulez pas vous d‚placer automatiquement. Il peut aller jusqu'… 3F, 
+c'est … dire la longueur de la pattern !
+     Passons au groupe de boutons et de donn‚es situ‚ sur la droite de 
+l'‚cran. Vous avez les fameux "Pos", "Pat" et "Res" commun … tous les 
+trackers, qui vous permettent de g‚rer la suite des patterns que vous cr‚erez, 
+c'est … dire la "song" : des num‚ros de position compris entre 0 et beaucoup 
+inclus, des num‚ros de pattern compris entre 0 et va savoir combien, et le 
+nombre "Res", qui est en fait le nombre de positions de la chanson : il est 
+donc compris entre 1 et beaucoup+1 ! Ce nombre est important, car il 
+repr‚sente la limite de la chanson : quand vous sauverez votre module, seules 
+les "Res" premiŠres positions seront sauv‚es ! Mais TOUTES les patterns le 
+seront !
+     Exemple de chanson : Vous avez cr‚‚ les patterns:
+          0,1,2,3
+     et vous voulez les enchaŒner dans cet ordre:
+          1,0,1,2,3,3,1,1,2.
+     Donc, la "song" sera compos‚e de 9 positions, et on peut la repr‚senter 
+comme :
+
+        PATTERN  :  1   0   1   2   3   3   1   1   2
+        POSITION :  0   1   2   3   4   5   6   7   8
+        RES      :  9
+
+     Vous comprenez maintenant comment la diff‚rence entre un num‚ro de 
+position et un num‚ro de pattern ! Faites attention au fait que, modifier le 
+num‚ro de pattern au dessus d'un num‚ro de position entraine la modification 
+de cette position : celle-ci pointera d‚sormais sur la pattern d‚sign‚e ! Vous 
+voyez : d‚finir une "song" est … la fois trŠs simple et assez dangereux pour 
+les "tˆtes en l'air" qui se trompent de boutons pour voyager dans la "song" ! 
+A gauche de ces trois boutons, vous avez aussi les "ins", "del" et "fnd", pas 
+trŠs utiles, mais r‚clam‚s par un b‚ta-testeur ! "ins" permet d'ins‚rer une 
+position … la position courante, "del" a l'effet contraire, et "fnd" permet de 
+trouver la premiŠre pattern vide (remplie de "0") parmi toutes les patterns 
+d‚j… d‚finies ! Notez que ce dernier bouton perd beaucoup de son int‚rˆt quand 
+on sait qu'il est impossible d'avancer dans le nombre de patterns si la 
+derniŠre en date est vide, ce qui ‚vite aux ‚tourdis de laisser des blancs, et 
+ensuite de les rechercher !
+     En dessous, vous avez un groupe trŠs puissant : le num‚ro et le nom du 
+son courant. Vous choisissez le son que vous utilisez ici, soit en donnant son 
+num‚ro, soit en donnant la ou les premiŠres lettres de son nom ! Et, juste en 
+dessous, vous avez le bouton qui appelle l'‚diteur de sons, qui est un 
+sous-menu, et dans lequel vous ne devez pas entrer maintenant ! Non ! Je n'ai 
+pas fini de d‚crire l'‚cran principal ! Si vous Štes entr‚(e)(s) dedans, 
+sortez-en … l'instant par un appui sur la touche du clavier <Esc> ou en 
+cliquant sur le bouton en haut … droite !
+     En dessous du bouton "Editor", vous avez le "beat" qui est en fait le 
+tempo (nombre de 50Šmes de secondes entre chaque battement du m‚tronome 
+interne).
+     En dessous, "spec" et "data" vous permettent de s‚lectionner l'effet 
+sp‚cial et sa donn‚e ‚ventuelle. Un appui sur "spec" rentre l'effet dans la 
+piste courante. Le petit bouton intitul‚ "S" situ‚ sur la gauche de ce bloc 
+permet de s‚lectionner le mode "Effet sp‚cial automatique", c'est … dire que, 
+si ce bouton est enfonc‚, l'effet sp‚cial sera valid‚ … chaque note que vous 
+entrerez au clavier. Nous reviendrons l…-dessus plus tard. 
+     Enfin, "env" permet d'entrer la forme et la p‚riode de l'enveloppe 
+offerte par le YM-2149. Un appui sur "env" l'entre comme effet sp‚cial, 
+seulement si le curseur de pattern est dans la piste "master" ! Le chiffre 
+solitaire situ‚ … gauche, compris entre 0 et F, est le num‚ro de type de 
+l'enveloppe, et se modifie avec les flŠches-boutons, tandis que le grand 
+nombre de quatre chiffres est la p‚riode de l'enveloppe, … entrer au clavier.
+
+     Nous allons maintenant d‚tailler les fonctions de chaque bouton ou zone 
+du menu principal...
+
+PLAY    : d‚clenche l'ex‚cution de la "song" … partir du d‚but de la pattern
+          courante, ainsi que le chronomŠtre.
+          Remarque : le chronomŠtre s'arrˆte, soit si on arrˆte la chanson,
+          soit si la chanson touche … sa fin (en ce cas elle recommence
+          automatiquement, mais le chronomŠtre est arrˆt‚).
+
+REC     : met le YM-Tracker en mode "record", vous permettant d'enregistrer
+          des notes dans la pattern courante. Pour plus de d‚tails concernant
+          l'entr‚e de notes au clavier, voyez plus loin : vous aurez un
+          expos‚ des touches du clavier servant … cela.
+
+STOP    : comme dans un magn‚tophone : arrˆte l'ex‚cution.
+
+A,B ou C: s‚lecteurs de voies : tant qu'ils sont enfonc‚s, on peut entendre
+          le son sortant sur la voie associ‚e.
+
+LOAD    : charge un module de musique … partir du disque. Attention : il est
+          bien ‚vident que le module actuellement en m‚moire sera effac‚.
+
+SAVE    : sauve un module sur disque. Vous avez le choix entre le sauver
+          au format "‚ditable", c'est … dire de fa‡on … pouvoir le charger
+          de nouveau plus tard, ou "ex‚cutable", c'est … dire sous une forme
+          trŠs compacte et utilisable dans vos propres programmes (La
+          description du format des fichiers ex‚cutables, ainsi que la
+          maniŠre de les exploiter dans vos propres applications, est
+          fournie en annexe 1).
+
+MON     : s‚lecteur de mode "monitor" (jouer la ligne courante ou non pendant
+          le d‚placement vertical du curseur dans la pattern).
+
+CYCLE   : s‚lecteur de mode "cycle" (jouer en boucle la pattern courante si
+          on est en "play").
+
+SO      : cette zone est l'offset ajout‚ … la ligne courante aprŠs
+          l'enregistrement d'une note.
+
+SNG NAME: cette zone contient, en 8 caractŠres, le nom du module courant.
+
+ICONES POUBELLES : elles permettent, dans l'ordre : un red‚marrage … chaud du
+          YM-Tracker, la suppression des patterns, la suppression de la
+          librairie de sons.
+
+INS     : insŠre une position "vide" … la position courante dans la "song".
+
+DEL     : op‚ration r‚ciproque ("delete").
+
+FND     : trouve la premiŠre pattern vide (remplie de 0) disponible.
+
+PAT     : cette zone contient le num‚ro de la pattern courante.
+          Attention : la modifier affecte le contenu de la position courante.
+
+POS     : cette zone contient le num‚ro de la position courante dans la
+          "song" . Il ne peut ˆtre sup‚rieur ou ‚gal au nombre total de
+          positions (le RES). Modifier cette zone peut vous faire "voyager"
+          dans la "song", ou allouer une nouvelle position … la suite des
+          autres, pour allonger la chanson.
+
+RES     : cette zone contient le nombre total de positions dont est
+          constitu‚e la "song". Ne peut ˆtre modifi‚e directement, mais
+          uniquement gr…ce aux flŠches-boutons.
+
+SND     : ces zones permettent de s‚lectionner le son courant pour l'entr‚e
+          des notes, que ce soit par son num‚ro ou par son nom (la ou les
+          premiŠres lettres suffisent). Attention : au d‚but, si vous
+          n'avez pas d‚fini de nouveaux sons ni charg‚ de librairie, seul
+          le son nø0 ("Null sound") est disponible.
+
+EDITOR  : permet d'acc‚der au sous-menu d'‚diteur de sons, qui est un outil
+          trŠs puissant et convivial (pour plus de pr‚cisions, voyez plus
+          loin le d‚tail de ce sous-menu).
+
+BEAT    : cette zone contient un nombre compris entre 0 et FF (255 en
+          d‚cimal), qui est appel‚ "tempo", et qui est le nombre de 1/50
+          secondes s‚parant chaque nouvelle note de la partition. Ce tempo
+          est adopt‚ comme valeur de d‚part, mais peut ˆtre modifi‚ … tout
+          instant dans la musique par un effet sp‚cial de la piste "master"
+          (voir plus loin pour les effets sp‚ciaux). Si vous le modifiez
+          en cours d'ex‚cution, cela aura quand mˆme un effet, mais il ne
+          sera pas "enregistr‚" de fa‡on d‚finitive.
+
+SPEC    : c'est … la fois une zone et un bouton, parfois associ‚ … "DATA" :
+          la valeur est un num‚ro d'effet sp‚cial (voir les d‚tails plus
+          loin). Appuyer sur le bouton SPEC a pour effet d'enregistrer
+          l'effet sp‚cial et sa donn‚e … la position courante du curseur
+          de pattern (sauf si le num‚ro d'effet sp‚cial est incompatible
+          avec la position dudit curseur : un effet "master" ne peut ˆtre
+          enregistr‚ dans une piste "channel" et vice-versa, de mˆme
+          qu'un effet inconnu est ignor‚)
+          N'a d'effet que si le mode "REC" est s‚lectionn‚.
+
+DATA    : une valeur de donn‚e pour l'effet sp‚cial (voir plus loin pour
+          les d‚tails)
+
+S       : si ce bouton est enfonc‚, le mode d'attribution automatique d'effets
+          sp‚ciaux … chaque nouvelle note entr‚e au clavier (en mode REC) est
+          activ‚. Ce bouton doit aussi ˆtre enfonc‚ si, quand vous faites un
+          un "replace sound" (Shift F4), vous voulez aussi remplacer l'effet
+          sp‚cial de chaque note ayant le son … remplacer par l'effet sp‚cial
+          et sa donn‚e d‚finis dans <SPEC> et <DATA>.
+
+ENV     : … la fois deux zones et un bouton : permet la d‚finition et
+          l'entr‚e de l'effet sp‚cial "forme et p‚riode de l'enveloppe" dans
+          la piste "master". Le digit isol‚ … gauche est le num‚ro de forme
+          de l'enveloppe (il ne se modifie qu'avec les flŠches-boutons),
+          le nombre … quatre chiffres est sa p‚riode (il ne se modifie qu'en
+          mode direct, en cliquant dessus et en entrant la donn‚e au
+          clavier). Cliquer sur ENV permet d'enregistrer cet effet sp‚cial,
+          seulement si le curseur de pattern se trouve dans la piste "master".
+
+          Voici les formes d'enveloppes disponibles :
+
+          de 0 … 3 :    \
+                         \___________________________
+
+          de 4 … 7 :     /|
+                        / |__________________________
+
+          8        :    \ |\ |\ |\ |\ |\ |\ |\ |\ |\
+                         \| \| \| \| \| \| \| \| \| \
+
+          9        :    \
+                         \___________________________
+
+          A        :    \  /\  /\  /\  /\  /\  /\  /\
+                         \/  \/  \/  \/  \/  \/  \/
+                           __________________________
+          B        :    \ |
+                         \|
+
+          C        :     /| /| /| /| /| /| /| /| /| /
+                        / |/ |/ |/ |/ |/ |/ |/ |/ |/ 
+                          ___________________________
+          D        :     /
+                        /
+
+          E        :     /\  /\  /\  /\  /\  /\  /\  
+                        /  \/  \/  \/  \/  \/  \/  \/
+
+          F        :     /|
+                        / |__________________________
+
+
+----------------------------------------------------------------------------
+                        LE PIANO-CLAVIER
+                        ----------------
+
+     8 octaves sont accesibles, dont 3 simultan‚ment au clavier. Vous avez la 
+possibilit‚ de faire "glisser" ces octaves vers le haut ou vers le bas avec 
+les touches "+" et "-" du pav‚ num‚rique.
+     Les touches utilis‚es pour faire un piano avec le clavier sont arrang‚es 
+comme sur un piano (touches noires en haut, touches blanches en bas, mais le 
+tout sur deux doubles rang‚es pour pouvoir caser trois octaves). La encore, la 
+disposition "classique" a ‚t‚ reprise : ceux qui sont d‚j… familiers avec les 
+trackers ne seront pas d‚pays‚s.
+     Le bloc de touches principal (en dessous des touches de fonction) est le 
+seul utilis‚ pour cela. 
+     Voici un tableau vous montrant l'organisation de ces touches, rang aprŠs 
+rang, en partant du haut du bloc principal :
+
+Touche   2   3   4       6   7       9   0   )
+Note     F2# G2# A2#     C3# D3#     F3# G3# A3#
+
+Touche  A   Z   E   R   T   Y   U   I   O   P   [
+Note    F2  G2  A2  H2  C3  D3  E3  F3  G3  A3  H3
+
+Touche       S   D   G       H   J       L   M
+Note         C1# D1# F1#     G1# A1#     C2# D2#
+
+Touche      W   X   C   V   B   N   ?   .   /   =
+Note        C1  D1  E1  F1  G1  A1  H1  C2  D2  E2
+
+     le num‚ro qui suit les lettres indique le num‚ro de l'octave auquel la 
+note correspondante appartient (entre 1 et 3, donc, car il y a trois octaves 
+disponibles simultan‚ment au clavier).
+     Si vous n'Štes pas familier(e)(s) avec la notation de notes au moyen de 
+lettres, voici un petit tableau de conversion avec la notation du solfŠge 
+fran‡ais :
+                C       do
+                C#      do#
+                D       r‚
+                D#      r‚#
+                E       mi
+                F       fa
+                F#      fa#
+                G       sol
+                G#      sol#
+                A       la
+                A#      la#
+                H       si
+                
+----------------------------------------------------------------------------
+                        LES COMMANDES AU CLAVIER
+                        ------------------------
+
+     En plus des notes, le clavier offre la possiblit‚ d'entrer des commandes:
+
+                BLOC PRINCIPAL
+                --------------
+
+Esc     : permet de sortir du YM-Tracker
+
+Tab     : pour affecter l'effet sp‚cial … la note courante (‚quivalent au
+          bouton <SPEC>). Ne marche pas si on n'est pas en mode "REC".
+
+Espace  : entre une note nulle si on est en mode "record"
+
+Delete  : d‚truit la portion de ligne qu'occupe le curseur de pattern,
+          et fait "remonter" dessus ce qui ‚tait aprŠs (dans la voie o—
+          se trouve ce curseur seulement).
+
+#       : efface la note courante et son effet sp‚cial (‚quivalent: Shift-F7)
+
+Return  : Permet d'entrer un effet sp‚cial directement, en le tapant au
+          clavier. Le curseur de la souris disparait, et vous vous retrouvez
+          en mode d'entr‚e de donn‚es.
+          ATTENTION : cette touche … un effet diff‚rent de la touche <Enter>!
+
+
+                PAVE DU CURSEUR
+                ---------------
+
+Help    : permet d'acc‚der aux ‚crans d'aide, qui r‚sument les actions des
+          touches, ainsi que les effets sp‚ciaux (voir plus loin pour les
+          commandes de ce mode).
+
+Undo    : annule la plupart des modifications que vous pouvez infliger aux
+          patterns, y compris elle-mˆme. Accessoirement, vous pouvez vous en
+          servir pour recopier une pattern dans une autre, mais je vous 
+          conseille plut“t pour cela la fonction pr‚vue … cet effet.
+
+Insert  : InsŠre une note … la position courante du curseur de pattern dans
+          la voie o— il se trouve.
+
+Curseur : permet de se d‚placer dans la pattern courante.
+
+Shift+gauche ou droite : permet de se d‚placer d'une position de la chanson
+          … une autre.
+
+Clr Home: vous amŠne directement sur la pattern 0 - ligne 0
+
+
+                PAVE NUMERIQUE
+                --------------
+
+9       : Charger un module
+
+6       : Sauver un module
+
++       : glissement vers les aigus des octaves
+
+-       : glissement vers les graves des octaves
+
+3       : ex‚cuter la musique en partant de la ligne courante
+
+Enter   : ex‚cuter la musique en partant de la ligne 0 (PLAY)
+
+0       : STOP
+
+.       : REC : mise en mode "record" ou sortie de ce mode
+
+(       : augmenter de 1 le num‚ro du type de l'enveloppe
+
+)       : diminuer de 1 le num‚ro du type de l'enveloppe
+
+/       : pour entrer la valeur de la p‚riode de l'enveloppe au clavier
+
+Alt /   : pour entrer la valeur de la p‚riode de l'enveloppe en se servant
+          du piano-clavier (la note est convertie en p‚riode)
+
+*       : ecrire un effet sp‚cial "2X" sur la ligne courante (‚quivalent
+          au bouton <ENV>)
+
+7       : incr‚menter le num‚ro de l'effet sp‚cial
+
+8       : d‚cr‚menter le num‚ro de l'effet sp‚cial
+
+4       : incr‚menter le champ "DATA" de l'effet sp‚cial
+
+5       : d‚cr‚menter le champ "DATA" de l'effet sp‚cial
+
+1       : commuter la position du s‚lecteur de mode automatique d'effet
+          sp‚cial (‚quivalent au bouton <S>)
+
+
+                TOUCHES DE FONCTION
+                -------------------
+
+F1      : Cut Track : met la piste courante dans un buffer et efface celle-ci
+
+F2      : Paste track : copie le buffer de piste dans la piste courante.
+          Ceci ‚crase la piste courante.
+
+F3      : Cut pattern : met la pattern courante dans un buffer sp‚cial et
+          efface celle-ci.
+
+F4      : Paste pattern : ‚crase la pattern courante avec le contenu du
+          buffer sp‚cial.
+
+F5      : Overlay track : copie le buffer de track dans la piste courante,
+          de fa‡on … ce que les donn‚es originales de la piste ne soient
+          effac‚es que si il y a lieu (le buffer est prioritaire).
+
+F6      : Underlay track : cette fois-ci, c'est la piste qui est prioritaire:
+          les donn‚es ne peuvent ˆtre inscrites que si il n'y a rien !
+
+F7      : aller … la ligne 0
+
+F8      : aller … la ligne 10 (16 en d‚cimal)
+
+F9      : aller … la ligne 20 (32 en d‚cimal)
+
+F10     : aller … la ligne 30 (48 en d‚cimal)
+
+                TOUCHES DE FONCTION + SHIFT
+                ---------------------------
+
+F1      : Marquer le commencement du bloc
+
+F2      : Marquer la fin du bloc et copier celui-ci dans un buffer
+
+F3      : Paste block : copier le buffer de bloc … partir de la position
+          courante du curseur de pattern.
+
+F4      : Replace sound : remplace le son qu'on trouve … la position
+          courante du curseur de pattern par celui qui est d‚sign‚ dans
+          la zone de son, et ce dans toute la piste !
+
+F5      : Cut sound : comme pour Cut track, mais seulement avec le son
+          situ‚ sous le curseur de pattern.
+
+F6      : Transpose down : transpose d'une octave vers le bas la piste dans
+          laquelle se trouve le curseur de pattern.
+
+F7      : Erase sound : efface le son
+
+F8      : Replace special effect : mˆme chose que "Replace sound", mais
+          pour l'effet sp‚cial !
+
+F9      : Transpose up : transpose d'une octave vers le haut la piste dans
+          laquelle se trouve le curseur
+
+F10     : Reverse track : retourne la piste comme une crˆpe.
+
+                TOUCHES DE FONCTION + ALTERNATE
+                -------------------------------
+
+F1      : Toggle monitor mode : mˆme effet que le bouton MON
+
+F2      : Toggle cycle mode : mˆme effet que le bouton CYCLE
+
+F4      : Cut track with offset : mˆme chose que Cut track, mais en
+          prenant une ligne tous les SO lignes (donc, en utilisant
+          l'offset !)
+
+F6      : Transpose down : transpose d'une note vers le bas la piste dans
+          laquelle se trouve le curseur de pattern
+
+F9      : Transpose up : transpose d'une note vers le haut la piste dans
+          laquelle se trouve le curseur de pattern
+
+----------------------------------------------------------------------------
+                        LE MODE "HELP"
+                        --------------
+
+     Une fois que vous avez appuy‚ sur la touche <Help>, vous vous retrouvez 
+dans le mode d'aide. L…, vous pouvez librement consulter 9 ‚crans d'aide (ou 
+un seul pour l'aide de l'‚diteur de sons, auquel cas il n'y a pas de mode 
+sp‚cial)...
+     Vous pouvez sortir de ce mode en appuyant sur la touche <Esc>, ou bien de 
+nouveau sur la touche <Help>. Si c'est sur la touche <Esc> que vous appuyez, 
+la prochaine fois que vous appuyerez sur la touche <Help>, vous aurez l'‚cran 
+d'aide nø1. Par contre, si vous sortez du mode d'aide par la touche <Help>, la 
+prochaine fois que vous appuyerez sur la touche <Help>, vous aurez devant les 
+yeux l'‚cran que vous avez laiss‚ en sortant ! Voil… qui est pratique, dans le 
+cas ou vous vous r‚f‚rez constamment … un de ces ‚crans en particulier (comme 
+par exemple l'‚cran des effets sp‚ciaux des pistes "CHANNEL").
+     Vous pouvez vous d‚placer d'un ‚cran d'aide … l'autre avec les flˆches 
+"droite" et "gauche" du pav‚ du curseur, ou bien gr…ce … la barre d'espace 
+(cette touche est fr‚quemment utilis‚e pour ce genre de fonction).
+     Vous pouvez acc‚der directement … un ‚cran particulier en tapant son 
+num‚ro : par exemple : tapez sur "7" pour avoir l'‚cran d'aide nø7...
+ 
+----------------------------------------------------------------------------
+                        EFFETS SPECIAUX
+                        ---------------
+
+     Il y a deux types d'effets sp‚ciaux : les effets sp‚ciaux utilisables 
+uniquement dans les pistes "channel", et ceux utilisables uniquement dans la 
+piste "master". Voici les tableaux les d‚crivant (fort heureusement, les noms 
+de ces effets sont plus ou moins "standard" !) :
+
+                EFFETS CHANNEL
+                --------------
+Num‚ro  Nom                     ParamŠtre       Annule le(s) num‚ro(s)
+--------+-----------------------+---------------+---------------------
+00      | Null                  |               |
+01      | Portamento up         | d‚calage +    | 02,03
+02      | Portamento down       | d‚calage -    | 01,03
+03      | Tone portamento       |               | 01,02
+04      | Set volume            | volume        | 0C
+05      | Volume slide          | d‚calage      |
+06      | P‚riode up            | d‚calage +    | 07,08
+07      | P‚riode down          | d‚calage -    | 06,08
+08      | P‚riode normale       |               | 01,02,03,06,07
+09      | Note cut              |               | 
+0A      | Play end of sound     | pos. d‚part   |
+0B      | Play normal           |               | 01,02,03,05,06,07
+0C      | Volume = enveloppe YM | mode (0 -> 3) | 04,05
+0D      | White noise on+replace| mode (0 ou 1) | 0E,0F
+0E      | White noise on+mix    | mode ou NP    | 0D,0F
+0F      | White noise off       |               | 0D,0E
+
+                EFFETS MASTER
+                -------------
+Num‚ro  Nom                     ParamŠtre       Annule le(s) num‚ro(s)
+--------+-----------------------+---------------+---------------------
+00      | Null                  |               |
+10      | Note delay            | tempo         | effet provisoire !
+11      | Pattern delay         | tempo         | effet provisoire !
+12      | Set speed             | tempo         | 13,14
+13      | Speed up              | d‚calage +    | 12,14
+14      | Speed down            | d‚calage -    | 12,13
+15      | Position jump         | nøligne       |
+16      | Pattern break         |               |
+17      | enveloppe = vibrato   | nøvibrato     | 1A
+18      | env. portamento up    | incr‚ment +   | 19,1A
+19      | env. portamento down  | incr‚ment -   | 18,1A
+1A      | env. normale          |               | 17,18,19
+1B      | white noise = vibrato | nø vibrato    | 1E
+1C      | white portamento up   | incr‚ment +   | 1B,1D,1E
+1D      | white portamento down | incr‚ment -   | 1B,1C,1E
+1E      | white noise normal    |               | 1B,1C,1D
+1F      | annuler tous effets   |               | tous
+2X      | set env. type + period| X=type,periode|
+
+     Une description plus approfondie de ces effets est donn‚e en annexe 
+(Annexe 2).
+
+----------------------------------------------------------------------------
+                        AFFICHAGE DE PATTERN
+                        --------------------
+
+     Sur l'affichage de la pattern, voici la signification des signes que l'on 
+trouve :
+
+                PISTE CHANNEL
+                -------------
+
+     Elle se pr‚sente sous la forme :
+
+                NN*SSEEDD
+
+        NN : le nom de la note, suivi du nød'octave (de 1 … 8)
+             exemple : A5
+
+        *  : indique un diŠse (#) ou pas (-) sur la note
+
+        SS : num‚ro du son pour cette note
+
+        EE : num‚ro de l'effet sp‚cial
+
+        DD : donn‚e ‚ventuelle de cet effet sp‚cial
+
+
+                PISTE MASTER
+                ------------
+
+     Elle se pr‚sente sous la forme :
+
+                EE DDTT
+
+        EE : num‚ro de l'effet
+
+        DD : donn‚e ‚ventuelle
+
+        DDTT : p‚riode de l'enveloppe si effet 2X
+
+
+----------------------------------------------------------------------------
+                        EDITEUR DE SONS
+                        ---------------
+
+     Voil… qui vous permet de charger, sauver ou dessiner de nouveaux sons.
+
+                QU'EST CE QU'UN SON ?
+                ---------------------
+     Je vous informe que je me fous complŠtement des conventions des autres 
+trackers. Les miennes, je les ai d‚finies empiriquement, sans rien connaŒtre … 
+la musique. Si j'emploie des mots qui ont un autre sens ailleurs, oubliez cet 
+autre sens et apprenez son nouveau sens dans ce nouveau contexte (l'esprit 
+humain est p‚tri de contradictions, la langue fran‡aise en est un bel exemple: 
+c'est l'une des plus difficiles … apprendre dans le monde, et ce n'est sans 
+doute pas un hasard si ce tissu d'ambigu‹t‚s a ‚t‚ choisi comme moyen de 
+communication entre les diplomates...). AprŠs les consid‚rations s‚mantiques, 
+passons … la pratique :
+     Rappel de la convention du YM-Tracker :
+     Un SON est la r‚union de deux formes d'onde : une en fr‚quence (le 
+vibrato), et une en amplitude (le tremolo).
+     En d'autres termes :
+          le VIBRATO est la variation de la tonalit‚ au cours du temps
+          le TREMOLO est la variation du volume au cours du temps
+     Ces deux formes d'ondes peuvent ais‚ment ˆtre repr‚sent‚es sur l'‚cran 
+comme deux courbes fonctions du temps.
+     Voil… pourquoi vous voyez deux fenŠtres l'une au dessus de l'autre 
+occupant les deux tiers gauche de l'‚cran, dans l'‚cran de l'‚diteur de son.
+     La plus grande de ces deux fenŠtres graphiques repr‚sente la courbe de 
+vibrato du son courant, l'autre, celle de tremolo du son courant.
+     La petite hauteur de la fenŠtre de tremolo par rapport … celle de vibrato 
+s'explique par le fait que le volume, sur le YM-2149, ne prend que 16 valeurs 
+au maximum: point n'est besoin, donc, d'une fenŠtre de 128 points de haut.
+
+                L'ECRAN D'EDITION
+                -----------------
+
+     Explorons ensemble cet ‚cran si all‚chant et si puissant (sa mise au 
+point a demand‚ autant de temps que l'ensemble de toutes les autres fonctions 
+du YM-Tracker !), et pourtant si simple … utiliser (‡a fait pas de mal de se 
+flatter un peu de temps en temps) !
+     Donc, comme nous le disions, le point central est que l'‚diteur est 
+entiŠrement construit autour des deux fenŠtres (de vibrato et de tremolo). La 
+ligne centrale, qui est la s‚paration entre ces deux fenŠtres, est la ligne de 
+d‚finition du son courant. C'est … dire le son que vous ‚ditez actuellement. 
+     Le son courant est d‚fini par le vibrato et le tremolo affich‚s 
+simultan‚ment … l'‚cran.
+     pour modifier la d‚finition du son courant, c'est trŠs simple : il suffit 
+de changer de vibrato ou de tremolo. Cela se passe exactement comme quand on 
+change le num‚ro de pattern associ‚ … un num‚ro de position: le changement est 
+d‚finitif !
+     REMARQUE : IL EST INTERDIT, ET MEME RENDU IMPOSSIBLE, DE MODIFIER LE 
+NULL_SND, LE NULL_VIBRATO OU LE NULL_TREMOLO : il faut bien qu'il y ait 
+quelque chose de nul … quoi se raccrocher, que diable ! Donc, ne vous 
+inqui‚tez pas si, parfois, des boutons n'ont pas d'action : il se pourrait 
+bien que l'une (ou les deux) des formes d'ondes nulles entre dans la 
+d‚finition de votre son. C'est le cas, entre autres, pour le bouton en haut … 
+droite (<Synth>), qui permet d'acc‚der au synth‚tiseur, le machin qui modifie 
+math‚magiquement (et j'ajouterais mˆme: automagiquement!) vos formes d'ondes. 
+     Vous pouvez aussi "dessiner" les courbes, de vibrato ou de tremolo, … la 
+souris : comme le suggŠre le changement de forme du curseur de la souris, qui 
+passe de la forme de flŠche … celle de crayon quand vous pointez dans une 
+fenŠtre "dessinable".
+     La encore, prenez garde : toute modification de courbe est d‚finitive et 
+affecte donc le son qui se servait de ladite courbe. Vous pouvez n‚anmoins 
+corriger toute ‚tourderie passagŠre par un appui sur la touche <UNDO>.
+     Conclusion : simple, mais attention !
+
+     Continuons notre exploration... 
+
+     La ligne de d‚finition du son courant affiche le nom du son courant, et 
+son num‚ro. Vous pouvez modifier le nom du son en cliquant dessus et en 
+l'entrant au clavier (sauf pour le null-sound). Vous pouvez passer d'un son … 
+l'autre en jouant sur les flŠches-boutons ou en entrant le num‚ro du son 
+voulu.
+     Pour cr‚er un nouveau son, allez juste aprŠs le dernier son en date et 
+entrez-lui un nom : il sera cr‚‚, avec  le null-vibrato et le null-tremolo 
+comme courbes d'enveloppe.
+     N'oubliez surtout pas de donner un nom au nouveau son ! D'une part, cela 
+vous permet de vous y retrouver de fa‡opn mn‚motechnique ("OSTINATO", 
+"BASSDRUM", sont des noms plus parlants que " " et " " !), et d'autre part, 
+l'‚diteur vous donnera le droit d'en cr‚er d'autres.
+     Pour s'occuper des courbes de vibrato et de tremolo, la colonne droite de 
+l'‚cran comporte des blocs de boutons sp‚ciaux.
+     En haut et en bas de cette colonne de boutons, se trouvent deux blocs 
+identiques, l'un intitul‚ "vibrato", l'autre "tremolo".
+     Au milieu, se trouvent deux boutons trŠs importants : LD LIB et SV LIB 
+qui permettent de charger ou sauver des librairies de sons entiŠres !
+     ASTUCE !!!! Pour r‚cup‚rer la librairie de sons d'un module, rien de plus 
+simple : "chargez" ce module avec le bouton "LD LIB" : seule sa librairie de 
+sons sera charg‚e ! Youpi, non ? V'la-t'y pas que ‡a simplifie dr“lement la 
+gestion des types de fichiers avec le YM-Tracker ! A la limite, on peut mˆme 
+se contenter de ne sauver que des modules sur disque ! 
+     Un p'tit mot … propos des deux blocs de boutons de gestion du vibrato ou 
+du tremolo. Etant identiques, ces deux blocs de boutons ont la mˆme action 
+mais l'un sur le vibrato, et l'autre sur le tremolo.
+     Comme exemple, je ne parlerai que du vibrato. Mais ce que je dirai est 
+tout aussi valable pour le tremolo, cela va sans dire !
+
+     En haut du bloc, les deux premiŠres lignes sont : le nom du vibrato 
+courant, et son num‚ro. Vous pouvez modifier le nom du vibrato en cliquant 
+dessus et en entrant son nom. Si c'est le num‚ro que vous changez, vous 
+passerez … un autre vibrato.
+     Pour cr‚er un nouveau vibrato, allez aprŠs le dernier de la liste et 
+DONNEZ-LUI UN NOM ! Ensuite, vous pouvez le "dessiner" en dessinant … la 
+souris dans la fenŠtre du vibrato.
+     Pour dessiner une courbe : bouton gauche enfonc‚ et d‚placement simultan‚ 
+du pointeur de la souris. Le bouton droit pour effacer. Une barre verticale 
+est automatiquement plac‚e … la fin de la courbe, marquant ainsi de fa‡on 
+graphique la limite de cette courbe.
+     Les deux boutons "LD" et "SV" (abr‚viations de "load" et "save") 
+permettent de charger ou sauver la courbe de vibrato … la position courante. 
+Cela permet de ne sauver que cette petite partie de la bibliothŠque si on est 
+… cours de place sur disque ou de ne charger que cette courbe si c'est tout ce 
+que l'on d‚sire.
+     le bouton "LOOP" a une double utilisation : enfonc‚ avec le bouton gauche 
+de la souris (comme un bouton normal, donc), il s‚lectionne le mode "loop" 
+(boucle) pour le vibrato courant, ce qui le fera boucler quand on jouera le 
+son qui l'utilise, et ce jusqu'… la fin du son. REMARQUE : si les deux 
+courbes, de vibrato et de tremolo, ont le mode "loop", le son n'aura pas de 
+fin ! Pratique, non?
+     Si on appuie sur le bouton "LOOP" avec le bouton droit, on peut fixer les 
+limites de la boucle : au rebouclage, en effet, on peut trŠs bien d‚sirer que 
+le vibrato reprenne plus loin que le d‚but de la courbe et/ou s'arrˆte avant 
+la fin de la courbe. La souris change alors de mode : son curseur ressemble … 
+un aimant, et la courbe de vibrato est alors affubl‚e de deux barres 
+verticales : celle de gauche est la barre de limite de d‚but de boucle, et 
+celle de droite, la barre de fin de boucle. Vous pouvez d‚placer ces barres 
+avec le bouton gauche pour celle de gauche, et le bouton droit pour celle de 
+droite. Notez cependant que (c'est ‚vident !) on ne peut mettre la barre de 
+d‚but aprŠs celle de fin ni mettre la barre de fin avant celle de d‚but.
+     NOTE: on ne peut "r‚gler le loop" en mode "zoom". Si vous voulez le 
+faire, revenz au mode "pas zoom" en re-cliquant sur le bouton "zoom", et 
+faites ce qu'il faut faire.
+     Le bouton suivant est "COPY" et s'utilise avec les deux lignes suivantes, 
+qui sont aussi les deux derniŠres lignes du bloc. Avec ce sous-bloc, vous 
+s‚lectionnez un autre vibrato et vous pouvez le copier ou le mixer avec la 
+courbe de vibrato courante. Seule le vibrato courant sera affect‚ par 
+l'op‚ration. Ceci permet de construire des variations sur une courbe de base, 
+sans avoir … redessiner ladite courbe de base, ou de m‚langerdeux courbes 
+"fondamentales" (par exemple une descente exponentielle et une sinusoide, ce 
+qui donnera une sinusoide amortie exponentiellement).
+     Vous pouvez choisir le vibrato … copier ou … m‚langer en donnant son 
+num‚ro ou la (les) premiŠre(s) lettre(s) de son nom.
+
+     Parlons maintenant du mode "zoom".
+     Vous entrez dedans en cliquant sur "ZOOM" et en sortez par le mˆme moyen. 
+Pour savoir si vous Štes dans ce mode, regardez le bouton "ZOOM" : il est 
+enfonc‚ si le mode "zoom" est enclench‚.
+     Que se passe-t'il alors ? l'‚chelle des courbes est multipli‚e par 6, ce 
+qui permet de dessiner finement des variations rapides de ces courbes. Un 
+petit segment t‚moin est plac‚ en bas de la fenŠtre de vibrato, qui permet de 
+voir ou on est dans la courbe. Il se d‚place en mˆme temps que nous dans la 
+courbe.
+     On peut se d‚placer dans la courbe avec les flŠches-boutons "droite" et 
+"gauche" mises de part et d'autre du bouton "ZOOM", ou gr…ce aux flŠches 
+droite et gauche du clavier.
+     NOTE : r‚gler les limites droite et gauche de la boucle est impossible 
+dans le mode "zoom" (Je n'avais pas envie de me casser les bonbons … 
+programmer une possibilit‚ aussi inutile !).
+
+----------------------------------------------------------------------------
+                LE CLAVIER DE L'EDITEUR DE SONS
+                -------------------------------
+
+     Comme dans tout ‚diteur, vous pouvez tester ce que vous faites : il 
+suffit pour cela d'appuyer sur une touche du clavier. Les 8 octaves dont 3 
+simultan‚s sont toujours disponibles, comme dans le menu principal : le 
+clavier de piano est le mˆme, et  on fait toujours glisser les octaves avec 
+les touches "+" et "-" du pav‚ num‚rique. Cela permet de mettre au point des 
+sons trŠs pr‚cis, car il est vrai qu'un son n'est pas le mˆme suivant la note 
+… laquelle il est jou‚. Un mˆme son pourra ˆtre trŠs joli dans les graves et 
+trŠs laid dans les aigus, ou inversement, vous vous en apercevrez trŠs vite.
+     Rappelons tout de mˆme la disposition des touches du clavier-piano :
+
+Touche   2   3   4       6   7       9   0   )
+Note     F2# G2# A2#     C3# D3#     F3# G3# A3#
+
+Touche  A   Z   E   R   T   Y   U   I   O   P   [
+Note    F2  G2  A2  H2  C3  D3  E3  F3  G3  A3  H3
+
+Touche       S   D   G       H   J       L   M
+Note         C1# D1# F1#     G1# A1#     C2# D2#
+
+Touche      W   X   C   V   B   N   ?   .   /   =
+Note        C1  D1  E1  F1  G1  A1  H1  C2  D2  E2
+
+     Si un son dure sans s'arrˆter, qu'il vous casse les oreilles et que vous 
+voulez l'arrˆter, appuyez sur la touche <0> du pav‚ num‚rique !
+     pour modifier le volume auquel est jou‚ le son, les flŠches haut et bas 
+du clavier sont l… pour ‡a.
+     La touche <Help> vous fait acc‚der … un ‚cran d'aide rappelant les 
+diverses touches du clavier, ainsi que la fa‡on de r‚gler les limites de la 
+boucle.
+     La touche <Undo> permet de rattraper la plupart des modifications que 
+vous faites subir aux formes d'onde, elle s'annule d'ailleurs elle-mˆme, car 
+il s'agit tout simplement d'un swapping de buffers. Vous pouvez accessoirement 
+vous en servir pour recopier un son dans un autre, mais faites attention : si 
+l'une des formes d'onde est utilis‚e dans un autre son, elle sera modifi‚e 
+pour cet autre son aussi... De toute fa‡on, pour des copies entre sons, je 
+vous conseille les boutons pr‚vus … cet usage.
+     La touche <Esc> est utile pour sortir de l'‚diteur et revenir … l'‚cran 
+principal (‚quivalent : le bouton en haut … gauche de l'‚cran).
+
+----------------------------------------------------------------------------
+                        LE SYNTHETISEUR
+                        ---------------
+
+     Pfff ! J'ai pas z'envie de m'‚tendre sur le sujet ! Je devrais vous dire: 
+"essayez, en appuyant sur les boutons, et vous verrez bien", mais, dans une 
+documentation, il faut savoir prendre sur soi, et guider l'utilisateur novice, 
+qui n'a jamais utilis‚ de logiciel sans regarder attentivement la doc avant !
+     Bon. Vous avez sans doute remarqu‚ le bouton <Synth> en haut … droite de 
+l'‚cran de l'‚diteur de son...
+     Et bien, croyez-le ou non, si la d‚finition de votre son courant ne 
+comporte pas de forme d'onde "Nulle" (c'est … dire, soit le null-vib, soit le 
+null-tre), ce bouton s'enfonce sous l'action de la souris et vous transporte 
+dans un ‚cran imbuvable, dans lequel la repr‚sentation graphique des formes 
+d'onde a disparu. C'est ce genre d'‚cran qui est commun aux autres utilitaires 
+de musique soudchip. Et dire qu'il y en a pour pr‚tendre qu'ils trouvent ‡a 
+pratique ! Plut“t qu'une courbe franche que vous avez sous les yeux, et qui 
+vous donne une id‚e imm‚diate de ce que peut ˆtre le son d‚fini, vous tombez 
+sur une froide accumulation de chiffres.
+     Le synth‚tiseur permet de "m‚langer" (on utilise l'anglicisme "mixer", je 
+crois) … la courbe que vous avez dessiner (ou avec le vide que vous avez cr‚‚) 
+avec des courbes toutes faites que vous allez param‚trer, avec des nombres.
+     Enfin... Du moins ceux-ci sont-ils r‚partis en quatre blocs principaux.
+     Ces quatre blocs sont :
+
+            Vibrato : Type, Depth, Speed, et Delay.
+
+            Tremolo : Type, Depth, Speed, et Delay.
+
+           Arpeggio : 6 d‚calages en demi-tons,
+                      un bouton de d‚marrage sur la premiŠre "note" ou
+                      sur le fondamental,
+                      Speed, et Repeat.
+
+               Main : Repat, et Volume Step.
+
+     Il y aussi deux boutons, Clear vibrato et Clear tremolo, qui permettent 
+d'effacer la forme d'onde du vibrato ou du tremolo que vous avez d‚finie dans 
+l'‚diteur de sons.
+     Je vais … pr‚sent vous donner une description, succinte, mais j'espŠre 
+suffisante, de ces blocs :
+
+
+          VIBRATO
+
+          Type : entre 0 et 3 inclus : c'est la forme que vous voulez lui 
+                 donner. Un cadre situe vers le haut … droite vous renseigne
+                 sur les formes d'onde correspondant … ces num‚ros.
+
+         Depth : la profondeur (entre 0 et FF) de cette forme d'onde
+
+         Speed : la "vitesse", mais inverse : le nombre de 50Šmes de seconde
+                 (moins 1) pour chaque pas de la courbe. Je ne peux que vous 
+                 conseiller de faire des aller-retours avec l'‚diteur, au 
+                 d‚but pour "voir ce que ‡a donne".
+
+         Delay : Le nombre de 50Šmes de seconde … attendre avant le 
+                 d‚clenchement de cette forme d'onde. On m'a fait remarquer 
+                 que Mad Max adorait ‡a.
+
+
+
+          TREMOLO
+
+         Veuillez vous reporter au Bloc du vibrato, car c'est … peu de choses 
+prŠs du mˆme tonneau.
+
+
+          ARPEGGIO
+
+         Il peut vous prendre l'envie de donner une certaine m‚lodie 
+"MadMaxienne" … vos tremolos. Cet effet est l'"arpeggio" : une succession 
+rapide de notes, partant de la note de d‚part (le "fondamental"), ou de la 
+premiŠre note de l'arpeggio (la flˆche situ‚e en dessous de la premiŠre "note" 
+donne cette diff‚rence, selon qu'elle est ou non enfonc‚e).
+         Vous pouvez donner jusqu'… six "notes" … l'arpeggio. Le nombre qui 
+d‚finit chaque note est un d‚calage en demi-tons. Si Il y a "FF" dans cette 
+note, alors c'est la fin de la succession de notes de l'arpeggio.
+         Vous avez encore un bouton "Speed" : plus c'est grand, plus c'est 
+lent...
+         Le bouton "Repeat" indique le nombre de fois moins 1 que se produit 
+l'arpeggio.
+
+
+          MAIN
+
+         Pour faire des effets d'‚chos sur le tremolo, avec -ou non- 
+att‚nuation de celui-ci. En gros c'est simple : vous avez d‚fini un bout de 
+tremolo, et vous voulez le r‚p‚ter plusieurs fois en l'att‚nuant un peu … 
+chaque r‚p‚tition...
+         MAIN REPEAT : le nombre de fois moins 1 que vous le r‚p‚tez (vous en 
+avez donc main repeat+2 exemplaires: l'original et les copies, … la sortie!).
+         MAIN VOL STEP : ce nombre indique l'att‚nuation (entre 0 et F) … 
+chaque r‚p‚tition.
+
+
+     Pour ‚couter le son que vous demandez au synth‚tiseur, appuyez sur une 
+touche du piano-clavier (mˆmes touches que pour le piano-clavier habituel, 
+avec les mˆmes commandes pour le volume ou les octaves ou pour arrˆter le 
+son).
+     Un problˆme peut surgir : si vous n'entendez rien, revenez … l'‚diteur 
+(<Esc> ou bouton en haut … gauche) et supprimez le mode <Loop> sur vos formes 
+d'onde...
+     Si vous revenez … l'‚diteur et que, somme toute, le son ne vous plait 
+pas, appuyez sur <Undo> : cela annulera tout ce que vous avez fait dans le 
+synth‚tiseur. Bien-s–r <Undo> peut aussi s'annuler elle-mˆme.
+     Lorsque vous serez revenu(e)(s) … l'‚diteur, que rien ne vous empˆche de 
+retravailler, de retoucher … la souris, votre son : il peut par exemple ˆtre 
+int‚ressant de remplacer un succession de formes identiques par une seule de 
+ces formes, avec une mode <Loop> bien choisi... N'oubliez pas que, moins le 
+son est long, moins il prend de place dans la forme "ex‚cutable" du module !
+     Une derniŠre remarque : pour la forme d'onde du vibrato, une moyenne est 
+faite avec la forme d'onde d‚ja d‚finie dans l'‚diteur, et pour le tremolo, 
+une surimposotion est faite (la diff‚rence vous sautera aux yeux si vous 
+revenez dans l'‚diteur). Ne me demandez pas pourquoi il en est ainsi : c'est 
+ce qu'on m'a demand‚ de programmer, les amis... Les gens ont de ces id‚es !
+
+----------------------------------------------------------------------------
+                        EPILOGUE
+                        --------
+
+     Voil…. Cette documentation est termin‚e. N‚anmoins, je ne suis pas … 
+l'abri d'‚ventuelles erreurs, que ce soit dans mon logiciel ou dans ma maniŠre 
+d'expliquer ce qui me paraŒt si ‚vident.
+     pour tout problˆme, vous pouvez me contacter … l'adresse suivante :
+
+                A. VIDOVIC
+                Tour Panoramique
+                DUCHERE
+                69009 LYON
+                FRANCE
+
+     Pour obtenir la derniŠre version en date, des modules de musique ou des 
+bibliothŠques de sons, c'est la mˆme adresse.
+     Remarque : si vous n'avez pas achet‚ ce logiciel et si vous d‚sirez 
+l'acheter, ce qui, entre parenthŠses, me permettra d'acqu‚rir plus vite un 
+magnifique FALCON, vous pouvez le faire gr…ce … la boŒte la moins chŠre de 
+France : Pressimage ! Ou alors, si vous Štes allergique(s) aux bons de 
+commande, envoyez-moi la somme de 100,00 Francs fran‡ais (ou U.S. $25.00) et 
+je vous enverrai le "package" complet par retour de courrier.
+     Dans le cas ou vous l'avez achet‚, renvoyez-moi la carte d'enregistrement 
+ci-dessous, ce qui fera de vous un utilisateur "enregistr‚" du YM-TRACKER et 
+vous donnera droit … un tarif ultra-pr‚f‚rentiel pour les versions ult‚rieures 
+de ce magnifique logiciel r‚volutionnaire du siŠcle... Voire aidera … la 
+cr‚ation d'un club d'utilisateurs, ce qui pourra faciliter les ‚changes de 
+modules de musique... JE PRECISE QUE JE NE FOURNIRAI LES RENSEIGNEMENTS DE 
+CETTE FICHE A PERSONNE, DONC, SI VOUS ETES SUBMERGE(E)(S) UN JOUR PAR DES 
+TONNES DE PUBLICITES POSTALES, CE NE SERA PAS MA FAUTE ! Quand je parle de 
+"future version", je fais allusion … une possible m‚ga-super-version tirant 
+parti du DSP du Falcon... J'ai d‚ja quelques id‚es sur le sujet, et ‡a va 
+fumer !
+     Enfin, si vous remarquez un ou des bugs dans ce logiciel, et/ou si vous 
+avez des suggestions … faire, dont je pourrais tenir compte pour les versions 
+ult‚rieures, ‚crivez-moi (dans le cas d'‚ventuels bugs, je corrige 
+imm‚diatement et je vous envoie gratuitement la version corrig‚e: n'oubliez 
+pas une enveloppe adress‚e et affranchie, avec disquette vierge, pour le 
+retour !).
+
+----------------------------------------------------------------------------
+
+     CARTE D'ENREGISTREMENT
+     ----------------------
+     YM-TRACKER v1.0
+     ---------------
+
+
+     NOM :
+     ----------------------------------
+
+     ADRESSE :
+     ----------------------------------
+
+     ----------------------------------
+
+     ----------------------------------
+
+     DATE D'ACHAT :
+     ----------------------------------
+
+     CONFIGURATION :
+     ----------------------------------
+
+     ----------------------------------
+
+     VOUS AVEZ CONNU L'EXISTENCE DE CE
+     LOGICIEL PAR :
+
+     - LA PUBLICITE                  []
+     - LE BOUCHE-A-OREILLE           []
+     - UNE VERSION DE DEMO           []
+
+----------------------------------------------------------------------------
+
+          POUR ECRIRE A CE BRAVE "AN COOL"
+
+     Je ne sais pas pour vous, mais moi, quand j'ai lu dans la "M DEMO 4" de 
+An Cool qu'il n'avait pas ‚t‚ pay‚ par M.P.H. (Philip Harman), l'‚diteur 
+(anglais) du TCB Tracker, qui a pourtant fait un v‚ritable tabac, cela m'a 
+r‚volt‚!
+     Bien que j'aie d‚ja raqu‚ entre 300 et 350 balles pour ce programme, je 
+me propose d'en rajouter encore (environ U.S. $50.00, ce qui correspond au 
+prix ‚diteur), mais directement … destination du programmeur.
+     Voil… comment je compte m'y prendre : dans sa RESET-Demo de la M-Demo 4, 
+An Cool donne l'adresse de Seabear Studio, avec lequel il semble trŠs li‚ 
+(c'est en effet l… qu'il a d‚velopp‚ le TCB Tracker, d'aprŠs la doc)... 
+J'envoie un mandat international de U.S. $50.00 … Seabear Studios, ainsi 
+qu'une lettre expliquant le pourquoi du comment, avec "Anders Nilsson" sur 
+l'enveloppe.
+     Voici cette adresse (si votre imprimante ne "passe" pas certains de ces 
+caractŠres, envoyez le fichier … l'‚cran pour corriger) :
+
+                      Anders  Nilsson
+                      Seabear Studios
+                     Sj”bj”rnsv„gen 10
+                     117 67  Stockholm
+                           SUEDE
+
+     Un dernier d‚tail : le sieur Anders Nilsson accomplit en ce moment son 
+service militaire de 10 mois, du 03 ao–t 1992 au 28 mai 1993. Profitez-en pour 
+le r‚conforter un peu : la M-DEMO 4, termin‚e le 1er ao–t 1992, ‚tait 
+empreinte d'inqui‚tude et d'une sorte de d‚go–t, bien compr‚hensibles de la 
+part de quelqu'un qui va devoir abandonner son cher ordinateur contre sa 
+volont‚ pendant une longue p‚riode.
+
+----------------------------------------------------------------------------
+
+          ANNEXE 1 : FORMAT DES MODULES EXECUTABLES
+          -----------------------------------------
+
+     Les modules ex‚cutables se pr‚sentent … la fois sous deux formes :
+
+          1ø) ils sont ex‚cutables directement … partir du bureau
+              leur nom est alors de la forme <NOM>.TOS
+              (il suffit donc de double-cliquer sur leur ic“ne)
+
+          2ø) on peut les d‚clencher … partir d'un autre programme :
+              - chargez-les en m‚moire
+              - notez leur adresse de d‚but (celle … partir de laquelle
+                vous avez charg‚ le module)
+              - pour d‚marrer (ou continuer) la musique :
+                     jsr adresse_de_d‚but+44
+              - pour arrˆter la musique :
+                     jsr adresse_de_d‚but+46
+              - pour red‚marrer la musique du d‚but (aprŠs un arrˆt) :
+                     jsr adresse_de_d‚but+48
+
+              Vous trouverez sur la disquette, dans le dossier "PROGRAMS", 
+quelques exemples d'utilisation en divers langages, qui vous aideront … 
+comprendre comment on appelle le module (en fait, rien de plus simple : il 
+suffit de l'avoir en m‚moire !).
+              Remarque : pour ceux que ‡a int‚resse : la routine s'installe en 
+tˆte de VBL (norme XBRA ! Oui, ma chŠre !) et consomme environ 3% de temps 
+machine (… titre de comparaison, la routine du replayer de Mad Max en consomme 
+environ 5% : c'est toujours ‡a de pris !).
+
+              ADDITIF AU DESCRIPTIF DU FORMAT : pour ceux qui veulent 
+installer eux-mˆmes la routine (attention: elle doit ˆtre appel‚ EXACTEMENT … 
+la fr‚quence de balayage du moniteur !) : la routine se trouve … l'offset $F2 
+(d‚cimal 242) aprŠs le d‚but du fichier ".TOS". Il va de soi que, si vous 
+installez la routine par vos propres moyens, vous devrez vous d‚brouiller pour 
+la "nettoyer" vous-mˆme quand vous aurez fini de vous en servir !
+              Les bidouilleurs qui d‚sassemblent toujours tous les bouts de 
+code qui passent … leur port‚e trouveront ici le chemin fl‚ch‚. Voici d‚ja les 
+offsets des mots o— sont stock‚s les p‚riodes et volumes de la note en cours 
+pour chacune des voies (d'abord en h‚xa, puis, entre parenthŠses, en d‚cimal):
+
+       Voie  |   Offset de la p‚riode  |   Offset du volume
+     --------+-------------------------+-------------------
+        A    |   $BE0  (3040)          |   $BE6  (3046)
+        B    |   $BE2  (3042)          |   $BE8  (3048)
+        C    |   $BE4  (3044)          |   $BEA  (3050)
+
+              D‚ja, avec ‡a, vous pourrez r‚aliser de petites choses, comme 
+des fondus (en diminuant progressivement le volume), etc...
+              Pour ce qui concerne la p‚riode et le volume REELS, cherchez un 
+peu: cela vous fera du bien, et vous aurez la satisafaction d'avoir trouv‚ 
+vous-mˆme la maniŠre d'attraper les donn‚es n‚cessaires au "spectrum" 
+pandragonesque de votre prochaine m‚ga-d‚mo (n'oubliez-pas d'inclure le 
+YM-Tracker dans les greetings, ‡a fait toujours plaisir !).
+
+----------------------------------------------------------------------------
+
+          ANNEXE 2 : LES EFFETS SPECIAUX
+          ------------------------------
+
+     Nous allons voir plus en d‚tail les effets sp‚ciaux.
+
+          EFFETS DES PISTES "CHANNEL"
+          ---------------------------
+
+nø00 :  NULL
+------------
+     Pas de paramŠtre.
+     Comme son nom l'indique, cet effet est nul. Il n'ajoute rien de sp‚cial.
+
+nø01 :  PORTAMENTO UP
+---------------------
+     ParamŠtre : incr‚ment de la p‚riode.
+     Cet effet permet de d‚caler de fa‡on progressive la fr‚quence de la note, 
+vers les basses tonalit‚s.
+
+nø02 :  PORTAMENTO DOWN
+-----------------------
+     ParamŠtre : d‚cr‚ment de la p‚riode.
+     Cet effet permet de d‚caler de fa‡on progressive la fr‚quence de la note, 
+vers les hautes tonalit‚s.
+
+nø03 :  TONE PORTAMENTO
+-----------------------
+     Aucun paramŠtre.
+     Cet effet permet de faire une liaison entre la note pr‚c‚dente et la note 
+courante. TrŠs impressionnant.
+
+nø04 :  SET VOLUME
+------------------
+     ParamŠtre : le nouveau volume de la voie (entre 00 et 0F inclus).
+     Cet effet permet de fixer un nouveau volume pour la voie. L'‚chelle des 
+volumes du YM-2149 est une ‚chelle logarithmique allant de 0 … 15.
+
+nø05 :  VOLUME SLIDE
+--------------------
+     ParamŠtre : d‚calage en volume (entre F1 et 0F inclus).
+     Cet effet permet le glissement en volume de la voie concern‚e. Ce 
+glissement est un nombre hexad‚cimal de 8 bits sign‚. Sa valeur est comprise 
+entre -15 et +15. Voici un tableau de ses valeurs possibles :
+
+D‚c :-15  -14  -13  -12  -11  -10  -9  -8  -7  -6  -5  -4  -3  -2  -1   0
+Hexa: F1   F2   F3   F4   F5   F6  F7  F8  F9  FA  FB  FC  FD  FE  FF  00
+ 
+D‚c :  1    2    3    4    5    6   7   8   9  10  11  12  13  14  15
+Hexa: 01   02   03   04   05   06  07  08  09  0A  0B  0C  0D  0E  0F
+
+nø06 :  PERIODE UP
+------------------
+     ParamŠtre : d‚calage positif de la p‚riode.
+     Cet effet permet de d‚caler la fr‚quence de la note vers une basse 
+tonalit‚. TrŠs utile si on veut g‚n‚rer des battements entre deux voies.
+
+nø07 :  PERIODE DOWN
+--------------------
+     ParamŠtre : d‚calage n‚gatif de la p‚riode.
+     Cet effet permet de d‚caler la p‚riode de la note vers une haute 
+tonalit‚.
+
+nø08 :  NORMAL PERIODE
+----------------------
+     Aucun paramŠtre.
+     Cet effet annule tous les d‚calages de fr‚quence, et permet donc de 
+retrouver le son "nu", tel que vous l'avez d‚fini au d‚part.
+
+nø09 :  NOTE CUT
+----------------
+     Aucun paramŠtre.
+     Cet effet permet d'arrˆter le son sur la voie.
+
+nø0A :  PLAY END OF SOUND
+-------------------------
+     ParamŠtre : position de d‚part dans le son (entre 0 et 255 inclus)
+     Cet effet permet de jouer le son de la note en partant d'une position de 
+d‚part dans son dessin autre que la position 0. C'est utile si vous avez envie 
+de rejouer un instrument sans sa phase d'attaque, par exemple.
+
+nø0B :  NORMAL SOUND
+--------------------
+     Aucun paramŠtre.
+     Cet effet annule tous les d‚calages, en fr‚quence comme en volume, sur la 
+voie.
+
+
+nø0C :  VOLUME IS ENVELOPE
+--------------------------
+     ParamŠtre : le mode (entre 0 et 3 inclus).
+     Cet effet permet de remplacer le tremolo du son par l'enveloppe fournie 
+par le YM-2149. Vous pouvez le faire de 4 maniŠres diff‚rentes, num‚rot‚es de 
+0 … 3 :
+     0 : rien de sp‚cial, il y a juste remplacement. Faites attention … ce que
+         l'enveloppe ait un vibrato (mˆme le NULL_VIB) … suivre.
+     1 : l'enveloppe utilisera la note et le vibrato du son courant.
+     2 : comme le mode 1, mais en plus, la forme d'enveloppe sera red‚marr‚e.
+     3 : comme le mode 0, mais en plus, la forme d'enveloppe sera red‚marr‚e.
+     Voyez plus haut pour un tableau des formes d'enveloppe.
+
+nø0D : WHITE NOISE ON + REPLACE
+-------------------------------
+     ParamŠtre : le mode (0 ou 1).
+     Cet effet d‚clenche le bruit blanc du YM-2149 sur la voie, qui remplace 
+alors le vibrato du son. Deux modes :
+     0 : rien de sp‚cial, le bruit blanc n'est pas affect‚.
+     1 : le bruit blanc utilisera la note et le vibrato du son courant.
+
+nø0E : WHITE NOISE ON + MIX
+---------------------------
+     ParamŠtre : le mode (0 ou 1), ou un couple de donn‚es NP.
+     Cet effet d‚clenche le bruit blanc du YM-2149 sur la voie, qui sera 
+m‚lang‚ avec le vibrato du son. Les deux modes sont les mˆmes que pour l'effet 
+nø0D, par contre, le couple NP doit ˆtre pr‚sent‚ :
+     Si le paramŠtre n'est, ni 00, ni 01, alors, les deux digits qui le 
+composent auront une nouvelle signification :
+
+                        NP
+
+     N : le nombre de 50Šmes de seconde que durera le bruit blanc
+     P : la p‚riode (entre 0 et F) … donner au bruit blanc. De fa‡on interne,
+         celle-ci sera multipli‚e par 2.
+
+     Exemple :
+                        E2# 02 0E 4E
+     Signifiera qu'on demande la note E2# avec l'instrument nø02, en le mixant 
+avec du bruit blanc pendant 4/50 de seconde (=0.08 seconde), de p‚riode 
+2*E=1C.
+     Cette forme du paramŠtre permet, assez simplement, de commencer un son 
+avec du bruit blanc mix‚, et de le finir "nu" : cela permet d'obtenir des sons 
+de batterie assez convaincants.
+     REMARQUE : cet effet sera recommenc‚ … chaque nouvelle note, jusqu'… 
+l'effet sp‚cial nø0F (annulation du bruit blanc).
+
+nø0F : WHITE NOISE OFF
+----------------------
+     Aucun paramŠtre.
+     Cet effet ‚teint le bruit blanc sur la voie.
+
+
+          EFFETS DE LA PISTE "MASTER"
+          ---------------------------
+
+nø00 :  NULL
+------------
+     Aucun paramŠtre.
+     De mˆme que pour les pistes de canal, cet effet ne produit rien.
+
+nø10 :  NOTE DELAY
+------------------
+     ParamŠtre : nouveau tempo provisoire (entre 1 et 255 inclus).
+     Cet effet permet un changement de tempo provisoire, limit‚ … la seule 
+note courante.
+
+nø11 :  PATTERN DELAY
+---------------------
+     ParamŠtre : nouveau tempo provisoire (entre 1 et 255 inclus).
+     Cet effet a exactement le mˆme effet que le nø10. Simplement, il est plus 
+destin‚ … ˆtre plac‚ en fin de pattern, pour le plaisir des yeux.
+
+
+
+nø12 :  SET TEMPO
+-----------------
+     ParamŠtre : nouveau tempo (entre 1 et 255 inclus).
+     Cet effet permet une modification d‚finitive du tempo. Rappelons que le 
+tempo est un nombre qui repr‚sente la dur‚e de la note, en cinquantiŠmes de 
+secondes : plus il est grand, plus les notes sont longues, et donc plus le 
+rythme est lent.
+
+nø13 :  TEMPO UP
+----------------
+     ParamŠtre : incr‚ment du tempo.
+     C'est une autre maniŠre de changer (d‚finitivement) le tempo : le nombre 
+en paramŠtre est ajout‚ au tempo.
+
+nø14 :  TEMPO DOWN
+------------------
+     ParamŠtre : d‚cr‚ment du tempo.
+     Comme pour le nø13, mais le nombre en paramŠtre est soustrait au tempo.
+
+nø15 :  POSITION JUMP
+---------------------
+     ParamŠtre : ligne de d‚part dans la pattern suivante (entre 0 et 3F).
+     Cet effet met fin sur-le-champ … la pattern en cours, va … la pattern 
+suivante dans la chanson, et continue … la ligne dont le num‚ro (entre 00 et 
+3F inclus) est donn‚ en paramŠtre. Si ce num‚ro est sup‚rieur … 3F, un 
+masquage logique … 3F le ramŠne dans l'intervalle (00-3F).
+
+nø16 :  PATTERN BREAK
+---------------------
+     Aucun paramŠtre.
+     Cet effet met fin aussit“t … la pattern en cours et d‚clenche la suivante 
+de la chanson. C'est le mˆme effet que "POSITION JUMP 00", mais avec un 
+paramŠtre en moins. C'est une fin anticip‚e de la pattern en cours.
+     Cet effet permet donc de fabriquer des patterns plus courtes que les 
+patterns de 64 lignes habituelles, et rend donc de ce fait inutile une option 
+"half track" (patterns de 32 lignes), puisqu'il suffit, pour la remplacer, de 
+mettre un effet nø16 dans la colonne master de la ligne $20.
+
+nø17 :  USE VIBRATO FOR ENVELOPE
+--------------------------------
+     paramŠtre : num‚ro du vibrato … utiliser.
+     Cet effet vous permet d'affecter une forme de vibrato d‚finie dans 
+l'‚diteur de sons … l'enveloppe du YM-2149 ! Il suffit de pr‚ciser le num‚ro 
+du vibrato en paramŠtre... Le potentiel de cet effet est proprement 
+astronomique, puisque, en conjonction avec des effets de battement entre la 
+fr‚quence d'une voie et celle de son enveloppe, on peut arriver … recr‚er, 
+entre autres choses, un "formant" quasi vocal ! Oui ! Vous en avez un exemple 
+dans une des musiques de pr‚sentation du YM-Tracker (la F10) : il y a un 
+moment ou l'on entend une sorte de "voix", comme si l'ordinateur devenait une 
+radio mal r‚gl‚e... Et encore, … l'heure actuelle, je n'ai pas explor‚ toutes 
+les possibilit‚s sonores des combinaisons entre les effets ! On peut imaginer 
+qu'en cherchant un peu, on pourra, comme ce guitariste qui sait faire "parler" 
+sa guitare ‚lectrique, cr‚er de petites "phrases" compr‚hensibles !
+
+nø18 :  ENVELOPE PERIODE PORTAMENTO UP
+--------------------------------------
+     ParamŠtre : incr‚ment de la p‚riode de l'enveloppe.
+     Cet effet est un portamento, mais sur la fr‚quence de l'enveloppe du 
+YM-2149, vers les basses fr‚quences.
+
+nø19 :  ENVELOPE PERIODE PORTAMENTO DOWN
+----------------------------------------
+     ParamŠtre : d‚cr‚ment de la p‚riode de l'enveloppe.
+     Cet effet est un portamento, mais sur la fr‚quence de l'enveloppe du 
+YM-2149, vers les hautes fr‚quences.
+
+nø1A :  NORMAL ENVELOPE
+-----------------------
+     Aucun paramŠtre.
+     Ceci annule tous les effets suppl‚mentaires sur la p‚riode de l'enveloppe 
+du YM-2149.
+
+nø1B :  WHITE NOISE WITH VIBRATO
+-------------------------------
+     ParamŠtre : num‚ro du vibrato … utiliser.
+     Voil… qui vous permet d'affecter une forme de vibrato d‚finie dans 
+l'‚diteur de sons … la p‚riode du bruit blanc. Vous donnez simplement le 
+num‚ro du vibrato en paramŠtre.
+
+nø1C :  WHITE NOISE PORTAMENTO UP
+---------------------------------
+     ParamŠtre : incr‚ment de la p‚riode.
+     Comme por l'effet nø18, mais sur la p‚riode du bruit blanc.
+
+nø1D :  WHITE NOISE PORTAMENTO DOWN
+-----------------------------------
+     ParamŠtre : d‚cr‚ment de la p‚riode.
+     Comme pour l'effet nø19, mais sur la p‚riode du bruit blanc.
+
+nø1E :  NORMAL WHITE NOISE
+--------------------------
+     Aucun paramŠtre.
+     Cet effet annule tous les effets additionnels sur la p‚riode du bruit 
+blanc.
+
+nø1F :  MUTE ALL EFFECTS
+------------------------
+     Aucun paramŠtre.
+     Utilisez ceci pour annuler d'un seul coup tous les autres effets.
+
+nø2X :  SET ENVELOPE TYPE AND PERIODE
+-------------------------------------
+     ParamŠtres :
+           - Le type (entre 0 et F) dans le deuxiŠme chiffre (X)
+           - La p‚riode d'enveloppe (entre 0 et FFFF)
+     Cet effet trŠs puissant fait deux choses simultan‚es : il affecte une 
+p‚riode … l'enveloppe du YM-2149, et lui donne une forme. Il va sans dire que 
+le simple fait d'affecter une nouvelle forme … cette enveloppe la refait 
+d‚marrer … z‚ro. Dans le tableau qui suit, vous verrez les formes que peut 
+prendre cette enveloppe. Certaines sont r‚p‚titives, et ne s'arrˆtent jamais, 
+d'autres s'arrˆtent au bout de leur p‚riode. Ce fait est illustr‚ par la 
+r‚p‚tition ou non du motif de d‚part.
+     Voici le tableau donnant les formes d'enveloppe :
+
+          de 0 … 3 :    \
+                         \___________________________
+
+          de 4 … 7 :     /|
+                        / |__________________________
+
+          8        :    \ |\ |\ |\ |\ |\ |\ |\ |\ |\
+                         \| \| \| \| \| \| \| \| \| \
+
+          9        :    \
+                         \___________________________
+
+          A        :    \  /\  /\  /\  /\  /\  /\  /\
+                         \/  \/  \/  \/  \/  \/  \/
+                           __________________________
+          B        :    \ |
+                         \|
+
+          C        :     /| /| /| /| /| /| /| /| /| /
+                        / |/ |/ |/ |/ |/ |/ |/ |/ |/ 
+                          ___________________________
+          D        :     /
+                        /
+
+          E        :     /\  /\  /\  /\  /\  /\  /\  
+                        /  \/  \/  \/  \/  \/  \/  \/
+
+          F        :     /|
+                        / |__________________________
+
+----------------------------------------------------------------------------
+          ANNEXE 3 : TABLES DE NOMBRES HEXADECIMAUX
+          -----------------------------------------
+
+     En hexad‚cimal, comme son nom l'indique, on travaille en base 16 : le 
+"dix" de cette base est obtenu en comptant 16 fois, ce qui nous oblige de 
+"rajouter" 6 chiffres entre "9" et "10". Par habitude, on prend les 6 
+premiŠres lettres de l'alphabet. Voici la table des 64  premiers nombres 
+hexad‚cimaux :  
+
+     D‚c./Hexa    D‚c./Hexa    D‚c./Hexa    D‚c./Hexa
+     ----+----    ----+----    ----+----    ----+----
+       0 | 00      16 | 10      32 | 20      48 | 30
+       1 | 01      17 | 11      33 | 21      49 | 31
+       2 | 02      18 | 12      34 | 22      50 | 32
+       3 | 03      19 | 13      35 | 23      51 | 33
+       4 | 04      20 | 14      36 | 24      52 | 34
+       5 | 05      21 | 15      37 | 25      53 | 35
+       6 | 06      22 | 16      38 | 26      54 | 36
+       7 | 07      23 | 17      39 | 27      55 | 37
+       8 | 08      24 | 18      40 | 28      56 | 38
+       9 | 09      25 | 19      41 | 29      57 | 39
+      10 | 0A      26 | 1A      42 | 2A      58 | 3A
+      11 | 0B      27 | 1B      43 | 2B      59 | 3B
+      12 | 0C      28 | 1C      44 | 2C      60 | 3C
+      13 | 0D      29 | 1D      45 | 2D      61 | 3D
+      14 | 0E      30 | 1E      46 | 2E      62 | 3E
+      15 | 0F      31 | 1F      47 | 2F      63 | 3F
+
+     Maintenant que vous avez compris le systŠme, voici un autre tableau, 
+donnant la "traduction" en d‚cimal de divers nombres "ronds" en hexad‚cimal :
+
+     D‚c. | Hexa     D‚c.  | Hexa     D‚c.   |  Hexa
+     -----+-----     ------+-----     -------+------
+       16 |  10        256 | 100        4096 | 1000
+       32 |  20        512 | 200        8192 | 2000
+       48 |  30        768 | 300       12288 | 3000
+       64 |  40       1024 | 400       16384 | 4000
+       80 |  50       1280 | 500       20480 | 5000
+       96 |  60       1536 | 600       24576 | 6000
+      112 |  70       1792 | 700       28672 | 7000
+      128 |  80       2048 | 800       32768 | 8000
+      144 |  90       2304 | 900       36864 | 9000
+      160 |  A0       2560 | A00       40960 | A000
+      176 |  B0       2816 | B00       45056 | B000
+      192 |  C0       3072 | C00       49152 | C000
+      208 |  D0       3328 | D00       53248 | D000
+      224 |  E0       3584 | E00       57344 | E000
+      240 |  F0       3840 | F00       61440 | F000
+
+     Muni(e)(s) de ces tables, vous devez maintenant ˆtre en mesure, sans 
+calculatrice sp‚cialis‚e, de convertir n'importe quel nombre hexad‚cimal 
+compris entre 0 et FFFF (d‚c : 65535). Il vous suffira pour cela d'additionner 
+les "valeurs" de chaque "chiffre". Voici un exemple :
+
+     Soit le nombre hexad‚cimal :
+
+                         A12E
+
+     dont on veut connaitre la transcription en d‚cimal.
+     On peut ‚crire ce nombre comme la somme (en hexa) :
+
+                A12E = A000 + 100 + 20 + E
+
+     Les tableaux nous donnent les valeurs de ces nombres :
+
+                40960 : A000
+                  256 :  100
+                   32 :   20
+                   14 :    E
+
+     La valeur d‚cimale de A12E est donc :
+
+               40960                      A000
+             +   256                    +  100
+             +    32                    +   20
+             +    14                    +    E
+             -------                    ------
+             = 41262                    = A12E
+
+     Voil…. Et c'est la mˆme m‚thode pour tous les autres nombres hexa !
+
+----------------------------------------------------------------------------
+                        Laissons le chat ‚crire un peu
+                        sur le clavier, puisqu'il en a
+                        tellement envie :
+
+
+
+
+888888888888888888888888888      :;;;,;"' '(PO54444444444        PLM     Y
+UICU
+ERRRRRRRRRRRR5%=0000000000000 888888888888888887{MM90ø0KO
+
+
+

@@ -1,0 +1,52 @@
+
+                            How to Get SCSI Standards
+                             (and other SCSI Books)
+
+   This file contains information on obtaining the various SCSI standards and 
+   other published information about SCSI.  If you know of other published 
+   material on SCSI that should be included here, please leave a message on 
+   the SCSI BBS or send a Fax to John Lohmeyer 316-636-8889.
+
+   American National Standard (ANSI) for Small Computer System Interface 
+   (SCSI), X3.131-1986.  This approved standard is available from:
+
+               American National Standards Institute
+               11 West 42nd Street
+               13th Floor
+               New York, NY 10036
+               Sales Department: (212) 642-4900
+
+   The Small Computer System Interface - 2 (SCSI-2) was approved by ANSI on 
+   August 31, 1990.  Since then, the X3T9.2 committee has asked ANSI to return 
+   SCSI-2 for further editing.  Revision 10d is in the works, but it is not 
+   finished yet.  Revision 10c can be purchased from:
+
+        Global Engineering Documents
+        2805 McGaw
+        Irvine, CA 92714
+        (800) 854-7179     Outside USA and Canada:  (714) 261-1455
+
+   Global has identified this document as X3.131-199x. (The latest revision is 
+   Rev 10c with a date of 3/9/90.)
+
+   If you are looking for a introduction to SCSI, try:
+
+        "SCSI: Understanding the Small Computer System Interface"
+        Written by NCR Corporation
+        Available from: Prentice Hall, Englewood Cliffs, NJ, 07632
+        Phone: (201) 767-5937                ISBN 0-13-796855-8
+
+   If you want an easy-to-read reference book on SCSI-2 that includes timing 
+   diagrams (but omits all command sets other than for disks, tapes, and 
+   processor devices), try:
+
+       "The SCSI Bench Reference"
+       ENDL Publications
+       14426 Black Walnut Court
+       Saratoga CA, 95070
+       (408) 867-6642
+
+   Also, coming soon from ENDL Publications, the "SCSI Encyclopedia".  I've 
+   reviewed volume 1 and find it an excellent source of information about 
+   SCSI-2.  Unfortunately, it is NOT inexpensive.
+

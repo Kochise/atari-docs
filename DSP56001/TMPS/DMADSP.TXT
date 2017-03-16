@@ -1,0 +1,116 @@
+##############Falcon030 DMA/DSP Controllers                        ###########
+-------+-----+-----------------------------------------------------+----------
+$FF8930|word |Crossbar Source Controller                           |R/W (F030)
+       |     +-----------------------------------------------------+
+       |     |Source: A/D Convertor                 BIT 15 14 13 12|
+       |     |1 - Connect, 0 - disconnect ---------------'  |  |  ||
+       |     |00 - 25.175Mhz clock -------------------------+--+  ||
+       |     |01 - External clock --------------------------+--+  ||
+       |     |10 - 32Mhz clock (Don't use) -----------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+       |     +-----------------------------------------------------+
+       |     |Source: External Input                BIT 11 10  9  8|
+       |     |0 - DSP IN, 1 - All others ----------------'  |  |  ||
+       |     |00 - 25.175Mhz clock -------------------------+--+  ||
+       |     |01 - External clock --------------------------+--+  ||
+       |     |10 - 32Mhz clock -----------------------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+       |     +-----------------------------------------------------+
+       |     |Source: DSP-XMIT                      BIT  7  6  5  4|
+       |     |0 - Tristate and disconnect DSP -----------+  |  |  ||
+       |     |    (Only for external SSI use)            |  |  |  ||
+       |     |1 - Connect DSP to multiplexer ------------'  |  |  ||
+       |     |00 - 25.175Mhz clock -------------------------+--+  ||
+       |     |01 - External clock --------------------------+--+  ||
+       |     |10 - 32Mhz clock -----------------------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+       |     +-----------------------------------------------------+
+       |     |Source: DMA-PLAYBACK                  BIT  3  2  1  0|
+       |     |0 - Handshaking on, dest DSP-REC ----------+  |  |  ||
+       |     |1 - Destination is not DSP-REC ------------'  |  |  ||
+       |     |00 - 25.175Mhz clock -------------------------+--+  ||
+       |     |01 - External clock --------------------------+--+  ||
+       |     |10 - 32Mhz clock -----------------------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+-------+-----+-----------------------------------------------------+----------
+$FF8932|word |Crossbar Destination Controller                      |R/W (F030)
+       |     +-----------------------------------------------------+
+       |     |Destination: D/A Convertor            BIT 15 14 13 12|
+       |     |1 - Connect, 0 - Disconnect ---------------'  |  |  ||
+       |     |00 - Source DMA-PLAYBACK ---------------------+--+  ||
+       |     |01 - Source DSP-XMIT -------------------------+--+  ||
+       |     |10 - Source External Input -------------------+--+  ||
+       |     |11 - Source A/D Convertor --------------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+       |     +-----------------------------------------------------+
+       |     |Destination: External Output          BIT 11 10  9  8|
+       |     |0 - DSP out, 1 - All others ---------------'  |  |  ||
+       |     |00 - Source DMA-PLAYBACK ---------------------+--+  ||
+       |     |01 - Source DSP-XMIT -------------------------+--+  ||
+       |     |10 - Source External Input -------------------+--+  ||
+       |     |11 - Source A/D Convertor --------------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+       |     +-----------------------------------------------------+
+       |     |Destination: DSP-RECORD               BIT  7  6  5  4|
+       |     |0 - Tristate and disconnect DSP -----------+  |  |  ||
+       |     |    (Only for external SSI use)            |  |  |  ||
+       |     |1 - Connect DSP to multiplexer ------------'  |  |  ||
+       |     |00 - Source DMA-PLAYBACK ---------------------+--+  ||
+       |     |01 - Source DSP-XMIT -------------------------+--+  ||
+       |     |10 - Source External Input -------------------+--+  ||
+       |     |11 - Source A/D Convertor --------------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+       |     +-----------------------------------------------------+
+       |     |Destination: DMA-RECORD               BIT  3  2  1  0|
+       |     |0 - Handshaking on, src DSP-XMIT ----------+  |  |  ||
+       |     |1 - Source is not DSP-XMIT ----------------'  |  |  ||
+       |     |00 - Source DMA-PLAYBACK ---------------------+--+  ||
+       |     |01 - Source DSP-XMIT -------------------------+--+  ||
+       |     |10 - Source External Input -------------------+--+  ||
+       |     |11 - Source A/D Convertor --------------------+--'  ||
+       |     |0 - Handshake on, 1 - Handshake off ----------------'|
+-------+-----+-----------------------------------------------------+----------
+$FF8934|byte |Frequency Divider External Clock          BIT 3 2 1 0|R/W (F030)
+       |     |0000 - STe-Compatible mode                           |
+       |     |0001 - 1111  Divide by 256 and then number           |
+-------+-----+-----------------------------------------------------+----------
+$FF8935|byte |Frequency Divider Internal Sync           BIT 3 2 1 0|R/W (F030)
+       |     |0000 - STe-Compatible mode   1000 - 10927Hz*         |
+       |     |0001 - 49170Hz               1001 -  9834Hz          |
+       |     |0010 - 32780Hz               1010 -  8940Hz*         |
+       |     |0011 - 24585Hz               1011 -  8195Hz          |
+       |     |0100 - 19668Hz               1100 -  7565Hz*         |
+       |     |0101 - 16390Hz               1101 -  7024Hz*         |
+       |     |0110 - 14049Hz*              1110 -  6556Hz*         |
+       |     |0111 - 12292Hz               1111 -  6146Hz*         |
+       |     |               * - Invalid for CODEC                 |
+-------+-----+-----------------------------------------------------+----------
+$FF8936|byte |Record Tracks Select                          BIT 1 0|R/W (F030)
+       |     |00 - Record 1 Track ------------------------------+-+|
+       |     |01 - Record 2 Tracks -----------------------------+-+|
+       |     |10 - Record 3 Tracks -----------------------------+-+|
+       |     |11 - Record 4 Tracks -----------------------------+-'|
+-------+-----+-----------------------------------------------------+----------
+$FF8937|byte |CODEC Input Source from 16bit adder           BIT 1 0|R/W (F030)
+       |     |Source: Multiplexer ------------------------------' ||
+       |     |Source: A/D Convertor ------------------------------'|
+-------+-----+-----------------------------------------------------+----------
+$FF8938|byte |CODEC ADC-Input for L+R Channel               BIT 1 0|R/W (F030)
+       |     |0 - Microphone, 1 - Soundchip                     L R|
+-------+-----+-----------------------------------------------------+----------
+$FF8939|byte |Channel amplification                   BIT LLLL RRRR|R/W (F030)
+       |     |          Amplification is in +1.5dB steps           |
+-------+-----+-----------------------------------------------------+----------
+$FF893A|word |Channel attenuation                     BIT LLLL RRRR|R/W (F030)
+       |     |           Attenuation is in -1.5dB steps            |
+-------+-----+-----------------------------------------------------+----------
+$FF893C|byte |CODEC-Status                                  BIT 1 0|R/W (F030)
+       |     |Left Channel Overflow ----------------------------' ||
+       |     |Right Channel Overflow -----------------------------'|
+-------+-----+-----------------------------------------------------+----------
+$FF8941|byte |GPx Data Direction                          BIT 2 1 0|R/W (F030)
+       |     |0 - In, 1 - Out --------------------------------+-+-'|
+       |     | For the GP0-GP2 pins on the DSP connector           |
+-------+-----+-----------------------------------------------------+----------
+$FF8943|byte |GPx Data Port                               BIT 2 1 0|R/W (F030)
+-------+-----+-----------------------------------------------------+----------

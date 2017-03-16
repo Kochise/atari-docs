@@ -1,0 +1,110 @@
+2. Referenced Standards and Organizations
+
+  The requirements of ISO 8482:1987, "Information Processing - twisted pair 
+multi-point interconnection data communication" apply to the use of 
+differential drivers and receivers.
+
+  American National Standard Small Computer System Interface, X3.131-1986, may 
+also be useful to achieve compatibility with devices that conform to version 1 
+of SCSI.
+
+  The medium catalog numbers in the CD-ROM section (13) are controlled by the 
+Uniform Product Code Council, 8163 Old Yankee Road, Suite J, Dayton, Ohio 
+45459, U.S.A. and the European Article Number Council, Rue des Colonies, 54-
+BTE8, 1000 Brussels, Belgium.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

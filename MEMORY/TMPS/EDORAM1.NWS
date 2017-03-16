@@ -1,0 +1,123 @@
+Heres some info that I gathered hope it helps:
+
+Video Memory Architecture
+
+Extended data out (EDO) is a single-cycle memory type that achieves
+more efficient  operation by holding onto the data (outside the CAS
+cycle), so the data remains valid longer. This increases its bandwidth
+without wideni
+ng the data bus.
+
+RDRAM replaces the conventional page-mode interface with RAMBUS
+interface. It operate s at 500MB per second over and 8-bit bus. This
+lets board makers improve card performance, as a higher-than-normal 
+level of bandwidth 
+is available. (A normal 16-bit chips runs at about 40 megabits per
+second.)
+
+
+
+PC Magazine  Dec 6, 1994 v13 n21 p274(1)
+------------------------------
+Memories of tomorrow.
+(types of video memory) (sidebar to "Mainstream Graphics Accelerators
+Rush Power")
+
+Author
+Ulanoff, Lance
+
+Abstract
+New types of memory for graphics accelerator boards are emerging to
+supplement dynamic RAM (DRAM) and video RAM (VRAM). Enhanced Data Out
+(EDO) DRAM and DRAM is a new memory technology already available from
+several chip 
+companies that offers increased bandwidth by shortening the page mode
+cycle of standard DRAM and VRAM. Most observers agree that EDO is
+evolutionary rather than revolutionary, extending current RAM
+technology instead of r
+eplacing it. A more radical departure is Window RAM (WRAM), developed
+by Samsung. WRAM, like VRAM, is dual-ported, and it has several
+enhancements oriented specifically toward GUI environments, such as a
+color write-block
+ mode and a memory design for fast font rendering. The new memory is
+expected to cost more than DRAM but less than VRAM; it may be in short
+supply for some time because Samsung is the only source for it. Matrox
+and Triden
+t are among the few graphics board vendors that have committed to WRAM;
+most are taking a wait-and-see approach. Rambus' RDRAM is another
+incremental technology that enhances DRAM, while Synchronous DRAM and
+Multibank DRA
+M are emerging as new choices.
+
+Full Text
+By this time next year, users preparing to purchase their next graphic
+accelerator boards could be faced with a mind-boggling selection of
+video RAM choices, including DRAM, VRAM, EDO VRAM and DRAM (also called
+EDRAM), MD
+RAM, RDRAM, SDRAM, and WRAM. 
+Among the front runners is EDO (Extended Data Out) VRAM and DRAM. It's
+the only new memory technology. EDO's defining feature is its increased
+bandwidth, which is a direct result of its overall shortening of the
+page mode
+ cycle of standard VRAM and DRAM. Overall, EDO chips are approximately
+25 percent faster than comparable standard DRAM and VRAM chips.
+Graphics card vendors already committed to using EDO on their next
+generation of cards
+ include ATI and Diamond.
+
+Most agree that EDO is an evolutionary step in memory technology
+because it's basically an extension of current RAM technology. 
+Samsung's WRAM (Window RAM) may fit the bill. Dual-ported like VRAM,
+WRAM features a number 
+of enhancements specifically geared toward improving graphics
+performance in any GUI environment. Unlike DRAM, WRAM has a color
+write-block mode that should enhance screen redraw performance, and a
+memory design that shou
+ld facilitate better text-rendering performance.
+
+Like VRAM, WRAM will be expensive (it will cost less than VRAM, but
+more than DRAM), and may be in short supply, since Samsung, the
+inventor of the technology, is currently the sole supplier, although
+the company says it 
+is speaking with other manufacturers who are interested in producing
+WRAM. Among graphics board manufacturers, few have voiced their
+commitment to WRAM so far. A couple of exceptions are Matrox and
+Trident.
+
+As for the rest of the technologies out there--Rambus's RDRAM,
+Synchronous DRAM (SDRAM), and many others--vendors have adopted a
+wait-and-see attitude. Of these two, RDRAM may have the best chance of
+succeeding. Although 
+Rambus only produces the chip technology and not the actual chips, it
+has received commitments from memory chip and graphics accelerator
+manufacturers to use and support Rambus technology in future DRAM-based
+products.
+
+Like EDO, RDRAM is another incremental technology that advances current
+DRAM technology by increasing bandwidth. Essentially, Rambus replaces
+DRAM's traditional page-mode memory with its own interface. Rambus
+claims that 
+8-bit DRAM organized according to the company's scheme can perform at
+approximately 500 megabytes per second (MBps). Current DRAM operates at
+around 40 MBps on a 16-bit bus.
+
+Another new proprietary memory architecture is Multibank DRAM, or
+MDRAM. Developed by MoSys, it will be based on several small,
+independent banks of DRAM. S3, among others, will support MDRAM in its
+chip sets.
+
+Andrew Martinez
+adm@ix.netcom.com
+
+In <3uqdbh$6ji@jaring.my> ycm@pract.po.my writes: 
+>
+><snip>
+>>can afford it, get it. Highly recommended. Then look into "Pipelined
+>>Burst SRAM".
+>Wow, this is too tech. I'm interested in knowing more of this EDO RAM,
+>can you please explain this in a simpler manner.
+>Thanks in advance.
+>Please reply thru the Newsgroup.
+>
+
+

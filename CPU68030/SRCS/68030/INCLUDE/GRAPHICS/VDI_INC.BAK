@@ -1,0 +1,10 @@
+;****************************************************************
+;		Structure d'information pour les sorties graphiques.
+;****************************************************************
+vdi		rsstruct
+xmin_clip:	rs.w		1 ; Clipping X minimum(W).
+xmax_clip:	rs.w		1 ; Clipping X maximum(W).
+ymin_clip:	rs.w		1 ; Clipping Y minimum(W).
+ymax_clip:	rs.w		1 ; Clipping Y maximum(W).
+		rsend
+;****************************************************************

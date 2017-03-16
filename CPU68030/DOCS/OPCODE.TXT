@@ -1,0 +1,592 @@
+ 
+6666666  8888888  0000000  0000000  0000000 
+66       88   88  00   00  00   00  00   00 
+66       88   88  00   00  00   00  00   00  EEEEEEE  RRRRRRR 
+6666666    888    00   00  00   00  00   00  EE   EE  RR   RR 
+66   66  88   88  00   00  00   00  00   00  EEEEEEE  RR 
+66   66  88   88  00   00  00   00  00   00  EE       RR 
+6666666  8888888  0000000  0000000  0000000  EEEEEEE  RR 
+ 
+ 
+OOOOOOO                                 DD 
+OO   OO                                 DD 
+OO   OO  PPPPPPP  CCCCCC  OOOOOOO  DDDDDDD  EEEEEEE  SSSSSSS 
+OO   OO  PP   PP  CC      OO   OO  DD   DD  EE   EE  SS 
+OO   OO  PP   PP  CC      OO   OO  DD   DD  EEEEEEE   SSSSS 
+OO   OO  PP   PP  CC      OO   OO  DD   DD  EE            SS 
+OOOOOOO  PPPPPPP  CCCCCC  OOOOOOO  DDDDDDD  EEEEEEE  SSSSSSS 
+         PP 
+         PP 
+ 
+ 
+ 
+ 
+ 
+ 
+šbersicht: 
+ 
+    $0    %0000        bset,btst,bchg,bclr,ori,andi,eori,cmp2 
+                       chk2,addi,subi,cmpi,moves,cas,movep... 
+     1     0001        move.b 
+     2     0010        move.l 
+     3     0011        move.w 
+     4     0100        lea,trap,clr,not,movem,link,unlk,rt? 
+                       movec,jmp,jsr,pea... 
+     5     0101        dbcc,addq,subq,scc,trapcc 
+     6     0110        bcc 
+     7     0111        moveq 
+     8     1000        div,or,sbcd,pack,unpk 
+     9     1001        sub 
+     A     1010        linea 
+     B     1011        cmp 
+     C     1100        mul,and,exg... 
+     D     1101        add 
+     E     1110        Schiften und Rollen, Bitfelder 
+     F     1111        FPU und PMMU-Ansteuerung 
+ 
+ 
+ 
+Adressierungsarten: 
+ 
+Modus:      0   1   2   3   4   5   6   7   7   7   7   7 
+Reg.Nr.:                                0   1   2   3   4 
+            D   A  (A) (A)+ |   |   |  $W  $L d(PC) |   | 
+                           -(A) |   |           d(PC,R) | 
+                               d(A) |                   # 
+                                   d(A,R) 
+ 
+Codierung von d(A,R.?) und d(PC,R.?): 
+ 
+      dRRR  G000  dddd  dddd 
+ 
+   d=0 :  R->D             G=0 : -> R.w 
+     1 :  R->A               1 : -> R.l 
+ 
+Codierung von ([b,A,R.?*m],o) und ([b,A],R.?*m) (ab MC68020) 
+ 
+      dRRR  Gmm1  bbbb  oooo  (+16 oder 32Bit b) (+...o) 
+ 
+      d,R und G siehe oben 
+      o=0 : b(A,R.?)   mit b=32Bit Offset 
+      sonst ([b,A],R.?*m) 
+      b: Bit 3 : A nicht in [] vorhanden 
+             2 : R nicht in [] vorhanden 
+             0 und 1 : 01 : b nicht vorhanden 
+                       10 : b ist wortlang 
+                       11 : b ist long 
+      o: Bit 3 : immer 0 
+             2 : R ist auerhalb [] vorhanden 
+                 ,wenn Bit 2 bei b nicht gesetzt! 
+             0 und 1 : 01 : o nicht vorhanden 
+                       10 : o ist wortlang 
+                       11 : o ist long 
+      m : Multiplikationsfaktor:  00 : R.? 
+                                  01 : R.?*2 
+                                  10 : R.?*4 
+                                  11 : R.?*8 
+ 
+ 
+unerlaubte Adressierungsarten: 
+  gelten im folgenden immer fr R 
+ 
+             *      d(PC),d(PC,R.?),# 
+             **     A,* 
+             ***    D,A,* 
+             ****   A 
+             *****  D,A,-(A),(A)+,#             
+             6*     D,A,# 
+             7*     # 
+ 
+  Wenn bei dem Datenformat .b die Adressierungsart A verboten 
+  ist, wird lediglich ein Wert von 16 hinzuaddiert! 
+ 
+ 
+Abkrzungen: 
+            R : Register aller Art 
+            Y : Register im zweiten Nibble (von oben) 
+            X : Register im vierten Nibble (von oben) 
+            D : Datenregister 
+            A : Adressregister 
+            M : Adressierungsmodus 
+            K : Konstante 
+            N : Nummer 
+            G : Datenformat  ( %00=.b  %01=.w  %10=.l ) 
+            d : Flag fr Daten-(0) oder Adressregister(1) 
+            s : Steuerregister (siehe unten) 
+ 
+            +X  : Erweiterung je nach Datenformat 
+            +W  : n„chstes Wort als wortlange Konstante 
+            +Wb : n„chstes Wort als bytelange Konstante 
+ 
+ 
+Prozessoren: 
+               M1  :  MC68010 
+               M2  :  MC68020 
+               M3  :  MC68030 
+               M4  :  MC68040 
+               MF  :  MC68881/68882 
+z.B. bedeutet >M2 ab MC68020 vorhanden 
+ 
+ 
+Steuerregister (s) fr movec: 
+                     $0  : SFC     >M1 
+                     $1  : DFC     >M1 
+                     $2  : CACR    >M2 
+                     $3  : TC      >M4 
+                   $800  : USP     >M1 
+                   $801  : VBR     >M1 
+                   $802  : CAAR    M2,M3 
+                   $803  : MSP     >M2 
+                   $804  : ISP     >M2 
+                   $805  : MMUSR   >M4 
+                   $807  : SRP     >M4 
+ 
+Steuerregister (s) fr pmove:  (M3) 
+               %0000 10  :  TT0 
+               %0000 11  :  TT1 
+               %0100 00  :  TC 
+               %0100 10  :  SRP 
+               %0100 11  :  CRP 
+               %0110 00  :  MMUSR 
+ 
+ 
+           LINE 0 
+ 
+0000 0000 GGMM MRRR  +X    ori.? #k,R        ** 
+          0011 1100  +Wb   ori #k,ccr 
+          0111 1100  +W    ori #k,sr 
+          11MM MRRR dXXX $000   cmp2.b R,X  >M2 
+                         $800   chk2.b R,X  >M2 
+0000 0010 GGMM MRRR  +X    andi.? #k,R       ** 
+          0011 1100  +Wb   andi #k,ccr 
+          0111 1100  +W    andi #k,sr 
+          11MM MRRR dXXX $000   cmp2.w R,X  >M2 
+                         $800   chk2.w R,X  >M2 
+0000 1010 GGMM MRRR  +X    eori.? #k,R       ** 
+          0011 1100  +Wb   eori #k,ccr 
+          0111 1100  +W    eori #k,sr 
+          11MM MRRR 0000 000Y YY00 0XXX  cas.b X,Y,R  7*,>M2 
+0000 0100 GGMM MRRR  +X    subi.? #k,R       ** 
+          11MM MRRR dXXX $000   cmp2.l R,X  >M2 
+                         $800   chk2.l R,X  >M2 
+0000 0110 GGMM MRRR  +X    addi.? #k,R       ** 
+          1100 dRRR        rtm R             M2 
+0000 1100 GGMM MRRR  +X    cmpi.? #k,R       ** 
+          11MM MRRR 0000 000Y YY00 0XXX  cas.w X,Y,R  7*,>M2 
+0000 1000 00MM MRRR  +Wk   btst #Wk,R     **, bei R=D: 
+          01               bchg #Wk,R         Wk=0..31 
+          10               bclr #Wk,R         sonst: 
+          11               bset #Wk,R         Wk=0..7 
+0000 1110 GGMM MRRR dXXX 0000 $00        moves.? R,X  6*,>M1 
+                         1000 $00        moves.? X,R  6*,>M1 
+          11MM MRRR 0000 000Y YY00 0XXX  cas.l X,Y,R  7*,>M2 
+0000 DDD1 00MM MRRR        btst D,R          ** 
+     DDD1 0000 1AAA  +W    movep.w k(A),D 
+     DDD1 01MM MRRR        bchg D,R          ** 
+     DDD1 0100 1AAA  +W    movep.l k(A),D 
+     DDD1 10MM MRRR        bclr D,R          ** 
+     DDD1 1000 1AAA  +W    movep.w D,k(A) 
+     DDD1 11MM MRRR        bset D,R          ** 
+     DDD1 1100 1AAA  +W    movep.l D,k(A) 
+ 
+ 
+ 
+           LINE 1 
+ 
+0001 YYYM MMMM MXXX        move.b X,Y        -,17* 
+ 
+ 
+ 
+           LINE 2 
+ 
+0010 YYYM MMMM MXXX        move.l X,Y        -,* 
+ 
+ 
+ 
+           LINE 3 
+ 
+0011 YYYM MMMM MXXX        move.w X,Y        -,* 
+ 
+ 
+ 
+           LINE 4 
+ 
+0100 0000 GGMM MRRR        negx.? R    ** 
+          11MM MRRR        move sr,R   ** 
+0100 0010 GGMM MRRR        clr.? R     ** 
+0100 0100 GGMM MRRR        neg.? R     ** 
+          11MM MRRR        move R,ccr  **** 
+0100 0110 GGMM MRRR        not.? R     ** 
+          11MM MRRR        move R,sr   **** 
+0100 1000 00MM MRRR        nbcd R      ** 
+          01MM MRRR        pea R       ***** 
+          0100 0DDD        swap D 
+               1NNN        bkpt #N     >M1 
+          10MM MRRR  +W    movem.w Liste,R siehe MOVEM 
+          1000 0DDD        ext.w D 
+          11MM MRRR  +W    movem.l Liste,R siehe MOVEM 
+          1100 0DDD        ext.l D 
+0100 1010 GGMM MRRR        tst.? R     **, bei >M2: 23* 
+          11MM MRRR        tas.b R     ** 
+          1111 1100        illegal 
+0100 1100 00MM MRRR 0DDD 0000 $00  mulu.l R,D   >M2 
+                         1         muls.l R,D   >M2 
+          01MM MRRR 0DDD 0000 $00  divu.l R,D   >M2 
+                         1         divs.l R,D   >M2 
+          10MM MRRR  +W    movem.w R,Liste siehe MOVEM 
+          11MM MRRR  +W    movem.l R,Liste siehe MOVEM 
+0100 1110 0100 NNNN        trap #N 
+          0101 0AAA  +W    link A,#k 
+               1AAA        unlk A 
+          0110 0AAA        move A,USP 
+               1AAA        move USP,A 
+          0111 0000        reset 
+               0001        nop 
+               0010  +W    stop #k 
+               0011        rte 
+               0100  +W    rtd #16Bit Adressdistanz    >M1 
+               0101        rts 
+               0110        trapv 
+               0111        rtr 
+               1010  +W    movec.l steuer,X            >M1 
+                  1  +W    movec.l X,steuer            >M1 
+                     dXXX ssss ssss ssss   s:Steuerregister 
+          10MM MRRR        jsr R       ***** 
+          11               jmp R       ***** 
+0100 DDD1 10MM MRRR        chk R,D     **** 
+     AAA1 11MM MRRR        lea R,A     ***** 
+ 
+ 
+           MOVEM 
+ 
+erlaubte Adressierungen: 
+        Register -> Speicher : 3* ohne (A)+ 
+        Speicher -> Registr  : 6* ohne (A)+ 
+ 
+Codierung der Registerliste: 
+                  BIT  15 14 13   08 07   02 01 00 
+bei Pre-Dekrement:     D0 D1 D2...D7 A0...A5 A6 A7 
+sonst:                 A7 A6 A5...A0 D7...D2 D1 D0 
+ 
+ 
+ 
+           LINE 5 
+ 
+0101 KKK0 GGMM MRRR        addq.? #k,R       17* (k= 0ğ8) 
+        1 GGMM MRRR        subq.? #k,R       17* (k= 0ğ8) 
+0101 CCCC 1100 1DDD  +W    db?? D,label      siehe CCR 
+          11MM MRRR        s?? R             ** siehe CCR 
+     CCCC 1111 1010  +W    trap??.w #W       siehe CCR, >M2 
+                  1  +L    trap??.l #L       siehe CCR, >M2 
+               1100        trap??            siehe CCR, >M2 
+ 
+ 
+ 
+           LINE 6 
+ 
+0110 CCCC kkkk kkkk        b??.s label       siehe CCR 
+          0000 0000  +W    b??   label       siehe CCR 
+          1111 1111  +L    b??.l label       siehe CCR, >M2 
+ 
+ 
+           CCR  (Conditional Code Register) 
+ 
+0000  bra   -    st     0100  cc    1000  vc    1100  ge 
+0001  bsr  dbra  sf     0101  cs    1001  vs    1101  lt 
+0010  bhi  dbhi  shi    0110  ne    1010  pl    1110  gt 
+0011  bls  dbls  sls    0111  eq    1011  mi    1111  le 
+ 
+ 
+ 
+           LINE 7 
+ 
+0111 DDD0 kkkk kkkk        moveq #k,D 
+ 
+ 
+ 
+           LINE 8 
+ 
+1000 DDD0 GGMM MRRR        or.? R,D          **** 
+          11               divu R,D          **** 
+1000 DDD1 GGMM MRRR        or.? D,R          *** 
+     YYY1 0000 0XXX        sbcd Dx,Dy 
+     YYY1 0000 1XXX        sbcd -(Ax),-(Ay) 
+     YYY1 0100 0XXX +W     pack Dx,Dy,#W     >M2 
+     YYY1 1000 0XXX +W     unpk Dx,Dy,#W     >M2 
+     DDD1 11MM MRRR        divs R,D          **** 
+ 
+ 
+ 
+           LINE 9 
+ 
+1001 DDD0 GGMM MRRR        sub.? R,D         16* 
+     AAA0 11MM MRRR        suba.w R,A 
+1001 DDD1 GGMM MRRR        sub.? D,R         *** 
+     YYY1 GG00 0XXX        subx.? Dx,Dy 
+     YYY1 GG00 1XXX        subx.? -(Ax),-(Ay) 
+     AAA1 11MM MRRR        suba.l R,A 
+ 
+ 
+ 
+           LINE A 
+ 
+1010 0000 0000 NNNN        linea #N 
+ 
+ 
+ 
+           LINE B 
+ 
+1011 DDD0 GGMM MRRR        cmp.? R,D         16* 
+     AAA0 11MM MRRR        cmpa.w R,A 
+1011 DDD1 GGMM MRRR        eor.? D,R         ** 
+     YYY1 GG00 1XXX        cmpm.? (Ax)+,(Ay)+ 
+     AAA1 11MM MRRR        cmpa.l R,A 
+ 
+ 
+ 
+           LINE C 
+ 
+1100 DDD0 GGMM MRRR        and.? R,D         **** 
+          11MM MRRR        mulu R,D          **** 
+1100 DDD1 GGMM MRRR        and.? D,R         *** 
+     YYY1 0000 0XXX        abcd Dx,Dy 
+               1           abcd -(Ax),-(Ay) 
+     YYY1 0100 0XXX        exg Dy,Dx 
+               1           exg Ay,Ax 
+     DDD1 1000 1AAA        exg A,D 
+     DDD1 11MM MRRR        muls R,D          **** 
+ 
+ 
+ 
+           LINE D 
+ 
+1101 DDD0 GGMM MRRR        add.? R,D         16* 
+     AAA0 11MM MRRR        adda.w R,A 
+1101 DDD1 GGMM MRRR        add.? D,R         *** 
+     YYY1 GG00 0XXX        addx.? Dx,Dy 
+     YYY1 GG00 1XXX        addx.? -(Ax),-(Ay) 
+     AAA1 11MM MRRR        adda.l R,A 
+ 
+ 
+ 
+           LINE E 
+ 
+1110 YYYP GGKS SDDD        ???.? ?,D 
+                           [SSP.G Y,D] 
+1110 0SSP 11MM MRRR        ???.w R           *** 
+                           [SSP.w R] 
+         P=0 : rechts 
+           1 : links 
+ 
+              K=0 : Y=Konstante (0ğ8) 
+                1 : Y=Datenregister 
+ 
+                SS=%00 : AS 
+                   %01 : LS 
+                   %10 : ROX 
+                   %11 : RO 
+ 
+ 
+1110 1SSS 11MM MRRR 0DDD FAAA AAFB BBBB  bf???  R{A:B},D  >M2 
+ 
+     bei F=0 : #A,#B 
+           1 : A,B : Datenregister 
+ 
+     sss=%000  bftst   R{A:B} 
+          001  bfextu  R{A:B},D 
+          010  bfchg   R{A:B} 
+          011  bfexts  R{A:B},D 
+          100  bfclr   R{A:B} 
+          101  bffor   R{A:B},D 
+          110  bfset   R{A:B} 
+          111  bfins   D,R{A:B} 
+ 
+ 
+ 
+           LINE F 
+ 
+1111 0000 0000 0000 0010 0100 0000 0000    pflusha   M3 
+          00MM MRRR ssss ss00 0000 0000    pmove R,s  M3 
+                           10 0000 0000    pmove s,R  7*,M3 
+     0110 0000 0AAA +L   move16 (A)+,Label.L  >M4 
+             1           move16 (A) ,Label.L  >M4 
+          0000 1AAA +L   move16 Label.L,(A)+  >M4 
+             1           move16 Label.L,(A)   >M4 
+ 
+ 
+          FPU-Ansteuerung (68881/2 oder 68040 [MF,M4]) 
+ 
+Allgemeines:    i : cp_id 
+ 
+ 
+          GRUPPE %000 
+ 
+1111 iii0 00MM MRRR 000y yyxx xNNN NNN  F???.X FPy,FPx 
+                     1                  F???.Fy R,FPx  4* 
+ 
+     Fy:  000  .l   (long) 
+          001  .s   (single real) 
+          010  .x   (extended real) 
+          011  .p   (packed decimal) 
+          100  .w   (word) 
+          101  .d   (double real) 
+          110  .b   (byte) 
+ 
+     N: 
+    $0 : fmove      1 : fint       2 : fsinh      3 : fintrz 
+     4 : fsqrt      6 : flognp1    8 : fetoxm1    9 : ftanh 
+     A : fatan      C : fasin      D : fatanh     E : fsin 
+     F : ftan      10 : fetox     11 : ftwotox   12 : ftentox 
+    14 : flogn     15 : flog10    16 : flog2     18 : fabs 
+    19 : fcosh     1A : fneg      1C : facos     1D : fcos 
+    1E : fgetexp   1F : fgetman   20 : fdiv      21 : fmod 
+    22 : fadd      23 : fmul      24 : fsgldiv   25 : frem 
+    26 : fscale    27 : fsglmul   28 : fsub      38 : fcmp 
+    3A : ftst 
+   $30 bis $37 : fsincos, wobei unteres Nibble cos-Reg. 
+ 
+      
+1111 iii0 00MM MRRR 011y yyxx xkkk kkkk  fmove.Fy  FPx,R  1* 
+ 
+     Fy : siehe oben 
+          011  .p   mit statischem k-Faktor (K= -64..63) 
+          111  .p   mit dynamischem k-Faktor 
+                    Bits 4..6 ergeben Datenregister 
+ 
+1111 iii0 0000 0000 0101 11xx xccc cccc  fmovecr.x #c,FPx 
+1111 iii0 00MM MRRR 100c cc00 0000 0000  fmove.l R,FPc 
+                    101                  fmove.l FPc,R  1* 
+          c = 001 : fpiar 
+              010 : fpsr 
+              100 : fpcr 
+ 
+1111 iii0 00MM MRRR 100c sr00 0000 0000  fmovem.l R,FPc 
+                    101                  fmovem.l FPc,R    7* 
+               c : fpcr       s : fpsr       r : fpiar 
+1111 iii0 00MM MRRR 100a r000 NNNN NNNN  fmovem.x R,Liste  6* 
+                    101                  fmovem.x Liste,R  3* 
+                             N-Bits:   7        0 
+     a = 0 : Ablage mit Predekrement:  FP7 ... FP0 
+         1 : sonstiges:                FP0 ... FP7 
+     r = 1 : dynamische Liste : N-Bits 4..6 -> Dn 
+         0 : statische Liste (siehe a) 
+ 
+ 
+          GRUPPE %001 
+ 
+1111 iii0 01MM MRRR 0000 0000 00cc cccc      fs?? R    2* 
+1111 iii0 0100 1DDD 0000 0000 00cc cccc +W   fdb?? D,Label 
+1111 iii0 0111 1010 0000 0000 00cc cccc +W   ftrap??.w #W 
+                011                     +L   ftrap??.l #L 
+                100                          ftrap?? 
+ 
+ 
+          GRUPPEN %010 und %011 
+ 
+1111 iii0 10cc cccc +W        fb??.w Label 
+1111 iii0 1000 0000 +W(=0)    fnop 
+1111 iii0 11cc cccc +L        fb??.l Label 
+ 
+ 
+          GRUPPEN %100 und %101 
+ 
+1111 iii1 00MM MRRR      fsave R        6* 
+1111 iii1 01MM MRRR      frestore R     6* 
+ 
+ 
+          Die Bedingungsschlssel der FPU 
+ 
+     000000    f         001011    ugt       010110    gl 
+     000001    eq        001100    uge       010111    gle 
+     000010    ogt       001101    ule       011000    ngle 
+     000011    oge       001110    ne        011001    ngl 
+     000100    olt       001111    t         011010    nle 
+     000101    ole       010000    sf        011011    nlt 
+     000110    ogl       010001    seq       011100    nge 
+     000111    or        010010    gt        011101    ngt 
+     001000    un        010011    ge        011110    sne 
+     001001    ueq       010100    lt        011111    st 
+     001010    ???       010101    le 
+ 
+ 
+ 
+ 
+           PROGRAMMHEADER 
+ 
+    offset    length 
+      $0        2       branch ($601A) 
+       2        4       L„nge des TEXT-Segmentes 
+       6        4       L„nge des DATA-Segmentes 
+       A        4       L„nge des BSS 
+       E        4       L„nge der Symboltabelle 
+      12        4       ??? 
+      16        4       Header-Flags 
+    ab TOS 1.4: 
+      Bit 0: Fast-Load-Bit (nur den Speicher frs BSS l”schen) 
+    ab TOS 3.0: 
+          1: Das Programm wird ins Fast-Ram geladen 
+          2: mit malloc() erh„lt man Speicherbl”cke m”glichst 
+             aus dem Fast-Ram 
+          3..27: reserviert 
+          28..31: TPA-Gr”enfeld (0-15 bedeutet: Programm  
+                  belegt 128k-2048kByte) 
+ 
+      1A        2       =0 : Relozierinformationen vorhanden 
+  
+      1C        -       TEXT-Segment 
+       +        -       DATA-Segment 
+       +        -       Symboltabelle 
+   bis EOF      -       Reloziertabelle 
+  
+  
+  
+  
+  
+           SYMBOLTABELLE 
+  
+    offset    length 
+     $0         8       Symbolname 
+      8         1       Kennung 
+      9         1       erweiterte Kennung 
+      A         4       Offset-Adresse 
+              =14 Bytes pro Symbol 
+ 
+Kennung: ein Byte lang 
+Bit  0    : BSS-relativ 
+     1    : Text-Segment-relativ 
+     2    : Data-Segment-relativ 
+     5    : globales Symbol 
+relativ bedeutet in Bezug auf den Segmentanfang! 
+ 
+erweiterte Kennung beim GST-Format: 
+Bei einem Wert von $48 folgen noch weitere 14 Zeichen als 
+erweitertes Symbol. (8 + 14 = max. 22 Zeichen) 
+ 
+ 
+ 
+ 
+           RELOZIERTABELLE 
+  
+Sie steht hinter der Symboltabelle und enth„lt Informationen 
+ber die zu relozierenden 4 Byte Adressen im TEXT und DATA- 
+Segment. 
+  
+erstes Langwort:    erster Offset ab Programmanfang 
+danach byteweise:   Wert=$01: Z„hler+$FE 
+                    sonst:    Z„hler+Wert 
+                              ->Zieladresse 
+Das Ende ist durch ein Nullbyte gekennzeichnet. Was dann noch 
+kommt, ist ein Linkvirus oder Linkerfehler! 
+ 
+Beispiel: $0000 
+          $0102                    ->$102=258 
+          $0101     +2*$FE 
+          $01EC     +$FE+$EC=$3E6  ->$4E8=1256 
+          $2A06     +$2A           ->$512=1298 
+                    +$06           ->$518=1304 
+          usw. 
+ 
+Die Langworte in den rechts stehenden Adressen mssen  
+vor Programmstart vom Betriebssystem reloziert werden! 
+ 
+ 

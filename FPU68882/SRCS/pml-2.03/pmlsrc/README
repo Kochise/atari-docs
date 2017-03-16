@@ -1,0 +1,17 @@
+This the src directory for PML (Fred Fish's Portable Math Library)
+
+Before you make the library
+	- You must have atleast GCC V1.31
+	- You should have applied all patches to the gcc library
+	  (the ones that came with this distribution, and the one
+	   that came with the gcc V1.31 upgrade).
+	- You should have compiled the library again.
+
+To make and install the library
+	GCC-TOS	: use Makefile.tos
+	GCC-MINIX : use Makefile.minix
+In both Makefiles adjust CC and CROSSDIR to suit your environment.
+--
+bang:   {any internet host}!dsrgsun.ces.CWRU.edu!bammi	jwahar r. bammi
+domain: bammi@dsrgsun.ces.CWRU.edu
+GEnie:	J.Bammi

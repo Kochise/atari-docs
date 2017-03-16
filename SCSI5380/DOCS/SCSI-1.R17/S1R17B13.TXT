@@ -1,0 +1,110 @@
+13. Command Descriptions for Read-Only Direct-Access Devices
+
+13.1 Group 0 Commands for Read-Only Direct-Access Devices.  The Group 0 
+commands for read-only direct-access devices shall be as shown in Table 13-1.
+
+                                  Table 13-1
+             Group 0 Commands for Read-Only Direct-Access Devices
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00H       O     TEST UNIT READY                    7.1.1
+   01H       O     REZERO UNIT                        8.1.1
+   02H       V
+   03H       M     REQUEST SENSE                      7.1.2
+   04H       R
+   05H       V
+   06H       V
+   07H       R
+   08H       O     READ                               12.1.1
+   09H       V
+   0AH       R
+   0BH       O     SEEK                               8.1.6
+   0CH       V
+   0DH       V
+   0EH       V
+   0FH       V
+   10H       V
+   11H       V
+   12H       E     INQUIRY                            7.1.3
+   13H       V
+   14H       V
+   15H       O     MODE SELECT                        12.1.3
+   16H       O     RESERVE                            8.1.8
+   17H       O     RELEASE                            8.1.9
+   18H       O     COPY                               7.1.4
+   19H       V
+   1AH       O     MODE SENSE                         12.1.4
+   1BH       O     START/STOP UNIT                    8.1.11
+   1CH       O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1DH       O     SEND DIAGNOSTIC                    7.1.6
+   1EH       O     PREVENT/ALLOW MEDIUM REMOVAL       8.1.12
+   1FH       R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+
+
+
+13.2 Group 1 Commands for Read-Only Direct-Access Devices.  The Group 1 
+commands for read-only direct-access devices shall be as shown in Table 13-2.
+
+                                  Table 13-2
+             Group 1 Commands for Read-Only Direct-Access Devices
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   20H       V
+   21H       V
+   22H       V
+   23H       V
+   24H       V
+   25H       E     READ CAPACITY                      8.2.1
+   26H       V
+   27H       V
+   28H       M     READ                               12.2.1
+   29H       V
+   2AH       R
+   2BH       O     SEEK                               8.2.4
+   2CH       V
+   2DH       V
+   2EH       R
+   2FH       O     VERIFY                             12.2.4
+   30H       O     SEARCH DATA HIGH                   8.2.7.1
+   31H       O     SEARCH DATA EQUAL                  8.2.7.2
+   32H       O     SEARCH DATA LOW                    8.2.7.3
+   33H       O     SET LIMITS                         8.2.8
+   34H       R
+   35H       R
+   36H       R
+   37H       R
+   38H       R
+   39H       O     COMPARE                            7.2.1
+   3AH       O     COPY AND COMPARE                   7.2.2
+   3BH       R
+   3CH       R
+   3DH       R
+   3EH       R
+   3FH       R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+
+
+
+
+

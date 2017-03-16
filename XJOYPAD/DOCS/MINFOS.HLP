@@ -1,0 +1,15 @@
+/// ModuleINFORMATION : JOYPAD ////////////////////////////////////////////////
+
+Author   : Kochise
+Date     : 02/10/07/2000
+Type     : SSAVCALL DRIVER Module
+Language : Assembler (Motorola 68030)
+Sequence : VBL or TIMER
+Purpose  : ATARI Enhanced JoyPAD DRIVER
+
+Machina  : ATARI Falcon030
+O.S.     : SSAVCALL 3
+
+Note     : This is PROBABLY the BEST JoyPAD DRIVER * EVER * Coded...
+           FAST, COMPACT, NICELY COMMENTED, another * GOD * Job by KOSS !
+

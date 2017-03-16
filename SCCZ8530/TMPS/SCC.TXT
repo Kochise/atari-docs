@@ -1,0 +1,10 @@
+**************************************************************************
+Serial-Communications-Controller
+**************************************************************************
+
+Kanal A bedient den LAN-Port, Kanal B fÅhlt sich fÅr V.24 zustÑndig.
+
+$FFFF8C81 [R/W] B         76543210  Controlregister Kanal A
+$FFFF8C83 [R/W] B         76543210  Read / Write Data Kanal A
+$FFFF8C85 [R/W] B         76543210  Controlregister Kanal B
+$FFFF8C87 [R/W] B         76543210  Read / Write Data Kannal B

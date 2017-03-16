@@ -1,0 +1,165 @@
+3. Glossary and Conventions
+
+3.1 Glossary
+
+byte.  In this standard, this term indicates an 8-bit (octet) byte.
+
+command descriptor block (CDB).  The structure used to communicate requests 
+from an initiator to a target.
+
+connect.  The function that occurs when an initiator selects a target to start 
+an operation.
+____________
+
+1 Available from the Electronic Industries Association, 2001 Eye Street NW, 
+Washington, D.C. 20006.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+disconnect.  The function that occurs when a target releases control of the 
+SCSI bus, allowing it to go to the BUS FREE phase.
+
+initiator.  An SCSI device (usually a host system) that requests an operation 
+to be performed by another SCSI device.
+
+INTERMEDIATE status.  A status code sent from a target to an initiator upon 
+completion of each command in a set of linked commands except the last command 
+in the set.
+
+logical unit.  A physical or virtual device addressable through a target.
+
+logical unit number.  An encoded three-bit identifier for the logical unit.
+
+LSB.  Least significant byte.
+
+LUN.  Logical unit number.
+
+mm.  Millimeter.
+
+ms.  Millisecond.
+
+MSB.  Most significant byte.
+
+ns.  Nanosecond.
+
+one.  A true signal value.
+
+peripheral device.  A peripheral that can be attached to an  SCSI device 
+(e.g., magnetic-disk, printer, optical-disk, or magnetic-tape).
+
+reconnect.  The function that occurs when a target selects an initiator to 
+continue an operation after a disconnect.
+
+reserved.  The term used for bits, bytes, fields, and code values that are set 
+aside for future standardization.
+
+SCSI address.  The octal representation of the unique address (0-7) assigned 
+to an SCSI device.  This address would normally be assigned and set in the 
+SCSI device during system installation.
+
+SCSI ID.  The bit-significant representation of the SCSI address referring to 
+one of the signal lines DB(7-0).
+
+SCSI device.  A host computer adapter or a peripheral controller or an 
+intelligent peripheral that can be attached to the SCSI bus.
+
+signal assertion.  The act of driving a signal to the true state.
+
+signal negation.  The act of driving a signal to the false state or allowing 
+the cable terminators to bias the signal to the false state (by placing the 
+driver in the high impedance condition).
+
+signal release.  The act of allowing the cable terminators to bias the signal 
+to the false state (by placing the driver in the high impedance condition).
+
+status.  One byte of information sent from a target to an initiator upon 
+completion of each command.
+
+target.  An SCSI device that performs an operation requested by an initiator.
+
+us.  Microsecond.
+
+vendor unique.  In this standard, this term indicates bits, fields, or code 
+values that are vendor specific.
+
+xxH.  Numbers followed by capital H subscript are hexadecimal values.  All 
+other numbers are decimal values. 
+
+zero.  A false signal value.
+
+3.2 Editorial Conventions.  Certain words and terms used in this standard have 
+a specific meaning beyond the normal English meaning.  These words and terms 
+are defined either in the glossary (see 3.1) or in the text where they first 
+appear (e.g., initiator).  Names of signals, phases, conditions, messages, 
+commands, statuses, and sense keys are in all uppercase (e.g., REQUEST SENSE).  
+Lowercase is used for words having the normal English meaning.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

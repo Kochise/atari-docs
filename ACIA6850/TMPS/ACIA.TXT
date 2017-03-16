@@ -1,0 +1,12 @@
+**************************************************************************
+Tastatur-/MIDI-ACIAs 6850
+**************************************************************************
+
+$FFFFFC00 [R/-] B         76543210  Keyboard-Status
+$FFFFFC00 [-/W] B         76543210  Keyboard-Control
+$FFFFFC02 [R/-] B         76543210  Keyboard-Receive
+$FFFFFC02 [-/W] B         76543210  Keyboard-Send
+$FFFFFC04 [R/-] B         76543210  Midi-Status
+$FFFFFC04 [-/W] B         76543210  Midi-Control
+$FFFFFC06 [R/-] B         76543210  Midi-Receive
+$FFFFFC06 [-/W] B         76543210  Midi-Send

@@ -1,0 +1,11 @@
+This is a version of z8530drv-2.4 that compiles with kernel
+2.1.x. Just copy scc.c to the directory above and type
+"make module". 
+
+WARNING:
+
+*
+* DO NOT SUBSTITUTE linux/drivers/net/scc.c OR
+* linux/include/linux/scc.h WITH THE SOURCES IN THIS
+* PACKAGE!
+*

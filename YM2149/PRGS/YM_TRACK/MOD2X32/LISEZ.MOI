@@ -1,0 +1,102 @@
+	MOD to X32 v1.0
+	---------------
+
+  C'est un ajout au "package" en date
+du 18/07/93, … la suite d'un d‚fi
+amical lanc‚ par un copain.
+  Ce petit utilitaire du YM-Tracker
+permet de convertir les modules .MOD
+(format ‚ditable) en fichiers .X32,
+qui sont des s‚quences de donn‚es pour
+la fonction Xbios(32).
+  Pour cela il suffit de donner le nom
+du module … convertir au fileselector,
+puis le nom du fichier-destination;
+aprŠs quelques instants de patience,
+le boulot est termin‚.
+  Les fichiers r‚sultants sont bien
+plus gros que les modules, ‚videmment,
+car la fonction Xbios(32) ne possŠde
+aucune v‚ritable instruction permet-
+tant le traitement synth‚tique.
+  Le seul avantage … les utiliser est
+qu'aucune routine de "Replay" sp‚ciale
+n'est n‚cessaire: un simple appel au
+Xbios suffit. L'utilisation sera donc
+plutot pour ceux qui ne veulent pas
+s'ennuyer … faire des appel … des
+sous-routines externes, ou qui ne
+peuvent pas (certains langages rendent
+la chose impossible!)...
+  Bien maigre consolation: ‚tant
+donn‚ que c'est une routine Xbios qui
+s'occupe de jouer la musique, on peut
+raisonnablement penser que cela permet
+la compatibilit‚ avec toutes les
+configuration ATARI fonctionnant sous
+TOS...
+  Inconv‚nients:
+     - la taille des fichiers
+     - la musique ne boucle pas
+       (aucune commande ne le permet)
+     - la qualit‚ sonore est moins
+       bonne, car Xbios(32) travaille
+       … 50Hz, soit, mais l'intervalle
+       minimal entre deux s‚quences
+       est de 40 ms! Ce qui fait que
+       la fr‚quence maximale est de...
+       25 Hz seulement!
+       AprŠs avoir reluqu‚ un peu la
+       ROM, on s'aper‡oit qu'il ne
+       peut pas en etre autrement:
+       tout vient d'une erreur de
+       conception: le code pour
+       faire attendre 20ms serait
+       $FF00 en th‚orie, mais $FF00
+       est le code d'arret du
+       traitement sonore! Ce qui fait
+       que le minimum d'attente est
+       $FF01, c'est … dire 40ms...
+
+--------------------------------------
+  Pour utiliser ces fichiers, rien de
+plus simple: il suffit de les charger
+en m‚moire et de donner l'adresse de
+d‚but des donn‚es en paramŠtre … la
+fonction Xbios(32).
+- - - - - - - - -  - - - - - - - - - -
+  Exemple en assembleur:
+
+deb:
+  pea fichier(pc)  ;adresse des data
+  move.w #32,-(a7) ;num. de fonction
+  trap #14         ;appel au Xbios
+  addq.l #6,a7     ;correction de pile
+  
+  clr.w -(a7)      ;pas d'erreur
+  pea fin-deb+256  ;rester en m‚moire
+  move.w #49,-(a7) ;aprŠs la fin
+  trap #1          ;sortie du prog.
+  
+fichier:
+  incbin A:\MUSIQUE.X32
+
+fin:
+  end
+
+- - - - - - - - -  - - - - - - - - - -
+  Exemple en BASIC:
+  
+fichier=MEMORY(longueur_du_fichier)
+BLOAD "A:\MUSIQUE.X32",fichier
+~XBIOS(32,L fichier)
+END
+
+--------------------------------------
+
+Le petit programme PLAY_X32.PRG
+permet de charger un fichier X32 et de
+l'‚couter. Ceci pour voir ce que donne
+la conversion, avant de commencer …
+inclure le fichier dans son programme.
+

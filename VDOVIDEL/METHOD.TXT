@@ -1,0 +1,247 @@
+|                                                                                                                                                                       |
+|                   /------------------------------------------------ HHT->HHC ---------------------------------------------------\                                     |
+| This is a line -> |            HBE .................... HDB xxxxxxxxxxxxxxxxxxxxxxxxx HDE ..................... HBB             |HBL                                  |
+|                     LeftBorder       LeftColor0Border             DisplayedLine             RightColor0Border       RightBorder                                       |
+|                                                                                                                                                                       |
+|                       if HDB=HBE, then no LeftColor0Border                              if HDE=HBB, then no RightColor0Border
+
+ WARNING : It's REALLY useful to keep LeftBorder and RightBorder in VGA, because
+           it allows us to move the DisplayedScreen horizontaly...
+
+
+
+
+
+
+
+
+
+
+;  /UpperBorder VFC=VFT
+; |         VBE
+; |          .  UpperColor0Border
+; |         VDB if VDB=VBE, then no UpperColor0Border
+; |          x
+; VFT->VFC   x  DisplayedLines
+; |          x
+; |         VDE
+; |         VBB if VDE=VBB, then no LowerColor0Border
+; | LowerBorder
+;  \LowerBorder VFC=0
+; VBL
+;
+; WARNING : It's REALLY NO USE (in Mono or VGA) to keep UpperBorder and LowerBorder
+;           because nothing can affect them (like Vertical Controls of your monitor...).
+
+
+
+
+
+
+; The same system was put into the ATARI Jaguar (Tom processor)
+; Different, but also very near from what you've just see above...
+; No Video Memory, but a Graphic Processor working with an Object List !
+; Quite easier too, because of no FUCKING BACKWARD COMPATIBILITY (no bad ST Emulation !)
+;
+; Now, let's see the way to create a New Resolution using the Videl Generator !
+;
+; First the Driver's Constants :
+;
+;ScreenLimits	4s	Mono Monitor
+;	4s	RGB Monitor
+;	4s	VGA Monitor
+;	4s	TV Monitor
+;ScreenEnergyStar	w	0==YES, 1==NO
+;ScreenToleranceFactor	s	ñ5% WARNING	
+;ScreenRatio	s	Normal
+;ScreenRealSize	s	in Meters
+;ScreenVidelClock0	s	in Hz (32MHz)
+;ScreenVidelClock1	s	in Hz (25.175MHz)
+;ScreenVidelClockBOOST	s	in Hz (50MHz)
+;ScreenVidelBrust	w	17 in LONG
+;ScreenZoomFactor	w	0==FullScreen, 1==VirtualScreen
+;
+; Now the Values given by the programmer who want to create a new Resolution :
+;
+;DisplayWidth	w
+;DisplayHeight	w
+;NbBitsPerColor	w	1, 2, 4, 8, 16
+;
+; There're ONLY FEW, isn't it ?
+;
+;   Ha ha ha, OK, let's talk a little, please. There is SO MANY things to see before
+; creating a new Resolution...
+;
+; Well, 'DisplayHeight' and 'NbBitsPerColor' are 'ALWAYS' good.
+; To prevent from errors, start to clean 'NbBitPerColor' :
+;
+;>  andi.w	 #%11111,NbBitsPerColor	; -> Now we're 'SAFE'
+;
+; Imagine there is more than 1 Bit set in 'NbBitsPerColor' :
+;
+;>  BFFFO 	NbBitsPerColor{11:5},D0	; Look for the Greatest Color Bit
+;		; WARNING : For BFxxx Instructions,
+;		; Bit 0 is Bit 31, so here 27 give
+;		; Bit 4, then count 5 Bit (-> Bit 0)
+;		; WORKS ONLY ON LONG, AND THERE WE'RE
+;		; WORKING ON A WORD !
+;   BEQ	NoBitsPerColor	; Hey, are U silly, 0 Bit per Color ?
+;   move.l	#15,D1	; We'R working on a WORD !
+;   sub.l	D0,D1
+;   moveq.l	#1,D0	; Just 1 Bit, for sure NOW...
+;   lsl.l	D1,D0	; Put it on the right upper place found
+;   move.w	D0,NbBitsPerColor	; OK, that's it !
+;
+; OK, now the 'NbBitsPerColor' is REALLY safe, but NOT the 'DisplayWidth' ! Yes,
+; because remember, 'OSTNL' and 'VWrap' are given in WORD, and depending on the
+; number of color we want, 1 WORD can contain from 1 Pixel (NTC) till 16 Pixels.
+; Basically, you've just to 'perform' a Modulo with an added PixelWidth :
+;
+;>  move.w	NbBitsPerColor,D0	; OK, that would be useful ;) )
+;   move.w	#16,D1	; Arf, that's too...
+;   divu.w	D0,D1	; Number of Pixels in a WORD
+;   move.w	DisplayWidth,D0	; OK, let's do some math !
+;   add.w	D1,D0	; FEW Pixels more (avoid SideEffect)
+;   divu.w	D1,D0	; In D0.w, the number of WORDs per Line
+;   andi.l	#$FFFF,D0	; Clean UpperWORD of D0
+;   mulu.w	D1,D0	; Correct 'DisplayWidth'
+;   move.w	D0,DisplayWidth	; Done...
+;
+; Well well well, young guy, now another problem : Is the Resolution asked
+; compatible with your Screen ? That's to say : "Is the RefreshRate of the new
+; screen compatible with your Screen's and your Videl's" ?
+; What a good question, isn't it ?
+;
+;
+;         | Monochrom Monitor       | RGB or TV Monitor       | Super VGA Monitor
+; --------+-------------------------+-------------------------+-------------------------
+; OSTNL   |    INT[ VirtualLineLenght * (NbBitsPerColor / 16)] - VWrap (OK for VirtualScreen)
+; OK      |             in Pixel
+;         | or INT[(VirtualLineLenght - DisplayLineLenght) * (NbBitsPerColor / 16)]
+;         |
+;         | - (NbBitsPerColor & %01110)//HSR
+;         | WARNING : If HSR != 0 and IF you're using a VirtualScreen, then sub the
+;         |           number of color plane already read by the Videl for 
+;         |           UltraSmoothScrooling !!! (-> DON'T touch VWrap in this case !)
+;         |
+;         | WARNING : If you're using a VirtualScreen, then be awarn that OSTNL SHOULD
+;         |           NOT be less than 34 (17 LONGs).
+;         |           Yeah, due of the VidelHardWare, loading 17 LONGs by BrustCycle,
+;         |           you'll jump too near, so the Videl will jump at least 17 LONGs
+;         |           away.
+;         |           Then you'll not start where you wanted !!!
+;         |
+;         | WARNING : Using HSR is not necessary in NTC, U've 'just' to change the
+;         |           ScreenAdress. In Monochrom, that's IMPOSSIBLE because OSTNL or
+;         |           VWrap would become ODD !!!
+; --------+-----------------------------------------------------------------------------
+; VWrap   |    INT[ DisplayLineLenght * (NbBitsPerColor / 16)] - NbBitsPerColor//HSR
+; OK      |             in Pixel
+;         | WARNING : If HSR != 0 and OSTNL == 0, then sub the number of color plane
+;         |           already read by the Videl for UltraSmoothScrooling !!!
+;         |           The screen would 'turn' on itself !
+;         |
+;         | WARNING : The Value here SHOULD NOT be less than 34 (17 LONGs). Read just
+;         |           above to know WHY !
+; --------+-------------------------+---------------------------------------------------
+; STSHIFT | Put 2 here              | Put 0 to select 16 ST Colors Mode (ST LOW) 
+; OK      |                         |     1            4 ST Colors Mode (ST MED) 
+;         |                         |     2            2 ST Colors Mode (ST HI)
+;         |                         | For 'Normal' 4 Colors, put 0 before in SPSHIFT
+;         |                         | then force Bit 8 to 1 !
+; --------+-------------------------+---------------------------------------------------
+; HSR     | Put there a Value between 0 and 15. Then the Videl would scrool the whole
+; OK      | screen on the left. Change OSTNL or VWrap (depending on which case U R) !!!
+; --------+-------------------------+---------------------------------------------------
+; SPSHIFT | Put 0 here              | Bit A98.6543210
+; OK      |                         |     100.000,,,, for Monochrom
+;         |                         |     000.000,,,, for 4 or 16 Colors
+;         |                         |     000.0010000 for 256 Colors  
+;         |                         |     001.0000000 for TrueColors
+;         |                         | ,,,, depend on which 16 Colors Modus Bank you
+;         |                         |      wanna use
+; --------+-------------------------+-------------------------+-------------------------
+; HHT     |    INT[
+;         |
+;         |
+; --------+-------------------------+-------------------------+-------------------------
+; HBB     | Put 0 here              |    INT[
+;         |                         |
+;         |                         |
+; --------+-------------------------+-------------------------+-------------------------
+; HBE     | Put 0 here              |    INT[
+;         |                         |
+;         |                         |
+; --------+-------------------------+-------------------------+-------------------------
+; HDB     |    INT[
+;         |
+;         |
+; --------+-------------------------+-------------------------+-------------------------
+; HDE     |    INT[
+;         |
+;         |
+; --------+-------------------------+-------------------------+-------------------------
+; HSS     |    INT[ HHT - (HHT * Factor)] with for MonType -> Factor    (use Bit 0 of
+; OK      |                                        0 (Mono)   0.20-0.25       MonType ;-)
+;         |                                        1 (RGB)    0.10-0.15
+;         |                                        2 (VGA)    0.20-0.25
+;         | Bit 0 == 0 > ! ALWAYS ! <              3 (TV)     0.10-0.15
+; --------+-------------------------+-------------------------+-------------------------
+; VFT     |    INT[ LowVRez * 2 * ((/Bit 0 MonType) * 2)] + 100 
+;         | The last Value (100) can be changed
+;         | Then check if VFT is compatible with the VFreq range of your Monitor !!
+;         | Bit 0 == /(Bit 1 VCO) <- InterlaceBit
+; --------+-------------------------+-------------------------+-------------------------
+; VBB     | Put 0 here              |    INT[
+;         |                         |
+;         |                         |
+;         |                         |                         +-------------------------
+;         |                         |                         | For SVGA, just copy VDE,
+;         |                         |                         | then you'll get NO
+;         |                         |                         | LowerColor0Border
+; --------+-------------------------+-------------------------+-------------------------
+; VBE     | Put 0 here              |    INT[
+;         |                         |
+;         |                         |                         +-------------------------
+;         |                         |                         | For SVGA, just copy VDB,
+;         |                         |                         | then you'll get NO
+;         |                         |                         | UpperColor0Border
+; --------+-------------------------+-------------------------+-------------------------
+; VDB     |    INT[
+;         |
+;         | - /(Bit 1 VCO) <- InterlaceBit
+; --------+-------------------------+-------------------------+-------------------------
+; VDE     |    INT[
+;         |
+;         | - /(Bit 1 VCO) <- InterlaceBit
+; --------+-------------------------+-------------------------+-------------------------
+; VSS     |    INT[ VFT - MonAccess ] with for MonType -> MonAccess
+; OK      |                                    0 (Mono)   2
+;         |                                    1 (RGB)    6
+;         |                                    2 (VGA)    4
+;         | Bit 0 == 1 > ! ALWAYS ! <          3 (TV)     6
+; --------+-------------------------+-------------------------+-------------------------
+; RCO     | Put $80 here            | Put $182 here           | Put $181 here
+;         | > VideoBus to 32 Bits & | >             VideoClock == 32 MHz 
+; --------+-------------------------+-------------------------+-------------------------
+; VCO     | Put 8 here              | Bit 3210                | Bit 3210
+; OK      | > 640*400 'VGA'         |     ..00 VRez>400       |     ..01 100<VRez<200 
+;         |                         |     ..01 VRez<400       |     ..00 200<VRez<400
+;         |                         |     ..                  |     ..10 VRez>400
+;         |                         |     00   160<HRez<320   |     00   320<HRez<640
+;         |                         |     01   320<HRez<640   |     01   640<HRez<1280
+;         |                         |     10   HRez>640       |     10   HRez>1280 (16 Colors ONLY)
+;         |
+;         | %11.. SWITCH OFF THE VIDEL, THEN YOUR SCREEN (ONLY IF ENERGY-STAR-COMPATIBLE !!!)
+;
+; HFreq = VidelFreq / (HHT 
+;
+; VFreq = (HFreq * 2) / (VFT + (Bit 1 VCO)) <- InterlaceBit
+;
+; For any Resolution Change, you've to set the Registers in this order, just after
+; a VSync : OSTNL, VWrap, SPSHIFT, (ST Mode for 4 Colors), RCO, VCO, HBB, HBE, HDB, HDE,
+;           VBB, VBE, VDB, VDE, HHT & VFT (Timers at the end...).
+; 
+; But you can also set them in the Memory Address Order (ONLY if the Videl is clocked
+; under 32 Mhz)
+;

@@ -1,0 +1,30 @@
+From coffin@ROCKY2.ROCKEFELLER.EDU Thu Mar 22 09:02:36 1990
+Flags: 000000000001
+Return-Path: <coffin@ROCKY2.ROCKEFELLER.EDU>
+Received: from ROCKY2.ROCKEFELLER.EDU by rascal.ics.utexas.edu. (4.0/SMI-4.0)
+	id AA28596; Thu, 22 Mar 90 09:02:29 CST
+Received: by ROCKY2.ROCKEFELLER.EDU (5.61/1.34)
+	id AA15445; Thu, 22 Mar 90 10:02:56 -0500
+Message-Id: <9003221502.AA15445@ROCKY2.ROCKEFELLER.EDU>
+To: werner@rascal.ics.utexas.edu
+Subject: re the 7 scsiDoc files
+Date: Thu, 22 Mar 90 10:02:26 -0500
+From: coffin@ROCKY2.ROCKEFELLER.EDU
+
+
+Part1 (58K): sections 0,1,3, and 4 of full doc.NOTE: NO part(ie, section)#2
+  is included. fter unzipping the orig WordStar stuff, I got a very small
+  (512 byte) binary file as section 2--apparently a GIF file(for which
+  I had no conversion program). In any event, sec. 2 is < 1 page, judging
+  from the Table of Contents in section 0.
+Part2 (77K): sections 5 and 6.
+Part3 (66K): sec. 7.
+Part4 (110K): sec 8.
+Part5 (69K): sec. 9.
+Part6 (84K): sections 10 through 14.
+Part7 (46K): appendices A through G, plus an odd glossary-listing type of
+   file(apparently needed when using IBM-world programs to view the SCSI
+   documentation.
+
+
+

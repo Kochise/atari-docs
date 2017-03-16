@@ -1,0 +1,61 @@
+**************************************************************************
+DSP - HOST - INTERFACE
+**************************************************************************
+
+$FFFFA200 [R/W] B         76543_10  Interrupt Control Register
+                          ||||| ||     (DSP X:FFE9)
+                          ||||| ++- Daten Transfer Modus
+                          |||||     DMA-Mode
+                          |||||     00 No DMA
+                          |||||     01 DSP To HOST Request
+                          |||||     10 HOST To DSP Request
+                          |||||     Interrupt-Mode
+                          |||||     00 kein Interrupt
+                          |||||     01 Enable Receiver Full Interrupt
+                          |||||     10 Enable Transmitter Empty Interrupt
+                          |||||     11 Enable Both Interrupts
+                          ||||+---- Hf0-Bit
+                          |||+----- Hf1-Bit
+                          |++------ DMA Mode Control
+                          |         00 Interrupt-Mode (DMA aus)
+                          |         01 24-Bit DMA-Modus
+                          |         10 16-Bit DMA-Modus
+                          |         11  8-Bit DMA-Modus
+                          |         NOTE: Das XBIOS untersttzt nur den
+                          |               Interrupt mode!
+                          +-------- INIT
+                                    Wird normalerweise zum Initialisieren
+                                    (kein RESET!!) des DSPs und des Host-Inter-
+                                    faces verwendet. Wird vom XBIOS nicht
+ verwendet.
+
+$FFFFA201 [R/W] B         7___3210  Command Vektor Register
+                          |   ||||  (DSP X:$FFE9)
+                          |   ++++- Host-Vektor (0..31)
+                          +-------- Host Command Bit
+                                    1: der DSP meldet einen Interrupt
+
+$FFFFA202 [R/-] B         76_43210  Interrupt Status Register
+                          || |||||  (DSP X:$FFE8)
+                          || ||||+- 0: DSP ist Empfangsbereit
+                          || ||||   1: DSP Empf„ngerbuffer ist voll
+                          || |||+-- 0: DSP Sendebuffer ist voll
+                          || |||    1: DSP ist Sendebereit
+                          || ||+--- Transmitter Ready
+                          || ||     1: Transmit und Receiver Byte Register empty
+                          || |+---- Hf2-Bit, userdef. Infobit from Host to DSP
+                          || +----- Hf3-Bit, userdef. Infobit from Host to DSP
+                          |+------- DMA-Status
+                          |         0: Host ist im Interrupt-Modus
+                          |         1: Host ist im DMA-Modus
+                          +-------- Host Request
+                                    0: kein Host IRQ
+                                    1: Host IRQ ausgel”st
+
+$FFFFA203 [R/W] B         76543210  Interrupt Vektor Register
+                                    enth„lt die MC68030-Exeption-Vektornummer.
+                                    IVR: $0F >> MC68030 IRQ-Adresse: $003C
+
+$FFFFA205 [R/W] B         76543210  I/O-Data-Path Hi (DSP X:$FFEB)
+$FFFFA206 [R/W] B         76543210  I/O-Data-Path Mi (DSP X:$FFEB)
+$FFFFA207 [R/W] B         76543210  I/O-Data-Path Lo (DSP X:$FFEB)

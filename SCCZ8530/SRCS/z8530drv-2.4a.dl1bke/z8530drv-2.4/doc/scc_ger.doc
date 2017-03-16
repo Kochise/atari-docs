@@ -1,0 +1,764 @@
+German documentation. English text in scc_eng.doc
+
+!! NET/NOS steht fuer ka9q NET oder ka9q NOS und seinen
+!! Derivaten (WAMPES, NETCHL, JNOS, etc...)
+!!
+!!
+!! (Fehler-) Berichte zu dieser Version (z8530drv-2.4.dl1bke) bitte direkt
+!! an mich!
+!!
+!!
+!! Uebrigens:
+!!
+!! Dieser Treiber funktioniert bei mir mit
+!!
+!! - einer BayCom USCC bei 1200 und 9600 baud
+!! - einem 486DX2/66
+!! - Linux Kernel AX.25
+!!
+!! Berichte ueber andere Konfigurationen sind immer willkommen!
+!!
+!!
+!! vy 73 de Joerg DL1BKE @ DB0ACH.#NRW.DEU.EU
+!!                dl1bke@db0pra.ampr.org (smtp)
+!!                dl1bke@lykos.tng.oche.de
+
+
+ ********************************************************************
+
+        Z8530 SCC kernel driver für Linux --- Version 2.4
+
+ ********************************************************************
+
+        Copyright 1993-1996 by Jörg Reuter DL1BKE
+
+        portions (c) 1993 Guido ten Dolle PE1NNZ
+
+   Dieses Programm ist freie Software (free software); sie darf
+   weiterverbreitet und/oder geändert werden unter Maßgabe der
+   (modifizierten) GNU General Public License, welche als Teil
+   des LinuX Kernel Quelltextes mitgeliefert wird.
+
+   Dieses Programm wurde entwickelt in der Hoffnung, daß es von
+   Nutzen sei, jedoch OHNE JEDE GEWÄHRLEISTUNG; ebenso ohne
+   jede wie auch immer implizierte Aussage der Nutzbarkeit für
+   einen bestimmten Zweck.  Nähere Details befinden sich in der
+   GNU Genereal Public License. Eine Kopie jener Nutzungslizenz
+   sollte sich in englischer Sprache in /usr/src/linux/COPYING
+   befinden.
+
+   Bei diesem Programm handelt es sich um ein "Freizeitprodukt".
+   Das Programm befindet sich noch in der ENTWICKLUNG, das heißt:
+   NUTZUNG AUF EIGENE GEFAHR! Der Autor lehnt jede Haftung für
+   die Folgen des Einsatzes dieser Software ab. Siehe auch
+   Copying.Z8530DRV für weitere Details.
+
+ ********************************************************************
+
+
+0. Installation
+===============
+
+Da Sie diesen Text lesen, haben Sie das Archiv ja schon erfolgreich
+ausgepackt :-) Sie sollten sich jetzt Gedanken darüber machen, ob
+Sie den Treiber als Modul oder Teil des Kernels kompilieren wollen.
+
+Um ein Modul zu erstellen, rufen Sie
+
+	make module
+
+auf. Es werden scc.c und die Utilities
+
+sccinit  - liest /etc/z8530drv.conf und initialisiert den Treiber
+sccstat  - gibt den Status eines Kanals aus
+sccparam - stellt die KISS-Parameter ein.
+
+kompiliert und installiert.
+
+Anmerkung: Make überschreibt eine schon vorhandene z8530drv.conf in /etc,
+           bitte sichern Sie diese Datei vor dem Aufruf!
+
+Um den Treiber im Kernel durch diese Version zu ersetzen, geben Sie
+einfach
+
+	make for_kernel
+
+ein. Auch hier werden die Utilities kompiliert und installiert. Um
+nur die Utilities neu zu übersetzen, rufen Sie einfach 'make' ohne
+Parameter auf.
+
+
+1. Initialisierung
+==================
+
+Drei Schritte sind notwendig:
+
+    1. Laden des Moduls
+    2. Initialisieren des Treibers
+    2. Zuweisung jedes Kanals im NET/NOS
+
+Die Hardwareparameter sind fuer die Initialisierung der SCCs und
+des Interrupt-Treibers notwendig. NET oder NOS haben keinen Zugriff
+auf diese Parameter!
+
+1.1 Laden des Moduls
+====================
+
+Bevor auf ein Modul zugegriffen werden kann, muß es ersteinmal
+geladen werden. Dies geschieht mit
+
+	insmod scc.o
+
+Lesen Sie bitte 'man insmod', die Manualpage ist Bestandteil der
+'modutils'.
+
+Obiger Aufruf von 'insmod' sollte in eine der /etc/rc.d/rc.*-Dateien
+eingefügt werden, und anschließend ein Aufruf von /sbin/sccinit
+erfolgen.
+
+
+1.2 Initialisierung des Treibers
+================================
+
+Der Aufruf von /sbin/sccinit muß vor dem Start von NET oder
+'ifconfig' erfolgen. Sccinit liest die Datei /etc/z8530drv.conf und
+stellt die Hardware, MODEM und KISS Paramter des Treibers ein.
+Eine Beispieldatei ist selbstverständlich auch in diesem Archiv.
+Passen Sie es einfach an Ihre Situation an.
+
+
+/etc/z8530drv.conf besteht aus zwei Teilen.
+
+1.2.1 Konfiguration der Hardware Parameter
+==========================================
+
+Die Einstellung der Hardware-Parameter geschieht durch folgende
+Einträge für jeden Z8530:
+
+chip    1
+data_a  0x300                   # Datenport A
+ctrl_a  0x304                   # Controlport A
+data_b  0x301                   # Datenport B
+ctrl_b  0x305                   # Controlport B
+irq     5                       # IRQ Nr. 5
+pclock  4915200                 # Takt
+board   BAYCOM                  # Welche Karte?
+escc    no                      # Enhanced SCC chip? (8580/85180/85280)
+vector  0                       # Adresse des INTACK-Latch
+special no                      # Adresse eines Special Function Register
+option  0                       # Wert, der in dieses Register geschrieben
+				# wird
+
+
+chip    - Dient nur zur Trennung der Einträge der Chips.
+          (Parameter ohne Bedeutung).
+
+data_a  - Adresse des Datenports A dieses Z8530 (benötigt)
+ctrl_a  - Adresse des Control Port A (benötigt)
+data_b  - Adresse des Datenports B (benötigt)
+ctrl_b  - Adresse des Control Port B (benötigt)
+
+irq     - Der verwendete IRQ für diesen Chip. Unterschiedliche Chips 
+          können unterschiedliche IRQs oder einen gemeinsamen benutzen.
+	  Wenn sie sich einen IRQ teilen, braucht diese nur einmal
+	  angegeben werden.
+
+pclock  - Der Takt am PCLK Pin des Z8530 gemessen in Hertz (optional)
+          Die SCC-Chips bekommen in der Regel einen Takt von 4.9152 MHz. 
+          Falls bei Ihrer Karte gerade nicht: Hier eintragen. (Der Quarz 
+          der USCC schwingt auf 9.8304 MHz, die Frequenz wird aber noch
+          durch zwei geteilt, d.h. an der SCC liegen 4.9152 MHz an)
+
+board   - Der Typ der SCC-Karte, nach folgender Tabelle:
+
+	  SCC Typ                  Wert
+	  ------------------------------
+	  PA0HZP SCC card          PA0HZP
+	  EAGLE card               EAGLE
+	  PC100 card               PC100
+	  PRIMUS-PC (DG9BL) card   PRIMUS
+	  BayCom (U)SCC card       BAYCOM
+
+
+escc    - Sollen die erweiterten Möglichkeiten von ESCC chips 
+          (8580, 85180, 85280) ausgenutzt werden, tragen Sie
+          hier "yes" ein. (Option, Defaults ist "no")
+
+vector  - Adresse des Vector-Latch (alias "INTACK-Port") von PA0HZP
+	  Karten. Es kann nur einen geben! (Für alle Chips)
+	  (Option, Default ist 0)
+
+special - Adresse des SFR einiger Karten (Option, Default ist 0)
+
+option  - Der Wert, der in dieses Register geschrieben wird
+          (Option, Default ist 0)
+
+Es können bis zu vier Chips (acht Kanäle) definiert werden. Wenn
+dies nicht ausreicht, kann in scc.c
+
+	#define MAXSCC 4
+
+hochgesetzt werden.
+
+Beispiel für die BayCom USCC:
+-----------------------------
+
+chip    1
+data_a  0x300                   # data port A
+ctrl_a  0x304                   # control port A
+data_b  0x301                   # data port B
+ctrl_b  0x305                   # control port B
+irq     5                       # IRQ No. 5 (#)
+board   BAYCOM                  # hardware type (*)
+#
+# SCC chip 2
+#
+chip    2
+data_a  0x302
+ctrl_a  0x306
+data_b  0x303
+ctrl_b  0x307
+board   BAYCOM
+
+Ein Beispiel für eine PA0HZP card:
+----------------------------------
+
+chip 1
+data_a 0x153
+ctrl_a 0x152
+data_b 0x151
+ctrl_b 0x150
+irq 9
+pclock 4915200
+board PA0HZP
+vector 0x168
+escc no
+#
+#
+#
+chip 2
+data_a 0x157
+ctrl_a 0x156
+data_b 0x155
+ctrl_b 0x154
+irq 9
+pclock 4915200
+board PA0HZP
+vector 0x168
+escc no
+
+Die PE1PET Karte ist angeblich PA0HZP kompatibel. Sie ist leider
+schlechter designed: Offensichtlich wird IORDY auf dem AT-Bus
+nicht verzögert, so daß der Z8530 vom Treiber "überfahren" wird
+und sich aufhängt. Für diese Karte muß SCC_DELAY in scc.c
+#define'd werden.
+
+Für eine DRSI-Karte könnte es so aussehen:
+------------------------------------------
+(tatsächlich wohl eher ZWEI Karten...)
+
+chip 1
+data_a 0x303
+ctrl_a 0x302
+data_b 0x301
+ctrl_b 0x300
+irq 7
+pclock 4915200
+board DRSI
+escc no
+#
+#
+#
+chip 2
+data_a 0x313
+ctrl_a 0x312
+data_b 0x311
+ctrl_b 0x310
+irq 7
+pclock 4915200
+board DRSI
+escc no
+
+Beachten Sie bitte, daß Sie den Baudrate-Generator auf der Platine
+nicht nutzen können. Benutzen Sie stattdessen den internen Takt-
+generator des Z8530, also 'mode dpll' (siehe unten).
+
+(Basierend auf einer Information von Mike Bilow, und laut Paul Healy
+ funktioniert es auch...)
+
+
+Hinweis:
+========
+
+Sind nur die Aufruf-Parameter fuer den PE1CHL SCC-Treiber unter DOS
+bekannt, so kann man mit gencfg die Portadressen berechnen. Der
+Aufruf entspricht dem "attach scc # init"-Kommando, es ist lediglich 
+das "init" wegzulassen. Beispiele:
+
+gencfg 2 0x150 4 2 0 1 0x168 9 4915200
+
+gibt ein "Skelet" fuer die OptoSCC-Karte nach stdout aus. 
+
+gencfg 2 0x300 2 4 5 -4 0 7 4915200 0x10
+
+macht das gleiche fuer die BayCom USCC Karte. Ich meine, es ist
+viel einfacher, z8530drv.conf zu editieren, als sich mit der Bedeutung
+der uebergebenen Parameter herumzuaergern. 
+
+
+1.2 Konfiguration der Kanäle
+============================
+
+Jede Kanal-Definition ist in drei Abschnitte aufgeteilt. Fuer
+/dev/scc0 zum Beispiel:
+
+# DEVICE
+
+device /dev/scc0         # das Device fuer die folgenden Parameter
+
+# MODEM
+
+speed 1200              # die Default-Baudrate
+clock dpll              # Welche Taktquelle wird benutzt:
+                        #       dpll     = normaler Halbduplex-Betrieb
+                        #       external = das MODEM liefert eigenen Takt
+                        #       divider  = der sog. Vollduplex-Teiler wird
+                        #                  benutzt (1)
+mode nrzi               # HDLC encoding Modus
+                        #       nrzi = 1k2 MODEM, G3RUH 9k6 MODEM
+                        #       nrz  = DF9IC 9k6 MODEM
+# KISS (Layer 1)
+
+txdelay 36              # (siehe Abschnitt 1.4)
+persist 64
+slot    8
+tail    8
+fulldup 0
+wait    12
+min     3
+maxkey  7
+idle    3
+maxdef  120
+group   0
+txoff   off
+softdcd on
+
+Die Reihenfolge INNERHALB der drei Abschnitte ist unwichtig. Die
+Reihenfolge DER drei Abschnitte aber nicht. Die MODEM-Parameter
+werden gesetzt, sobald das erste KISS-Kommando erkannt wird.
+
+Beachten Sie bitte, daß Sccinit nur einmal nach dem Booten aufgerufen
+werden kann. Alle Parameter außer "mode" und "clock" können jedoch
+mit Sccparam bzw. über KISS-Kommandos verändert werden.
+
+(1) Dieser Teiler ist normalerweise auf der SCC-Platine (PA0HZP) oder
+    ueberhaupt nicht montiert. Er fuehrt das Ausgangssignal der
+    digitalen PLL als Sendetakt zum Z8530 zurueck. Die Wahl dieses
+    Modus ohne installierten Treiber fuehrt normalerweise dazu,
+    dass die PTT bis zum Ablauf von Maxkey getastet wird -- ohne
+    allerdings irgendetwas (sinnvolles) zu senden.
+
+
+2. Ansprechen der Kanäle durch die AX.25-Software
+=================================================
+
+Der Treiber stellt aus Sicht der AX.25-Software einen KISS-TNC
+an einer seriellen Schnittstelle da. 
+
+2.1 KA9Q-Derivate
+=================
+
+Nachdem Start von Linux wird der SCC-Treiber initialisiert. Um
+ihn nutzen zu koennen, muss er NET/NOS bekannt gemacht werden. Dies
+passiert mit dem "attach"-Kommando. Der SCC Treiber emuliert
+einen KISS-TNC mit dem Unterschied, dass die angegebene Baudrate
+die Baudrate auf der HF-Strecke ist.
+
+Beispiel WAMPES:
+
+#############################################################################################
+# Wampes device attach
+# NOTE: Interfacename and the device must be the same!!
+# Usage: attach asy 0 0 slip|vjslip|ax25ui|ax25i|nrs|kissui <label> 0 <mtu> <speed> [ip_addr]
+#
+attach asy 0 0 kissui scc0 256 256 1200    # Attach SCC channel 1 in 1200 baud
+attach asy 0 0 kissui scc1 256 256 1200    # Attach SCC channel 2 in 1200 baud
+attach asy 0 0 kissui scc2 256 256 38400   # Attach SCC channel 3 in 38400 baud
+attach asy 0 0 kissui scc3 256 256 4800    # Attach SCC channel 4 in 4800 baud
+#                ^
+#                 fuer WAMPES 921229: ax25
+#
+
+naehere Erklaerung siehe Dokumentation zu NETCHL oder GNOS...
+
+Beispiel JNOS:
+
+############################################
+# JNOS device attach
+#
+#attach asy scc0 0 ax25 scc0 256 256 1200
+#attach asy scc1 0 ax25 scc1 256 256 1200
+#attach asy scc2 0 ax25 scc2 256 256 300
+#attach asy scc3 0 ax25 scc3 256 256 4800
+#
+#
+
+
+Es ist also AX.25 ohne TNC moeglich. Lediglich ein MODEM wird
+gebraucht, wobei auf der BayCom USCC schon drei auf der Platine
+sind.
+
+Fuer Vollduplexbetrieb ist uebrigens ein externer Teiler noetig,
+der den Takt des Baudratengenerators TRxC und an RTxC des selben 
+Kanals legt. Dieser Teiler ist fuer normalen (CSMA) Betrieb nicht 
+noetig, reduziert dort allerdings das Interrupt-Aufkommen etwas. 
+(Die USCC hat diesen Teiler nicht, die PA0HZP Karte hat ihn in der 
+Regel bestueckt, was einer von zwei Gruenden ist, warum der PE1CHL-
+Treiber mit der USCC so ohne weiteres nicht zusammenarbeitet. Der 
+andere Grund ist die Freischaltung des CTS-Interrupts, welcher zu 
+einem Totalabsturz des Rechners fuehrt. Wieso ist mir ein Rätsel...).
+
+2.2 Kernel-AX.25
+================
+
+Der Treiber kann auch als Netzwerk-Treiber mit dem Linux Kernel
+AX.25 zusammenarbeiten. Es entfällt der Umweg über TTY- und
+SLIP-Treiber und die nutzlose SLIP-Kodierung. 
+
+Verbunden wird das Interface mit dem Kernel-AX.25 einfach durch
+
+	ifconfig scc0 dl0tha.ampr.org hw ax25 DL0THA
+
+Natürlich ist noch einiges an Konfiguration für das Kernel-AX.25
+notwendig, lesen Sie dazu bitte die entsprechende Dokumentation.
+
+Achtung bei Verwendung des Treibers als TTY-Treiber im Zusammenhang
+mit axattach: Es muß der SLIP-Treiber in den Kernel mit einkompiliert
+werden.
+
+3. Aenderung der SCC-Parameter
+==============================
+
+
+3.1 SCC Parameter:
+------------------
+
+Die KISS-Parameter koennen genauso veraendert werden wie bei
+einem normalen KISS-TNC, und zwar durch Verwendung des
+"param"-Befehls in NET/NOS. Es gibt noch die Moeglichkeit,
+die Parameter ueber das Programm Sccparam von aussen zu setzen
+(mehr UN*X like)
+
+Aufruf des param-Kommandos in NET/NOS:
+
+     param <iface> <paramname> <value>
+
+Aufruf des Programms Sccparam:
+
+     sccparam <iface> <paramname> <value>
+
+wobei
+<iface>		den SCC-Port bezeichnet scc0, scc1, ...
+<paramname>	einen der Namen, die unten aufgefuehrt sind
+<value>		Wert des Parameters
+
+
+
+Folgende Parameter sind veraenderlich:
+
+Parameter	Wert 
+---------------------
+speed       	1200
+txdelay     	36
+persist     	128
+slot        	16
+tail		8
+fulldup		0
+wait		48
+maxkey		7
+min		3
+idle		30
+maxdefer	120
+group		193
+txoff		off
+softdcd		on
+---------------------
+
+
+Die Paramter haben folgende Bedeutung:
+
+txdelay:
+     Die Verzoegerung (in 10ms) von Tastung der PTT bis zur
+     Aussendung des ersten Bytes. Wird 0 angegeben, wartet der
+     Treiber auf ein CTS vom MODEM --- allerdings nicht
+     bei der BayCom USCC --- das setzt natuerlich einen Timer
+     auf dem MODEM voraus, der die Verzoegerung erzeugt.
+     Ein normaler Wert ist 20-36
+
+persist:
+     Der Treiber generiert, sobald der Kanal frei ist, vor jeder
+     Aussendung eine Zufallszahl zwischen 0 und 255 und 
+     vergleicht diese mit der Persistance. Ist die Zufallszahl
+     kleiner, wird die PTT getastet. Ein guter Persistance-Wert
+     liegt zwischen 40 und 60 bei maessigem Betrieb, oder sogar
+     niedriger. Bei DAMA-Betrieb sollte dieser Parameter auf
+     255 stehen.
+
+slot:
+     Ist der Zufallswert groesser als persist, wartet der Treiber
+     die Slottime ab, prueft dann wieder DCD und bildet einen
+     neuen Zufallswert...
+     Dieser Parameter wird auch in 10ms angegeben, ein
+     guter wert liegt zwischen 20 und 30.
+
+tail:
+     Dies ist die Verzoegerung (in 10ms), mit der die PTT nach dem
+     letzten Datenbyte noch getastet bleibt. Dies ist notwendig,
+     weil ja noch der CRC und ein Flag gesendet werden muessen.
+     Der Wert haengt von der Baudrate und der Abfallverzoegerung
+     des des Tranceivers ab. Der Standardwert in der Tabelle
+     ist fuer 1200 baud brauchbar.
+
+full:
+     Damit kann man die Auswertung der DCD umschalten. Fuer
+     echten Vollduplex-Betrieb kann dieser Parameter auf eins oder
+     zwei stehen, sonst immer auf Null (auch auf sog. 
+     "Duplex"-Digis!) [Ausnahme: DAMA]
+
+     Die Werte bedeuten:
+     0:   CSMA-Betrieb (normal)
+     1:   DCD wird nicht ausgewertet, der Sender wird nach dem
+          letzten Frame wieder abgeschaltet
+     2:   wie 1, nur dass der Sender getastet bleibt, bis Idle 
+	  abgelaufen ist
+     3:   wie 2, nur dass der Sender getastet bleibt, bis via
+	  ioctl()- oder KISS-Kommando "PARAM_RTS 0" die PTT
+	  wieder abgeschaltet wird.
+
+wait:
+     Wartezeit, nach der ein neu in die Sendeliste eingehaengtes
+     Frame gesendet wird (in 10ms), damit evtl. unmittelbar
+     folgende Frames im gleichen Durchgang gesendet werden
+     koennen. (DWAIT)
+
+
+min: Wenn Maxkeyup (s.u.) abgelaufen ist, ist dies die Zeit 
+     (in s), die mindestens bis zu einem neuen Sendeversuch
+     gewartet wird.
+
+maxkey: 
+     Maxkeyup ist die Zeit, die der Sender maximal getastet ist
+     (in s). Verwendung als "watchdog" um beim Absturz des
+     SCC-Chips den Uebertragungskanal nicht zu lange zu
+     blockieren. (Auch in den Vollduplex-Modi).
+     Sollte aus verstaendlichen Gruenden nicht Null werden. 
+     Kann abgeschaltet werden.
+
+idle:
+     Dieser Parameter bestimmt die maximale Leerlaufzeit im
+     Vollduplex-Modus 2. Danach wird der Sender abgschaltet.
+     Ist dieser Parameter 0, entspricht dies fulldup=1.
+     Kann abgeschaltet werden, d.h. der Sender laeuft dann bis
+     Ablauf von maxkeyup weiter
+
+
+maxdefer:
+     Ist die maximale Zeit, die auf einen freien Kanal gewartet
+     wird. Laeuft der Timer ab, wird sofort gesendet (Bitte
+     keinen Unfug damit treiben. Dies ist ein Timer, der
+     einen Speicherüberlauf verhindern soll, nicht andere
+     Leute ärgern)
+
+
+txoff:
+     Damit laesst sich die PTT abschalten :-)
+
+group:
+     Dies ist fuer mehrere Baudraten auf einer Frequenz nuetzlich,
+     es laessen sich die Aussendungen der einzelnen Ports gegenseitig
+     verriegeln. Moeglich ist dies uebrigens nur im CSMA-Betrieb...
+
+     Die Erklaerung ist etwas kompliziert:
+
+     Der Parameter ist ein Byte. Es setzt sich wie folgt zusammen:
+
+     mgg sei eine eine Oktal-Zahl. Dann sind die letzten beiden
+     Stellen ("gg") die Gruppen-Nummer, die erste Stelle (m) ergibt
+     die Sendeerlaubnis fuer diesen Port. Hierzu wird der Zustand
+     der Ports mit der gleichen Gruppen-Nummer herangezogen.
+
+     m = 0: Zugriff auf die Frequenz unbeschraenkt
+     m = 1: Zugriff nur wenn kein DCD auf einem der anderen Ports
+            dieser Gruppe.
+     m = 2: Zugriff nur wenn kein anderer Port dieser Gruppe sendet
+     m = 3: Zugriff nur wenn keiner DCD meldet und auch keiner
+            sendet in dieser Gruppe
+
+     Beispiele:
+
+     param scc0 group 301 -- scc0 ist in Gruppe 1 und sendet nur,
+                             wenn scc1 nichts empfaengt und auch
+                             nicht sendet
+
+     param scc1 group 101 -- scc1 ist auch in Gruppe 1 und sendet
+                             solange scc0 nichts empfaengt, "doppelt"
+                             aber evtl. mit der Aussendung von scc0
+
+     param scc2 group 211 -- scc2 sendet, wenn scc3 nicht sendet,
+                             kuemmert sich aber nicht um DCD von scc3
+
+     param scc3 group 011 -- scc3 sendet unabhaengig von scc2
+
+     param scc4 group 000 -- scc4 sendet unabhaengig von anderen
+
+softdcd:
+     es ist moeglich, eine Software-DCD zu verwenden.
+
+
+3.2 SCC Status:
+---------------
+
+Mit
+
+	sccstat /dev/scc0
+
+wird neben der aktuellen Einstellung der oben beschriebenen
+Parameter der Status des SCC-Treibers fuer diesen Port angezeigt:
+
+Status:
+
+HDLC                  Z8530           Interrupts         Queues
+-----------------------------------------------------------------------
+Sent       :     273  RxOver :     0  RxInts :   125074  RxQueue :    0
+Received   :    1095  TxUnder:     0  TxInts :     4684  TxQueue :    0
+RxErrors   :    1591                  ExInts :    11776  NoSpace :    0
+KissErrors :       0                  SpInts :     1503
+Tx State   :    idle
+
+Memory allocated:
+
+Buffer size:  384
+rx buffers :    4
+tx buffers :    8
+
+...bedeutet:
+
+	Sent 	   = Anzahl der gesendeten Frames
+	Received   = Anzahl der empfangenen Frames
+	RxErrors   = Anzahl der Empfangsfehler (CRC, ABORT)
+	KissErrors = Anzahl fehlerhaft an den Treiber gesendeter KISS-Frames
+
+	TxState    = Status der Tx-Sendeschleife:
+			idle    - Schleife leer
+			busy	- bin mit DWait/Slottime/TxDelay/Tail
+				  beschäftigt
+			active  - daten werden gesendet
+			?       - darf nicht erscheinen
+
+	RxOver	   = Anzahl der Empfangsueberlaeufe
+	TxUnder	   = Anzahl der Sender-Unterlaeufe
+	Rxints	   = Anzahl der Empfangsinterrupts
+	Txints	   = Anzahl der Senderinterrupts
+        Exints	   = Anzahl der Externer-Status-Ints (ABORT, CTS, DCD)
+	Spints	   = Anzahl der "special condition" Interrupts (Frame-Ende, 
+                     Rx-Ueberlauf)
+
+	RxQueue    = Anzahl der in der Warteschleife stehenden Emfangspackete
+	TxQueue    = Anzahl der in der Warteschleife stehenden Sendepackete
+	NoSpace    = Anzahl der vergeblich angeforderten Puffer
+
+	Buffer size= Puffergröße
+	rx buffers = Anzahl der Empfangspuffer
+	tx buffers = Anzahl der Sendepuffer
+
+
+Ueber/Unterlaeufe duerfen nicht auftreten. Ist dies doch der Fall,
+dann ist der Computer fuer die Anzahl der Ports zu langsam...
+
+
+2. Probleme
+===========
+
+
+2.1 Womit man sonst noch spielen kann
+=====================================
+
+In linux/drivers/char/scc.c finden sich noch einige DEFINES,
+die man bei Problemen ändern kann...
+
+#define MAXSCC		4	/* number of max. supported chips */
+#define TPS		25	/* scc_timer():  Ticks Per Second */
+#undef  SCC_DELAY		/* perhaps a 486DX2 is a *bit* too fast */
+#undef  SCC_LDELAY		/* slow it even a bit more down */
+
+MAXSCC gibt die maximale Anzahl an SCC-Chips an. Werden Karten verwendet,
+die mehr als 4 Z8530 benutzen, bzw. mehrere Karten benutzt, ist dieser
+Wert entsprechend anzupassen.
+
+SCC_DELAY und SCC_LDELAY koennen bei Timing-Problemen (PE1PET-Karte)
+definiert werden. Bei SCC_DELAY werden statt den Makros inb()/outb() 
+die Makros inb_p()/outb_p() verwendet, bei SCC_LDELAY werden in die
+Funktionen OutReg() und InReg() ein paar udelay(5) eingestreut. Bei
+der BayCom-USCC ist dies nicht notwendig, da die Karte selbst
+IORDY verzögert.
+
+ 
+2.2 Andere Probleme
+===================
+
+Bei Tx-Problemen mit der BayCom USCC bitte ueberpruefen, von
+welchem Hersteller die SCC-Chips kommen. SGS Chips haben ein
+etwas anderes Timing. Versuche es dann mit Zilog-Typen.
+
+Ich habe Berichte erhalten, daß es bei einigen 386er-Systemen
+zu Over- und Underruns kommen kann. Diese Systeme haben ein
+inkompatibles AT-Bus-Timing. In diesem Fall mit SCC_DELAY
+oder SCC_LDELAY spielen. 
+
+Das Problem, daß Empfangsdaten nur verzögert durch das aufrufende
+Programm (Wampes, KA9Q-net, PE1CHL-net) bearbeitet werden, liegt
+begründet in
+
+1. Der Kernel-Version
+
+2. Eingeschalteter Debugging-Code bei der Kompilierung des Kernels
+   (verlangsamt malloc() und free() erheblich!)
+
+3. Die relativ langsame Übergabe der Daten an das lesende
+   Programm durch tty_io.c (je nach Kernel-Version)
+
+4. Hohe Interrupt-Last des Rechners
+
+5. Hohe Belastung des Rechners mit etlichen anderen Prozessen
+   (z.B. XFree86, mit Xmorph und XV und noch Povray, während
+    der Kernel gerade neu kompiliert wird. Das kann selbst mit
+    32 MB RAM nicht gutgehen!)
+
+6. NETs Geschwindigkeit selbst.
+
+Bei unlösbaren Problemen bitte Mail an mich mit den folgenden
+Angaben:
+
+- eine Beschreibung des Problems
+- Informationenen zur Hardware (Computer, SCC-Karte, MODEMs)
+- Kernel Version
+- Die Ausgabe von sccstat -p scc# (wobei für "#" die Nummer des
+  fraglichen Kanals eingesetzt werden muß)
+
+Ich möchte außerdem noch einmal daran erinnern, daß die Kernel-
+Versionen der Reihe 1.3.* Alpha-Versionen sind. Benutzung auf 
+eigene Gefahr. 
+
+Mir liegen Informationen vor, daß der Treiber auch mit der
+BayCom USCC Karte bei 9600 baud funktioniert. Ich kann das
+hier leider nur im loopback nachprüfen.
+
+
+Text: pe1nnz et al.
+(freie) Uebersetzung, Kapitel 2 und Tippfehler: dl1bke
+
+--
+
+Joerg Reuter	ampr-net: dl1bke@db0pra.ampr.org
+		AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU
+		Internet: jreuter@lykos.tng.oche.de

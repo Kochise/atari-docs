@@ -1,0 +1,128 @@
+##############MFP 68901 - Multi Function Peripheral Chip           ###########
+-------+-----+-----------------------------------------------------+----------
+       |     |     MFP Master Clock is 2,457,600 cycles/second     |
+-------+-----+-----------------------------------------------------+----------
+$FFFA01|byte |Parallel Port Data Register                          |R/W
+-------+-----+-----------------------------------------------------+----------
+$FFFA03|byte |Active Edge Register              BIT 7 6 5 4 . 2 1 0|R/W
+       |     |Monochrome monitor detect ------------' | | | | | | ||
+       |     |RS-232 Ring indicator ------------------' | | | | | ||
+       |     |FDC/HDC interrupt ------------------------' | | | | ||
+       |     |Keyboard/MIDI interrupt --------------------' | | | ||
+       |     |Reserved -------------------------------------' | | ||
+       |     |RS-232 CTS (input) -----------------------------' | ||
+       |     |RS-232 DCD (input) -------------------------------' ||
+       |     |Centronics busy ------------------------------------'|
+       |     +-----------------------------------------------------+
+       |     |       When port bits are used for input only:       |
+       |     |0 - Interrupt on pin high-low conversion             |
+       |     |1 - Interrupt on pin low-high conversion             |
+-------+-----+-----------------------------------------------------+----------
+$FFFA05|byte |Data Direction                    BIT 7 6 5 4 3 2 1 0|R/W
+       |     |0 - In, 1 - Out ----------------------+-+-+-+-+-+-+-'|
+-------+-----+-----------------------------------------------------+----------
+$FFFA07|byte |Interrupt Enable A                BIT 7 6 5 4 3 2 1 0|R/W
+$FFFA0B|byte |Interrupt Pending A               BIT 7 6 5 4 3 2 1 0|R/W
+$FFFA0F|byte |Interrupt In-service A            BIT 7 6 5 4 3 2 1 0|R/W
+$FFFA13|byte |Interrupt Mask A                  BIT 7 6 5 4 3 2 1 0|R/W
+       |     |MFP Address                           | | | | | | | ||
+       |     |$13C GPI7-Monochrome Detect ----------' | | | | | | ||
+       |     |$138   RS-232 Ring Detector ------------' | | | | | ||
+       |     |$134 (STe sound)    Timer A --------------' | | | | ||
+       |     |$130    Receive buffer full ----------------' | | | ||
+       |     |$12C          Receive error ------------------' | | ||
+       |     |$128      Send buffer empty --------------------' | ||
+       |     |$124             Send error ----------------------' ||
+       |     |$120 (HBL)          Timer B ------------------------'|
+       |     |1 - Enable Interrupt            0 - Disable Interrupt|
+-------+-----+-----------------------------------------------------+----------
+$FFFA09|byte |Interrupt Enable B                BIT 7 6 5 4 3 2 1 0|R/W
+$FFFA0D|byte |Interrupt Pending B               BIT 7 6 5 4 3 2 1 0|R/W
+$FFFA11|byte |Interrupt In-service B            BIT 7 6 5 4 3 2 1 0|R/W
+$FFFA15|byte |Interrupt Mask B                  BIT 7 6 5 4 3 2 1 0|R/W
+       |     |MFP Address                           | | | | | | | ||
+       |     |$11C                FDC/HDC ----------' | | | | | | ||
+       |     |$118          Keyboard/MIDI ------------' | | | | | ||
+       |     |$114 (200hz clock)  Timer C --------------' | | | | ||
+       |     |$110 (USART timer)  Timer D ----------------' | | | ||
+       |     |$10C           Blitter done ------------------' | | ||
+       |     |$108     RS-232 CTS - input --------------------' | ||
+       |     |$104     RS-232 DCD - input ----------------------' ||
+       |     |$100        Centronics Busy ------------------------'|
+       |     |1 - Enable Interrupt            0 - Disable Interrupt|
+-------+-----+-----------------------------------------------------+----------
+$FFFA17|byte |Vector Register                   BIT 7 6 5 4 3 . . .|R/W
+       |     |Vector Base Offset -------------------+-+-+-' |      |
+       |     |1 - *Software End-interrupt mode -------------+      |
+       |     |0 - Automatic End-interrupt mode -------------'      |
+       |     |* - Default operating mode                           |
+-------+-----+-----------------------------------------------------+----------
+$FFFA19|byte |Timer A Control                         BIT 4 3 2 1 0|R/W
+$FFFA1B|byte |Timer B Control                         BIT 4 3 2 1 0|R/W
+       |     |Reset (force output low) -------------------' | | | ||
+       |     +----------------------------------------------+-+-+-++
+       |     |0000 - Timer stop, no function executed              |
+       |     |0001 - Delay mode, divide by 4                       |
+       |     |0010 -     :           :     10                      |
+       |     |0011 -     :           :     16                      |
+       |     |0100 -     :           :     50                      |
+       |     |0101 -     :           :     64                      |
+       |     |0110 -     :           :     100                     |
+       |     |0111 - Delay mode, divide by 200                     |
+       |     |1000 - Event count mode                              |
+       |     |1xxx - Pulse extension mode, divide as above         |
+       |     +-----------------------------------------------------+
+$FFFA1F|byte |Timer A Data                                         |R/W
+$FFFA21|byte |Timer B Data                                         |R/W
+-------+-----+-----------------------------------------------------+----------
+$FFFA1D|byte |Timer C & D Control                 BIT 6 5 4 . 2 1 0|R/W
+       |     |                                        Timer   Timer|
+       |     |                                          C       D  |
+       |     +-----------------------------------------------------+
+       |     |000 - Timer stop                                     |
+       |     |001 - Delay mode, divide by 4                        |
+       |     |010 -      :           :    10                       |
+       |     |011 -      :           :    16                       |
+       |     |100 -      :           :    50                       |
+       |     |101 -      :           :    64                       |
+       |     |110 -      :           :    100                      |
+       |     |111 - Delay mode, divide by 200                      |
+       |     +-----------------------------------------------------+
+$FFFA23|byte |Timer C Data                                         |R/W
+$FFFA25|byte |Timer D Data                                         |R/W
+-------+-----+-----------------------------------------------------+----------
+$FFFA27|byte |Sync Character                                       |R/W
+$FFFA29|byte |USART Control                     BIT 7 6 5 4 3 2 1 .|R/W
+       |     |Clock divide (1 - div by 16) ---------' | | | | | | ||
+       |     |Word Length 00 - 8 bits ----------------+-+ | | | | ||
+       |     |            01 - 7 bits ----------------+-+ | | | | ||
+       |     |            10 - 6 bits ----------------+-+ | | | | ||
+       |     |            11 - 5 bits ----------------+-' | | | | ||
+       |     |Bits Stop Start Format                      | | | | ||
+       |     |00     0    0   Synchronous ----------------+-+ | | ||
+       |     |01     1    1   Asynchronous ---------------+-+ | | ||
+       |     |10     1    1.5 Asynchronous ---------------+-+ | | ||
+       |     |11     1    2   Asynchronous ---------------+-' | | ||
+       |     |Parity (0 - ignore parity bit) -----------------' | ||
+       |     |Parity (0 - odd parity,1 - even) -----------------' ||
+       |     |Unused ---------------------------------------------'|
+$FFFA2B|byte |Receiver Status                   BIT 7 6 5 4 3 2 1 0|R/W
+       |     |Buffer full --------------------------' | | | | | | ||
+       |     |Overrun error --------------------------' | | | | | ||
+       |     |Parity error -----------------------------' | | | | ||
+       |     |Frame error --------------------------------' | | | ||
+       |     |Found - Search/Break detected ----------------' | | ||
+       |     |Match/Character in progress --------------------' | ||
+       |     |Synchronous strip enable -------------------------' ||
+       |     |Receiver enable bit --------------------------------'|
+$FFFA2D|byte |Transmitter Status                BIT 7 6 5 4 3 2 1 0|R/W
+       |     |Buffer empty -------------------------' | | | | | | ||
+       |     |Underrun error -------------------------' | | | | | ||
+       |     |Auto turnaround --------------------------' | | | | ||
+       |     |End of transmission ------------------------' | | | ||
+       |     |Break ----------------------------------------' | | ||
+       |     |High bit ---------------------------------------' | ||
+       |     |Low bit ------------------------------------------' ||
+       |     |Transmitter enable ---------------------------------'|
+$FFFA2F|byte |USART data                                           |R/W
+-------+-----+-----------------------------------------------------+----------

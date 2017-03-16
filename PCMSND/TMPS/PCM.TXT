@@ -1,0 +1,27 @@
+**************************************************************************
+PCM - Soundchip (CODEC)
+**************************************************************************
+
+$FFFF8900 [R/W] B        ____3210  Sound-DMA-Control Hi
+                             ||||  MFP IRQ 15
+                             ||00- keinen Interrupt ausl”sen
+                             ||01- Interrupt nach dem Abspielen
+                             ||10- Interrupt nach dem Aufnehmen
+                             ||11- Interrupt nach Aufnahme oder Wiedergabe
+                             ||    Timer A Interrupt
+                             00--- keinen Interrupt ausl”sen
+                             01--- Interrupt nach dem Abspielen
+                             10--- Interrupt nach dem Aufnehmen
+                             11--- Interrupt nach Aufnahme oder Wiedergabe
+
+$FFFF8901 [R/W] B        7_54__10  Sound-DMA-Control Lo
+                         | ||  ||
+                         | ||  ++- 00: DMA aus
+                         | ||      01: Abspielen
+                         | ||      11: Abspielen mit Wiederholung
+                         | ++----- 00: DMA aus
+                         |         01: Aufnehmen
+                         |         11: Aufnehmen mit Wiederholung
+                         +-------- 0: W„hlt Abspiel-Frame-Register
+                                   1: W„hlt Aufnahme-Frame-Register
+

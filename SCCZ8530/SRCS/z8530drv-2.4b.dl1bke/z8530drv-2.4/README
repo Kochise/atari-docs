@@ -1,0 +1,102 @@
+
+     SCC.C - Linux driver for Z8530 based HDLC cards for AX.25
+			Version 2.4b
+
+Kernel versions below 2.0.0 are not supported!
+
+For the English documentation read (sic!) doc/scc_eng.doc
+                                          ===============
+
+----------------------------------------------------------------------------
+
+Important NOTE:
+---------------
+
+A version of scc.c that compiles under Linux kernel 2.1.x can
+be found in /kernel-2.1.x. Please try not to substitute the 
+existing driver from the kernel sources with these sources as
+they don't fit into the kernel configuration. To build this
+driver for kernel 2.1.x:
+
+- copy z8530drv-2.4/kernel-2.1.x/scc.c to z8530drv-2.4/scc.c
+- type "make module"
+
+Note that the driver included in the kernel source tree (z8530drv-3.0)
+must be compiled as a module or not compiled at all. You'd better
+use that driver anyway, unless you really need the TTY driver
+support and do not like programs like kissbridge.c or net2kiss.c
+to bind an AX.25 network device to a pseudo TTY... But you
+really should consider using our Fine Kernel AX.25. ;-)
+
+Er, another warning: The utilities (sccinit, sccparam, sccstat)
+in this package are incompatible with the ones for z8530drv-3.0.
+
+----------------------------------------------------------------------------
+
+(*) New features relative to 2.2:
+
+    - New timer routines give better performance and less tx underruns
+    - Fixed channel grouping
+    - Rewrote parts of the interrupt service routine (polling mode)
+    - Fixed 'maxkeyup'
+    - The TxQueue value should show correct values now
+
+(*) The driver does NOT support a simple BayCom MODEM. It needs a
+    Z8530 based controller board.
+
+(*) It should at least work with the following Z8530-SCC boards and
+    connected MODEMs
+
+    - BayCom USCC
+
+    - PA0HZP card with and without ESCC and/or external clock divider
+      (up to 19200 baud (loopback))
+
+    - TCM3105 modem, 4k8 modem, 9k6 DF9IC modem (loopback), HAPN 4k8 modem
+      (connected to a SCC board, of course!)
+
+The full copyright (-left?) notice is in Copying.Z8530DRV 
+(please read it, too)
+
+
+*****
+
+Kernel-Versionen unterhalb 2.0.0 werden nicht unterstützt!
+
+Die deutsche Version der Dokumentation befindet sich in doc/scc_ger.doc
+                                                        ===============
+
+Bitte VORHER LESEN!
+
+(*) Neu in Version 2.4:
+
+    - Neue Timer-Routinen: 10 msec-Timerauflösung, verringerte
+      Systembelastung, weniger TX-Underruns
+    - Kanal-Gruppierung funktioniert jetzt
+    - Neue Interrupt-Routine für Poll-Modus
+    - Ablauf des Maxkeyup-Timers sollte jetzt korrekt funktionieren.
+    - Der TxQueue-Wert sollte jetzt korrekt angezeigt werden.
+
+(*) Der Treiber unterstützt kein BayCom-Einfachstmodem. Er benötigt
+    eine Einsteck-Karte mit dem Z8530 SCC chip.
+
+(*) Der Treiber sollte zumindest mit den folgenden Z8530-SCC Karten
+    und MODEMs zusammenarbeiten:
+
+    - BayCom USCC
+
+    - PA0HZP-Karte mit und ohne ESCC-Chip und/oder Vollduplex-Teiler
+      (bis 19200 baud im Loopback getestet)
+
+    - TCM 3105 modem, 4k8 modem, 9k6 DF9IC modem (loopback), HAPN 4k8 modem
+      (natürlich an eine SCC-Karte angeschlossen!)
+
+
+Der vollständige Copyright-Vermerk befindet sich in Copying.Z8530DRV
+(bitte auch lesen!)
+
+-----
+
+Joerg Reuter	ampr-net: dl1bke@db0pra.ampr.org
+		AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU
+		Internet: jreuter@lykos.oche.de

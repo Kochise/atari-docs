@@ -1,0 +1,13 @@
+adc	equ	$ffef ; ADC address
+dac	equ	$ffef ; DAC address
+M_CRA	equ	$FFEC ; SSI Control Register A
+M_CRB	equ	$FFED ; SSI Control Register B
+M_SR	equ	$FFEE ; SSI Status Register
+M_PCC	equ	$FFE1 ; Port C Control Register
+BCR	equ	$fffe
+IPR	equ	$ffff
+PBC	equ	$ffe0
+HCR	equ	$ffe8 ; Host Control Register
+HSR	equ	$ffe9 ; Host Status Register
+HRX	equ	$ffeb ; Host Receive Register
+HTX	equ	$ffeb ; Host Transmit Register

@@ -1,0 +1,901 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- $Id: scc.en.html,v 1.11 1998/04/28 22:15:37 jreuter Exp $ -->
+
+<!-- Automatically converted text, do not edit -->
+
+<HTML>
+<HEAD>
+   <TITLE>Z8530DRV Documentation</TITLE>
+   <LINK HREF="../jr-style.css" rel="stylesheet" type="text/css">
+   <LINK REV="Made" HREF="mailto:jreuter@yaina.de">
+   <LINK REV="Owns" TITLE="Joerg Reuter" HREF="mailto:jreuter@yaina.de">
+   <META NAME="Author" CONTENT="Joerg Reuter">
+   <META NAME="Description" CONTENT="Linux driver for Z8530 based HDLC cards for AX.25 - Online documentation">
+   <META NAME="Keywords" CONTENT="Amateur Radio, HAM-Radio, Z8530, Linux, Packet Radio, AX.25">
+</HEAD>
+
+<BODY lang="en" bgcolor="#FFFFFF">
+
+<H1 ALIGN=CENTER><A NAME="#top">Linux driver for Z8530 based HDLC cards for AX.25</a></H1>
+
+<P><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="delim"><small>&nbsp;</small></th></tr>
+</table></P>
+
+<P><UL class="theme">
+<LI>Index</LI>
+<UL>
+<LI><A HREF="#chap0">Quickstart</A></LI>
+
+<LI><A HREF="#chap1">Initialization of the driver</A></LI>
+
+<UL>
+<LI><A HREF="#chap1_1">Loading the module</A></LI>
+
+<LI><A HREF="#chap1_2">/etc/z8530drv.conf</A></LI>
+
+<UL>
+<LI><A HREF="#chap1_2_1">Configuration of hardware Paramters</A></LI>
+
+<UL>
+<LI><A HREF="#chap1_2_1_1">Example BayCom USCC</A></LI>
+
+<LI><A HREF="#chap1_2_1_2">Example PA0HZP&nbsp;card</A></LI>
+
+<LI><A HREF="#chap1_2_1_3">Example DRSI&nbsp;card</A></LI>
+
+<LI><A HREF="#chap1_2_1_4">Gencfg utility</A></LI>
+</UL>
+
+<LI><A HREF="#chap1_2_2">Channel configuration</A></LI>
+</UL>
+</UL>
+
+<LI><A HREF="#chap2">Attachment of a channel by your AX.25 software</A></LI>
+
+<UL>
+<LI><A HREF="#chap2_1">Kernel AX.25</A></LI>
+
+<LI><A HREF="#chap2_2">NOS, NET&nbsp;and TFKISS</A></LI>
+</UL>
+
+<LI><A HREF="#chap3">Adjustment and display of parameters</A></LI>
+
+<UL>
+<LI><A HREF="#chap3_1">Displaying channel parameters</A></LI>
+
+<LI><A HREF="#chap3_2">Setting channel parameters</A></LI>
+</UL>
+
+<LI><A HREF="#chap4">Problems</A></LI>
+
+<UL>
+<LI><A HREF="#chap4_1">General problems</A></LI>
+
+<LI><A HREF="#chap4_2">Thor RLC10 card</A></LI>
+</UL>
+
+<LI><A HREF="#chap5">Appendix</A></LI>
+
+<LI><A HREF="#chap6">Thanks</A></LI>
+</UL>
+<LI>Links</LI>
+<UL>
+	<LI>Zur&uuml;ck zur <A HREF="linux.de.html">Linux-Seite</A></LI>
+	<LI><A HREF="../index.de.html">Leitseite</A></LI>
+</UL><BR>
+<UL>
+	<LI>Back to the <A HREF="linux.en.html">Linux page</A></LI>
+	<LI><A HREF="../index.en.html">Main page</A></LI>
+</UL>
+</UL></P>
+
+<p><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="caption">
+<A NAME="chap0">0. Quickstart</A>
+</th></tr></table></p>
+
+<P>To compile the utilities, type</P>
+
+<UL>
+<P>make dep ; make</P>
+</UL>
+
+<P>It will make the following programs:</P>
+
+<P><UL>
+<LI>sccinit<BR>
+Reads /etc/z8530drv.conf and initializes the driver</LI>
+
+<LI>sccstat<BR>
+Shows the status of a channel</LI>
+
+<LI>sccparam<BR>
+Sets L1 parameters for a channel</LI>
+</UL></P>
+
+<P>It will install these utilities in /sbin/ and an example configuration
+file as /etc/z8530drv.conf.ex. Rename this file to /etc/z8530drv.conf and
+edit it according to chapter 1.2. Please note that since version 3.0 of
+this driver the driver itself does not come with this package (hence the
+package name &quot;z8530drv-*.*-<STRONG>utils</STRONG>.tar.gz&quot;).</P>
+
+<P>Now configure the Linux kernel to prepare the compilation of the driver.
+If you are using menuconfig or xconfig select:</P>
+
+<P><UL>
+<LI>Network device support</LI>
+
+<UL>
+<LI>Radio network interfaces (CONFIG_NET_RADIO): &quot;Y&quot;</LI>
+
+<LI>Z8530 SCC driver for AX.25 (CONFIG_SCC): &quot;Y&quot; or &quot;M&quot;</LI>
+</UL>
+</UL></P>
+
+<P>Do not forget to select other AX.25 devices you probably need, and do
+not forget to include the kernel AX.25 / NET/ROM / Rose stuff as well.
+Please read the <A HREF="http://sunsite.unc.edu/mdw/HOWTO/AX25-HOWTO.html">AX25-HOWTO</A>
+for details.</P>
+
+<P>Save your new kernel configuration and either rebuild your kernel now
+(if you selected &quot;Y&quot; for CONFIG_SCC), or rebuild your modules
+(if you selected &quot;M&quot;).</P>
+
+<p><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="caption">
+<A NAME="chap1">1. Initialization of the driver</A>
+</th></tr></table></p>
+
+<P>To use the driver, 3 steps must be performed:</P>
+
+<P><OL>
+<LI>if compiled as module: loading the module</LI>
+
+<LI>Set-up of hardware, MODEM and KISS parameters with sccinit</LI>
+
+<LI>Attach each channel to the Linux kernel AX.25 with &quot;ifconfig&quot;</LI>
+</OL></P>
+
+<P>Unlike the versions below 2.4 this driver is a real network device driver.
+If you want to run xNOS instead of our fine kernel AX.25 use a 2.x version
+(available from above sites) or read the AX.25-HOWTO on how to emulate
+a KISS TNC on network device drivers.</P>
+
+<H3><A NAME="chap1_1">1.1 Loading the module</A></H3>
+
+<P>(If you're going to compile the driver as a part of the kernel image,
+skip this chapter and continue with 1.2)</P>
+
+<P>Before you can use a module, you'll have to load it with</P>
+
+<UL>
+<P>insmod scc</P>
+</UL>
+
+<P>please read 'man insmod' that comes with modutils.</P>
+
+<P>You should include the insmod in one of the /etc/rc.d/rc.* files, and
+don't forget to insert a call of sccinit after that. It will read your
+/etc/z8530drv.conf.</P>
+
+<H3><A NAME="chap1_2">1.2 /etc/z8530drv.conf</A></H3>
+
+<P>To set up all parameters you must run /sbin/sccinit from one of your
+rc.*-files. This has to be done BEFORE you can &quot;ifconfig&quot; an
+interface. Sccinit reads the file /etc/z8530drv.conf and sets the hardware,
+MODEM and KISS parameters. A sample file is delivered with this package.
+Change it to your needs.</P>
+
+<P>The file itself consists of two main sections.</P>
+
+<H4><A NAME="chap1_2_1">1.2.1 Configuration of hardware parameters</A></H4>
+
+<P>The hardware set-up section defines the following parameters for each
+Z8530:</P>
+
+<P><PRE>chip    1
+data_a  0x300                   # data port A
+ctrl_a  0x304                   # control port A
+data_b  0x301                   # data port B
+ctrl_b  0x305                   # control port B
+irq     5                       # IRQ No. 5
+pclock  4915200                 # clock
+board   BAYCOM                  # hardware type
+escc    no                      # enhanced SCC chip? (8580/85180/85280)
+vector  0                       # latch for interrupt vector
+special no                      # address of special function register
+option  0                       # option to set via sfr</PRE></P>
+
+<P>The config options are:</P>
+
+<P><UL>
+<LI>chip<BR>
+This is just a delimiter to make sccinit a bit simpler to program. A parameter
+has no effect.</LI>
+
+<LI>data_a<BR>
+The address of the data port A of this Z8530 (needed)</LI>
+
+<LI>ctrl_a<BR>
+The address of the control port A (needed)</LI>
+
+<LI>data_b<BR>
+The address of the data port B (needed)</LI>
+
+<LI>ctrl_b<BR>
+The address of the control port B (needed)</LI>
+
+<LI>irq<BR>
+The used IRQ for this chip. Different chips can use different IRQs or the
+same. If they share an interrupt, it needs to be specified within one chip-definition
+only.</LI>
+
+<LI>pclock<BR>
+The clock at the PCLK pin of the Z8530 (option, 4915200 is default), measured
+in Hertz</LI>
+
+<LI>board<BR>
+The &quot;type&quot; of the board:</LI>
+
+<UL>
+<LI>PA0HZP - PA0HZP OptoSCC card</LI>
+
+<LI>EAGLE - Eagle card</LI>
+
+<LI>PC100 - PC100 card</LI>
+
+<LI>PRIMUS - Primus-PC (DG9BL) card</LI>
+
+<LI>BAYCOM - BayCom USCC card</LI>
+</UL>
+
+<LI>escc<BR>
+If you want support for ESCC chips (8580, 85180, 85280), set this to &quot;yes&quot;
+(option, defaults to &quot;no&quot;)</LI>
+
+<LI>vector<BR>
+Address of the vector latch (aka &quot;intack port&quot;) for PA0HZP cards.
+There can be only one vector latch for all chips! (option, defaults to
+0)</LI>
+
+<LI>Special<BR>
+Address of the special function register on several cards. (option, defaults
+to 0)</LI>
+
+<LI>option<BR>
+The value you write into that register (option, default is 0)</LI>
+</UL></P>
+
+<P>You can specify up to four chips (8 channels). If this is not enough,
+just change</P>
+
+<UL>
+<P>#define MAXSCC 4</P>
+</UL>
+
+<P>to a higher value.</P>
+
+<H5><A NAME="chap1_2_1_1">1.2.1.1 Example for the BayCom USCC</A></H5>
+
+<P><PRE>chip    1
+data_a  0x300                   # data port A
+ctrl_a  0x304                   # control port A
+data_b  0x301                   # data port B
+ctrl_b  0x305                   # control port B
+irq     5                       # IRQ No. 5 (#)
+board   BAYCOM                  # hardware type (*)
+#
+# SCC chip 2
+#
+chip    2
+data_a  0x302
+ctrl_a  0x306
+data_b  0x303
+ctrl_b  0x307
+board   BAYCOM</PRE></P>
+
+<H5><A NAME="chap1_2_1_2">1.2.1.2 An example for a PA0HZP card</A></H5>
+
+<P><PRE>chip 1
+data_a 0x153
+data_b 0x151
+ctrl_a 0x152
+ctrl_b 0x150
+irq 9
+pclock 4915200
+board PA0HZP
+vector 0x168
+escc no
+#
+#
+#
+chip 2
+data_a 0x157
+data_b 0x155
+ctrl_a 0x156
+ctrl_b 0x154
+irq 9
+pclock 4915200
+board PA0HZP
+vector 0x168
+escc no</PRE></P>
+
+<H5><A NAME="chap1_2_1_3">1.2.1.3 A DRSI would should probably work
+with this (actually: two DRSI cards...)</A></H5>
+
+<P><PRE>chip 1
+data_a 0x303
+data_b 0x301
+ctrl_a 0x302
+ctrl_b 0x300
+irq 7
+pclock 4915200
+board DRSI
+escc no
+#
+#
+#
+chip 2
+data_a 0x313
+data_b 0x311
+ctrl_a 0x312
+ctrl_b 0x310
+irq 7
+pclock 4915200
+board DRSI
+escc no</PRE></P>
+
+<P>Note that you cannot use the on-board baudrate generator off DRSI cards.
+Use &quot;mode dpll&quot; for clock source (see below). This is based on
+information provided by Mike Bilow (and verified by Paul Helay).</P>
+
+<H5><A NAME="chap1_2_1_4">1.2.1.4 The utility &quot;gencfg&quot;</A></H5>
+
+<P>If you only know the parameters for the PE1CHL driver for DOS, run gencfg.
+It will generate the correct port addresses (I hope). Its parameters are
+exactly the same as the ones you use with the &quot;attach scc&quot; command
+in net, except that the string &quot;init&quot; must not appear. Example:
+</P>
+
+<UL>
+<P>gencfg 2 0x150 4 2 0 1 0x168 9 4915200</P>
+</UL>
+
+<P>will print a skeleton z8530drv.conf for the OptoSCC to stdout.</P>
+
+<UL>
+<P>gencfg 2 0x300 2 4 5 -4 0 7 4915200 0x10</P>
+</UL>
+
+<P>does the same for the BayCom USCC card. I my opinion it is much easier
+to edit scc_config.h...</P>
+
+<H4><A NAME="chap1_2_2">1.2.2 Channel configuration</A></H4>
+
+<P>The channel definition is divided into three sub sections for each channel:
+</P>
+
+<P>An example for scc0:</P>
+
+<P><PRE># DEVICE
+
+device scc0     # the device for the following params
+
+# MODEM / BUFFERS
+
+speed 1200              # the default baudrate
+clock dpll              # clock source: 
+                        #       dpll     = normal halfduplex operation
+                        #       external = MODEM provides own Rx/Tx clock
+                        #       divider  = use fullduplex divider if
+                        #                  installed (1)
+mode nrzi               # HDLC encoding mode
+                        #       nrzi = 1k2 MODEM, G3RUH 9k6 MODEM
+                        #       nrz  = DF9IC 9k6 MODEM
+                        #
+bufsize 384             # size of buffers. Note that this must include
+                        # the AX.25 header, not only the data field!
+                        # (optional, defaults to 384)
+
+# KISS (Layer 1)
+
+txdelay 36              # (see chapter 1.4)
+persist 64
+slot    8
+tail    8
+fulldup 0
+wait    12
+min     3
+maxkey  7
+idle    3
+maxdef  120
+group   0
+txoff   off
+softdcd on                   
+slip    off</PRE></P>
+
+<P>The order <EM>within </EM>these sections is unimportant. The order <EM>of</EM>
+these sections <EM>is</EM> important. The MODEM parameters are set with the
+first recognized KISS parameter. Please note that you can initialize the
+board only once after boot (or insmod). You can change all parameters but
+&quot;mode&quot; and &quot;clock&quot; later with the Sccparam program
+or through KISS. Just to avoid security holes...</P>
+
+<P>(1) this divider is usually mounted on the SCC board (PA0HZP) or not present
+at all (BayCom). It feeds back the output of the DPLL (digital pll) as
+transmit clock. Using this mode without a divider installed will normally
+result in keying the transceiver until maxkey expires, of course without
+sending anything (useful).</P>
+
+<p><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="caption">
+<A NAME="chap2">2. Attachment of a channel by your AX.25 software</A>
+</th></tr></table></p>
+
+<H3><A NAME="chap2_1">2.1 Kernel AX.25</A></H3>
+
+<P>To set up an AX.25 device you can simply type:</P>
+
+<UL>
+<P>ifconfig scc0 44.128.1.1 hw ax25 dl0tha-7</P>
+</UL>
+
+<P>This will create a network interface with the IP number 44.128.20.107
+and the callsign &quot;dl0tha&quot;. If you do not have any IP number (yet)
+you can use any of the 44.128.0.0 network. Note that you do not need axattach.
+The purpose of axattach (like slattach) is to create a KISS network device
+linked to a TTY. Please read the documentation of the <A HREF="ftp://ftp.pspt.fi/pub/ham/linux/ax25/">ax25-utils</A>
+and the <A HREF="http://sunsite.unc.edu/mdw/HOWTO/AX25-HOWTO.html">AX25-HOWTO</A>
+to learn how to set the parameters of the kernel AX.25.</P>
+
+<H3><A NAME="chap2_2">2.2 NOS, NET and TFKISS</A></H3>
+
+<P>Since the TTY driver (aka KISS TNC emulation) is gone you need to emulate
+the old behaviour. The cost using these programs is that you probably need
+to compile the kernel AX.25, regardless if you actually use it or not.
+First set up your /etc/ax25/axports, for example:</P>
+
+<UL>
+<P>9k6 dl0tha-9 9600 255 4 9600 baud port (scc3)<BR>
+axlink dl0tha-15 38400 255 4 Link to NOS</P>
+</UL>
+
+<P>Now &quot;ifconfig&quot; the scc device:</P>
+
+<UL>
+<P>ifconfig scc3 44.128.1.1 hw ax25 dl0tha-9</P>
+</UL>
+
+<P>You can now axattach a pseudo-TTY:</P>
+
+<UL>
+<P>axattach /dev/ptys0 axlink</P>
+</UL>
+
+<P>and start your NOS and attach /dev/ptys0 there. The problem is that
+NOS is reachable only via digipeating through the kernel AX.25 (disastrous
+on a DAMA controlled channel). To solve this problem, configure &quot;rxecho&quot;
+to echo the incoming frames from &quot;9k6&quot; to &quot;axlink&quot;
+and outgoing frames from &quot;axlink&quot; to &quot;9k6&quot; and start:
+</P>
+
+<UL>
+<P>rxecho</P>
+</UL>
+
+<P>Or simply use &quot;kissbridge&quot; coming with this package:</P>
+
+<UL>
+<P>ifconfig scc3 hw ax25 dl0tha-9<BR>
+kissbridge scc3 /dev/ptys0</P>
+</UL>
+
+<P>There's a similar program called net2kiss coming with the AX.25 utilities
+which does basically the same (but the source looks better than mine...)
+and is better documented.</P>
+
+<p><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="caption">
+<A NAME="chap3">3. Adjustment and display of parameters</A>
+</th></tr></table></p>
+
+<H3><A NAME="chap3_1">3.1 Displaying SCC parameters</A></H3>
+
+<P>Once a SCC channel has been attached, the parameter settings and some
+statistic information can be shown using the param program:</P>
+
+<P><PRE>dl1bke-u:~$ sccstat scc0
+
+Parameters:
+
+speed       : 1200 baud
+txdelay     : 36
+persist     : 255
+slottime    : 0
+txtail      : 8
+fulldup     : 1
+waittime    : 12
+mintime     : 3 sec
+maxkeyup    : 7 sec
+idletime    : 3 sec
+maxdefer    : 120 sec
+group       : 0x00
+txoff       : off
+softdcd     : on
+SLIP        : off
+
+Status:
+
+HDLC                  Z8530           Interrupts         Buffers
+-----------------------------------------------------------------------
+Sent       :     273  RxOver :     0  RxInts :   125074  Size    :  384
+Received   :    1095  TxUnder:     0  TxInts :     4684  NoSpace :    0
+RxErrors   :    1591                  ExInts :    11776
+TxErrors   :       0                  SpInts :     1503
+Tx State   :    idle</PRE></P>
+
+<P>The status info shown is:</P>
+
+<P><UL>
+<LI>Sent<BR>
+Number of frames transmitted</LI>
+
+<LI>Received<BR>
+Number of frames received</LI>
+
+<LI>RxErrors<BR>
+Number of receive errors (CRC, ABORT)</LI>
+
+<LI>TxErrors<BR>
+Number of discarded Tx frames (due to various reasons)</LI>
+
+<LI>Tx State<BR>
+Status of the Tx interrupt handler: idle/busy/active/tail</LI>
+
+<LI>RxOver<BR>
+Number of receiver overruns</LI>
+
+<LI>TxUnder<BR>
+Number of transmitter underruns</LI>
+
+<LI>RxInts<BR>
+Number of receiver interrupts</LI>
+
+<LI>TxInts<BR>
+Number of transmitter interrupts</LI>
+
+<LI>ExInts<BR>
+Number of receiver special condition interrupts</LI>
+
+<LI>SpInts<BR>
+Number of external/status interrupts</LI>
+
+<LI>Size<BR>
+Maximum size of an AX.25 frame (<STRONG>with</STRONG> AX.25 headers!)</LI>
+
+<LI>NoSpace<BR>
+Number of times a buffer could not get allocated</LI>
+</UL></P>
+
+<P>An overrun is abnormal. If lots of these occur, the product of baudrate
+and number of interfaces is too high for the processing power of you computer.
+NoSpace errors are not likely caused by the driver or the kernel AX.25.
+</P>
+
+<H3><A NAME="chap3_2">3.2 Setting parameters</A></H3>
+
+<P>The setting of parameters of the emulated KISS TNC is done in the same
+way in the SCC driver. You can change parameters by using the kissparms
+program from the ax25-utils package or use the program &quot;sccparam&quot;:
+</P>
+
+<UL>
+<P>sccparam &lt;device&gt; &lt;paramname&gt; &lt;decimal | hexadecimal
+value&gt;</P>
+</UL>
+
+<P>You can change the following parameters:</P>
+
+<P><UL>
+<LI>speed<BR>
+The baudrate on this channel in bits/sec<BR>
+&nbsp;<BR>
+Example: sccparam scc3 speed 9600<BR>
+&nbsp;</LI>
+
+<LI>txdelay<BR>
+The delay (in units of 10ms) after keying of the transmitter, until the
+first byte is sent. This is usually called &quot;TXDELAY&quot; in a TNC.
+When 0 is specified, the driver will just wait until the CTS signal is
+asserted. This assumes the presence of a timer or other circuitry in the
+MODEM and/or transmitter, that asserts CTS when the transmitter is ready
+for data. A normal value of this parameter is 30-36.<BR>
+&nbsp;<BR>
+Example: sccparam scc0 txd 20<BR>
+&nbsp;</LI>
+
+<LI>persist<BR>
+This is the probability that the transmitter will be keyed when the channel
+is found to be free. It is a value from 0 to 255, and the probability is
+(value+1)/256. The value should be somewhere near 50-60, and should be
+lowered when the channel is used more heavily.<BR>
+&nbsp;<BR>
+Example: sccparam scc2 persist 20<BR>
+&nbsp;</LI>
+
+<LI>slottime<BR>
+This is the time between samples of the channel. It is expressed in units
+of 10ms. About 200-300 ms (value 20-30) seems to be a good value.<BR>
+&nbsp;<BR>
+Example: sccparam scc0 slot 20<BR>
+&nbsp;</LI>
+
+<LI>tail<BR>
+The time the transmitter will remain keyed after the last byte of a packet
+has been transferred to the SCC. This is necessary because the CRC and
+a flag still have to leave the SCC before the transmitter is keyed down.
+The value depends on the baudrate selected. A few character times should
+be sufficient, e.g. 40ms at 1200 baud. (value 4) The value of this parameter
+is in 10ms units.<BR>
+&nbsp;<BR>
+Example: sccparam scc2 tail 4<BR>
+&nbsp;</LI>
+
+<LI>full<BR>
+The full-duplex mode switch. This can be one of the following values: 0:
+The interface will operate in CSMA mode (the normal half-duplex packet
+radio operation) 1: Fullduplex mode, i.e. the transmitter will be keyed
+at any time, without checking the received carrier. It will be unkeyed
+when there are no packets to be sent. 2: Like 1, but the transmitter will
+remain keyed, also when there are no packets to be sent. Flags will be
+sent in that case, until a timeout (parameter 10) occurs.<BR>
+&nbsp;<BR>
+Example: sccparam scc0 fulldup off<BR>
+&nbsp;</LI>
+
+<LI>wait<BR>
+The initial waittime before any transmit attempt, after the frame has been
+queue for transmit. This is the length of the first slot in CSMA mode.
+In fullduplex modes it is set to 0 for maximum performance. The value of
+this parameter is in 10ms units.<BR>
+&nbsp;<BR>
+Example: sccparam scc1 wait 4<BR>
+&nbsp;</LI>
+
+<LI>maxkey<BR>
+The maximal time the transmitter will be keyed to send packets, in seconds.
+This can be useful on busy CSMA channels, to avoid &quot;getting a bad
+reputation&quot; when you are generating a lot of traffic. After the specified
+time has elapsed, no new frame will be started. Instead, the transmitter
+will be switched off for a specified time (parameter min), and then the
+selected algorithm for keyup will be started again. The value 0 as well
+as &quot;off&quot; will disable this feature, and allow infinite transmission
+time.<BR>
+&nbsp;<BR>
+Example: sccparam scc0 maxk 20<BR>
+&nbsp;</LI>
+
+<LI>min<BR>
+This is the time the transmitter will be switched off when the maximum
+transmission time is exceeded.<BR>
+&nbsp;<BR>
+Example: sccparam scc3 min 10<BR>
+&nbsp;</LI>
+
+<LI>idle<BR>
+This parameter specifies the maximum idle time in fullduplex 2 mode, in
+seconds. When no frames have been sent for this time, the transmitter will
+be keyed down. A value of 0 is has same result as the fullduplex mode 1.
+This parameter can be disabled.<BR>
+&nbsp;<BR>
+Example: sccparam scc2 idle off # transmit forever<BR>
+&nbsp;</LI>
+
+<LI>maxdefer<BR>
+This is the maximum time (in seconds) to wait for a free channel to send.
+When this timer expires the transmitter will be keyed IMMEDIATELY. If you
+love to get trouble with other users you should set this to a very low
+value ;-)<BR>
+&nbsp;<BR>
+Example: sccparam scc0 maxdefer 240 # 2 minutes<BR>
+&nbsp;</LI>
+
+<LI>txoff<BR>
+When this parameter has the value 0, the transmission of packets is enable.
+Otherwise it is disabled.<BR>
+&nbsp;<BR>
+Example: sccparam scc2 txoff on<BR>
+&nbsp;</LI>
+
+<LI>group<BR>
+It is possible to build special radio equipment to use more than one frequency
+on the same bad, e.g. using several receivers and only one transmitter
+that can be switched between frequencies. Also, you can connect several
+radios that are active on the same band. In these cases, it is not possible,
+or not a good idea, to transmit on more than one frequency. The SCC driver
+provides a method to lock transmitters on different interfaces, using the
+&quot;sccparam &lt;device&gt; group &lt;x&gt;&quot; command. This will
+only work when you are using CSMA mode (parameter full = 0). The number
+&lt;x&gt; must be 0 if you want no group restrictions, and can be computed
+as follows to create restricted groups. &lt;x&gt; is the sum of some OCTAL
+numbers:<BR>
+&nbsp;</LI>
+
+<UL>
+<LI>200 This transmitter will only be keyed when all other transmitters
+in the group are off.</LI>
+
+<LI>100 This transmitter will only be keyed when the carrier detect of
+all other interfaces in the group is off.</LI>
+
+<LI>0xx A byte that can be used to define different groups.</LI>
+</UL>
+
+<P>Interfaces are in the same group, when the logical AND between their
+xx values is not zero.<BR>
+<BR>
+Examples: When 2 interfaces use group 201, their transmitters will never
+be keyed at the same time. When 2 interfaces use group 101, the transmitters
+will only key when both channels are clear at the same time. When group
+301, the transmitters will not be keyed at the same time. Don't forget
+to convert the octal numbers into decimal before you set the parameter.<BR>
+&nbsp;<BR>
+Example: (still to be written)</P>
+
+<LI>softdcd<BR>
+Use a software dcd instead of the real one. Useful for a very slow squelch.<BR>
+&nbsp;<BR>
+Example: sccparam scc0 soft on</LI>
+</UL></P>
+
+<p><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="caption">
+<A NAME="chap4">4. Problems</A>
+</th></tr></table></p>
+
+<H3><A NAME="chap4_1">4.1 General problems</A></H3>
+
+<P>If you have tx-problems with your BayCom USCC card please check the
+manufacturer of the 8530. SGS chips have a slightly different timing. Try
+Zilog... A solution is to write to register 8 instead to the data port,
+but this won't work with the ESCC chips. <STRONG>SIGH!</STRONG></P>
+
+<P>A very common problem is that the PTT locks until the maxkeyup timer
+expires, although interrupts and clock source are correct. In most cases
+#define SCC_DELAY solves the problems. For more hints read the (pseudo)
+FAQ and the documentation coming with z8530drv-utils.</P>
+
+<P>I got reports that the driver has problems on some 386-based systems.
+(i.e. Amstrad) Those systems have a bogus AT bus timing which will lead
+to delayed answers on interrupts. You can recognize these problems by looking
+at the output of Sccstat for the suspected port. See if it shows under-
+and overruns you own such a system.</P>
+
+<P>Delayed processing of received data:</P>
+
+<P>This depends on</P>
+
+<P><UL>
+<LI>the kernel version (don't laugh!)</LI>
+
+<LI>kernel profiling compiled or not</LI>
+
+<LI>a high interrupt load</LI>
+
+<LI>a high load of the machine --- running X, Xmorph, XV and Povray, while
+compiling the kernel... hmm ... even with 32 MB RAM ... ;-) Or running
+a named for the whole .ampr.org domain on an 8 MB box..</LI>
+
+<LI>using information from rxecho or kissbridge.</LI>
+</UL></P>
+
+<P>Kernel panics: please read to /linux/README and find out if it really
+occurred within the scc driver.</P>
+
+<P>If you cannot solve a problem, send me</P>
+
+<P><UL>
+<LI>a description of the problem,</LI>
+
+<LI>information on your hardware (computer system, scc board, modem)</LI>
+
+<LI>your kernel version</LI>
+
+<LI>the output of cat /proc/net/z8530</LI>
+</UL></P>
+
+<H3><A NAME="chap4_2">4.2 Thor RLC100</A></H3>
+
+<P>Mysteriously this board seems not to work with the driver. Anyone got
+it up-and-running?</P>
+
+<p><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="caption">
+<A NAME="chap5">5. Appendix</A>
+</th></tr></table></p>
+
+<P>The fullduplex mode 3 works as follows:</P>
+
+<P>1. The protocol layer sends a KISS command</P>
+
+<UL>
+<P>[PARAM_RTS] [TX_ON]</P>
+</UL>
+
+<P>to key up the transmitter. Then it sends the data frame(s) to the driver.
+When all frames are sent, the driver will send the KISS command</P>
+
+<UL>
+<P>[PARAM_HWEVENT] [HWEV_ALL_SENT].</P>
+</UL>
+
+<P>The protocol layer may now key down the transmitter with</P>
+
+<UL>
+<P>[PARAM_RTS] [TX_OFF]</P>
+</UL>
+
+<P>or send more frames. Note that the maxkeyup timer may expire and key
+down the transceiver before everything is sent.</P>
+
+<P>2. The driver sends</P>
+
+<UL>
+<P>[PARAM_HWEVENT] [HWEV_DCD_ON] or<BR>
+[PARAM_HWEVENT] [HWEV_DCD_OFF]</P>
+</UL>
+
+<P>if the status of the DCD changes.</P>
+
+<P>3. The protocol layer can send</P>
+
+<UL>
+<P>[PARAM_HWEVENT] 0</P>
+</UL>
+
+<P>the driver will reply with one of the DCD status messages.</P>
+
+<P>Note that KISS command doesn't necessarily mean that the enclosed data
+is SLIP encoded. In network driver mode the driver does not encode/decode
+SLIP, but it will still distinguish between a data and a command packet
+by the leading byte, just like in 'real' KISS mode.</P>
+
+<P>Note that this feature may vanish without a notice.</P>
+
+<p><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="caption">
+<A NAME="chap6">6. Thanks</A>
+</th></tr></table></p>
+
+<P>Many thanks to everyone who contributed to this project with ideas,
+error reports and bug fixes. Special thanks to <EM>Guido ten Dolle,
+PE1NNZ</EM>. Guido started the whole project in 1993, some of his
+code may be still in the current release...</P>
+
+<P><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="delim"><small>&nbsp;</small></th></tr>
+</table></P>
+
+<P><UL class="theme">
+<LI>Navigation</LI>
+<UL class="topics">
+	<LI><A HREF="#top">Anfang</A> dieser Seite</LI>
+        <LI>Zur&uuml;ck zur <A HREF="linux.de.html">Linux-Seite</A></LI>
+	<LI><A HREF="../index.de.html">Leitseite</A></LI>
+</UL><BR>
+<UL class="topics">
+	<LI><A HREF="#top">Top</A> of this page</LI>
+	<LI>Back to the <A HREF="linux.en.html">Linux page</A></LI>
+	<LI><A HREF="../index.en.html">Main page</A></LI>
+</UL>
+</UL></P>
+
+<P><table class="caption" width="100%" bgcolor="#C0C0C0">
+<tr><th class="delim"><small>&nbsp;</small></th></tr>
+</table>
+<P><span style="font-size: small"><small>Copyright 2001 by <a href="mailto:jreuter@yaina.de">J&ouml;rg Reuter</a>.</small></span><BR>
+<span style="font-size: small"><small>Last modified: 2001-05-26</small></span></P>
+
+</BODY>
+</HTML>

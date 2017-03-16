@@ -1,0 +1,42 @@
+This is how to install the Overscan :
+
+Copy the OVERSCAN.PRG to Your auto-folder on Your harddisk or if You
+don't have a harddisk copy it to Your boot disk into an auto folder.
+
+Copy also the VIDEO50.PRG to the auto-folder to make sure Your ST will
+start with 50 Hertz picture frequency in color mode. 
+
+If You still have the old ROMTOS from 1985 inside Your ST, then copy
+also a BETA-RAMTOS 1.4 or the Developer-RAMTOS 1.4 to Your boot disk
+into the root-directory !
+This disk has to have then a bootable sector, so that it will boot
+automaticaly the TOS.IMG-file (BETA- or Developer-RAMTOS 1.4).
+
+(If You already have the Blitter-TOS or the new (EP)ROMTOS 1.4 inside
+Your ST, then You only have to have the OVERSCAN.PRG and VIDEO50.PRG
+inside the autofolder and don't need an additional RAMTOS)
+
+Switch the Overscan-switch to OVERSCAN and boot the disk or boot from
+Your harddisk.
+
+If You press the CONTROL-, SHIFT-, or ALTERNATE- key, the Overscan.PRG
+will come up with an installation menu.
+From this menu You can fit the screen resolution to Your monitor size
+and still can save this, so Your ST will start up with the right size
+the next time.
+With key "P" You get the "Physebase"-emulator, so Calamus DTP works
+now also !
+
+In color mode: If You want to change from lowres to midres go to the
+"change resolution"-menu from the GEM SHELL and click "okay" while
+depressing the CONTROL-,SHIFT-, or ALTERNATE-key.Then the
+OVERSCAN-installation menu comes up again and You can change to midres
+and the other way around.
+Use the arrow keys and the + - * /  keys to modify the size of the
+Overscan screen.
+The HELP key brings You back to the menu.
+"S" saves the new screen size and "Q" quits the menu without saving to
+(hard)disk.
+
+Have fun with the Overscan,   Stefan Hartmann.
+

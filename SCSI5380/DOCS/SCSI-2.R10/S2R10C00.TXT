@@ -1,0 +1,1097 @@
+NOTE: Copies of this document may be purchased from:             X3T9.2/86-109
+Global Engineering Documents, 2805 McGaw, Irvine, CA 92714        Revision 10c
+(800) 854-7179 or (714) 261-1455.  Please refer to                 X3T9/89-042
+document X3.131-198X.                      
+
+
+
+
+
+                                draft proposed
+                          American National Standard
+                          for information systems -
+
+                     SMALL COMPUTER SYSTEM INTERFACE - 2
+                                   (SCSI-2)
+
+                                March 9, 1990
+
+
+
+Secretariat
+
+Computer and Business Equipment Manufacturers Association
+
+Abstract:  This standard defines mechanical, electrical, and functional 
+requirements for attaching physically small computers with each other and with 
+intelligent peripherals such as rigid disks, flexible disks, magnetic tape 
+devices, printers, optical disks, and scanners.  The resulting interface 
+facilitates the interconnection of physically small computers and intelligent 
+peripherals and thus provides a common interface specification for both 
+systems integrators and suppliers of intelligent peripherals.
+
+This is a draft proposed American National Standard of Accredited Standards 
+Committee X3.  As such, this is not a completed standard.  The X3T9 Technical 
+Committee may modify this document as a result of comments received during X3 
+approval as a standard.
+
+COPYRIGHT NOTICE:  This draft proposed standard is based upon ANSI X3.131-
+1986, a document which is copyrighted by the American National Standards 
+Institute (ANSI).  In accordance with the usual ANSI policy on the revision of 
+standards, this draft standard may be reproduced, for the purpose of review 
+and comment only, without further permission, provided this notice is 
+included.  All other rights are reserved.
+
+
+POINTS OF CONTACT:
+
+John B. Lohmeyer (X3T9.2 Chair)        I. Dal Allan (X3T9.2 Vice-Chair)
+NCR Corporation                        ENDL
+3718 N. Rock Road                      14426 Black Walnut Court
+Wichita, KS 67226                      Saratoga, CA 95070
+(316) 636-8703                         (408) 867-6630
+This revision incorporates editorial changes and several improvements (non-
+substantive) which were the result of comments received during the public 
+review period.  These changes approved by X3T9.2 at their February, 1990 
+plenary meeting in Austin, TX.
+
+An electronic copy of this document is available on the SCSI Bulletin Board 
+System (316-636-8700).
+
+The current editorial assignments are:
+
+Lawrence J. Lamers (Technical Editor)
+Maxtor Corporation                 
+211 River Oaks Parkway             
+San Jose, CA   95134               
+(408) 432-4341
+
+Elizabeth A. Stephens (Technical Editor)
+Optimem 
+297 North Bernardo Avenue
+Mountain View, CA   94043
+(415) 961-1800
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              TABLE OF CONTENTS
+
+  1. Scope.................................................................1-1
+
+  2. Referenced Standards and Organizations................................2-1
+
+  3. Glossary and Conventions..............................................3-1
+     3.1. Glossary.........................................................3-1
+     3.2. Editorial Conventions............................................3-5
+
+  4. Physical Characteristics..............................................4-1
+     4.1. Physical Description.............................................4-1
+     4.2. Cable Requirements  .............................................4-1
+          4.2.1. Single-Ended Cable........................................4-2
+          4.2.2. Differential Cable........................................4-2
+          4.2.3. Cable Requirements for Fast Synchronous Data Transfer.....4-2
+     4.3. Connector Requirements...........................................4-3
+          4.3.1. Nonshielded Connector Requirements........................4-3
+                 4.3.1.1. Nonshielded Connector Alternative 1 - A Cable....4-3
+                 4.3.1.2. Nonshielded Connector Alternative 2 - A Cable....4-3
+                 4.3.1.3. Nonshielded Connector - B Cable..................4-4
+          4.3.2. Shielded Connector Requirements...........................4-4
+                 4.3.2.1. Shielded Connector Alternative 1 - A Cable.......4-4
+                 4.3.2.2. Shielded Connector Alternative 2 - A Cable.......4-5
+                 4.3.2.3. Shielded Connector - B Cable.....................4-5
+          4.3.3. Connector Contact Assignments............................4-14
+     4.4. Electrical Description..........................................4-19
+          4.4.1. Single-Ended Alternative.................................4-19
+                 4.4.1.1. Output Characteristics..........................4-19
+                 4.4.1.2. Input Characteristics...........................4-19
+          4.4.2. Differential Alternative.................................4-20
+                 4.4.2.1. Output Characteristics..........................4-20
+                 4.4.2.2. Input Characteristics...........................4-20
+          4.4.3. Terminator Power.........................................4-21
+          4.4.4. RESERVED Lines...........................................4-23
+     4.5. SCSI Bus........................................................4-24
+     4.6. SCSI Bus Signals................................................4-26
+          4.6.1. Signal Values............................................4-27
+          4.6.2. OR-Tied Signals..........................................4-27
+          4.6.3. Signal Sources...........................................4-28
+     4.7. SCSI Bus Timing.................................................4-29
+          4.7.1. Arbitration Delay .......................................4-29
+          4.7.2. Assertion Period ........................................4-29
+          4.7.3. Bus Clear Delay .........................................4-30
+          4.7.4. Bus Free Delay ..........................................4-30
+          4.7.5. Bus Set Delay ...........................................4-30
+          4.7.6. Bus Settle Delay ........................................4-30
+          4.7.7. Cable Skew Delay ........................................4-30
+          4.7.8. Data Release Delay ......................................4-30
+          4.7.9. Deskew Delay ............................................4-30
+          4.7.10. Disconnection Delay ....................................4-30
+          4.7.11. Hold Time ..............................................4-31
+          4.7.12. Negation Period ........................................4-31
+          4.7.13. Power-On to Selection Time .............................4-31
+          4.7.14. Reset to Selection Time ................................4-31
+          4.7.15. Reset Hold Time ........................................4-31
+          4.7.16. Selection Abort Time ...................................4-31
+          4.7.17. Selection Time-out Delay ...............................4-31
+          4.7.18. Transfer Period ........................................4-31
+     4.8. Fast Synchronous Transfer Option................................4-32
+          4.8.1. Fast Assertion Period ...................................4-32
+          4.8.2. Fast Cable Skew Delay ...................................4-32
+          4.8.3. Fast Deskew Delay .......................................4-32
+          4.8.4. Fast Hold Time ..........................................4-32
+          4.8.5. Fast Negation Period ....................................4-32
+
+  5. Logical Characteristics...............................................5-1
+     5.1. SCSI Bus Phases..................................................5-1
+          5.1.1. BUS FREE Phase............................................5-1
+          5.1.2. ARBITRATION Phase.........................................5-2
+          5.1.3. SELECTION Phase...........................................5-3
+                 5.1.3.1. SELECTION Time-out Procedure.....................5-3
+          5.1.4. RESELECTION Phase.........................................5-4
+                 5.1.4.1. RESELECTION   ...................................5-4
+                 5.1.4.2. RESELECTION Time-out Procedure...................5-5
+          5.1.5. Information Transfer Phases...............................5-5
+                 5.1.5.1. Asynchronous Information Transfer................5-6
+                 5.1.5.2. Synchronous Data Transfer........................5-7
+                 5.1.5.3. Wide Data Transfer...............................5-8
+          5.1.6. COMMAND Phase............................................5-10
+          5.1.7. Data Phase...............................................5-10
+                 5.1.7.1. DATA IN Phase...................................5-10
+                 5.1.7.2. DATA OUT Phase..................................5-10
+          5.1.8. STATUS Phase.............................................5-10
+          5.1.9. Message Phase............................................5-11
+                 5.1.9.1. MESSAGE IN Phase................................5-11
+                 5.1.9.2. MESSAGE OUT Phase...............................5-11
+          5.1.10. Signal Restrictions Between Phases......................5-12
+     5.2. SCSI Bus Conditions.............................................5-12
+          5.2.1. Attention Condition......................................5-12
+          5.2.2. Reset Condition..........................................5-13
+                 5.2.2.1. Hard Reset Alternative..........................5-14
+                 5.2.2.2. Soft Reset Alternative..........................5-14
+     5.3. SCSI Bus Phase Sequences........................................5-15
+     5.4. SCSI Pointers...................................................5-16
+     5.5. Message System Description......................................5-17
+     5.6. Messages........................................................5-20
+          5.6.1. ABORT....................................................5-20
+          5.6.2. ABORT TAG................................................5-21
+          5.6.3. BUS DEVICE RESET.........................................5-21
+          5.6.4. CLEAR QUEUE..............................................5-21
+          5.6.5. COMMAND COMPLETE.........................................5-22
+          5.6.6. DISCONNECT...............................................5-22
+          5.6.7. IDENTIFY.................................................5-22
+          5.6.8. IGNORE WIDE RESIDUE......................................5-24
+          5.6.9. INITIATE RECOVERY........................................5-24
+          5.6.10. INITIATOR DETECTED ERROR................................5-25
+          5.6.11. LINKED COMMAND COMPLETE.................................5-25
+          5.6.12. LINKED COMMAND COMPLETE (WITH FLAG).....................5-25
+          5.6.13. MESSAGE PARITY ERROR....................................5-25
+          5.6.14. MESSAGE REJECT..........................................5-26
+          5.6.15. MODIFY DATA POINTER Message.............................5-26
+          5.6.16. NO OPERATION............................................5-26
+          5.6.17. Queue Tag Messages......................................5-27
+                  5.6.17.1. HEAD OF QUEUE TAG.............................5-28
+                  5.6.17.2. ORDERED QUEUE TAG.............................5-28
+                  5.6.17.3. SIMPLE QUEUE TAG..............................5-28
+          5.6.18. RELEASE RECOVERY........................................5-28
+          5.6.19. RESTORE POINTERS........................................5-28
+          5.6.20. SAVE DATA POINTER.......................................5-28
+          5.6.21. SYNCHRONOUS DATA TRANSFER REQUEST Message...............5-29
+          5.6.22. TERMINATE I/O PROCESS...................................5-31
+          5.6.23. WIDE DATA TRANSFER REQUEST Message......................5-33
+
+  6. SCSI Commands and Status..............................................6-1
+     6.1. Command Implementation Requirements..............................6-1
+          6.1.1. Reserved..................................................6-1
+          6.1.2. Operation Code Types......................................6-1
+     6.2. Command Descriptor Block.........................................6-2
+          6.2.1. Operation Code............................................6-4
+          6.2.2. Logical Unit Number.......................................6-5
+          6.2.3. Logical Block Address.....................................6-5
+          6.2.4. Transfer Length...........................................6-5
+          6.2.5. Parameter List Length.....................................6-6
+          6.2.6. Allocation Length.........................................6-6
+          6.2.7. Control Field.............................................6-7
+     6.3. Status ..........................................................6-8
+     6.4. Command Examples.................................................6-9
+          6.4.1. Single Command Example....................................6-9
+          6.4.2. Disconnect Example.......................................6-10
+          6.4.3. Linked Command Example...................................6-11
+     6.5. Command Processing Considerations and Exception Conditions .....6-11
+          6.5.1. Programmable Operating Definition........................6-11
+          6.5.2. Incorrect Initiator Connection...........................6-12
+          6.5.3. Selection of an Invalid Logical Unit.....................6-13
+          6.5.4. Parameter Rounding.......................................6-13
+          6.5.5. Asynchronous Event Notification .........................6-14
+          6.5.6. Unexpected Reselection...................................6-16
+     6.6. Contingent Allegiance Condition.................................6-16
+     6.7. Extended Contingent Allegiance Condition........................6-16
+     6.8. Queued I/O Processes............................................6-17
+          6.8.1. Untagged Queuing.........................................6-17
+          6.8.2. Tagged Queuing...........................................6-18
+          6.8.3. Example of Queued I/O Process............................6-20
+                 6.8.3.1. Typical Sequences for Tagged Queuing............6-20
+                 6.8.3.2. Example of Tagged Queuing ......................6-20
+     6.9. Unit Attention Condition........................................6-22
+
+  7. All Device Types......................................................7-1
+     7.1. Model for All Device Types.......................................7-1
+          7.1.1. SCSI Addresses............................................7-1
+                 7.1.1.1. SCSI Device Address..............................7-1
+                 7.1.1.2. Logical Units....................................7-1
+                 7.1.1.3. Target Routines..................................7-1
+          7.1.2. Commands Implemented by all SCSI Devices..................7-2
+                 7.1.2.1. Using the INQUIRY Command........................7-2
+                 7.1.2.2. Using the REQUEST SENSE Command..................7-2
+                 7.1.2.3. Using the SEND DIAGNOSTIC Command................7-2
+                 7.1.2.4. Using the TEST UNIT READY Command................7-2
+     7.2. Commands for All Device Types....................................7-3
+          7.2.1. CHANGE DEFINITION Command.................................7-4
+          7.2.2. COMPARE Command...........................................7-7
+          7.2.3. COPY Command..............................................7-8
+                 7.2.3.1. Errors Detected by the Managing SCSI Device.....7-10
+                 7.2.3.2. Errors Detected by a Target.....................7-10
+                 7.2.3.3. COPY Function Code 00h and 01h..................7-11
+                 7.2.3.4. COPY Function Code 02h..........................7-12
+                 7.2.3.5. COPY Function Code 03h..........................7-13
+                 7.2.3.6. COPY Function Code 04h..........................7-15
+                 7.2.3.7. Copies With Unequal Block Lengths...............7-16
+          7.2.4. COPY AND VERIFY Command..................................7-17
+          7.2.5. INQUIRY Command..........................................7-18
+                 7.2.5.1. Standard INQUIRY Data...........................7-19
+                 7.2.5.2. Vital Product Data..............................7-24
+          7.2.6. LOG SELECT Command.......................................7-25
+          7.2.7. LOG SENSE Command........................................7-28
+          7.2.8. MODE SELECT(6) Command...................................7-30
+          7.2.9. MODE SELECT(10) Command..................................7-32
+          7.2.10. MODE SENSE(6) Command...................................7-33
+                  7.2.10.1. Current Values................................7-34
+                  7.2.10.2. Changeable Values.............................7-35
+                  7.2.10.3. Default Values................................7-35
+                  7.2.10.4. Saved Values..................................7-35
+                  7.2.10.5. Initial Responses.............................7-35
+          7.2.11. MODE SENSE(10) Command..................................7-36
+          7.2.12. READ BUFFER.............................................7-37
+                  7.2.12.1. Combined Header and Data Mode (000b)..........7-38
+                  7.2.12.2. Vendor-Specific Mode (001b)...................7-38
+                  7.2.12.3. Data Mode (010b)..............................7-38
+                  7.2.12.4. Descriptor Mode (011b)........................7-39
+          7.2.13. RECEIVE DIAGNOSTIC RESULTS Command......................7-40
+          7.2.14. REQUEST SENSE Command...................................7-41
+                  7.2.14.1. Sense-Key Specific............................7-46
+                  7.2.14.2. Deferred Errors...............................7-48
+          7.2.15. SEND DIAGNOSTIC Command.................................7-57
+          7.2.16. TEST UNIT READY Command.................................7-59
+          7.2.17. WRITE BUFFER Command....................................7-60
+                  7.2.17.1. Combined Header and Data Mode (000b)..........7-61
+                  7.2.17.2. Vendor-Specific Mode (001b)...................7-61
+                  7.2.17.3. Data Mode (010b)..............................7-61
+                  7.2.17.4. Download Microcode Mode (100b)................7-62
+                  7.2.17.5. Download Microcode and Save Mode (101b).......7-62
+     7.3. Parameters for All Device Types ................................7-62
+          7.3.1. Diagnostic Parameters ...................................7-62
+                 7.3.1.1. Supported Diagnostic Pages......................7-63
+          7.3.2. Log Parameters...........................................7-65
+                 7.3.2.1. Buffer Over-Run/Under-Run Page..................7-69
+                 7.3.2.2. Error Counter Pages.............................7-71
+                 7.3.2.3. Last n Error Events Page........................7-72
+                 7.3.2.4. Non-Medium Error Page ..........................7-72
+                 7.3.2.5. Supported Log Pages.............................7-73
+          7.3.3. Mode Parameters .........................................7-73
+                 7.3.3.1. Control Mode Page...............................7-78
+                 7.3.3.2. Disconnect-Reconnect Page.......................7-81
+                 7.3.3.3. Peripheral Device Page..........................7-83
+          7.3.4. Vital Product Data Parameters............................7-84
+                 7.3.4.1. ASCII Implemented Operating Definition Page.....7-85
+                 7.3.4.2. ASCII Information Page..........................7-86
+                 7.3.4.3. Implemented Operating Definition Page...........7-87
+                 7.3.4.4. Supported Vital Product Data Pages..............7-88
+                 7.3.4.5. Unit Serial Number Page.........................7-89
+
+  8. Direct-Access Devices.................................................8-1
+     8.1. Direct-Access Device Model.......................................8-1
+          8.1.1. Removable Medium..........................................8-1
+          8.1.2. Logical Blocks............................................8-2
+          8.1.3. Ready State...............................................8-2
+          8.1.4. Initialization............................................8-2
+          8.1.5. Medium Defects............................................8-3
+          8.1.6. Data Cache................................................8-3
+          8.1.7. Reservation...............................................8-5
+          8.1.8. Seek and Rezero...........................................8-7
+          8.1.9. Notched Drives............................................8-7
+          8.1.10. Rotational Position Locking .............................8-7
+          8.1.11. Relative Addressing......................................8-7
+          8.1.12. Error Reporting..........................................8-7
+          8.1.13. Examples.................................................8-8
+                  8.1.13.1. Rotating Media.................................8-8
+                  8.1.13.2. Sequential Media...............................8-9
+                  8.1.13.3. Memory Media..................................8-10
+     8.2. Commands for Direct-Access Devices..............................8-11
+          8.2.1. FORMAT UNIT Command......................................8-12
+                 8.2.1.1. Defect List Formats.............................8-18
+                 8.2.1.2. Initialization Pattern Option...................8-20
+          8.2.2. LOCK UNLOCK CACHE Command................................8-23
+          8.2.3. PRE-FETCH Command........................................8-24
+          8.2.4. PREVENT ALLOW MEDIUM REMOVAL Command.....................8-25
+          8.2.5. READ(6) Command..........................................8-26
+          8.2.6. READ(10) Command.........................................8-27
+          8.2.7. READ CAPACITY Command....................................8-29
+          8.2.8. READ DEFECT DATA Command.................................8-30
+          8.2.9. READ LONG Command........................................8-33
+          8.2.10. REASSIGN BLOCKS Command.................................8-34
+          8.2.11. RELEASE Command.........................................8-36
+                  8.2.11.1. Logical Unit Release (Mandatory)..............8-36
+                  8.2.11.2. Extent Release (Optional).....................8-37
+                  8.2.11.3. Third-Party Release (Mandatory)...............8-37
+          8.2.12. RESERVE Command.........................................8-38
+                  8.2.12.1. Logical Unit Reservation (Mandatory)..........8-38
+                  8.2.12.2. Extent Reservation (Optional).................8-39
+                  8.2.12.3. Third Party Reservation (Mandatory)...........8-41
+                  8.2.12.4. Superseding Reservations (Mandatory)..........8-42
+          8.2.13. REZERO UNIT Command.....................................8-42
+          8.2.14. SEARCH DATA Commands....................................8-43
+                  8.2.14.1. SEARCH DATA EQUAL Command.....................8-46
+                  8.2.14.2. SEARCH DATA HIGH Command......................8-46
+                  8.2.14.3. SEARCH DATA LOW Command.......................8-46
+          8.2.15. SEEK(6) and SEEK(10) Commands...........................8-47
+          8.2.16. SET LIMITS Command......................................8-48
+          8.2.17. START STOP UNIT Command.................................8-49
+          8.2.18. SYNCHRONIZE CACHE Command...............................8-50
+          8.2.19. VERIFY Command..........................................8-51
+          8.2.20. WRITE(6) Command........................................8-52
+          8.2.21. WRITE(10) Command.......................................8-53
+          8.2.22. WRITE AND VERIFY Command................................8-54
+          8.2.23. WRITE LONG Command......................................8-55
+          8.2.24. WRITE SAME Command......................................8-56
+     8.3. Parameters for Direct-Access Devices............................8-57
+          8.3.1. Diagnostic Parameters....................................8-57
+                 8.3.1.1. Translate Address Page - SEND DIAGNOSTIC .......8-57
+                 8.3.1.2. Translate Address Page - RECEIVE DIAGNOSTIC ....8-58
+          8.3.2. Log Parameters...........................................8-60
+          8.3.3. Mode Parameters..........................................8-61
+                 8.3.3.1. Caching Page ...................................8-63
+                 8.3.3.2. Flexible Disk Page..............................8-67
+                 8.3.3.3. Format Device Page..............................8-72
+                 8.3.3.4. Medium Types Supported Page.....................8-75
+                 8.3.3.5. Notch and Partition Page........................8-76
+                 8.3.3.6. Read-Write Error Recovery Page..................8-78
+                 8.3.3.7. Rigid Disk Drive Geometry Page..................8-86
+                 8.3.3.8. Verify Error Recovery Page......................8-89
+     8.4. Glossary for Direct-Access Devices..............................8-90
+
+  9. Sequential-Access Devices.............................................9-1
+     9.1. Sequential-Access Device Model...................................9-1
+          9.1.1. Physical Elements.........................................9-1
+          9.1.2. Data Storage Characteristics..............................9-2
+          9.1.3. Partitions within a Volume................................9-4
+          9.1.4. Logical Elements within a Partition.......................9-6
+          9.1.5. Data Buffering............................................9-7
+          9.1.6. Recorded Object Descriptors (Block Identifiers)...........9-8
+          9.1.7. Direction and Position Definitions........................9-9
+          9.1.8. Error Reporting..........................................9-10
+     9.2. Command Descriptions for Sequential-Access Devices..............9-12
+          9.2.1. ERASE Command............................................9-13
+          9.2.2. LOAD UNLOAD Command......................................9-14
+          9.2.3. LOCATE Command...........................................9-16
+          9.2.4. READ Command.............................................9-17
+          9.2.5. READ BLOCK LIMITS Command................................9-20
+          9.2.6. READ POSITION Command....................................9-21
+          9.2.7. READ REVERSE Command.....................................9-23
+          9.2.8. RECOVER BUFFERED DATA Command............................9-24
+          9.2.9. RELEASE UNIT Command.....................................9-26
+                 9.2.9.1. Third-Party Release ............................9-26
+          9.2.10. RESERVE UNIT Command....................................9-27
+                  9.2.10.1. Third-Party Reservation.......................9-28
+                  9.2.10.2. Superseding Reservations......................9-28
+          9.2.11. REWIND Command..........................................9-29
+          9.2.12. SPACE Command...........................................9-30
+          9.2.13. VERIFY Command..........................................9-33
+          9.2.14. WRITE Command...........................................9-34
+          9.2.15. WRITE FILEMARKS Command.................................9-36
+     9.3. Parameters for Sequential-Access Devices........................9-38
+          9.3.1. Diagnostic Parameters....................................9-38
+          9.3.2. Log Parameters...........................................9-39
+          9.3.3. Mode Parameters..........................................9-39
+                 9.3.3.1. Device Configuration Page.......................9-43
+                 9.3.3.2. Medium Partition Page(1)........................9-47
+                 9.3.3.3. Medium Partition Page(2-4)......................9-49
+                 9.3.3.4. Read-Write Error Recovery Page..................9-50
+     9.4. Glossary for Sequential Access Devices..........................9-52
+
+ 10. Commands for Printer Devices.........................................10-1
+     10.1. Model for Printer Devices .....................................10-1
+     10.2. Commands for Printer Devices...................................10-2
+           10.2.1. FORMAT Command.........................................10-3
+           10.2.2. PRINT Command..........................................10-4
+           10.2.3. RECOVER BUFFERED DATA Command..........................10-4
+           10.2.4. SLEW AND PRINT Command.................................10-5
+           10.2.5. STOP PRINT Command.....................................10-6
+           10.2.6. SYNCHRONIZE BUFFER Command.............................10-7
+     10.3. Parameters for Printer Devices.................................10-8
+           10.3.1. Diagnostic Parameters..................................10-8
+           10.3.2. Log Parameters.........................................10-8
+           10.3.3. Mode Parameters........................................10-8
+                   10.3.3.1. Parallel Printer Interface Parameters Page..10-10
+                   10.3.3.2. Printer Options Page........................10-12
+                   10.3.3.3. Serial Printer Interface Parameters Page....10-15
+
+ 11. Processor Devices....................................................11-1
+     11.1. Model for Processor Devices....................................11-1
+           11.1.1. Host to Host Communication, SEND Only..................11-2
+           11.1.2. Host to Host Communication, SEND and RECEIVE...........11-2
+           11.1.3. Host to Special Output Peripheral......................11-2
+           11.1.4. Host to Special Input Peripheral.......................11-3
+     11.2. Commands for Processor Devices.................................11-4
+           11.2.1. RECEIVE Command........................................11-5
+           11.2.2. SEND Command...........................................11-5
+     11.3. Parameters for Processor Devices...............................11-7
+           11.3.1. Diagnostic Parameters..................................11-7
+           11.3.2. Log Parameters.........................................11-7
+     11.4. Glossary for Processor Devices.................................11-8
+
+ 12. Write-Once Devices...................................................12-1
+     12.1. Model for Write-Once Devices...................................12-1
+           12.1.1. Logical Blocks.........................................12-1
+           12.1.2. Initialization.........................................12-1
+           12.1.3. Physical Medium Defects................................12-1
+           12.1.4. Error Reporting........................................12-2
+     12.2. Commands for Write-Once Devices................................12-3
+     12.3. Parameters for Write-Once Devices..............................12-4
+     12.4. Glossary for Write-Once Devices................................12-4
+
+ 13. CD-ROM Devices.......................................................13-1
+     13.1. Model for CD-ROM Devices.......................................13-1
+           13.1.1. CD-ROM Media Organization..............................13-1
+           13.1.2. CD-ROM Physical Data Format............................13-4
+                   13.1.2.1. Frame Format for Audio.......................13-4
+                   13.1.2.2. Sector Format for Data.......................13-4
+                   13.1.2.3. Sub-channel Information Formats..............13-5
+           13.1.3. CD Audio Error Reporting...............................13-6
+           13.1.4. CD-ROM Ready Condition/Not Ready Condition.............13-6
+           13.1.5. CD-ROM Address Reporting Formats (MSF Bit).............13-6
+           13.1.6. Sensing Support for CD-Audio Commands. ................13-7
+           13.1.7. Error Reporting.......................................13-10
+     13.2. Commands for CD-ROM Devices...................................13-11
+           13.2.1. PAUSE RESUME Command..................................13-13
+           13.2.2. PLAY AUDIO(10) Command................................13-14
+           13.2.3. PLAY AUDIO(12) Command ...............................13-16
+           13.2.4. PLAY AUDIO MSF Command................................13-17
+           13.2.5. PLAY AUDIO TRACK INDEX Command........................13-18
+           13.2.6. PLAY AUDIO TRACK RELATIVE(10) Command.................13-20
+           13.2.7. PLAY AUDIO TRACK RELATIVE(12) Command.................13-21
+           13.2.8. READ CD-ROM CAPACITY Command..........................13-22
+           13.2.9. READ HEADER Command...................................13-24
+           13.2.10. READ SUB-CHANNEL Command.............................13-26
+           13.2.11. READ TOC Command.....................................13-34
+     13.3. Parameters for CD-ROM Devices.................................13-36
+           13.3.1. Diagnostic Parameters.................................13-36
+           13.3.2. Log Parameters........................................13-36
+           13.3.3. Mode Parameters.......................................13-37
+                   13.3.3.1. CD-ROM Audio Control Parameters.............13-40
+                   13.3.3.2. CD-ROM Device Parameters ...................13-42
+                   13.3.3.3. Read Error Recovery Parameters .............13-44
+                   13.3.3.4. Verify Error Recovery Parameters............13-52
+     13.4. Glossary for CD-ROM Devices...................................13-53
+
+ 14. Scanner Devices......................................................14-1
+     14.1. Model for Scanner Devices......................................14-1
+     14.2. Commands for Scanner Devices...................................14-3
+           14.2.1. GET DATA BUFFER STATUS Command.........................14-4
+           14.2.2. GET WINDOW Command.....................................14-6
+           14.2.3. OBJECT POSITION Command...............................14-12
+           14.2.4. READ Command..........................................14-14
+           14.2.5. SCAN Command..........................................14-16
+           14.2.6. SEND Command..........................................14-17
+           14.2.7. SET WINDOW Command....................................14-18
+     14.3. Parameters for Scanner Devices................................14-19
+           14.3.1. Diagnostic Parameters.................................14-19
+           14.3.2. Log Parameters........................................14-20
+           14.3.3. Mode Parameters.......................................14-20
+                   14.3.3.1. Measurement Units Page......................14-21
+     14.4. Glossary for Scanner Devices..................................14-22
+
+ 15. Optical Memory Devices...............................................15-1
+     15.1. Model for Optical Memory Devices...............................15-1
+           15.1.1. Defect Management......................................15-2
+           15.1.2. Error Reporting........................................15-2
+     15.2. Commands for Optical Memory Devices............................15-4
+           15.2.1. ERASE(10) Command......................................15-6
+           15.2.2. ERASE(12) Command......................................15-7
+           15.2.3. MEDIUM SCAN Command....................................15-8
+           15.2.4. READ(12) Command .....................................15-11
+           15.2.5. READ DEFECT DATA(12) Command .........................15-12
+           15.2.6. READ GENERATION Command...............................15-14
+           15.2.7. READ UPDATED BLOCK(10) Command........................15-15
+           15.2.8. SEARCH DATA(12) Commands..............................15-16
+           15.2.9. SET LIMITS(12) Command ...............................15-17
+           15.2.10. UPDATE BLOCK Command.................................15-18
+           15.2.11. VERIFY(10) Command...................................15-19
+           15.2.12. VERIFY(12) Command...................................15-20
+           15.2.13. WRITE(10) Command....................................15-21
+           15.2.14. WRITE(12) Command....................................15-22
+           15.2.15. WRITE AND VERIFY(10) Command.........................15-23
+           15.2.16. WRITE AND VERIFY(12) Command.........................15-24
+     15.3. Parameters for Optical Memory Devices.........................15-25
+           15.3.1. Diagnostic Parameters.................................15-25
+           15.3.2. Log Parameters........................................15-25
+           15.3.3. Mode Parameters.......................................15-26
+                   15.3.3.1. Optical Memory Page.........................15-29
+     15.4. Glossary for Optical Memory Devices...........................15-30
+
+ 16. Medium-Changer Devices...............................................16-1
+     16.1. Medium-Changer Device Model....................................16-1
+           16.1.1. Medium-Changer Elements................................16-1
+                   16.1.1.1. Medium Transport Elements....................16-2
+                   16.1.1.2. Storage Elements.............................16-2
+                   16.1.1.3. Import Export Elements.......................16-2
+                   16.1.1.4. Data Transfer Element .......................16-3
+           16.1.2. SCSI Addressing of Medium Changer Devices .............16-3
+           16.1.3. Data Access Operations Using a Medium Changer Device ..16-3
+           16.1.4. Element Status Maintenance Requirements ...............16-4
+           16.1.5. Volume Tags............................................16-4
+                   16.1.5.1. Volume Tag Format ...........................16-4
+                   16.1.5.2. Primary and Alternate Volume Tag Information.16-5
+     16.2. Commands for Medium Changer Devices............................16-6
+           16.2.1. EXCHANGE MEDIUM Command................................16-7
+           16.2.2. INITIALIZE ELEMENT STATUS Command......................16-9
+           16.2.3. MOVE MEDIUM Command...................................16-10
+           16.2.4. POSITION TO ELEMENT Command...........................16-11
+           16.2.5. READ ELEMENT STATUS Command...........................16-12
+                   16.2.5.1. Element Status Data ........................16-13
+                   16.2.5.2. Element Status Page ........................16-16
+                   16.2.5.3. Medium Transport Element Descriptor.........16-17
+                   16.2.5.4. Storage Element Descriptor..................16-19
+                   16.2.5.5. Import Export Element Descriptor............16-20
+                   16.2.5.6. Data Transfer Element Descriptor............16-22
+           16.2.6. REQUEST VOLUME ELEMENT ADDRESS Command................16-24
+           16.2.7. RELEASE Command.......................................16-27
+                   16.2.7.1. Logical Unit Release........................16-27
+                   16.2.7.2. Element Release (Optional)..................16-27
+                   16.2.7.3. Third Party Release ........................16-27
+           16.2.8. RESERVE Command.......................................16-28
+                   16.2.8.1. Logical Unit Reservation....................16-28
+                   16.2.8.2. Element Reservation (Optional)..............16-29
+                   16.2.8.3. Third Party Reservation.....................16-30
+                   16.2.8.4. Superseding Reservations....................16-31
+           16.2.9. SEND VOLUME TAG Command...............................16-31
+     16.3. Parameters for Medium Changer Devices.........................16-34
+           16.3.1. Diagnostic Parameters.................................16-34
+           16.3.2. Log Parameters........................................16-34
+           16.3.3. Mode Parameters.......................................16-35
+                   16.3.3.1. Device Capabilities Page....................16-36
+                   16.3.3.2. Element Address Assignment Page.............16-38
+                   16.3.3.3. Transport Geometry Parameters Page..........16-40
+     16.4. Glossary for Medium Changer Devices...........................16-41
+
+ 17. Communications Devices...............................................17-1
+     17.1. Communications Device Model....................................17-1
+           17.1.1. Implementation Examples................................17-3
+                   17.1.1.1. Host to Host Communications .................17-3
+                   17.1.1.2. Host to Device Communications ...............17-3
+                   17.1.1.3. Multiple Role Communications ................17-3
+     17.2. Command Descriptions for Communications Devices................17-4
+           17.2.1. GET MESSAGE(6) Command.................................17-5
+           17.2.2. GET MESSAGE(10) Command................................17-6
+           17.2.3. GET MESSAGE(12) Command................................17-7
+           17.2.4. SEND MESSAGE(6) Command................................17-8
+           17.2.5. SEND MESSAGE(10) Command...............................17-9
+           17.2.6. SEND MESSAGE(12) Command..............................17-10
+     17.3. Parameters for Communication Devices..........................17-11
+           17.3.1. Diagnostic Parameters.................................17-11
+           17.3.2. Log Parameters........................................17-11
+           17.3.3. Mode Parameters.......................................17-12
+     17.4. Glossary for Communications Devices...........................17-13
+
+                              LIST OF APPENDICES
+
+  A. SCSI Signal Sequence Example..........................................A-1
+
+  B. Typical Bus Phase Sequence............................................B-1
+
+  C. SCSI System Operation.................................................C-1
+     C.1. Host Memory, Host Adapter, SCSI Target Relationship..............C-1
+     C.2. SCSI READ Command Example........................................C-2
+     C.3. I/O Channel Concept..............................................C-4
+
+  D. Additional Medium Type and Density Code Standards.....................D-1
+
+  E. Data Integrity and I/O Process Queuing................................E-1
+     E.1. Glossary.........................................................E-1
+     E.2. Thesis...........................................................E-2
+
+  F. Power On Protocols - Recommended Initialization Procedure.............F-1
+     F.1. System Initialization............................................F-1
+     F.2. General Procedure for Initializing Devices.......................F-2
+          F.2.1. General Procedure Executed by Initiators..................F-2
+          F.2.2. Procedure Executed by Temporary Initiators................F-3
+          F.2.3. Verify State Test.........................................F-3
+     F.3. Direct-Access Device Initialization Procedure....................F-5
+          F.3.1. Boot Device Initialization Procedure......................F-5
+          F.3.2. General Direct-Access Device Initialization Procedure.....F-6
+          F.3.3. Direct-Access Device Medium Initialization Procedure......F-8
+     F.4. Sequential Access Device Initialization Procedure...............F-10
+          F.4.1. General Sequential-Access Device Initialization..........F-10
+     F.5. Asynchronous Event Notification Initialization Procedure........F-11
+
+  G. Fast SCSI Skew Time...................................................G-1
+
+  H. Other SCSI Standardization Activities.................................H-1
+     H.1. SCSI-3 Standards Project.........................................H-1
+     H.2. Digital Data Exchange for Color Electronic Prepress Systems......H-1
+     H.3. Fiber Channel....................................................H-1
+
+  I. Numeric Order Codes...................................................I-1
+
+  J. Vendor Identification.................................................J-1
+
+                               LIST OF FIGURES
+
+ 4-1: 50/68-Contact Nonshielded High-Density SCSI Device Connector.........4-6
+ 4-2: 50/68-Contact Nonshielded High-Density Cable Connector...............4-7
+ 4-3: 50-Contact Nonshielded Low-Density SCSI Device Connector.............4-8
+ 4-4: 50-Contact Nonshielded Low-Density Cable Connector...................4-9
+ 4-5: 50/68-Contact Shielded High-density SCSI Device Connector...........4-10
+ 4-6: 50/68-Contact Shielded High-density Cable Connector.................4-11
+ 4-7: 50-Contact Shielded Low-Density SCSI Device Connector...............4-12
+ 4-8: 50-Contact Shielded Low-Density Cable Connector.....................4-13
+ 4-9: Termination for Single-Ended Devices................................4-22
+ 4-10: Termination for Differential Devices...............................4-23
+ 4-11: Differential Driver Protection Circuit.............................4-23
+ 4-12: SCSI ID Bits.......................................................4-24
+ 4-13: Sample SCSI Configurations.........................................4-25
+
+ 5-1: Wide SCSI Byte Ordering..............................................5-9
+ 5-2: Phase Sequences.....................................................5-16
+ 5-3: Simplified SCSI System..............................................5-16
+
+ 9-1: Typical Volume Layout................................................9-2
+ 9-2: Typical Medium Track Layout..........................................9-2
+ 9-3: Serpentine Recording Example ........................................9-3
+ 9-4: Parallel Recording Example...........................................9-3
+ 9-5: Helical Scan Recording Example.......................................9-3
+ 9-6: Early-Warning Example................................................9-4
+ 9-7: Partitioning Example - One Partition per Track Group.................9-5
+ 9-8: Partitioning Example - One Partition per Two Track Groups............9-5
+ 9-9: Partitioning Example - Two Partitions per Track Group................9-5
+
+10-1: SCSI Printer Model..................................................10-1
+
+16-1: Illustration of Element Status Data Structure......................16-14
+
+ A-1: SCSI Signal Sequence Example.........................................A-2
+
+ C-1: Snapshot Prior to Initial Selection..................................C-5
+ C-2: Snapshot Prior to Data Transfer......................................C-6
+
+ F-1: Verify State Test....................................................F-4
+
+ G-1: Fast SCSI Jitter Budget..............................................G-1
+ G-2: Mapping of Jitter to SCSI............................................G-2
+
+                                LIST OF TABLES
+
+ 4-1: Cross-Reference to Connector Contact Assignments....................4-14
+ 4-2: Single-Ended Contact Assignments - A Cable..........................4-15
+ 4-3: Single-Ended Contact Assignments - B Cable..........................4-16
+ 4-4: Differential Contact Assignments - A Cable..........................4-17
+ 4-5: Differential Contact Assignments - B Cable..........................4-18
+ 4-6: Signal Sources......................................................4-28
+ 4-7: SCSI Bus Timing Values..............................................4-29
+
+ 5-1: Information Transfer Phases..........................................5-6
+ 5-2: Message Codes.......................................................5-18
+ 5-3: Extended Message Format.............................................5-19
+ 5-4: Extended Message Codes..............................................5-19
+ 5-5: IDENTIFY Message Format.............................................5-23
+ 5-6: IGNORE WIDE RESIDUE Message Format..................................5-24
+ 5-7: MODIFY DATA POINTER.................................................5-26
+ 5-8: Queue Tag Message Format............................................5-27
+ 5-9: SYNCHRONOUS DATA TRANSFER REQUEST...................................5-29
+ 5-10: WIDE DATA TRANSFER MESSAGE.........................................5-33
+
+ 6-1: Typical Command Descriptor Block for Six-byte Commands...............6-2
+ 6-2: Typical Command Descriptor Block for Ten-byte Commands...............6-3
+ 6-3: Typical Command Descriptor Block for Twelve-byte Commands............6-4
+ 6-4: Operation Code.......................................................6-5
+ 6-5: Control Field........................................................6-7
+ 6-6: Status Byte..........................................................6-8
+ 6-7: Status Byte Code ....................................................6-8
+ 6-8: Commands in Order Received by Target................................6-21
+ 6-9: Commands in Order of Execution......................................6-21
+ 6-10: Modified by HEAD OF QUEUE TAG Message..............................6-22
+
+ 7-1: Commands for All Device Types........................................7-3
+ 7-2: CHANGE DEFINITION Command............................................7-4
+ 7-3: Definition Parameter Field...........................................7-4
+ 7-4: COMPARE Command......................................................7-7
+ 7-5: COPY Command.........................................................7-8
+ 7-6: COPY Parameter List..................................................7-9
+ 7-7: COPY Function Codes.................................................7-10
+ 7-8: Segment Descriptor for COPY Function Codes 00h and 01h..............7-11
+ 7-9: Segment Descriptor for COPY Function Code 02h.......................7-13
+ 7-10: Segment Descriptor for COPY Function Code 03h......................7-14
+ 7-11: Segment Descriptor for COPY Function Code 04h......................7-15
+ 7-12: Pad and Cat Bit Definition.........................................7-16
+ 7-13: COPY AND VERIFY Command............................................7-17
+ 7-14: INQUIRY Command....................................................7-18
+ 7-15: Standard INQUIRY Data Format.......................................7-20
+ 7-16: Peripheral Qualifier...............................................7-21
+ 7-17: Peripheral Device Type.............................................7-21
+ 7-18: ANSI-Approved Version..............................................7-22
+ 7-19: LOG SELECT Command.................................................7-25
+ 7-20: Page Control Field.................................................7-26
+ 7-21: LOG SENSE Command..................................................7-28
+ 7-22: MODE SELECT(6) Command.............................................7-30
+ 7-23: MODE SELECT(10) Command............................................7-32
+ 7-24: MODE SENSE(6) Command..............................................7-33
+ 7-25: Page Control Field.................................................7-33
+ 7-26: Page Code Usage for All Devices ...................................7-34
+ 7-27: MODE SENSE(10) Command.............................................7-36
+ 7-28: READ BUFFER Command................................................7-37
+ 7-29: READ BUFFER Mode Field.............................................7-37
+ 7-30: READ BUFFER Header.................................................7-38
+ 7-31: READ BUFFER Descriptor.............................................7-39
+ 7-32: Buffer Offset Boundary.............................................7-39
+ 7-33: RECEIVE DIAGNOSTIC RESULTS Command.................................7-40
+ 7-34: REQUEST SENSE Command..............................................7-41
+ 7-35: Error Codes 70h and 71h Sense Data Format..........................7-43
+ 7-36: Field Pointer Bytes................................................7-46
+ 7-37: Actual Retry Count Bytes...........................................7-47
+ 7-38: Format Progress Indication Bytes...................................7-47
+ 7-39: Sense Key (0h-7h) Descriptions.....................................7-50
+ 7-40: Sense Key (8h-Fh) Descriptions.....................................7-51
+ 7-41: ASC and ASCQ Assignments...........................................7-52
+ 7-42: SEND DIAGNOSTIC Command............................................7-57
+ 7-43: TEST UNIT READY Command............................................7-59
+ 7-44: Preferred TEST UNIT READY Responses................................7-59
+ 7-45: WRITE BUFFER Command...............................................7-60
+ 7-46: WRITE BUFFER Mode Field............................................7-60
+ 7-47: Diagnostic Page Format.............................................7-63
+ 7-48: Diagnostic Page Codes..............................................7-63
+ 7-49: Supported Diagnostic Pages.........................................7-64
+ 7-50: Log Page Format....................................................7-65
+ 7-51: Log Parameter......................................................7-66
+ 7-52: Threshold Met Criteria.............................................7-67
+ 7-53: Log Page Codes.....................................................7-69
+ 7-54: Parameter Code Field for Buffer Over-Run/Under-Run Counters........7-70
+ 7-55: Count Basis Definition.............................................7-70
+ 7-56: Cause Field Definition.............................................7-71
+ 7-57: Parameter Codes for Error Counter Pages............................7-71
+ 7-58: Non-Medium Error Event Parameter Codes.............................7-72
+ 7-59: Supported Log Pages................................................7-73
+ 7-60: Mode Parameter List................................................7-74
+ 7-61: Mode Parameter Header(6)...........................................7-74
+ 7-62: Mode Parameter Header(10)..........................................7-75
+ 7-63: Mode Parameter Block Descriptor....................................7-76
+ 7-64: Mode Page Format...................................................7-77
+ 7-65: Mode Page Codes....................................................7-78
+ 7-66: Control Mode Page..................................................7-78
+ 7-67: Queue Algorithm Modifier...........................................7-79
+ 7-68: Disconnect-Reconnect Page..........................................7-81
+ 7-69: Data Transfer Disconnect Control...................................7-83
+ 7-70: Peripheral Device Page.............................................7-83
+ 7-71: Interface Identifier Codes.........................................7-84
+ 7-72: Vital Product Data Page Codes......................................7-84
+ 7-73: ASCII Implemented Operating Definition ............................7-85
+ 7-74: ASCII Information Page.............................................7-86
+ 7-75: Implemented Operating Definition Page..............................7-87
+ 7-76: Supported Vital Product Data Pages.................................7-88
+ 7-77: Unit Serial Number Page............................................7-89
+
+ 8-1: Commands for Direct-Access Devices..................................8-11
+ 8-2: FORMAT UNIT Command.................................................8-12
+ 8-3: FORMAT UNIT Parameter List..........................................8-15
+ 8-4: Defect List Header..................................................8-15
+ 8-5: FORMAT UNIT Defect Descriptor Format and Requirements...............8-17
+ 8-6: Defect Descriptor - Block Format....................................8-19
+ 8-7: Defect Descriptor - Bytes From Index Format.........................8-19
+ 8-8: Defect Descriptor - Physical Sector Format..........................8-20
+ 8-9: Initialization Pattern Descriptor...................................8-20
+ 8-10: Initialization Pattern Modifier....................................8-21
+ 8-11: Initialization Pattern Type........................................8-22
+ 8-12: LOCK UNLOCK CACHE Command..........................................8-23
+ 8-13: PRE-FETCH Command..................................................8-24
+ 8-14: PREVENT ALLOW MEDIUM REMOVAL Command...............................8-25
+ 8-15: READ(6) Command....................................................8-26
+ 8-16: READ(10) Command...................................................8-27
+ 8-17: READ CAPACITY Command..............................................8-29
+ 8-18: READ CAPACITY Data.................................................8-30
+ 8-19: READ DEFECT DATA Command...........................................8-30
+ 8-20: READ DEFECT DATA Defect List.......................................8-31
+ 8-21: READ LONG Command..................................................8-33
+ 8-22: REASSIGN BLOCKS Command............................................8-34
+ 8-23: REASSIGN BLOCKS Defect List........................................8-35
+ 8-24: RELEASE Command....................................................8-36
+ 8-25: RESERVE Command....................................................8-38
+ 8-26: Data Format of Extent Descriptors..................................8-40
+ 8-27: REZERO UNIT Command................................................8-42
+ 8-28: SEARCH DATA Commands...............................................8-43
+ 8-29: SEARCH DATA Parameter List.........................................8-45
+ 8-30: SEEK(6) Command....................................................8-47
+ 8-31: SEEK(10) Command...................................................8-47
+ 8-32: SET LIMITS Command.................................................8-48
+ 8-33: START STOP UNIT Command............................................8-49
+ 8-34: SYNCHRONIZE CACHE Command..........................................8-50
+ 8-35: VERIFY Command.....................................................8-51
+ 8-36: WRITE(6) Command...................................................8-52
+ 8-37: WRITE(10) Command..................................................8-53
+ 8-38: WRITE AND VERIFY Command...........................................8-54
+ 8-39: WRITE LONG Command.................................................8-55
+ 8-40: WRITE SAME Command.................................................8-56
+ 8-41: Diagnostic Page Codes..............................................8-57
+ 8-42: Translate Address Page - SEND DIAGNOSTIC ..........................8-58
+ 8-43: Translate Address Page - RECEIVE DIAGNOSTIC .......................8-59
+ 8-44: Log Page Codes.....................................................8-60
+ 8-45: Direct-Access Medium-Type Codes....................................8-61
+ 8-46: Device Specific Parameter..........................................8-62
+ 8-47: Mode Page Codes ...................................................8-62
+ 8-48: Caching Page.......................................................8-63
+ 8-49: Demand Read and Write Retention Priority...........................8-65
+ 8-50: Flexible Disk Page (Bytes 0-19)....................................8-67
+ 8-51: Flexible Disk Page (Bytes 20-31)...................................8-68
+ 8-52: Format Device Page.................................................8-72
+ 8-53: Medium Types Supported Page........................................8-75
+ 8-54: Notch Page.........................................................8-76
+ 8-55: Read-Write Error Recovery Page.....................................8-78
+ 8-56: Error Recovery Bit Definitions.....................................8-80
+ 8-57: Combined Error Recovery Parameter Descriptions(1)..................8-81
+ 8-58: Combined Error Recovery Parameter Descriptions(2)..................8-82
+ 8-59: Combined Error Recovery Parameter Descriptions(3)..................8-83
+ 8-60: Combined Error Recovery Parameter Descriptions(4)..................8-84
+ 8-61: Rigid Disk Drive Geometry Page.....................................8-86
+ 8-62: Rotational Position Locking........................................8-88
+ 8-63: Verify Error Recovery Page.........................................8-89
+
+ 9-1: Commands for Sequential-Access Devices..............................9-12
+ 9-2: ERASE Command.......................................................9-13
+ 9-3: LOAD UNLOAD Command.................................................9-14
+ 9-4: LOCATE Command......................................................9-16
+ 9-5: READ Command........................................................9-17
+ 9-6: READ BLOCK LIMITS Command...........................................9-20
+ 9-7: READ BLOCK LIMITS Data..............................................9-20
+ 9-8: READ POSITION Command...............................................9-21
+ 9-9: READ POSITION Data Format...........................................9-22
+ 9-10: READ REVERSE Command...............................................9-23
+ 9-11: RECOVER BUFFERED DATA Command......................................9-24
+ 9-12: RELEASE UNIT Command...............................................9-26
+ 9-13: RESERVE UNIT Command...............................................9-27
+ 9-14: REWIND Command.....................................................9-29
+ 9-15: SPACE Command......................................................9-30
+ 9-16: VERIFY Command.....................................................9-33
+ 9-17: WRITE Command......................................................9-34
+ 9-18: WRITE FILEMARKS Command............................................9-36
+ 9-19: Diagnostic Page Codes..............................................9-38
+ 9-20: Log Page Codes.....................................................9-39
+ 9-21: Device-Specific Parameter .........................................9-39
+ 9-22: Sequential-Access Density Codes....................................9-41
+ 9-23: Mode Page Codes....................................................9-42
+ 9-24: Device Configuration Page..........................................9-43
+ 9-25: Medium Partition Page(1)...........................................9-47
+ 9-26: Medium Partition Page(2-4).........................................9-49
+ 9-27: Read-Write Error Recovery Page.....................................9-50
+
+10-1: Commands for Printer Devices........................................10-2
+10-2: FORMAT Command......................................................10-3
+10-3: PRINT Command.......................................................10-4
+10-4: RECOVER BUFFERED DATA Command.......................................10-4
+10-5: SLEW AND PRINT Command..............................................10-5
+10-6: STOP PRINT Command..................................................10-6
+10-7: SYNCHRONIZE BUFFER Command..........................................10-7
+10-8: Diagnostic Page Codes...............................................10-8
+10-9: Log Page Codes......................................................10-8
+10-10: Printer Device Specific Parameter..................................10-9
+10-11: Mode Page Codes....................................................10-9
+10-12: Parallel Printer Interface Parameters.............................10-10
+10-13: Printer Options...................................................10-12
+10-14: Serial Printer Interface Parameters...............................10-15
+
+11-1: Commands for Processor Devices......................................11-4
+11-2: RECEIVE Command.....................................................11-5
+11-3: SEND Command........................................................11-5
+11-4: SEND Command - AEN Data Format......................................11-6
+11-5: Diagnostic Page Codes...............................................11-7
+11-6: Log Page Codes......................................................11-7
+
+12-1: Commands for Write-Once Devices.....................................12-3
+
+13-1: MSF Address Format..................................................13-7
+13-2: Example Mixed Mode CD-ROM Disc Layout...............................13-8
+13-3: Commands for CD-ROM Devices(1).....................................13-11
+13-4: Commands for CD-ROM Devices(2).....................................13-12
+13-5: PAUSE RESUME Command...............................................13-13
+13-6: PLAY AUDIO(10) Command ............................................13-14
+13-7: PLAY AUDIO(12) Command ............................................13-16
+13-8: PLAY AUDIO MSF Command.............................................13-17
+13-9: PLAY AUDIO TRACK INDEX Command.....................................13-18
+13-10: PLAY AUDIO TRACK RELATIVE(10) Command.............................13-20
+13-11: PLAY AUDIO TRACK RELATIVE(12) Command.............................13-21
+13-12: READ CD-ROM CAPACITY Command......................................13-22
+13-13: READ CAPACITY Data Format.........................................13-23
+13-14: READ HEADER Command...............................................13-24
+13-15: READ HEADER Data Format...........................................13-25
+13-16: CD-ROM Data Mode Codes............................................13-25
+13-17: READ SUB-CHANNEL Command..........................................13-26
+13-18: Subchannel Data Format Codes......................................13-27
+13-19: Sub-Q Channel Data Format.........................................13-28
+13-20: Audio Status Codes................................................13-29
+13-21: ADR Sub-channel Q Field...........................................13-30
+13-22: Sub-channel Q Control Bits........................................13-30
+13-23: CD-ROM Current Position Data Format...............................13-31
+13-24: Media Catalog Number Data Format..................................13-32
+13-25: Track International Standard Recording Code Data Format...........13-33
+13-26: READ TOC Command..................................................13-34
+13-27: READ TOC Data Format .............................................13-35
+13-28: Diagnostic Page Codes.............................................13-36
+13-29: Log Page Codes....................................................13-37
+13-30: CD-ROM Medium Type Codes..........................................13-37
+13-31: CD-ROM Device Specific Parameter..................................13-38
+13-32: CD-ROM Density Codes..............................................13-38
+13-33: Mode Page Codes...................................................13-39
+13-34: CD-ROM Audio Control Parameters Page..............................13-40
+13-35: Output Port Channel Selection.....................................13-42
+13-36: CD-ROM Parameters Page............................................13-42
+13-37: Inactivity Timer Multiplier Values................................13-43
+13-38: Read Error Recovery Parameters Page...............................13-44
+13-39: Error Recovery Parameter Bit Settings.............................13-45
+13-40: CD-ROM Error Recovery Parameters 00h - 04h........................13-47
+13-41: CD-ROM Error Recovery Procedures 05h - 07h........................13-48
+13-42: CD-ROM Error Recovery Procedures 10h - 15h........................13-49
+13-43: CD-ROM Error Recovery Procedures 20h - 24h........................13-50
+13-44: CD-ROM Error Recovery Procedures 25h - 27h........................13-51
+13-45: CD-ROM Error Recovery Procedures 30h - 35h........................13-52
+13-46: Verify Error Recovery Parameters Page.............................13-52
+
+14-1: Commands for Scanner Devices........................................14-3
+14-2: GET DATA BUFFER STATUS Command......................................14-4
+14-3: Data Buffer Status Format...........................................14-5
+14-4: GET WINDOW Command..................................................14-6
+14-5: Get Window Data Header..............................................14-7
+14-6: Window Descriptor Bytes (1-23)......................................14-8
+14-7: Window Descriptor Bytes (24 - 39)...................................14-9
+14-8: Image Composition Codes............................................14-11
+14-9: Padding Types......................................................14-11
+14-10: Compression Types and Arguments...................................14-12
+14-11: OBJECT POSITION Command...........................................14-12
+14-12: Position Function.................................................14-13
+14-13: READ Command......................................................14-14
+14-14: Data Type Codes...................................................14-15
+14-15: SCAN Command......................................................14-16
+14-16: SEND Command......................................................14-17
+14-17: SET WINDOW Command................................................14-18
+14-18: Set Window Data Header............................................14-19
+14-19: Diagnostic Page Codes.............................................14-19
+14-20: Log Page Codes....................................................14-20
+14-21: Mode Page Codes...................................................14-21
+14-22: Measurement Units Page............................................14-21
+14-23: Basic Measurement Units...........................................14-22
+
+15-1: Commands for Optical Memory Devices(1)..............................15-4
+15-2: Commands for Optical Memory Devices(2) .............................15-5
+15-3: ERASE(10) Command...................................................15-6
+15-4: ERASE(12) Command...................................................15-7
+15-5: MEDIUM SCAN Command.................................................15-8
+15-6: MEDIUM SCAN Parameter List.........................................15-10
+15-7: READ(12) Command...................................................15-11
+15-8: READ DEFECT DATA(12) Command.......................................15-12
+15-9: READ DEFECT DATA(12) LIST HEADER...................................15-13
+15-10: READ GENERATION Command...........................................15-14
+15-11: Maximum Generation Data Block.....................................15-14
+15-12: READ UPDATED BLOCK(10) Command....................................15-15
+15-13: SEARCH DATA(12) Commands..........................................15-16
+15-14: SET LIMITS(12) Command............................................15-17
+15-15: UPDATE BLOCK Command .............................................15-18
+15-16: VERIFY Command....................................................15-19
+15-17: VERIFY(12) Command................................................15-20
+15-18: WRITE(10) Command.................................................15-21
+15-19: WRITE(12) Command.................................................15-22
+15-20: WRITE AND VERIFY(10) Command......................................15-23
+15-21: WRITE AND VERIFY(12) Command......................................15-24
+15-22: Diagnostic Page Codes.............................................15-25
+15-23: Log Page Codes....................................................15-25
+15-24: Optical Memory Medium-Type Codes..................................15-26
+15-25: Optical Memory Device Specific Parameter..........................15-26
+15-26: Optical Memory Density Codes......................................15-28
+15-27: Mode Page Codes...................................................15-29
+15-28: Optical Memory Page...............................................15-29
+
+16-1: Volume Tag Information Format.......................................16-5
+16-2: Commands for Medium Changer Devices.................................16-6
+16-3: EXCHANGE MEDIUM Command.............................................16-7
+16-4: INITIALIZE ELEMENT STATUS Command...................................16-9
+16-5: MOVE MEDIUM Command................................................16-10
+16-6: POSITION TO ELEMENT Command........................................16-11
+16-7: READ ELEMENT STATUS Command........................................16-12
+16-8: Element Type Code..................................................16-13
+16-9: Element Status Data................................................16-15
+16-10: Element Status Page ..............................................16-16
+16-11: Medium Transport Element Descriptor...............................16-17
+16-12: Storage Element Descriptor........................................16-19
+16-13: Import Export Element Descriptor..................................16-20
+16-14: Data Transfer Element Descriptor..................................16-22
+16-15: REQUEST VOLUME ELEMENT ADDRESS Command............................16-24
+16-16: Volume Element Address Header Format..............................16-26
+16-17: RELEASE Command...................................................16-27
+16-18: RESERVE Command...................................................16-28
+16-19: Data Format of Element List Descriptors...........................16-30
+16-20: SEND VOLUME TAG Command...........................................16-31
+16-21: Send Volume Tag Action Codes......................................16-32
+16-22: Send Volume Tag Parameters Format.................................16-33
+16-23: Diagnostic Page Codes.............................................16-34
+16-24: Log Page Codes....................................................16-35
+16-25: Mode Page Codes...................................................16-36
+16-26: Device Capabilities Page..........................................16-36
+16-27: Element Address Assignment Page...................................16-38
+16-28: Transport Geometry Parameters Page................................16-40
+
+17-1: Commands for Communications Devices.................................17-4
+17-2: GET MESSAGE(6) Command..............................................17-5
+17-3: GET MESSAGE(10) Command.............................................17-6
+17-4: GET MESSAGE(12) Command.............................................17-7
+17-5: SEND MESSAGE(6) Command.............................................17-8
+17-6: SEND MESSAGE(10) Command............................................17-9
+17-7: SEND MESSAGE(12) Command...........................................17-10
+17-8: Diagnostic Page Codes..............................................17-11
+17-9: Log Page Codes.....................................................17-11
+17-10: Mode Page Codes...................................................17-12
+
+ B-1: Typical READ Command Phase Sequence..................................B-1
+ B-2: Typical READ Command Phase Sequence (Continued)......................B-2
+
+ D-1: Direct-Access Medium-Type Codes......................................D-2
+ D-2: Sequential-Access Density Codes......................................D-3
+
+ I-1: ASC and ASCQ Assignments.............................................I-1
+ I-2: SCSI-2 Operation Codes...............................................I-7
+
+ J-1: Vendor Identification List...........................................J-1
+
+

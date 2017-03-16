@@ -1,0 +1,153 @@
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>sys/dev/ctau/am8530.h</title>
+<base href="http://fxr.watson.org/fxr/">
+</head>
+
+<body bgcolor=white>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/ctau/am8530.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<h1 align=center>
+  FreeBSD/Linux Kernel Cross Reference
+<!--  <a href="http:blurb.html">
+    Cross Reference</a>--><br>
+  <a href="source/">sys</a>/<a href="source/dev/">dev</a>/<a href="source/dev/ctau/">ctau</a>/<a href="source/dev/ctau/am8530.h">am8530.h</a>
+</h1>
+
+<div align=center>
+  
+  <b>Version:</b>
+   ~ <b>[</b>&nbsp;<b><i>HEAD</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=RELENG52">RELENG52</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=RELENG51">RELENG51</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=RELENG50">RELENG50</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=RELENG49">RELENG49</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=RELENG4">RELENG4</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=RELENG3">RELENG3</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=linux-2.4.22">linux-2.4.22</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=linux-2.6.0">linux-2.6.0</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=linux-2.6.1">linux-2.6.1</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=DFBSD">DFBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=NETBSD">NETBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=OPENBSD">OPENBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=DARWIN7">DARWIN7</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=OPENDARWIN">OPENDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=TRUSTEDBSD-MAC">TRUSTEDBSD-MAC</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=TRUSTEDBSD-CAP">TRUSTEDBSD-CAP</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=TRUSTEDBSD-SEBSD">TRUSTEDBSD-SEBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=TRUSTEDBSD-SEDARWIN">TRUSTEDBSD-SEDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=netperf-socket">netperf-socket</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=rwatson-netperf">rwatson-netperf</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/ctau/am8530.h?v=TRUSTEDBSD-SEDARWIN73">TRUSTEDBSD-SEDARWIN73</a>&nbsp;<b>]</b> ~
+  <br>
+</div>
+<hr>
+<pre>  <a name=L1 href="source/dev/ctau/am8530.h#L1">1</a> <b><i>/*</i></b>
+  <a name=L2 href="source/dev/ctau/am8530.h#L2">2</a> <b><i> * AMD Am83C30 serial communication controller registers.</i></b>
+  <a name=L3 href="source/dev/ctau/am8530.h#L3">3</a> <b><i> *</i></b>
+  <a name=L4 href="source/dev/ctau/am8530.h#L4">4</a> <b><i> * Copyright (C) 1996 Cronyx Engineering.</i></b>
+  <a name=L5 href="source/dev/ctau/am8530.h#L5">5</a> <b><i> * Author: Serge Vakulenko, &lt;vak@cronyx.ru&gt;</i></b>
+  <a name=L6 href="source/dev/ctau/am8530.h#L6">6</a> <b><i> *</i></b>
+  <a name=L7 href="source/dev/ctau/am8530.h#L7">7</a> <b><i> * This software is distributed with NO WARRANTIES, not even the implied</i></b>
+  <a name=L8 href="source/dev/ctau/am8530.h#L8">8</a> <b><i> * warranties for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</i></b>
+  <a name=L9 href="source/dev/ctau/am8530.h#L9">9</a> <b><i> *</i></b>
+ <a name=L10 href="source/dev/ctau/am8530.h#L10">10</a> <b><i> * Authors grant any other persons or organisations permission to use</i></b>
+ <a name=L11 href="source/dev/ctau/am8530.h#L11">11</a> <b><i> * or modify this software as long as this message is kept with the software,</i></b>
+ <a name=L12 href="source/dev/ctau/am8530.h#L12">12</a> <b><i> * all derivative works or modified versions.</i></b>
+ <a name=L13 href="source/dev/ctau/am8530.h#L13">13</a> <b><i> *</i></b>
+ <a name=L14 href="source/dev/ctau/am8530.h#L14">14</a> <b><i> * Cronyx Id: am8530.h,v 1.1.2.2 2003/11/12 17:31:21 rik Exp $</i></b>
+ <a name=L15 href="source/dev/ctau/am8530.h#L15">15</a> <b><i> * $FreeBSD: src/sys/dev/ctau/am8530.h,v 1.1 2004/02/23 20:19:00 rik Exp $</i></b>
+ <a name=L16 href="source/dev/ctau/am8530.h#L16">16</a> <b><i> */</i></b>
+ <a name=L17 href="source/dev/ctau/am8530.h#L17">17</a> 
+ <a name=L18 href="source/dev/ctau/am8530.h#L18">18</a> <b><i>/*</i></b>
+ <a name=L19 href="source/dev/ctau/am8530.h#L19">19</a> <b><i> * Read/write registers.</i></b>
+ <a name=L20 href="source/dev/ctau/am8530.h#L20">20</a> <b><i> */</i></b>
+ <a name=L21 href="source/dev/ctau/am8530.h#L21">21</a> #define <a href="ident?i=AM_IVR">AM_IVR</a>          2       <b><i>/* rw2 - interrupt vector register */</i></b>
+ <a name=L22 href="source/dev/ctau/am8530.h#L22">22</a> #define <a href="ident?i=AM_DAT">AM_DAT</a>          8       <b><i>/* rw8 - data buffer register */</i></b>
+ <a name=L23 href="source/dev/ctau/am8530.h#L23">23</a> #define <a href="ident?i=AM_TCL">AM_TCL</a>          12      <b><i>/* rw12 - time constant low */</i></b>
+ <a name=L24 href="source/dev/ctau/am8530.h#L24">24</a> #define <a href="ident?i=AM_TCH">AM_TCH</a>          13      <b><i>/* rw13 - time constant high */</i></b>
+ <a name=L25 href="source/dev/ctau/am8530.h#L25">25</a> #define <a href="ident?i=AM_SICR">AM_SICR</a>         15      <b><i>/* rw15 - status interrupt control reg */</i></b>
+ <a name=L26 href="source/dev/ctau/am8530.h#L26">26</a> 
+ <a name=L27 href="source/dev/ctau/am8530.h#L27">27</a> <b><i>/*</i></b>
+ <a name=L28 href="source/dev/ctau/am8530.h#L28">28</a> <b><i> * Write only registers.</i></b>
+ <a name=L29 href="source/dev/ctau/am8530.h#L29">29</a> <b><i> */</i></b>
+ <a name=L30 href="source/dev/ctau/am8530.h#L30">30</a> #define <a href="ident?i=AM_CR">AM_CR</a>           0       <b><i>/* w0 - command register */</i></b>
+ <a name=L31 href="source/dev/ctau/am8530.h#L31">31</a> #define <a href="ident?i=AM_IMR">AM_IMR</a>          1       <b><i>/* w1 - interrupt mode register */</i></b>
+ <a name=L32 href="source/dev/ctau/am8530.h#L32">32</a> #define <a href="ident?i=AM_RCR">AM_RCR</a>          3       <b><i>/* w3 - receive control register */</i></b>
+ <a name=L33 href="source/dev/ctau/am8530.h#L33">33</a> #define <a href="ident?i=AM_PMR">AM_PMR</a>          4       <b><i>/* w4 - tx/rx parameters and modes reg */</i></b>
+ <a name=L34 href="source/dev/ctau/am8530.h#L34">34</a> #define <a href="ident?i=AM_TCR">AM_TCR</a>          5       <b><i>/* w5 - transmit control register */</i></b>
+ <a name=L35 href="source/dev/ctau/am8530.h#L35">35</a> #define <a href="ident?i=AM_SAF">AM_SAF</a>          6       <b><i>/* w6 - sync address field */</i></b>
+ <a name=L36 href="source/dev/ctau/am8530.h#L36">36</a> #define <a href="ident?i=AM_SFR">AM_SFR</a>          7       <b><i>/* w7 - sync flag register */</i></b>
+ <a name=L37 href="source/dev/ctau/am8530.h#L37">37</a> #define <a href="ident?i=AM_MICR">AM_MICR</a>         9       <b><i>/* w9 - master interrupt control reg */</i></b>
+ <a name=L38 href="source/dev/ctau/am8530.h#L38">38</a> #define <a href="ident?i=AM_MCR">AM_MCR</a>          10      <b><i>/* w10 - misc control register */</i></b>
+ <a name=L39 href="source/dev/ctau/am8530.h#L39">39</a> #define <a href="ident?i=AM_CMR">AM_CMR</a>          11      <b><i>/* w11 - clock mode register */</i></b>
+ <a name=L40 href="source/dev/ctau/am8530.h#L40">40</a> #define <a href="ident?i=AM_BCR">AM_BCR</a>          14      <b><i>/* w14 - baud rate control register */</i></b>
+ <a name=L41 href="source/dev/ctau/am8530.h#L41">41</a> 
+ <a name=L42 href="source/dev/ctau/am8530.h#L42">42</a> <b><i>/*</i></b>
+ <a name=L43 href="source/dev/ctau/am8530.h#L43">43</a> <b><i> * Read only registers.</i></b>
+ <a name=L44 href="source/dev/ctau/am8530.h#L44">44</a> <b><i> */</i></b>
+ <a name=L45 href="source/dev/ctau/am8530.h#L45">45</a> #define <a href="ident?i=AM_SR">AM_SR</a>           0       <b><i>/* r0 - status register */</i></b>
+ <a name=L46 href="source/dev/ctau/am8530.h#L46">46</a> #define <a href="ident?i=AM_RSR">AM_RSR</a>          1       <b><i>/* r1 - receive status register */</i></b>
+ <a name=L47 href="source/dev/ctau/am8530.h#L47">47</a> #define <a href="ident?i=AM_IPR">AM_IPR</a>          3       <b><i>/* r3 - interrupt pending register */</i></b>
+ <a name=L48 href="source/dev/ctau/am8530.h#L48">48</a> #define <a href="ident?i=AM_MSR">AM_MSR</a>          10      <b><i>/* r10 - misc status register */</i></b>
+ <a name=L49 href="source/dev/ctau/am8530.h#L49">49</a> 
+ <a name=L50 href="source/dev/ctau/am8530.h#L50">50</a> <b><i>/*</i></b>
+ <a name=L51 href="source/dev/ctau/am8530.h#L51">51</a> <b><i> * Enhanced mode registers.</i></b>
+ <a name=L52 href="source/dev/ctau/am8530.h#L52">52</a> <b><i> * In enhanced mode registers PMR(w4), TCR(w5) become readable.</i></b>
+ <a name=L53 href="source/dev/ctau/am8530.h#L53">53</a> <b><i> */</i></b>
+ <a name=L54 href="source/dev/ctau/am8530.h#L54">54</a> #define <a href="ident?i=AM_FBCL">AM_FBCL</a>         6       <b><i>/* r6 - frame byte count low */</i></b>
+ <a name=L55 href="source/dev/ctau/am8530.h#L55">55</a> #define <a href="ident?i=AM_FBCH">AM_FBCH</a>         7       <b><i>/* r7 - frame byte count high */</i></b>
+ <a name=L56 href="source/dev/ctau/am8530.h#L56">56</a> #define <a href="ident?i=AM_RCR_R">AM_RCR_R</a>        9       <b><i>/* r9 - read RCR(w3) */</i></b>
+ <a name=L57 href="source/dev/ctau/am8530.h#L57">57</a> #define <a href="ident?i=AM_MCR_R">AM_MCR_R</a>        11      <b><i>/* r11 - read MCR(w10) */</i></b>
+ <a name=L58 href="source/dev/ctau/am8530.h#L58">58</a> #define <a href="ident?i=AM_SFR_R">AM_SFR_R</a>        14      <b><i>/* r14 - read SFR(w7') */</i></b>
+ <a name=L59 href="source/dev/ctau/am8530.h#L59">59</a> 
+ <a name=L60 href="source/dev/ctau/am8530.h#L60">60</a> #define <a href="ident?i=AM_A">AM_A</a>            32      <b><i>/* channel A offset */</i></b>
+ <a name=L61 href="source/dev/ctau/am8530.h#L61">61</a> 
+ <a name=L62 href="source/dev/ctau/am8530.h#L62">62</a> <b><i>/*</i></b>
+ <a name=L63 href="source/dev/ctau/am8530.h#L63">63</a> <b><i> * Interrupt vector register</i></b>
+ <a name=L64 href="source/dev/ctau/am8530.h#L64">64</a> <b><i> */</i></b>
+ <a name=L65 href="source/dev/ctau/am8530.h#L65">65</a> #define <a href="ident?i=IVR_A">IVR_A</a>           0x08    <b><i>/* channel A status */</i></b>
+ <a name=L66 href="source/dev/ctau/am8530.h#L66">66</a> #define <a href="ident?i=IVR_REASON">IVR_REASON</a>      0x06    <b><i>/* interrupt reason mask */</i></b>
+ <a name=L67 href="source/dev/ctau/am8530.h#L67">67</a> #define <a href="ident?i=IVR_TXRDY">IVR_TXRDY</a>       0x00    <b><i>/* transmit buffer empty */</i></b>
+ <a name=L68 href="source/dev/ctau/am8530.h#L68">68</a> #define <a href="ident?i=IVR_STATUS">IVR_STATUS</a>      0x02    <b><i>/* external status interrupt */</i></b>
+ <a name=L69 href="source/dev/ctau/am8530.h#L69">69</a> #define <a href="ident?i=IVR_RX">IVR_RX</a>          0x04    <b><i>/* receive character available */</i></b>
+ <a name=L70 href="source/dev/ctau/am8530.h#L70">70</a> #define <a href="ident?i=IVR_RXERR">IVR_RXERR</a>       0x06    <b><i>/* special receive condition */</i></b>
+ <a name=L71 href="source/dev/ctau/am8530.h#L71">71</a> 
+ <a name=L72 href="source/dev/ctau/am8530.h#L72">72</a> <b><i>/*</i></b>
+ <a name=L73 href="source/dev/ctau/am8530.h#L73">73</a> <b><i> * Interrupt mask register</i></b>
+ <a name=L74 href="source/dev/ctau/am8530.h#L74">74</a> <b><i> */</i></b>
+ <a name=L75 href="source/dev/ctau/am8530.h#L75">75</a> #define <a href="ident?i=IMR_EXT">IMR_EXT</a>         0x01    <b><i>/* ext interrupt enable */</i></b>
+ <a name=L76 href="source/dev/ctau/am8530.h#L76">76</a> #define <a href="ident?i=IMR_TX">IMR_TX</a>          0x02    <b><i>/* ext interrupt enable */</i></b>
+ <a name=L77 href="source/dev/ctau/am8530.h#L77">77</a> #define <a href="ident?i=IMR_PARITY">IMR_PARITY</a>      0x04    <b><i>/* ext interrupt enable */</i></b>
+ <a name=L78 href="source/dev/ctau/am8530.h#L78">78</a> 
+ <a name=L79 href="source/dev/ctau/am8530.h#L79">79</a> #define <a href="ident?i=IMR_RX_FIRST">IMR_RX_FIRST</a>    0x08    <b><i>/* ext interrupt enable */</i></b>
+ <a name=L80 href="source/dev/ctau/am8530.h#L80">80</a> #define <a href="ident?i=IMR_RX_ALL">IMR_RX_ALL</a>      0x10    <b><i>/* ext interrupt enable */</i></b>
+ <a name=L81 href="source/dev/ctau/am8530.h#L81">81</a> #define <a href="ident?i=IMR_RX_ERR">IMR_RX_ERR</a>      0x18    <b><i>/* ext interrupt enable */</i></b>
+ <a name=L82 href="source/dev/ctau/am8530.h#L82">82</a> 
+ <a name=L83 href="source/dev/ctau/am8530.h#L83">83</a> #define <a href="ident?i=IMR_WD_RX">IMR_WD_RX</a>       0x20    <b><i>/* wait/request follows receiver fifo */</i></b>
+ <a name=L84 href="source/dev/ctau/am8530.h#L84">84</a> #define <a href="ident?i=IMR_WD_REQ">IMR_WD_REQ</a>      0x40    <b><i>/* wait/request function as request */</i></b>
+ <a name=L85 href="source/dev/ctau/am8530.h#L85">85</a> #define <a href="ident?i=IMR_WD_ENABLE">IMR_WD_ENABLE</a>   0x80    <b><i>/* wait/request pin enable */</i></b>
+ <a name=L86 href="source/dev/ctau/am8530.h#L86">86</a> 
+ <a name=L87 href="source/dev/ctau/am8530.h#L87">87</a> <b><i>/*</i></b>
+ <a name=L88 href="source/dev/ctau/am8530.h#L88">88</a> <b><i> * Master interrupt control register</i></b>
+ <a name=L89 href="source/dev/ctau/am8530.h#L89">89</a> <b><i> */</i></b>
+ <a name=L90 href="source/dev/ctau/am8530.h#L90">90</a> #define <a href="ident?i=MICR_VIS">MICR_VIS</a>        0x01    <b><i>/* vector includes status */</i></b>
+ <a name=L91 href="source/dev/ctau/am8530.h#L91">91</a> #define <a href="ident?i=MICR_NV">MICR_NV</a>         0x02    <b><i>/* no interrupt vector */</i></b>
+ <a name=L92 href="source/dev/ctau/am8530.h#L92">92</a> #define <a href="ident?i=MICR_DLC">MICR_DLC</a>        0x04    <b><i>/* disable lower chain */</i></b>
+ <a name=L93 href="source/dev/ctau/am8530.h#L93">93</a> #define <a href="ident?i=MICR_MIE">MICR_MIE</a>        0x08    <b><i>/* master interrupt enable */</i></b>
+ <a name=L94 href="source/dev/ctau/am8530.h#L94">94</a> #define <a href="ident?i=MICR_HIGH">MICR_HIGH</a>       0x10    <b><i>/* status high */</i></b>
+ <a name=L95 href="source/dev/ctau/am8530.h#L95">95</a> #define <a href="ident?i=MICR_NINTACK">MICR_NINTACK</a>    0x20    <b><i>/* interrupt masking without INTACK */</i></b>
+ <a name=L96 href="source/dev/ctau/am8530.h#L96">96</a> 
+ <a name=L97 href="source/dev/ctau/am8530.h#L97">97</a> #define <a href="ident?i=MICR_RESET_A">MICR_RESET_A</a>    0x80    <b><i>/* channel reset A */</i></b>
+ <a name=L98 href="source/dev/ctau/am8530.h#L98">98</a> #define <a href="ident?i=MICR_RESET_B">MICR_RESET_B</a>    0x40    <b><i>/* channel reset B */</i></b>
+ <a name=L99 href="source/dev/ctau/am8530.h#L99">99</a> #define <a href="ident?i=MICR_RESET_HW">MICR_RESET_HW</a>   0xc0    <b><i>/* force hardware reset */</i></b>
+<a name=L100 href="source/dev/ctau/am8530.h#L100">100</a> 
+<a name=L101 href="source/dev/ctau/am8530.h#L101">101</a> <b><i>/*</i></b>
+<a name=L102 href="source/dev/ctau/am8530.h#L102">102</a> <b><i> * Receive status register</i></b>
+<a name=L103 href="source/dev/ctau/am8530.h#L103">103</a> <b><i> */</i></b>
+<a name=L104 href="source/dev/ctau/am8530.h#L104">104</a> #define <a href="ident?i=RSR_FRME">RSR_FRME</a>        0x10    <b><i>/* framing error */</i></b>
+<a name=L105 href="source/dev/ctau/am8530.h#L105">105</a> #define <a href="ident?i=RSR_RXOVRN">RSR_RXOVRN</a>      0x20    <b><i>/* rx overrun error */</i></b>
+<a name=L106 href="source/dev/ctau/am8530.h#L106">106</a> 
+<a name=L107 href="source/dev/ctau/am8530.h#L107">107</a> <b><i>/*</i></b>
+<a name=L108 href="source/dev/ctau/am8530.h#L108">108</a> <b><i> * Command register</i></b>
+<a name=L109 href="source/dev/ctau/am8530.h#L109">109</a> <b><i> */</i></b>
+<a name=L110 href="source/dev/ctau/am8530.h#L110">110</a> #define <a href="ident?i=CR_RST_EXTINT">CR_RST_EXTINT</a>   0x10    <b><i>/* reset external/status irq */</i></b>
+<a name=L111 href="source/dev/ctau/am8530.h#L111">111</a> #define <a href="ident?i=CR_TX_ABORT">CR_TX_ABORT</a>     0x18    <b><i>/* send abort (SDLC) */</i></b>
+<a name=L112 href="source/dev/ctau/am8530.h#L112">112</a> #define <a href="ident?i=CR_RX_NXTINT">CR_RX_NXTINT</a>    0x20    <b><i>/* enable irq on next rx character */</i></b>
+<a name=L113 href="source/dev/ctau/am8530.h#L113">113</a> #define <a href="ident?i=CR_RST_TXINT">CR_RST_TXINT</a>    0x28    <b><i>/* reset tx irq pending */</i></b>
+<a name=L114 href="source/dev/ctau/am8530.h#L114">114</a> #define <a href="ident?i=CR_RST_ERROR">CR_RST_ERROR</a>    0x30    <b><i>/* error reset */</i></b>
+<a name=L115 href="source/dev/ctau/am8530.h#L115">115</a> #define <a href="ident?i=CR_RST_HIUS">CR_RST_HIUS</a>     0x38    <b><i>/* reset highest irq under service */</i></b>
+<a name=L116 href="source/dev/ctau/am8530.h#L116">116</a> </pre><hr>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/ctau/am8530.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<hr>
+This page was automatically generated by the 
+<a href="http:blurb.html">LXR engine</a>.
+<br>
+Visit the <a href="http://lxr.linux.no/">LXR main site</a> for more
+information.
+</html>

@@ -1,0 +1,78 @@
+               MC68901 Multi-Function Peripheral Chip
+
+                    Jeff Rigby/SOTA Computers
+
+The 68901 is a very inexpensive very powerful multi-function chip. In the
+ST it is responsible for the interrupt generation of the busy line on the
+printer port, the interrupt signal from the hard drive port and the prin-
+ter port, Midi port, keyboard, and RS-232 port as well as the entire RS -
+232 receive, transmit and controll lines (16 levels of interrupt ). In ad-
+dition, the MFP can be daisy chained ( a second 68901 can be added allo -
+wing the interrupt levels to be chained ). All this in a chip with a re -
+tail cost of about $12.00.
+
+How it works; the 68000 CPU has 7 levels of interrupt, one of those levels
+points to the 68901 MFP, when the CPU is told that the  MFP needs  servi -
+ceing, the address of the service routine is given controll, it addresses
+$fffffa00 which the glue chip decodes and sends a low on the chip select
+pin 48 of the MFP, then the routine sends an address to the lower 5 lines
+of the address bus to select a register in the MFP and the routine, depen-
+ding on what it needs to do writes or reads the registers in the chip.
+
+The operating system has previously set the interrupt registers in the MFP
+with the priorities the Interrupt lines I0-I7 and the internal receive and
+transmit buffers require. The 68901 then talks directly to the 68000 tel -
+ling it that one of it's interrupt's needs servicing, giving the vector
+adress of the service routine, and this goes on until all the 68901 inter-
+rupts are serviced then control is passed back to the 68000 and the pro -
+cess starts all over again. If no interrupts need servicing then control
+is passed back to the 68000 immediately.     
+
+I'll try to make this as non-technical as possible.
+
+MFP tells the Glue chip that it needs servicing. Glue thinks and says OK,
+I guess it is your turn. Glue tells CPU that a IRQ level is pending. CPU
+to Glue " what level is it ". CPU to Glue tell the MFP it's his turn. 
+Glue tells MFP to go ahead ---> CS on MFP goes low MFP gives the CPU the
+vector for the needed routine The routine services the MFP and clears the
+Interrupt register. Control is passed back to the CPU and the next level
+down interrupt has a chance.
+
+Maybe that was too simple, the 68901 does alot more than that and I could
+spend all day and 30 screens to tell you about it.
+
+Literature is available from Motorola on the MC68901, I believe the 28 pa-
+ge technical booklet is #ADI-984, The great thing is that we can add a se-
+cond RS-232 very cheaply by daisy chaining the IEI and IEO pins on the
+68901 and changing the vector addresses for the service routines.
+
+A few suggestions for standards in the ST upgrades.
+
+1) The output pin in the video out port be used for Monitor switching (Mo-
+   no to Color). 
+
+2) Pin 25 I3 of the 68901 MFP be used for an interrupt to tell software
+   that the power has been interrupted. In battery backups in the 1040 all
+   power 12v and 5V can be provided for 10 min with C cell Ni-Cad. The
+   software has to be informed that power is out and to save the data.
+
+   Suggest a low for power interrupt on pin 25.  
+
+3) Address $fffffb00 be used for a second 68901 MFP and the second MFP be
+   daisy chained using the IEO and IEI pins.
+
+4) An address for battery backup clocks be picked as standard. I don't ha-
+   ve any thoughts on this one but an address should be suggested. Anyone
+   have an address that is already being used for this purpose and the
+   reason it was chosen please respond.
+
+As a hardware hacker, I am interested in other people's input on this sub-
+ject. The great thing about PD software is that people build upon the work
+of others and eventually the PD software can be better than commercial
+software. I would like to see something like that started on the technical
+side, if someone finds a flaw or a better way to describe the 68901 please
+add it to this file and upload to CIS.
+
+Jeff Rigby/SOTA Computers
+3949 Sawyer Road 
+SARASOTA, FL. 33583 (USA)

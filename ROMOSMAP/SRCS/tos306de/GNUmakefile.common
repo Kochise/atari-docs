@@ -1,0 +1,94 @@
+BIN=../bin/
+LIB=../lib/
+INC=../include
+
+DISTDIR=../tmp/tos306de
+WWWDIR=$(HOME)/webgo24/home/www/download
+
+ALNPATH=${LIB}
+CRT0=crt0.o
+LIBC=libc.a
+LIBC_NDX=
+LIBM=libm.a
+LIBM_NDX=
+
+QBS=\${empty}
+
+#
+# target and host compiler
+# 
+ifeq ($(CROSS),yes)
+
+CROSSPREFIX=m68k-atari-mint-
+EXEEXT=.ttp
+BUILD_EXEEXT=
+
+else
+
+CROSSPREFIX=
+EXEEXT=
+BUILD_EXEEXT=$(EXEEXT)
+
+endif
+
+BUILD_CC = gcc
+BUILD_CFLAGS = -O -Wall
+
+CC = $(CROSSPREFIX)gcc
+CPP = $(CROSSPREFIX)gcc -xc $(CPPFLAGS) -E -P
+CPPOUT = -o
+LD = $(CC)
+AS = $(CROSSPREFIX)as --mri
+AR = $(CROSSPREFIX)ar
+ARFLAGS = rcs
+RANLIB = $(CROSSPREFIX)ranlib
+STRIP = $(CROSSPREFIX)strip
+FLAGS = $(CROSSPREFIX)flags
+
+# 
+# some tools
+# 
+YACC  = bison -dk
+LEX   = flex
+MV    = mv
+CP    = cp
+RM    = rm -f
+TOUCH = touch
+MKDIR = mkdir
+MKDIR_P = $(MKDIR) -p
+SED   = sed
+AWK   = awk
+
+CMP      = $(top_srcdir)/tools/cmprom$(BUILD_EXEEXT)
+MKGLUE   = $(top_srcdir)/tools/newglue$(BUILD_EXEEXT)
+MKBININC = $(top_srcdir)/tools/mkbininc$(BUILD_EXEEXT)
+MKROM    = $(top_srcdir)/tools/mkrom$(BUILD_EXEEXT)
+
+#
+# optimizations
+# 
+OPTS = -O2 -fomit-frame-pointer
+
+
+#
+# warning options
+#
+WARN = \
+	-Wall \
+	-Wstrict-prototypes \
+	-Wmissing-prototypes \
+	-Wshadow \
+	-Wpointer-arith \
+	-Wcast-qual \
+	-Waggregate-return \
+	-Wundef
+
+
+.c.o:
+	$(AM_V_CC)$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+.s.o:
+	$(AM_V_AS)$(AS) $(ASFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+.S.o:
+	$(AM_V_AS)$(CC) -Wa,--mri $(ASFLAGS) $(CPPFLAGS) -c -o $@ $<

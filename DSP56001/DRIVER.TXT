@@ -1,0 +1,289 @@
+,---- M:$0000 ----, ,---- P:$0000 ----, ,---- Y:$0000 ----,---- Y:$4000 ----,
+|                 | |  Int.  Vectors  | |   On-Chip RAM                     |
+|                 | |---- P:$0040 ----| |                 |                 |
+|                 | |   Pretty FAST   | |---- Y:$0100 ----                  |
+|                 | | | On-Chip RAM | | |    SIN Table    |                 |
+|                 | | vProgram  Loadv | |>CAN BE DISABLED<                  |
+|                 | |---- P:$0200 ----| |---- Y:$0200 ----|                 |
+|                 | |  Program  Load  | |                                   |
+|    Bank  Low    | | | | | | | | | | | |    Bank  Low    |    Bank  Low    |
+|                 | | v v v v v v v v | |  Off-Chip  RAM     Off-Chip  RAM  |
+| P:$0000-P:$3FFF | |                 | |                 |                 |
+|                 | |    Bank  Low    | |                                   |
+|                 | |  Off-Chip  RAM  | |                 |                 |
+| Y:$0000-Y:$3FFF | |                 | |                                   |
+| Y:$4000-Y:$7FFF | |                 | |                 |                 |
+|                 | |---- P:$3F00 ----| |---- Y:$3F00 ---- ---- Y:$7F00 ----|
+|                 | | WARNING AREA -> | | SubRoutine BSS  | <- WARNING AREA |
++ - - M:$3FFF - - + + - - P:$3FFF - - + '---- Y:$3FFF ----'---- Y:$7FFF ----'
++ - - M:$4000 - - + + - - P:$4000 - - + ,---- X:$0000 ----,---- X:$4000 ----,
+|                 | |                 | |   On-Chip RAM   |                 |
+|                 | |                 | |                                   |
+|                 | |                 | |---- X:$0100 ----|                 |
+|                 | |                 | |Mu & A-Law Table                   |
+|                 | |                 | |>CAN BE DISABLED<|                 |
+|                 | |                 | |---- X:$0200 ----                  |
+|                 | |                 | |                 |                 |
+|    Bank  Hi     | |    Bank  Hi     | |    Bank  Hi          Bank  Hi     |
+|                 | |  Off-Chip  RAM  | |  Off-Chip  RAM  |  Off-Chip  RAM  |
+| P:$4000-P:$7FFF | |                 | |                                   |
+| X:$0000-X:$3FFF | |                 | |                 |                 |
+| X:$4000-X:$7FFF | | ^ ^ ^ ^ ^ ^ ^ ^ | |                                   |
+|                 | | | | | | | | | | | |                 |                 |
+|                 | | SubRoutine Load | |                                   |
+|                 | |---- P:$7F00 ----| |---- X:$3F00 ----|---- X:$7F00 ----|
+|                 | | WARNING AREA -> | | SubRoutine  BSS   <- WARNING AREA |
+'---- M:$7FFF ----' '---- P:$7FFF ----' '---- X:$3FFF ----'---- X:$7FFF ----'
+                                                          ,---- X:$FFC0 ----,
+                                                          | Peripheral  I/O |
+                                                          | &  Control  Reg.|
+                                                          '---- X:$FFFF ----'
+
+;
+; WARNING AREA are caused by the SAME PHYSICAL LOCATION of the SubRoutine BSS !
+; If ROM of X Memory & Y Memory are disable, you'll find Off-Chip RAM !
+; On-Chip RAM have priority on Off-Chip RAM, so in Y:$0000-0040, there is not
+; the Int.  Vectors of the P Memory...
+;
+; *****************************************************************************
+; > P Memory Interrupts Description
+;
+;   WARNING : Interrupts ARE NOT ADDRESSES like in the 68030, but REAL INSTRUCTIONS
+;             They are Inserted in the Program Flow during its Execution
+;             You can ALSO put there JMP Instruction (JMP + P:$ADDR takes 2 WORDs)
+;
+; P:$0000 HardWare /RESET
+; P:$0002 Stack Error
+; P:$0004 Trace
+; P:$0006 SWI   (SoftWare Interrupt)
+; P:$0008 /IRQA (External)
+; P:$000A /IRQB (External)
+; P:$000C SSI Receive  Data
+; P:$000E SSI Receive  Data with Exception Status
+; P:$0010 SSI Transmit Data
+; P:$0012 SSI Transmit Data with Exception Status
+; P:$0014 SCI Receive  Data                       (not in the Falcon030)
+; P:$0016 SCI Receive  Data with Exception Status (not in the Falcon030)
+; P:$0018 SCI Transmit Data                       (not in the Falcon030)
+; P:$001A SCI Idle Line                           (not in the Falcon030)
+; P:$001C SCI Timer                               (not in the Falcon030)
+; P:$001E NMI
+; P:$0020 Host Receive  Data
+; P:$0022 Host Transmit Data
+; P:$0024 Host Command (Default)
+; P:$0026 Available for Host Command              (Free Host Command)
+; P:$0028 Available for Host Command              (Free Host Command)
+; P:$002A Available for Host Command
+; P:$002C Available for Host Command
+; P:$002E Available for Host Command
+; P:$0030 Available for Host Command
+; P:$0032 Available for Host Command
+; P:$0034 Available for Host Command
+; P:$0036 Available for Host Command
+; P:$0038 Available for Host Command
+; P:$003A Available for Host Command
+; P:$003C Available for Host Command
+; P:$003E Illegal Instruction
+;
+; Short Programs should be loaded into the On-Chip RAM, quite fastest than the
+; Off-Chip RAM. You can put in the On-Chip RAM fast Routine, and in the
+; Off-Chip RAM (up to P:$0200) 'slow' Routine.
+;
+; WARNING : NOTHING about the SCI port is implemented in the Falcon030.
+;           The DSP 56001 wired in is a Special Version for the Falcon030,
+;           without any SCI enchancements.
+;
+; *****************************************************************************
+; > X Memory Details
+;
+; DSP56001  MCU68030 Size
+;
+; - On-Chip Peripheral Memory Map -
+; DSP56001  MCU68030 Size
+; X:$0100                 Mu-Law Table (128 DSP WORDs)
+;   to
+; X:$017F
+;----
+; X:$0180                 A-Law  Table (128 DSP WORDs)
+;   to
+; X:$1FFF
+;----
+;----
+; X:$FFC0                 Reserved
+;   to
+; X:$FFDF                 Reserved
+;----
+; DSP Registers are pretty useful, but there are so many things to write on, so
+; read the DSP56000/1 User's Manual, all there is well explained.
+;
+; X:$FFE0                 PORT B - Bus  Control   Register (PBC)
+; X:$FFE1                 PORT C -      Control   Register (PCC)
+; X:$FFE2                 PORT B - Data Direction Register (PBDDR)
+; X:$FFE3                 PORT C - Data Direction Register (PCDDR)
+; X:$FFE4                 PORT B - Data           Register (PBD)
+; X:$FFE5                 PORT C - Data           Register (PCD)
+; X:$FFE6                 Reserved
+; X:$FFE7                 Reserved
+; X:$FFE8                 Host Control Register            (HCR)
+; X:$FFE9                 Host Status  Register            (HSR)
+; X:$FFEA                 Unused
+; X:$FFEB                 Host Receive/Transmit Register   (HRX/HTX)
+; X:$FFEC                 SSI Control Register A           (CRA)
+; X:$FFED                 SSI Control Register B           (CRB)
+; X:$FFEE                 SSI Status/Time Slot Register    (SSISR/TSR)
+; X:$FFEF                 SSI Receive/Transmit Data Reg.   (RX/TX)
+; X:$FFF0 not in the F030 SCI Interface Control Register   (SCR)
+; X:$FFF1 not in the F030 SCI Interface Status Register    (SSR)
+; X:$FFF2 not in the F030 SCI Control Register             (SCCR)
+; X:$FFF3 not in the F030 SCI Transmit Data Address Reg.   (STXA)
+; X:$FFF4 not in the F030 SCI Low - Rec/XMit Data Register (SRX/STX)
+; X:$FFF5 not in the F030 SCI Mid - Rec/XMit Data Register (SRX/STX)
+; X:$FFF6 not in the F030 SCI Hi  - Rec/XMit Data Register (SRX/STX)
+; X:$FFF7                 Reserved
+; X:$FFF8                 Reserved
+; X:$FFF9                 Reserved
+; X:$FFFA                 Reserved
+; X:$FFFB                 Reserved
+; X:$FFFC                 Reserved
+; X:$FFFD                 Reserved
+; X:$FFFE                 PORT A - Bus  Control   Register (BCR)
+; X:$FFFF                 Interrupt Priority Register      (IPR)
+;
+; *****************************************************************************
+; > Y Memory Details
+;
+; DSP56001  MCU68030 Size
+; Y:$0100                 Four-Quadrant Sine Table (256 DSP WORDs)
+;   to
+; Y:$01FF
+;
+; *****************************************************************************
+; > DSP 56001 Registers
+;
+;     .. are Non-Usable Memory to Prevent DSP from OverFlow
+;     00 is a Byte (8 Bits)
+;   0000 is a Word (16 Bits)
+; 000000 is a Word (DSP WORD - 24 Bits) - Default Size -
+;
+; WARNING : What is following could be quite uneasy to read, but I think it's
+;           the better way I found to describe you how the registers are made.
+;
+; /---------------- Data ALU Input Registers ----------------\
+; Like Dx in the 680x0 family, but NO OPERATION ALLOWED, can ONLY keep a constant
+;
+; X    [  X1  ][  X0  ]                  Y    [  Y1  ][  Y0  ]
+;       000000  000000                         000000  000000
+; Bits [23 - 0][23 - 0]                  Bits [23 - 0][23 - 0]
+;      [47     -     0]                       [47    -      0]
+;
+; /----------------------- Accumulator Registers -----------------------\
+; Like Dx in the 680X0 family, but OPERATION ALLOWED (like Math, Logical, ...)
+; These Accumulators are General Purpose Registers
+;
+; A          [A2][  A1  ][  A0  ]        B          [B2][  B1  ][  B0  ]
+;      ...... 00  000000  000000              ...... 00  000000  000000
+; Bits       [70][23 - 0][23 - 0]        Bits       [70][23 - 0][23 - 0]
+;            [55       -       0]                   [55       -       0]
+; then...
+;
+; X0  is       X0 - 24 Bits called LSP
+; X1  is       X1 - 24 Bits called MSP
+; X   is    X1:X0 - 48 Bits
+;
+; Y0  is       Y0 - 24 Bits called LSP
+; Y1  is       Y1 - 24 Bits called MSP
+; Y   is    Y1:Y0 - 48 Bits
+;
+; A0  is       A0 - 24 Bits called LSP
+; A1  is       A1 - 24 Bits called MSP
+; A2  is       A2 -  8 Bits called EXT
+; A   is A2:A1:A0 - 56 Bits
+;
+; B0  is       B0 - 24 Bits called LSP
+; B1  is       B1 - 24 Bits called MSP
+; B2  is       B2 -  8 Bits called EXT
+; B   is B2:B1:B0 - 56 Bits
+;
+; AB  is    A1:B1 - 48 Bits
+; BA  is    B1:A1 - 48 Bits
+; A10 is    A1:A0 - 48 Bits
+; B10 is    B1:B0 - 48 Bits
+;
+; /--------------- Address Generation Unit ---------------\
+; Like Ax in the 680X0 family
+; Address Registers - OffSet Registers - Modifier Registers
+;
+; R7       ..0000 <-> N7      ..0000 <-> M7        ..0000
+; R6       ..0000 <-> N6      ..0000 <-> M6        ..0000
+; R5       ..0000 <-> N5      ..0000 <-> M5        ..0000
+; R4       ..0000 <-> N4      ..0000 <-> M4        ..0000 Upper File
+; -------------------------------------------------------
+; R3       ..0000 <-> N3      ..0000 <-> M3        ..0000 Lower File
+; R2       ..0000 <-> N2      ..0000 <-> M2        ..0000
+; R1       ..0000 <-> N1      ..0000 <-> M1        ..0000
+; R0       ..0000 <-> N0      ..0000 <-> M0        ..0000
+;
+; You should ever use Rn Registers with their respective Nn and Mn Registers.
+; (R0+N2) is impossible, only (R0+N0) or (R2+N2) are...
+; Mx (Modifier Registers) are typically used as Modulus Adressing Limitator.
+;
+;----
+; Nx (OffSet Registers) are typically used as OffSet Table Locator.
+; In a 680x0 example :
+;         move.l         (A0)+,D0
+; After the Instruction, the A0 Register is added with the size of the
+; Operand, here 4...
+; But imagine you want increase the register with 8...
+; In a 5600x example :
+;         move           X:(R0)+N0,B0
+; With 8 in the N0 Register. Operand Size is contextual (here a DSP WORD)
+;----
+; Nx and Mx registers can also be used as Data Registers,
+; like Dx in the 680x0 family
+;
+; /----------------------- Program Controller -----------------------\
+; Loop Address      - Loop Counter     - Program Counter
+;
+; LA       ..0000     LC      ..0000     PC        ..0000
+;
+; Status Registers                     - Operating Mode Register
+;
+; SR  .. 00   00                         OMR ....   00
+; |     [MR][CCR]                        |       [Mode]
+; |                                      |
+; +-> MR                                 |
+; |     Bit 15 : LF - Loop Flag          |
+; |                                      |
+; |     Bit 13 : T - Trace Mode          |
+; |                                      |
+; |     Bit 11 : S1 \ Scaling Mode       |
+; |     Bit 10 : S0 /                    |
+; |     Bit  9 : I1 \ Interrupt Mask     |
+; |     Bit  8 : I0 /                    |
+; |                                      |
+; '-> CCR                                '-> Mode
+;                                              Bit  7 : EA - External Mem Access
+;       Bit  6 : L - Limit                     Bit  6 : SD - Stop Delay
+;       Bit  5 : E - Extension
+;       Bit  4 : U - UnNormalized
+;       Bit  3 : N - Negative
+;       Bit  2 : Z - Zero                      Bit  2 : DE - Data ROM Enable
+;       Bit  1 : V - oVerflow                  Bit  1 : MB \ Operating Mode
+;       Bit  0 : C - Carry                     Bit  0 : MA /
+;
+; Stack Pointer
+;
+; SP       ..0000 -> SSH ..0000    SSL ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000
+;                        ..0000        ..0000

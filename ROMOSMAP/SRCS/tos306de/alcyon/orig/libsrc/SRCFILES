@@ -1,0 +1,133 @@
+# $ ar68 r  clib setjmp.o signal.o xsignal.o xstrcmp.o ldiv.o blivot.o
+
+#
+# Dividing the object list is neccessary for the stupid original tools
+# which have a 126 byte command length limit.
+# Also, if you want to reproduce the exact same binaries as those
+# from the Atari Developer Kit, dont change the order here
+#
+
+CSRCS1=xmain.c xwmain.c xnwmain.c perror.c mktemp.c chmod.c chown.c
+CSRCS2=printf.c fprintf.c sprintf.c doprt.c prtint.c prtld.c
+CSRCS3=prtshort.c scanf.c sscanf.c doscan.c fdopen.c
+CSRCS4=fopen.c freopen.c ftell.c rewind.c fseek.c exit.c
+CSRCS5=cleanup.c fclose.c fflush.c fread.c fwrite.c fgets.c
+CSRCS6=gets.c fputs.c puts.c getl.c getw.c putl.c putw.c
+CSRCS7=ungetc.c setbuf.c fgetc.c fputc.c filbuf.c flsbuf.c
+CSRCS8=fdecls.c close.c creat.c lseek.c rename.c
+CSRCS9=open.c read.c xttyin.c unlink.c write.c xopen.c access.c ttyinraw.c
+CSRCS10=getpass.c isatty.c chinit.c chkc.c blkio.c chkuser.c
+CSRCS11=allocc.c atoi.c atol.c swab.c getpid.c rand.c qsort.c
+CSRCS12=calloc.c malloc.c sbrk.c errno.c ctype.c strchr.c index.c strins.c
+CSRCS13=strrchr.c rindex.c strcat.c strcmp.c strcpy.c strlen.c strncat.c
+CSRCS14=strncmp.c strncpy.c mallocnd.c memset.c wrtchr.c readasc.c readbin.c
+CSRCS15=fputn.c optoff.c signal.c blkmove.c execl.c lstout.c ttyout.c sgtty.c
+CSRCS16=writeasc.c writebin.c xread.c xwrite.c filesz.c stricmp.c readl.c writel.c
+CSRCS17=kopen.c kcreat.c cputc.c kdup.c kgetc.c kgetchar.c kputc.c kputchar.c kseek.c kstrcmp.c kwritef.c
+
+COBJS1=${CSRCS1:.c=.o}
+COBJS2=${CSRCS2:.c=.o}
+COBJS3=${CSRCS3:.c=.o}
+COBJS4=${CSRCS4:.c=.o}
+COBJS5=${CSRCS5:.c=.o}
+COBJS6=${CSRCS6:.c=.o}
+COBJS7=${CSRCS7:.c=.o}
+COBJS8=${CSRCS8:.c=.o}
+COBJS9=${CSRCS9:.c=.o}
+COBJS10=${CSRCS10:.c=.o}
+COBJS11=${CSRCS11:.c=.o}
+COBJS12=${CSRCS12:.c=.o}
+COBJS13=${CSRCS13:.c=.o}
+COBJS14=${CSRCS14:.c=.o}
+COBJS15=${CSRCS15:.c=.o}
+COBJS16=${CSRCS16:.c=.o}
+COBJS17=${CSRCS17:.c=.o}
+
+COBJS=${COBJS1} ${COBJS2} ${COBJS3} ${COBJS4} ${COBJS5} ${COBJS6} ${COBJS7} ${COBJS8} \
+      ${COBJS9} ${COBJS10} ${COBJS11} ${COBJS12} ${COBJS13} ${COBJS14} ${COBJS15} ${COBJS16} ${COBJS17}
+CSRCS=${CSRCS1} ${CSRCS2} ${CSRCS3} ${CSRCS4} ${CSRCS5} ${CSRCS6} ${CSRCS7} ${CSRCS8} \
+      ${CSRCS9} ${CSRCS10} ${CSRCS11} ${CSRCS12} ${CSRCS13} ${CSRCS14} ${CSRCS15} ${CSRCS16} ${CSRCS17}
+
+ASRCS1=abort.S aldiv.S almul.S alrem.S lmul.S lrem.S uldiv.S setjmp.S
+ASRCS2=xsignal.S salloc.S stkcpy.S ldiv.S blivot.S trap.S osbind.S
+
+AOBJS1=${ASRCS1:.S=.o}
+AOBJS2=${ASRCS2:.S=.o}
+
+AOBJS=${AOBJS1} ${AOBJS2}
+ASRCS=${ASRCS1} ${ASRCS2}
+
+OBJS=${COBJS} ${AOBJS}
+
+
+MCSRCS1=atof.c ceil.c etoa.c fabs.c ffptof.c floor.c fmod.c ftoa.c
+MCSRCS2=ftoffp.c ftol.c ltof.c xdoprtfp.c xatof.c
+MCOBJS1=${MCSRCS1:.c=.o}
+MCOBJS2=${MCSRCS2:.c=.o}
+
+MCOBJS=${MCOBJS1} ${MCOBJS2}
+MCSRCS=${MCSRCS1} ${MCSRCS2}
+
+MASRCS1=ffpabs.S ffpadd.S ffpcmp.S ffpcp.S ffpdiv.S
+MASRCS2=ffpmul2.S
+MASRCS3=ffptnorm.S fpadd.S fpcmp.S fpdiv.S fpmul.S fpneg.S
+MASRCS4=fpsub.S ffpcpyrt.S
+MAOBJS1=${MASRCS1:.S=.o}
+MAOBJS2=${MASRCS2:.S=.o}
+MAOBJS3=${MASRCS3:.S=.o}
+MAOBJS4=${MASRCS4:.S=.o}
+
+MAOBJS = $(MAOBJS1) $(MAOBJS2) $(MAOBJS3) $(MAOBJS4)
+MASRCS = $(MASRCS1) $(MASRCS2) $(MASRCS3) $(MASRCS4)
+
+MOBJS = $(MAOBJS) $(MCOBJS)
+MSRCS = $(MASRCS) $(MCSRCS)
+
+
+OPTIONSRCS1=nofloat.c nottyin.c nostart.c nodisk.c nolong.c noascii.c
+OPTIONSRCS2=nobinary.c nofilesz.c mallocdb.c channel5.c
+OPTIONOBJS1=${OPTIONSRCS1:.c=.o}
+OPTIONOBJS2=${OPTIONSRCS2:.c=.o} xnwmain.o
+
+OPTIONOBJS=${OPTIONOBJS1} ${OPTIONOBJS2}
+OPTIONSRCS=${OPTIONSRCS1} ${OPTIONSRCS2}
+
+SRCS=${CSRCS} ${ASRCS} ${MSRCS} ${OPTIONSRCS} \
+	lib.h klib.h osattr.h \
+	crt0.S crtg.S gemstart.S gemsta.s \
+	fixxopen.c fixlst.c fixwrtc.c fixwrite.c bugtty.c
+
+srcfiles.sh: SRCFILES ${MAKEFILE}
+	$(AM_V_GEN)
+	@echo "#!mupfel"            > $@
+	@echo AOBJS1=\"${AOBJS1}\" >> $@
+	@echo AOBJS2=\"${AOBJS2}\" >> $@
+	@echo COBJS1=\"${COBJS1}\" >> $@
+	@echo COBJS2=\"${COBJS2}\" >> $@
+	@echo COBJS3=\"${COBJS3}\" >> $@
+	@echo COBJS4=\"${COBJS4}\" >> $@
+	@echo COBJS5=\"${COBJS5}\" >> $@
+	@echo COBJS6=\"${COBJS6}\" >> $@
+	@echo COBJS7=\"${COBJS7}\" >> $@
+	@echo COBJS8=\"${COBJS8}\" >> $@
+	@echo COBJS9=\"${COBJS9}\" >> $@
+	@echo COBJS10=\"${COBJS10}\" >> $@
+	@echo COBJS11=\"${COBJS11}\" >> $@
+	@echo COBJS12=\"${COBJS12}\" >> $@
+	@echo COBJS13=\"${COBJS13}\" >> $@
+	@echo COBJS14=\"${COBJS14}\" >> $@
+	@echo COBJS15=\"${COBJS15}\" >> $@
+	@echo COBJS16=\"${COBJS16}\" >> $@
+	@echo COBJS17=\"${COBJS17}\" >> $@
+	@echo MCOBJS1=\"${MCOBJS1}\" >> $@
+	@echo MCOBJS2=\"${MCOBJS2}\" >> $@
+	@echo MAOBJS1=\"${MAOBJS1}\" >> $@
+	@echo MAOBJS2=\"${MAOBJS2}\" >> $@
+	@echo MAOBJS3=\"${MAOBJS3}\" >> $@
+	@echo MAOBJS4=\"${MAOBJS4}\" >> $@
+	@echo OPTIONOBJS1=\"${OPTIONOBJS1}\" >> $@
+	@echo OPTIONOBJS2=\"${OPTIONOBJS2}\" >> $@
+	@echo CRT0=\"${CRT0}\" >> $@
+	@echo LIBC=\"${LIBC}\" >> $@
+
+EXTRA_DIST = GNUmakefile Makefile SRCFILES srcfiles.sh makeall.sh optimize.mak

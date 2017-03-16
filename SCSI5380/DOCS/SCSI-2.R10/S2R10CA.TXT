@@ -1,0 +1,2750 @@
+
+  Appendixes  (These Appendixes are not part of the requirements of American
+              National Standard X3.131-198x, but are included for information 
+              only.)
+
+A. SCSI Signal Sequence Example
+
+This Appendix is included to provide an example of the signal sequencing of an 
+I/O process that includes most of the SCSI bus phases (Figure A-1).  In this 
+example, the target does not disconnect from the SCSI bus prior to completing 
+the I/O process.
+
+The following notes apply to Figure A-1:
+
+  NOTE:  In a typical system, the computer's host adapter acts as the 
+  "initiator" and the peripheral device's controller acts as the "target."  In 
+  general, this standard does not attempt to distinguish between a computer 
+  and its host adapter.  These functions may be separate or merged.  The term 
+  "initiator" encompasses both.  The term "target" refers to the controller 
+  portion of the peripheral device, which may be separate (bridge controller) 
+  from the peripheral device or merged with it (embedded controller).  The 
+  term "SCSI device" refers to a device that may be connected to the SCSI bus.  
+  An SCSI device may act in the initiator role, the target role, or both 
+  roles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     Figure A-1: SCSI Signal Sequence Example
+
+
+  DATA BUS NOTES:
+  (1) DB(7) is the most significant bit.
+  (2) DB(7) is the highest priority arbitration bit.
+  (3) DB(P) is the data parity bit (odd).  Parity is not valid during the 
+      ARBITRATION phase.
+
+  BUS PHASE NOTES:
+
+  BUS FREE phase.  BUS FREE phase begins when the SEL and BSY signals are both 
+  continuously false for a bus settle delay.  It ends when the BSY signal 
+  becomes true.  (In the SCSI-1 single-initiator option, BUS FREE phase could 
+  also end when the SEL signal became true.)
+
+  ARBITRATION phase.  This phase is documented as mandatory in SCSI-2.  In 
+  SCSI-1, this phase was optional.
+
+     At least one bus free delay after first detecting BUS FREE phase, but no 
+  more than a bus set delay after the bus was last free, the initiator asserts 
+  the BSY signal and its assigned SCSI device ID bit on the DATA BUS.  The 
+  initiator waits an arbitration delay, then examines the DATA BUS.  If a 
+  higher priority SCSI device ID bit is true, the initiator loses arbitration 
+  and may release the BSY signal and its SCSI ID bit.  Otherwise, the 
+  initiator wins arbitration and asserts the SEL signal.  All SCSI devices 
+  must release the BSY signal and their SCSI ID bit within a bus clear delay 
+  after the SEL signal becomes true (even if they have not yet examined the 
+  DATA BUS).  The winning SCSI device waits at least a bus clear delay plus a 
+  bus settle delay after asserting the SEL signal before changing any signals 
+  on the bus.
+
+  SELECTION phase.  The I/O signal is false during this phase to distinguish 
+  it from the RESELECTION phase.
+
+     NONARBITRATING SYSTEMS (only permitted in SCSI-1):  In such systems, the 
+  initiator waits at least a bus clear delay after detecting BUS FREE phase, 
+  then it asserts the target's  SCSI ID bit and, optionally, the initiator's 
+  SCSI ID bit on the DATA BUS.  After at least two deskew delays, the 
+  initiator asserts the SEL signal.
+
+     ARBITRATING SYSTEMS:  In such systems, the SCSI device that won 
+  arbitration has both the BSY and SEL signals asserted.  After at least a bus 
+  clear delay plus a bus settle delay, it places both the target's and the 
+  initiator's SCSI ID bits on the DATA BUS.  At least two deskew delays later, 
+  it releases the BSY signal.
+
+     ALL SYSTEMS:  The target determines that it is selected when the SEL 
+  signal and its SCSI ID bit are true and the BSY and I/O signals are false 
+  for at least a bus settle delay.  The target then asserts the BSY signal 
+  within a selection abort time after it last determined that it was still 
+  being selected.  (The target is not required to respond to a selection 
+  within a selection abort time;  but it must ensure that it will not assert 
+  the BSY signal more than a selection abort time after the initiator aborts a 
+  selection attempt.)
+
+     At least two deskew delays after the initiator detects the BSY signal is 
+  true, it releases the SEL signal.
+
+  MESSAGE OUT phase.  During this phase the initiator sends an IDENTIFY 
+  message to the target.  The target asserts the C/D and MSG signals and 
+  negates the I/O signal for the message transfer.  After detecting the 
+  assertion of the REQ signal, the initiator negates the ATN signal before 
+  asserting the ACK signal.  (Refer to the handshake procedure for the COMMAND 
+  phase.)
+
+  COMMAND phase.  The target asserts the C/D signal and negates the I/O and 
+  MSG signals for all of the bytes transferred during this phase.  The 
+  direction of transfer is from the initiator to the target.
+
+     HANDSHAKE PROCEDURE:  The target asserts the REQ signal.  Upon detecting 
+  the REQ signal is true, the initiator drives the DATA BUS to the desired 
+  value, waits at least one deskew delay plus a cable skew delay and then 
+  asserts the ACK signal.  The initiator continues to drive the DATA BUS until 
+  the REQ signal is false.
+
+     When the ACK signal is true at the target, the target reads the DATA BUS 
+  and then negates the REQ signal.
+
+     When the REQ signal becomes false at the initiator, the initiator may 
+  change or release the DATA BUS and negate the ACK signal.
+
+     The target may continue to request command bytes by asserting the REQ 
+  signal again.  The number of command bytes is determined by the group code 
+  (most significant 3 bits) that is contained in the first command byte.
+
+  DATA IN phase.  The target asserts the I/O signal and negates the C/D and 
+  MSG signal for all of the bytes transferred during this phase.  The 
+  direction of transfer is from the target to the initiator.
+
+     HANDSHAKE PROCEDURE:  The target first drives the DATA BUS to their 
+  desired values, waits at least one deskew delay plus a cable skew delay, and 
+  then asserts the REQ signal.  The target continues to drive the DATA BUS 
+  until the ACK signal is true.
+
+     When the REQ signal is true at the initiator, the initiator reads the 
+  DATA BUS and then asserts the ACK signal.
+
+     When the ACK signal is true at the target, the target may change or 
+  release the DATA BUS and negate the REQ signal.
+
+     When the REQ signal is false at the initiator, the initiator negates the 
+  ACK signal.  After the ACK signal is false, the target may continue the 
+  transfer by driving the DATA BUS and asserting the REQ signal as described 
+  above.
+
+  DATA OUT phase (not shown in the figure).  The target negates the C/D, I/O, 
+  and MSG signals for all of the bytes transferred during this phase.  The 
+  direction of transfer is from the initiator to the target.  (Refer to the 
+  handshake procedure for the COMMAND phase.)
+
+
+
+  STATUS phase.  The target asserts the C/D and I/O signals and negates the 
+  MSG signal for the byte transferred during this phase.  The direction of 
+  transfer is from the target to the initiator.  (Refer to the handshake 
+  procedure for the DATA IN phase.)
+
+  MESSAGE IN phase.  The target asserts the C/D, I/O, and MSG signals during 
+  the byte transferred during this phase.  Typically, a COMMAND COMPLETE 
+  message would be sent at this point.  The direction of transfer is from the 
+  target to the initiator.  (Refer to the handshake procedure for the DATA IN 
+  phase.)
+
+  BUS FREE phase.  The target returns to BUS FREE phase by releasing the BSY 
+  signal.  Both the target and the initiator release all bus signals within a 
+  bus clear delay after the BSY signal is continuously false for a bus settle 
+  delay.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+B. Typical Bus Phase Sequence
+
+  This Appendix is included to provide an example of the SCSI bus phase 
+sequence for a typical READ command (Tables B-1 and B-2).  In this example, 
+the target does not disconnect from the SCSI bus prior to completing the 
+command.
+
+               Table B-1: Typical READ Command Phase Sequence
+
+==============================================================================
+                                   Signals
+               ---------------------------------------------------------------
+               B  S  A  M  C  I  R  A  R    D    D
+               S  E  T  S  /  /  E  C  S    B    B
+Bus Phase      Y  L  N  G  D  O  Q  K  T  (7-0) (P)    Comment
+------------------------------------------------------------------------------
+BUS FREE       -  -  -  -  -  -  -  -  -    -    -     SCSI bus is available. 
+
+ARBITRATION    1  -  -  -  -  -  -  -  -    ID   X     Initiator tries to get 
+     "            1                                    the SCSI bus.
+
+SELECTION      1  1  1  -  -  -  -  0  -  ID I,T V     Initiator has SCSI bus 
+     "         -  1                       ID I,T V     and selects a target.
+     "         1  1                       ID I,T V     ATN is on. 
+     "         1  -                         X    X
+
+MESSAGE OUT    1  -  1  1  1  0  0  0  -    X    X     Target has control of
+     "               1           1  0       X    X     the bus and gets the 
+     "               0           1  1    Message V     IDENTIFY message from
+     "               0           0  1       X    X     the initiator. 
+     "               0           0  0       X    X
+
+COMMAND        1  -  0  0  1  0  0  0  -    X    X     Target gets a command 
+     "                           1  0       X    X     byte from the 
+     "                           1  1    Command V     initiator.  (This 
+     "                           0  1       X    X     handshake is repeated
+     "                           0  0       X    X     for each byte.)
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         Table B-2: Typical READ Command Phase Sequence (Continued)
+
+==============================================================================
+                                   Signals
+               ---------------------------------------------------------------
+               B  S  A  M  C  I  R  A  R    D    D
+               S  E  T  S  /  /  E  C  S    B    B
+Bus Phase      Y  L  N  G  D  O  Q  K  T  (7-0) (P)    Comment
+------------------------------------------------------------------------------
+DATA IN        1  -  0  0  0  1  0  0  -    X    X     Target sends data to 
+     "                           1  0  Read Data V     the initiator.  (This
+     "                           1  1       X    X     handshake is repeated
+     "                           0  1       X    X     for each byte.)
+     "                           0  0       X    X
+
+STATUS         1  -  0  0  1  1  0  0  -    X    X     Target sends status to 
+     "                           1  0    Status  V     the initiator. 
+     "                           1  1       X    X
+     "                           0  1       X    X
+     "                           0  0       X    X
+
+MESSAGE IN     1  -  0  1  1  1  0  0  -    X    X     Target sends a COMMAND 
+     "                           1  0    Message V     COMPLETE message to the
+     "                           1  1       X    X     initiator. 
+     "                           0  1       X    X
+     "                           0  0       X    X
+
+
+BUS FREE       -  -  -  -  -  -  -  -  -    -    -     SCSI bus is available. 
+==============================================================================
+Key:  -       =  Signal driver is passive.
+      0       =  Signal is false.
+      1       =  Signal is true.
+      "Blank" =  Signal state is the same as the previous line.
+      ID      =  SCSI ID for arbitration.
+      ID I,T  =  SCSI ID of initiator and target.
+      V       =  Parity is valid.
+      X       =  The signal is not guaranteed to be in a known state.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+C. SCSI System Operation
+
+  This Appendix is included to provide an explanation of the relationship of 
+the various pieces of an SCSI system.  This Appendix also provides additional 
+information about the use of SCSI in a multi-tasking system.  Such systems 
+typically use a host adapter circuit to interface from the host memory to the 
+SCSI bus.  Although other architectures are possible (including native or 
+embedded SCSI), the host adapter logic still exists as part of the system.  
+The term "initiator" is used throughout this standard to encompass all such 
+architectures.  The term "host adapter" is used within this Appendix to refer 
+to the logic that interfaces from the host memory to the SCSI bus.
+
+C.1. Host Memory, Host Adapter, SCSI Target Relationship
+
+  The SCSI architecture utilizes the concept of host memory blocks for 
+command, data, and status interchange between the host system and the SCSI 
+target.  In the middle of this exchange is the SCSI host adapter, which acts 
+as the gateway between host memory and the SCSI bus.  The host adapter is an 
+important portion of the overall intelligence of SCSI.  Along with providing 
+an information path from the SCSI bus to the host bus, the host adapter is 
+intimately involved in assuring data integrity and proper performance of the 
+I/O subsystem. 
+
+  In order to fully understand SCSI operation, the concepts of I/O memory 
+blocks and nexus are detailed.  Figure C1 presents an example block diagram of 
+a single host/single peripheral SCSI I/O subsystem.  The host memory contains 
+three I/O blocks:  command, data, and status.  The SCSI disk controller target 
+needs to read the command block and write to the status block in order to 
+perform the task specified by the host in the command block.  Likewise, the 
+SCSI controller needs to either read or write the data block in host memory, 
+depending on the task specified.  The SCSI controller "reaches into host 
+memory" via the SCSI host adapter.  The host adapter must know the addresses 
+of the command, data, and status blocks in order for it to "reach" into the 
+right spot in memory.  In other words, the host adapter must be given a 
+pointer to the start of each block by the host.  As the SCSI controller takes 
+information from the command block, the memory pointer for the command block 
+advances to the next byte.  The same is true for the data and status pointers.
+
+  SCSI architecture provides for two sets of three pointers within the host 
+adapter.  The first set is known as the current (or active) pointer values.  
+These are the pointers to the next command, data, or status byte to be 
+transferred between the host memory and the SCSI controller.  There is only 
+one set of current pointers in the host adapter.  The current pointers are 
+shared among all devices and are used by the current device connected to the 
+host adapter.  
+
+  The second set is known as the saved pointer values.  There is one set of 
+saved pointers for each active I/O process.  For command and status, these 
+pointers always point to the start of the memory command block and memory 
+status block.  The saved data pointer points to the start of the data block at 
+the beginning of each command.  It remains at this value until the controller 
+sends a SAVE DATA POINTER message to the host adapter which copies the value 
+of the current data pointer into the saved data pointer.  The controller may 
+retrieve the saved value by sending a RESTORE POINTERS message.  This moves 
+the value of each of the three saved pointers into the current pointers.  
+Whenever an SCSI device disconnects from the bus, only the saved pointer 
+values are retained.  The current pointer values are set from the saved values 
+upon the next reconnection.  The current and saved pointers provide an 
+efficient method to break up large transfers into smaller bursts, and to 
+facilitate error retry and recovery.
+
+C.2. SCSI READ Command Example
+
+  One method of understanding the "host, host adapter, SCSI controller" 
+relationship is via an example.  Consider the case of a multiple sector READ 
+command that will cross a cylinder boundary on a direct-access device such as 
+a disk.
+
+  The first activity in the I/O operation is for the system to create a 
+command descriptor block in memory and determine where the data and status are 
+to be written in host memory.  The host then sends a command to the host 
+adapter that includes the starting address (pointer) for each of the command, 
+data, and status blocks and the SCSI address of the peripheral to perform the 
+operation.  In this example, there is only one SCSI controller and physical 
+disk, but its address is required in order for the host adapter to select it.
+
+  Upon receiving the command, the host adapter arbitrates for the SCSI bus and 
+wins (due to the lack of competing devices) and proceeds to select the target 
+SCSI device with the ATN signal asserted.  The ATTENTION condition indicates 
+to the SCSI target that the initiator (the host adapter) has a message to send 
+to the target.  When the target responds to the SELECTION phase, an I_T nexus 
+is established between the two devices.
+
+  After the SELECTION phase is completed, the target responds to the 
+initiator's ATTENTION condition by receiving an IDENTIFY message from the 
+initiator.  This message, generated by the host adapter, indicates the desired 
+logical unit number in the target and whether the initiator can support bus 
+disconnect.  In this example, the initiator supports disconnect.  When the 
+controller receives the IDENTIFY message, an I_T_L nexus is established.  The 
+nexus uniquely identifies the relationship between the initiator and the 
+specified logical unit of the target disk controller.
+
+  An additional message following the IDENTIFY may be sent for purposes of 
+command queuing.  If a QUEUE TAG message is sent, the I_T_L nexus is replaced 
+by an I_T_L_Q nexus.  This I_T_L_Q nexus behaves in a similar manner as the 
+I_T_L nexus for purposes of pointer management; it merely permits more sets of 
+pointers to be identified.  In this example, however, command queuing is not 
+used.
+
+  Input/output activity from this point are principally controlled by the 
+target.  The host adapter is simply an "arm" of the target used to reach into 
+host memory.  Utilizing this arm, the target reads in the command descriptor 
+block (CDB).  The host adapter is expected to ensure that the target does not 
+reach outside its allocated blocks.
+
+  After decoding the instruction, the controller determines that a disk seek 
+is required to get the starting data block.  Since the SCSI bus will not be 
+utilized until data has been read from the disk, the target controller 
+disconnects from the bus.  The disconnect process includes the transmission of 
+a SAVE DATA POINTER message and DISCONNECT message from the target to the host 
+adapter.  The host adapter responds to the SAVE DATA POINTER message by saving 
+the current data pointer, which is still set to the start of the data block.  
+(Strictly speaking, the target need not send the SAVE DATA POINTER message 
+following the command phase since at that time the saved and current pointers 
+are equal.)  After transmission of the DISCONNECT message the target releases 
+the BSY signal, freeing the bus.
+
+  Although the initiator host adapter and target disk controller are 
+disconnected, the I/O process has not completed and the I_T_L nexus still 
+exists.  Both devices know they have a command to finish and will return to 
+that job at a later point in time.  The ability to disconnect allows multiple 
+I/O processes to occur simultaneously, utilizing a single physical bus.  The 
+logical connection is actually not just between the host adapter and the disk 
+controller, but runs all the way from the host memory I/O block to the 
+peripheral device (disk) performing the operation. (See Figure C-2 for a 
+pictorial presentation of this concept.)
+
+  Once the target has started filling its data buffers, it can transmit data 
+to the initiator, but first it must revived the connection.  The reconnection 
+process involves the target arbitrating for the bus and reselecting the host 
+adapter.  After the reselection is made, the target sends an IDENTIFY message 
+to the host adapter to indicate which target logical unit is reconnecting.  
+This information provides the correct logical connection via the I_T_L nexus 
+into host memory.  After reconnection, the roles of the initiator and target 
+are just as they were prior to disconnection.  The target transfers data into 
+host memory via the host adapter.  The data transfer continues until the disk 
+reaches the end of its cylinder and the disk controller determines that a 
+second physical seek is required to complete the READ command.  The target 
+again performs a SAVE DATA POINTER message and a DISCONNECT message.  However, 
+this time the current data pointer is not at the beginning of the memory data 
+block, and is required to ensure that the I/O process continues at the correct 
+data block location.  The saved value at disconnect reflects the change.
+
+  After seek completion and transfer of data into its buffer, the controller 
+reconnects to the host adapter and completes the data transfer as requested by 
+the READ command.  At this point, the controller sends ending status into host 
+memory via the host adapter.  The final action of the target is to send the 
+host adapter a COMMAND COMPLETE message and go to BUS FREE.  The target has 
+completed its operation and considers the I/O process ended.
+
+  Upon receipt of the COMMAND COMPLETE message, the host adapter signals the 
+host that the I/O process is complete.  This signal can be an interrupt or the 
+setting of a flag read by the host in a polled I/O environment.  This action 
+by the host adapter breaks the logical connection between the host adapter and 
+the I/O memory blocks of the host.  The host reviews the status of the 
+operation in the status block and proceeds to utilize the data transferred 
+into the data block.
+
+
+
+
+
+
+
+C.3. I/O Channel Concept
+
+  The I/O channel concept fully utilizes the high performance capability of 
+the SCSI.  The I/O channel is basically an intelligent SCSI host adapter that 
+can maintain multiple simultaneous I/O processes between host memory I/O 
+blocks and different SCSI devices. 
+
+  The I/O channel utilizes a single direct memory access (DMA) path into host 
+memory supporting the DMA operations of numerous SCSI peripherals.  Since the 
+SCSI bus is a single physical bus and most host computers have a single 
+physical backplane bus, multiple DMA channels into memory are not necessary.  
+In many implementations of a multiple DMA channel architecture, when a channel 
+is accessing memory, all other channels are idle.  In such implementations, a 
+single channel supporting multiple I/O processes can supply the same 
+performance as separate DMA peripherals.  An obvious advantage to the host is 
+lower system cost as well as the saving in backplane card slots.
+
+  In the READ command example discussed in C.2, the I/O channel is the SCSI 
+host adapter.  The host gives the I/O channel a command by providing it with 
+pointers to the I/O memory blocks and the SCSI peripheral address.  This 
+establishes a logical connection between the host adapter and the host I/O 
+memory blocks.  The I/O channel then opens a sub-channel that is assigned the 
+task of managing the physical link and nexus between the host adapter and the 
+target controller.  All physical connections and reconnections to the host 
+adapter are managed by this sub-channel.  The number of active or open sub-
+channels an I/O channel can support is totally dependent upon its design.  The 
+SCSI definition could, in theory, support an I/O channel with up to 56 sub-
+channels for simple I_T_L nexus, and many more if target routines and command 
+queuing are implemented.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               Figure C-1: Snapshot Prior to Initial Selection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 Figure C-2: Snapshot Prior to Data Transfer
+
+
+
+
+D. Additional Medium Type and Density Code Standards
+
+  In Sections 8 and 9 of this standard, the MODE SELECT and MODE SENSE data 
+define medium type codes and density codes for certain flexible disks and 
+magnetic tapes.  American National Standards are referenced for code values if 
+a standard exists for that code value.  In many cases, other standards or X3 
+draft documents also exist for a code value.  Tables D-1 and D-2 in this 
+Appendix provide additional references to those standards or draft documents.
+
+  DISCLAIMER:  It is not the purpose of this Appendix to indicate that these 
+standards are exactly equivalent to each other.  However, these standards may 
+be useful.  Please refer to Sections 8 and 9 for additional information.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   Table D-1: Direct-Access Medium-Type Codes
+
+    ======================================================================
+      Code                           Medium Type                                               
+    ----------  ----------------------------------------------------------
+      00h       See Section 8.                                            
+      01h       See Section 8.                                            
+      02h       See Section 8.                                            
+                                                                      
+    Flexible-Disk Reference Standard(s)                       
+
+      05h       X3.73-1980             ECMA-54           ISO 5654-1 : 1984
+                                                         ISO 5654-2 : 1985
+      06h                              ECMA-59                               
+      09h       (None -- X3B8 has abandoned this project.)                
+      0Ah       X3.121-1984            ECMA-69           ISO 7065-1 : 1985
+                                                         ISO 7065-2 : 1985
+      0Dh       X3.82-1980             ECMA-66           ISO 6596-1 : 1985
+                                                         ISO 6596-2 : 1985
+      12h       X3.125-1985            ECMA-70           ISO 7487-1 : 1985
+                                                         ISO 7487-2 : 1985
+                                                         ISO 7487-3 : 1984            
+      16h       X3.126-1986            ECMA-78           DIS 8378/1-1984  
+                                                         DIS 8378/2       
+                                                         DIS 8378/3                 
+      1Ah       X3B8/86-32 (Note 1)    ECMA-99           DIS 8630/1-1985  
+                                                         DIS 8630/2-1985  
+      1Eh       X3.137 (Note 1)        ECMA-100          DIS 8860/1-1985  
+                                                         DIS 8860/2-1985  
+
+    Direct-Access Magnetic Tape Standard(s)               
+
+                       ANSI                 ECMA                ISO          
+                -------------------    --------------    -----------------
+      40h       X3B5/85-151 (Note 2)   ECMA TC19/83/39                    
+      44h       X3B5/85-151 (Note 2)   ECMA TC19/83/39                    
+
+    80h-FFh     Vendor unique
+    All others  Reserved
+    ======================================================================
+  NOTES:
+  (1)  These listings are currently under development.  Please check with the 
+X3 Secretariat for information concerning status and availability.
+  (2)  This draft document is for unrecorded miniature cartridge media.  The 
+usage referred to here is for serial GCR recording using a format known as 
+QIC-100.  Since Subcommittee X3B5 issues a new document number for each 
+revision of their working draft document, please contact the chairman of X3B5 
+for the latest document number.
+
+
+
+
+
+
+
+                   Table D-2: Sequential-Access Density Codes
+
+==============================================================================
+Code Value                             Density
+----------  ------------------------------------------------------------------
+   00h      See Section 9.
+
+            Magnetic Tape Reference Standard(s)
+
+                    ANSI                  ECMA         ISO
+            --------------------------  ---------  ---------------------------
+   01h      X3.22-1983,                 ECMA-62,   ISO 1863-1976
+   02h      X3.39-1986,                 ECMA-62,   ISO 3788-1976
+   03h      X3.54-1986,                 ECMA-62,   ISO 5652-1984
+   04h      Old format known as QIC-11
+   05h      X3.136-1986,                ECMA-98
+   06h      X3B5/85-194A (See Note)
+   07h      X3.116-1986,                ECMA-79,   ISO 8063/1-1984
+   08h      X3B5/86-099 (See Note)
+   09h      X3B5/86-055 (See Note)
+   0Ah      X3B5/85-88 (See Note)
+   0Bh      X3.55-1982, X3.56-1986,     ECMA-46,   ISO 4057-1979
+
+80h -- FFh  Vendor unique
+All others  Reserved
+==============================================================================
+NOTE:  Draft document.  Subcommittee X3B5 assigns a new document number to 
+each revision of their documents.  Please contact the chairman of X3B5 for the 
+latest document number.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+E. Data Integrity and I/O Process Queuing
+
+  This Appendix demonstrates the practicality of having the target reorder I/O 
+processes which have been queued for a specific logical unit under its control 
+with a minimum of explicit direction by the initiator.  A clear and precise 
+written explanation was deemed appropriate.  While this appendix is only 
+directly applicable to direct-access devices, the same concepts can be applied 
+to any SCSI device.
+
+  This appendix is not intended to indicate how command queuing must be 
+implemented by the target in order to insure correct execution.  Rather, it 
+simply illustrates one possible implementation that does insure correctness at 
+a reasonable cost (in overhead and performance) and is easy to analyze.  
+
+E.1. Glossary
+
+  Unless otherwise stated, all terms used in this Appendix are as defined in 
+the body of this standard.  The following terms are new: 
+
+  correct execution sequence.  Any sequence of execution from the I/O process 
+queue(s) for a logical unit that both obeys the rules for I/O process queuing 
+and which results in the state of the media, and the data returned to the 
+initiator concerning the contents of the media, to be identical to those of a 
+first-in first-out (FIFO) execution of the primary queue.  
+
+  NOTE:  The state of other components of the target, such as the buffer, are 
+  not guaranteed to the be same under different re-orderings that result in 
+  correct execution.
+
+  explicit ordered I/O process.  This is an I/O process that includes an 
+ORDERED QUEUE TAG message.
+
+   implicit ordered I/O process.  This is an I/O process that includes a 
+SIMPLE QUEUE TAG message, but the target has determined it will treat as an 
+ordered I/O process for the purposes of queuing.
+
+  head of queue queue.  This is the queue for a specific logical unit 
+containing head of queue I/O processes for that logical unit.
+
+  LBA.  An abbreviation for "logical block address".
+
+  ordered I/O process.  This is an explicit or implicit ordered I/O process.
+
+  primary queue.  This is the queue for a specific logical unit containing the 
+ordered and unordered I/O processes for that logical unit.
+
+
+
+
+
+
+
+
+
+  Each primary queue can be divided into a series of one or more segments.  
+Each segment normally consists of a sequence of I/O processes containing zero 
+or more unordered I/O processes and one ordered I/O process such that the 
+ordered I/O process is the last in the sequence and the unordered I/O 
+processes are those which arrived after the ordered I/O process of the 
+previous segment in the queue and before the ordered I/O process in this 
+segment.  The last segment in the queue is a special case which may not 
+include an ordered I/O process.  
+
+  For example, a queue containing commands in the following order: 
+
+    U   U   O   O   U   O   U   O   O   O   U   U   U   U   U
+
+  can be divided into segments as follows:
+
+   (U   U   O) (O) (U   O) (U   O) (O) (O) (U   U   U   U   U)
+
+  where, "U" represents an unordered command and "O" represents an ordered 
+command.
+
+  regeneration point.   The point in time when no command is under execution 
+and the first I/O process of a new segment in the primary queue is the next 
+I/O process to be executed.
+
+  reordering rule.  The algorithm used by a target to reorder commands in the 
+primary queue of a logical unit.
+
+  state of the media.  At any particular moment, the state is defined to be 
+the complete mapping of logical block addresses to the data stored in those 
+logical block addresses.  Thus the state is a measure of the contents of the 
+device.
+
+  TL.  An abbreviation for "transfer length".
+
+E.2. Thesis
+
+  The point of this Appendix is that the target can implement reordering rules 
+which result in a correct execution sequence at:
+
+  (1)  low cost in command overhead,
+  (2)  high improvement in performance, and
+  (3)  without requiring the initiator to explicitly order commands (although 
+     such ordering is allowed).
+
+  Under any reordering rule, only the reordering done within a queue segment 
+can make the execution sequence incorrect.
+
+
+
+
+
+
+
+
+
+  This follows directly from the definitions in the above glossary and the 
+entire philosophy of I/O process queuing, under which the explicit ordering of 
+a I/O process or the use of a head of queue I/O process indicates that the 
+initiator is removing any control of order of execution from the target.  
+Doing so shifts any risk that the resulting execution sequence may be 
+"incorrect" from the target to the initiator.  A sequence of execution is 
+correct if for each queue segment the execution of I/O processes in that 
+segment, if considered to be the total queue for the logical unit, would be 
+considered to be correct.
+
+  Since the order of execution of head of queue I/O processes and the order of 
+execution of queue segments is restricted to a single ordering by the rules of 
+I/O process queuing, only reordering within a segment can create a deviation 
+from the FIFO primary queue execution sequence which is always correct. 
+
+  Assume all unordered I/O processes other than those containing READ(6), 
+READ(10), WRITE(6), and WRITE(10) commands to be implicitly ordered by the 
+target.  (For simplicity, "read" is used for "READ(6) or READ(10)" and "write" 
+is used for "WRITE(6) or WRITE(10)" in the following section.)
+
+  Note that this assumption does not significantly decrease the performance 
+gains to be realized by reordering (since the remaining unordered I/O 
+processes still make up over 99.9% of the I/O processes actually encountered 
+during normal execution), nor increase the overhead (since a simple operation 
+code check is all that is required), but will significantly simplify the 
+analysis of reordering rules.  Targets might be able to insure correct 
+execution sequence without this restriction, but allowing such commands as 
+MODE SELECT, RESERVE/RELEASE, and FORMAT to be reordered obviously leads to 
+potential difficulties and much complexity for little gain.
+
+  The test for correct execution is made at regeneration points.  Note that 
+I/O processes cannot be reordered across regeneration points.  This implies 
+that halting execution (e.g., for an error) in the middle of a queue segment 
+may leave the state of the media in an incorrect state.  As always, it is up 
+to the initiator to successfully perform recovery operations.
+
+  All segments (except for the last, which is treated as a special case) are 
+finite, and any reordering algorithm eventually results in reaching a 
+regeneration point.  For the last segment, the target insures that all 
+commands are executed in a finite period of time (i.e., starvation does not 
+occur).  Many popular reordering algorithms prevent starvation, and the 
+assumption is that one such algorithm is implemented.
+
+  Thus the problem has been reduced to requiring that the reordering of I/O 
+processes within a segment does not result in the return of data which differs 
+from that of a FIFO execution nor leaves the media in a different state.  Note 
+that under any reordering of a segment, the ordered command is always 
+constrained to be executed last.  Thus as long as the data returned and the 
+state of the media for the sequence of unordered I/O processes meets the 
+correctness criteria, then the I/O processes in the segment as a whole are 
+correctly executed.
+
+
+
+
+  All unordered I/O processes in a segment contain a variety of either the 
+read or write commands.  Consider the N unordered I/O processes in a segment 
+to be numbered 1 to N.  Then any reordering is uniquely defined by the N! (N 
+factorial) ordered pairs of I/O processes (x,y), where each pair implies that 
+I/O process x comes before I/O process y in the reordering.
+
+  If all the pairs were (read,read) pairs (i.e., all unordered commands were 
+reads), then any reordering could not affect the state of the media (since it 
+is never changed) nor the returned data.  Similarly, if a pair was a 
+(read,write), a (write,read), or a (write,write) then the reordering of these 
+two commands could not affect correctness as long as the range of the 
+specified logical block addresses for each command did not intersect.
+
+  Thus the above is both a necessary and sufficient condition for generating a 
+correct execution sequence.  However, the target need not generate the N! 
+pairs and perform the check required by theory.  A more practical 
+implementation of the above test would be the following:  
+
+  First, any reordering of I/O processes implies that a sorting operation 
+(usually with respect to the LBA of the command) be performed.  The sort may 
+result in an explicit data structure (i.e., a binary tree of pointers) or an 
+implicit structure (i.e., the command descriptor blocks are reordered in an 
+array, or an array of pointers to command descriptor blocks are reordered).  
+In any event, denote T as the time required to perform such sorting, and 
+denote A as the resulting sequence of execution.
+
+  This list is now sorted so that the LBA+TL of the immediately preceding 
+command is <= the LBA of the next command.  Note that LBA+TL is one more than 
+the last LBA in the command, and this sort can be performed at a cost no 
+greater than T (note that LBA+TL must be computed for each command anyway in 
+order to perform a range check against the logical unit's maximum LBA, and 
+that a more sophisticated data structure can reduce the incremental effort to 
+perform this second sort considerably).  This ordering is denoted as B.  
+
+  For each segment, a I/O process has a position in both queues denoted by the 
+pair (a,b).  The execution sequence is then determined as follows: 
+  1) Attempt to execute I/O process in the ordering determined by A.
+  2) If a = b, then execute the I/O process.
+  3) If a < b, then scan A until a command equaling b is found.  For all 
+     commands in A between a and this b, search B and keep track of the I/O 
+     process that appears last in B (denote this c).  Now scan A again, but 
+     use c as the search target instead of b.  Continue the search process, 
+     alternating between A and B, until all I/O processes to search for are 
+     exhausted.  The result is a subsequence of I/O processes in A and B such 
+     that each I/O process in the subsequence in A appears in the subsequence 
+     in B and vice-versa, but the orders differ between the subsequences.  
+     These I/O processes should be executed in the original FIFO order (i.e., 
+     both re-orderings should be ignored).
+  4) when done, go to step 1) again until the queue is empty.
+
+  As an example, considering the following pairs of ordered LBA ranges:
+  (0,3) (6,8) (7,12) (8,15) (20,23) (28,32) (31,35) (36,39) (37,38)
+  (0,3) (7,12) (6,8) (8,15) (20,23) (31,35) (28,32) (37,38) (36,39)
+
+
+  Thus the execution order is:
+  (0,3)
+  (6,8) (7,12) in FIFO order
+  (8,15)
+  (20,23)
+  (28,32) (31,35) in FIFO order
+  (36,39) (37,38) in FIFO order
+
+  Note that other execution sequences may be defined that provide greater 
+performance (i.e., (read,read) sequences can be freely reordered) at a cost of 
+greater overhead.  But in the normal case of few intersections, the total 
+overhead is 2*T plus a check per I/O process (this can grow to N*N checks in 
+the worse case).
+
+  Finally, overhead should not be an issue in I/O process queuing.  Overhead 
+grows as the queue lengthens, but the opportunity to overlap queuing tasks 
+with seek time and rotational latency also grows with the queue length.  Thus 
+most, if not all, of the queuing overhead can be effectively hidden.
+
+  Explicit ordering of I/O processes by the initiator can shift the the 
+implementation burden from target to initiator, and this may have many 
+practical benefits.  Error recovery might prove easier to implement, and 
+target resources might be more profitably used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+F. Power On Protocols - Recommended Initialization Procedure
+
+  This appendix describes the normal mechanisms for obtaining the information 
+required for system initialization from SCSI-2 devices as well as all SCSI 
+devices meeting conformance level 2 as defined in Appendix E of SCSI-1.  This 
+procedure documents the steps required to obtain this information and to 
+achieve the desired initial states in the attached devices.
+
+F.1. System Initialization
+
+  The following list of information is assumed necessary and sufficient for 
+normal system initialization:
+  1) A list of each installed and powered on SCSI device for each SCSI 
+     address.  SCSI devices that are not power-on are treated as not 
+     installed, assuming that the terminators are powered from a source other 
+     than the power-off SCSI devices.
+  2) A list of the installed logical units for each SCSI device.  Power-off or 
+     failing logical units may not be completely identifiable.
+  3) The device type for each available logical unit.
+  4) The manufacturer and model for each available logical unit.  (This 
+     information may not be available for SCSI-1 devices)
+  5) The critical device type information for each available logical unit.  
+     This information varies depending on the device type.
+  6) Extended functionality of SCSI devices such as target role capability in 
+     devices that are principally initiators, AEN capability, etc.
+
+  The following states are established for each attached logical unit that has 
+power available and is not failing:
+  1) The ready state for each available logical unit, including any required 
+     medium initialization, but not formatting.
+  2) All error conditions associated with the starting process are  cleared.
+  3) All UNIT ATTENTION conditions are cleared.
+  4) All data transfer parameters are established.
+  5) All pertinent system tuning parameters are established where known.  Note 
+     that these may be modified dynamically to improve the performance 
+     characteristics of the system.
+
+  The following procedures show the sequences necessary to implement a system 
+that initializes itself with a minimum of information available at power-on. 
+In reality many systems are not as generalized, and have considerable 
+information available about the configuration at power-on.  In those cases, 
+the sequence steps that would have been necessary to obtain information about 
+the configuration may be skipped or ignored.
+
+
+
+
+
+
+
+
+
+
+
+F.2. General Procedure for Initializing Devices
+
+  The system should execute the following steps to perform initialization.  
+Some of the steps are detailed in subsequent paragraphs.  Note that the text 
+represents a primitive pseudo-code that can be converted to the appropriate 
+software object code by those who implement device drivers.
+
+F.2.1. General Procedure Executed by Initiators
+
+  Initiator Activities:
+
+  Power On: It is assumed that each SCSI device, as it is powered on, performs 
+appropriate internal reset operations and internal test operations.  Once 
+powered on, initiators that have target capability should be prepared to 
+respond to a selection within a system-specific time.
+
+  Reset: At power-on time, it is likely that an SCSI device has caused errors 
+to the ongoing activities on the SCSI bus.  A bus reset should be generated to 
+notify attached devices that any activities that may have been occurring 
+should be restarted.
+
+  Find Devices:  Each SCSI address other than the initiator's SCSI address 
+should be tested to determine if an SCSI device responds.  If an SCSI device 
+responds, an INQUIRY command to logical unit 0 should be executed.   The 
+information obtained indicates the device type, manufacturer, and model of the 
+attached logical unit 0 if the response data format field is one or two.  If 
+the response data format field is zero, only the device type field is valid.  
+In addition, the version of the command set supported by the device is 
+indicated by the ANSI-approved version field.
+
+  Find logical units:  Each possible logical unit number on the attached 
+targets should be tested for existence using an INQUIRY command.  Those found 
+with a non-zero peripheral qualifier in the INQUIRY data should not be 
+included in the list of available logical units.  Each available logical unit 
+should be added to the host configuration information, identifying the 
+associated logical unit number, device type, manufacturer, and model.
+
+  Verify State:  The verify state test (see F.2.3)  should be made to clear 
+any outstanding errors, capture and clear UNIT ATTENTION conditions, and 
+determine the state of readiness of the available logical units.  The logical 
+units should be identified as ready, not ready, or failing by this test.
+
+  Device Initialization:  The device undergoes a device-dependent 
+initialization process.  This process is described for direct-access devices, 
+sequential-access devices, and processor devices.  Other device initialization 
+procedures are not described since they tend to be similar to one of these 
+initialization procedures.  The initialization process takes into account the 
+state of the device as identified during the verify state test.
+
+  Device On-line:  The successful completion of the device initialization 
+process allows the device-table entry to be fully enabled.  The device joins 
+the system with all key parameters identified and initialized.  The device 
+state is known and may be presented to the system operator.
+
+
+F.2.2. Procedure Executed by Temporary Initiators
+
+  A temporary initiator typically performs initiator operations only under the 
+direction of a host processor.  Such operations may include read and write 
+commands associated with management of a COPY command.  Other possible 
+operations include issuing a SEND command associated with asynchronous event 
+notification.  As such, temporary initiators need not completely perform the 
+last two steps defined above.  Since all commands are managed by a host 
+processor, temporary initiators normally need not recover information about 
+the media density, the sparing algorithms, or other detailed information that 
+may be required only by a host processor.  
+
+F.2.3. Verify State Test
+
+  The verify state test uses the following steps to identify any outstanding 
+errors, clear any UNIT ATTENTION conditions, and determine the readiness of 
+the devices.  The verify state test should be executed against each available 
+logical unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                         TEST UNIT READY (1)
+                               |
+                               |
+               ________________|______________                    
+              | GOOD                          | CHECK CONDITION
+              |                               |
+exit:   LOGICAL UNIT READY                    |
+                                       REQUEST SENSE (2)
+                               _______________|
+                              |
+                              |
+                        TEST UNIT READY (3)
+                              |         
+                              |
+                ______________|_______________
+               | GOOD                         | CHECK CONDITION
+               |                              |
+      exit:   LOGICAL UNIT READY              |
+                                         REQUEST SENSE (4)
+                                              |
+                               _______________|
+                              |
+                              |
+                        TEST UNIT READY (5)
+                              |
+                              |
+                 _____________|_______________
+                | GOOD                        |  CHECK CONDITION
+                |                             |
+       exit:    LOGICAL UNIT READY            |
+                               _______________|
+                              |
+                              |
+                        REQUEST SENSE (6)
+                              |
+                              |
+                 _____________|_______________
+                | NOT READY                   |  OTHER CHECK
+                |                             |
+  exit:   LOGICAL UNIT NOT READY             exit:  LOGICAL UNIT FAILED        
+
+                        Figure F-1: Verify State Test
+
+TEST UNIT READY (1):
+  This TEST UNIT READY command is used to determine if any outstanding CHECK 
+CONDITION or UNIT ATTENTION condition exists.  If not, the device is indicated 
+to be ready.
+
+REQUEST SENSE (2):
+  This REQUEST SENSE command is used to clear the outstanding CHECK CONDITION.  
+Most SCSI-2 logical units return UNIT ATTENTION sense key in this sense 
+information.
+
+
+
+TEST UNIT READY (3):
+  This TEST UNIT READY command is used to see if the UNIT ATTENTION condition 
+or other error was successfully cleared.  In some special cases, another error 
+may have been nested with the UNIT ATTENTION and this TEST UNIT READY command 
+may also return CHECK CONDITION status.
+
+REQUEST SENSE (4):
+  This REQUEST SENSE command is used to determine which error or exception was 
+associated with the CHECK CONDITION status returned by the TEST UNIT READY (3) 
+command.  In addition, this REQUEST SENSE command is used to clear the 
+outstanding CHECK CONDITION.  This may be a NOT READY sense key or another 
+unexpected error.
+
+TEST UNIT READY (5):
+  This TEST UNIT READY command is used to see if all outstanding CHECK 
+CONDITION statuses have finally been cleared.  If so, the logical unit is 
+identified as ready.
+
+REQUEST SENSE (6):
+  This REQUEST SENSE command is used to determine why there is a persistent 
+CHECK CONDITION status.  If the sense key is NOT READY, the logical unit is 
+identified as not ready.  If the sense key indicates some other failure, the 
+logical unit is identified as failing and the sense key is logged in the 
+appropriate area.
+
+  IMPLEMENTORS NOTE:  Commands that receive BUSY or RESERVATION CONFLICT 
+  status should be re-issued until some other status is received.
+
+F.3. Direct-Access Device Initialization Procedure
+
+  The device-dependent initialization process for a direct-access device may 
+be divided into three independent activities.  The first activity enables the 
+minimum logical function required for execution of READ commands on the boot 
+device.  The second activity is performed on all direct-access devices, 
+including the boot device.  It establishes all required initial parameters and 
+operating conditions.  The third activity is performed on direct-access 
+devices that have never been formatted or initialized.  This activity is 
+normally performed by an initialization utility program.
+
+F.3.1. Boot Device Initialization Procedure
+
+  It is assumed that the boot program and boot device have been prepared in 
+such a manner that proper block lengths, data file contents, and logical 
+addresses have been implemented by both the boot device and the boot program.  
+The boot program prepares the boot device for operation in the following 
+manner:
+
+  Verify Ready:  The state of the device as determined by the verify state 
+test (see F.2.3) is examined.  If the test indicates that the required drive 
+has failed, the boot device initialization is not performed and appropriate 
+error indications are presented.
+
+
+
+
+  Start Device:  A START STOP UNIT command should be issued with the start bit 
+set to one.  The Immed bit should be set to zero in order to guarantee that 
+the returned status reflects the completion of the device start operation.  A 
+disconnect operation is likely to occur since the start process may take a 
+considerable period of time.  If system-controlled power sequencing of the 
+peripheral devices is required, it is done by managing the timing relationship 
+of the START STOP UNIT commands to different logical units.
+
+  If GOOD status is returned, the next step should be started.  If CHECK 
+CONDITION status is returned, a REQUEST SENSE command is issued to determine 
+what error condition was detected.  If an ILLEGAL REQUEST sense key is found, 
+the START STOP UNIT command was not supported by the target or peripheral 
+device and the next step should be started.  If any other error is detected 
+(BUSY status is not an error), the boot device initialization should be 
+terminated and appropriate error indications should be presented.
+
+  Verify Ready / Spinning:  A verify state test should be performed.  If the 
+device is ready, the next step should be started.  If the device is not ready 
+or failing, the boot device initialization should be terminated and 
+appropriate error indications should be presented.
+
+  Boot:  The boot READ commands can now be started on the boot device.  It is 
+assumed that the information read includes the programs that are required to 
+continue the system initialization and bring-up process, including the 
+necessary programs and device drivers to perform the other system 
+initialization procedures.
+
+F.3.2. General Direct-Access Device Initialization Procedure
+
+  A general direct-access device initialization procedure is defined below.  
+The initialization procedure should be executed for each attached logical unit 
+that has been identified as a direct-access device.  Execution of this 
+procedure may be overlapped from one logical unit to another.  If the 
+initiator supports only a limited range of devices, parts of this procedure 
+may be skipped or simplified.
+
+  Verify Ready:  The state of the device as determined by the verify state 
+test (see F.2.3) should be examined.  If the device has failed, the general 
+direct-access device initialization should not be performed and appropriate 
+error indications should be presented.
+
+  Start Device:  A START STOP UNIT command should be issued with the start bit 
+set to one.  If GOOD status is returned, the next step should be started.  If 
+CHECK CONDITION status is returned, a REQUEST SENSE command should be issued 
+to determine what error condition was detected.  If an ILLEGAL REQUEST sense 
+key is found, the START STOP UNIT command was not supported by the device and 
+the next step should be started.  If any other error is detected (BUSY status 
+is not an error), the general direct-access device initialization procedure 
+should be terminated on this logical unit and appropriate error indications 
+should be presented.
+
+
+
+
+
+  Verify Ready / Spinning:  A verify state test (see F.2.3) should be 
+performed.  If the device is ready, the next step should be started.  If the 
+device is not ready or failing, the general direct-access device 
+initialization should be terminated for this logical unit and appropriate 
+error indications should be presented.
+
+  Determine Parameters:  If the ANSI-approved version field of the previously 
+executed INQUIRY command was 0 or 1, the MODE SENSE information, if any, may 
+be vendor specific and this function should be skipped unless required by the 
+vendor specific initialization protocols.  
+
+  If the ANSI-approved version field is 2, optional MODE SENSE information is 
+by this standard.  In this case, a MODE SENSE command should be executed with 
+the page control field set to request current values and the page code field 
+set to request all pages.  A record should be made of the current values.
+
+  If a CHECK CONDITION status is returned to the MODE SENSE command, then a 
+REQUEST SENSE command should be issued.  If the sense key is ILLEGAL REQUEST, 
+then the target does not support the MODE commands.  In this case, the 
+initiator should skip to the determine capacity step.
+
+  A second MODE SENSE command should be executed with the page control field 
+set to request changeable values and the page code field set to request all 
+pages.  A record should be made of the changeable values.
+
+  Any errors that occur during the two MODE SENSE commands should be recorded 
+and the initialization for the failing logical unit should be terminated.
+
+  Set Parameters: If the ANSI-approved version field is 0 or 1, the 
+initialization operation may be vendor specific and may be executed according 
+to the vendor's rules for the peripheral device.  The system is assumed to 
+have some other source of information concerning these requirements or it may 
+skip this step, accepting the target's default parameters.
+
+  If the ANSI-approved version field is 2, the optional MODE SELECT command is 
+defined by  this standard.  The actual requirements for the parameters are 
+characteristic of the particular system and should be known to the system.  
+The current values and the changeable values obtained from the previous MODE 
+SENSE commands should be examined to see if the system's requirements are 
+satisfied and if the parameters can be modified.  If all values are correct, 
+the remainder of this step may be skipped.  If modifications need to be made 
+to the changeable values, a MODE SELECT command should be issued to modify the 
+appropriate pages.  This may include modifying error recovery parameters or 
+performance tuning parameters.  Most geometry parameters should not be 
+modified during general direct-access device initialization.
+
+  Determine Capacity:  The capacity and block size of the logical unit are 
+determined by issuing a READ CAPACITY command.  The information is stored for 
+access by the system device drivers.
+
+  The direct-access device is now fully initialized and all required 
+information has been made available to the system.  When all available non-
+failing devices have been initialized, the system initialization is considered 
+complete.
+
+F.3.3. Direct-Access Device Medium Initialization Procedure
+
+  The following initialization procedure is not part of normal power-up system 
+initialization.  It is assumed to be performed after completion of the general 
+system initialization process but uses only the INQUIRY data information 
+obtained during that process.  It is performed to initialize the device medium 
+and is normally performed only by an initialization utility program.
+
+  Determine Format Requirement:  The requirement to perform a format operation 
+is normally generated by an operator who has just installed a new device known 
+to require formatting.  It may also be generated by recognition that the 
+device has information that is no longer valid and should be totally erased.  
+It may also be generated by changes in system requirements, including 
+different block sizes.  Finally, reformatting may also be required to 
+restructure the defect management.
+
+  The general direct-access device initialization procedure may have 
+identified the device as failing because of the inability of the device to 
+recover the READ CAPACITY parameters.  The device is assumed to have been 
+started during the general direct-access device initialization procedure.  The 
+verify state test should be executed again.  The device should be ready 
+according to that test.  If the logical unit is not ready or failing, the 
+direct-access device medium initialization procedure should be terminated and 
+appropriate error indications should be presented.
+
+  If it was determined in the general direct-access device initialization 
+procedure that the target does not support the MODE commands, then the 
+initiator should either proceed to the perform format operation step or it 
+should perform the determine format parameters and set format parameters steps 
+in the vendor-specified manner. 
+
+  Determine Format Parameters:  If the ANSI-approved version field is 0 or 1, 
+the direct-access device medium initialization procedure may be vendor 
+specific and should be executed according to the vendor's rules for the 
+peripheral device.  The system is assumed to have some other source of 
+information concerning these requirements or to be willing to accept the 
+target's default format.
+
+  If the ANSI-approved version field is 2, a MODE SENSE command should be 
+issued with the page control field set to current values and the page code 
+field set to return all pages.  A MODE SENSE command should be issued again 
+with the page control field set to changeable values and the page code field 
+set to return all pages.  The information returned by the two MODE SENSE 
+commands indicates what values should be provided by the system to complete 
+the format parameters.  If either of these MODE SENSE operations does not 
+complete normally, the media initialization operation should be terminated and 
+appropriate error indications should be presented.
+
+  Set Format Parameters:  If the ANSI-approved version field is 0 or 1, the 
+format requirements may be vendor specific and the appropriate commands should 
+be known to the initialization utility or it should be willing to accept the 
+target's default format.  Those format preparation commands, if any, should be 
+executed at this time.
+
+
+  If the ANSI-approved version field is 2 and the target supports the MODE 
+commands, the logical unit should be prepared for medium formatting by 
+executing a MODE SELECT command.  The necessary formatting parameters are 
+selected to meet the system requirements and are placed into the changeable 
+value locations.  The MODE SELECT command is then issued.  If the command 
+fails, the media initialization procedure should be  terminated and 
+appropriate error indications should be presented.  If the command succeeds, 
+the next step should be performed.
+
+  Perform Format Operation:  After the appropriate format parameters are 
+established, the FORMAT command should be executed.  The FORMAT parameters 
+depend on the system requirements and the device capabilities. These 
+parameters should be made easily variable in the operating system architecture 
+so that modifications can be performed when system or device requirements 
+change.  An error may be returned if improper format parameters are selected.  
+If the FORMAT command fails, the media initialization procedure should be 
+terminated and appropriate error indications should be presented.  If the 
+command succeeds, the device is fully operational and the next step should be 
+performed.
+
+  Set Parameters: If the ANSI-approved version field is 0 or 1 or if the 
+target does not support the MODE commands, the initialization operation may be 
+vendor specific and may be executed according to the vendor's rules for the 
+peripheral device.  The system is assumed to have some other source of 
+information concerning these requirements or it may skip this step, accepting 
+the target's default parameters.
+
+  If the ANSI-approved version field is 2, the optional MODE SELECT command is 
+defined by  this standard.  The actual requirements for the parameters are 
+characteristic of the particular system and should be known to the system.  
+The current values and the parameters established by the MODE SELECT and 
+FORMAT commands should be examined to determine if the system requirements are 
+satisfied and if the parameters should be modified.  If all values are 
+correct, the remainder of this step may be skipped.  If modifications need to 
+be made to the changeable values, a MODE SELECT command should be issued to 
+modify the appropriate pages.  This may include modifying error recovery 
+parameters or performance tuning parameters.  Most geometry parameters were 
+established by the storing of parameters during the MODE SELECT and FORMAT 
+commands and should not be modified.
+
+  Determine Capacity:  The capacity and block size of the logical unit should 
+be determined by issuing a READ CAPACITY command.  The information should be 
+stored for access by the system device drivers.
+
+  Upon completion of this procedure the device should be initialized and 
+prepared to partake in system-oriented activities.  Other system 
+initialization operations may also be required, including the establishment of 
+system volume labels, tables of contents, and other structures.
+
+
+
+
+
+
+
+F.4. Sequential Access Device Initialization Procedure
+
+  The initialization process for a sequential-access device may be divided 
+into two independent activities.  The first activity establishes all required 
+initial parameters and operating conditions for the identified devices.  The 
+second activity performs any required medium initialization for the available 
+logical units.
+
+F.4.1. General Sequential-Access Device Initialization
+
+  A general sequential-access device initialization procedure is defined 
+below.  The initialization procedure should be executed for each attached 
+logical unit that has been identified as a sequential-access device.  
+Execution of this procedure may be overlapped from one logical unit to 
+another.  If initiator supports only a limited range of devices, parts of this 
+procedure may be skipped or simplified.
+
+  Verify Ready:  The state of the device as determined by the verify state 
+test (see F.2.3) should be examined.  If the device has failed, the general 
+direct-access device initialization should not be performed and appropriate 
+error indications should be presented.
+
+  Start Device:  A LOAD UNLOAD command should be issued with the load bit set 
+one.  If GOOD status is returned, the next step should be started.  If CHECK 
+CONDITION status is returned, a REQUEST SENSE command should be issued to 
+determine what error condition was detected.  If an ILLEGAL REQUEST sense key 
+is found, the LOAD UNLOAD command was not supported by the device and the next 
+step should be started.  If any other error is detected, the device 
+initialization procedure should be terminated on this logical unit and 
+appropriate error indications should be presented.
+
+  Verify Ready / Loaded:  If necessary, a verify state test (see F.2.3) should 
+be performed.  If the device and medium are ready, the next step should be 
+started.  If a NOT READY sense key is reported, manually loading the medium or 
+activating a switch mechanism may be required to establish the ready state for 
+the device.  If any other error is detected, the device initialization 
+procedure should be terminated and the appropriate error indications should be 
+presented.
+
+  Determine Parameters:  A READ BLOCK LIMITS command should be issued to 
+determine the range of block sizes supported by the device.  Following this 
+command, a MODE SENSE command should be issued to determine additional 
+operating parameters of the device. If the ANSI-approved version field of the 
+previously executed INQUIRY command is 0 or 1, any MODE SENSE data following 
+the header and block descriptor is vendor specific.  If the ANSI-approved 
+version field is 2, additional pages of MODE SENSE data may be available as 
+defined in this standard.  In this case, a MODE SENSE command should be issued 
+with the page code field set to return all pages.  If any unrecovered errors 
+are detected during execution of the READ BLOCK LIMITS or MODE SENSE commands, 
+the device initialization process should be terminated and the appropriate 
+error indications should be presented.
+
+
+
+
+  Set Parameters:  Specific system requirements may require that certain 
+operating parameters be changed from the values reported in the previously 
+executed MODE SENSE command.  If changes are required, a MODE SELECT command 
+should be issued to modify the appropriate parameters.  This may include error 
+recovery parameters, performance tuning parameters, or other basic operating 
+parameters.  If any unrecovered error occurs during this step, the device 
+initialization process should be terminated and the appropriate error 
+indications should be presented.  If no change is required or no unrecovered 
+error occurs, the general sequential-access device initialization procedure is 
+complete.
+
+F.5. Asynchronous Event Notification Initialization Procedure
+
+  A target using asynchronous event notification, must first execute an 
+initialization procedure.  This initialization procedure allows the target 
+device to determine which SCSI devices are capable and willing to receive an 
+asynchronous event notification.  Parameters that affect asynchronous event 
+notification within the target device is specified in the control mode page.
+
+  The initialization procedure is performed at power-on (after waiting the 
+recommended 10 seconds for all devices to be able to respond and waiting the 
+time specified in the control mode page).  It may also be performed following 
+a reset condition, or when a target becomes aware of another SCSI device, or 
+following the issuance of the control mode page or prior to a device issuing 
+an asynchronous event notification.
+
+  The target device that uses asynchronous event notification must determine 
+which devices on the bus are capable of receiving an asynchronous event 
+notification.  This is done by the target device becoming a temporary 
+initiator and selecting each SCSI device.  If the SCSI device responds to 
+selection, the verify state test (see F.2.3) is performed.  If the verify 
+state test fails, then the SCSI device does not support asynchronous event 
+notification.  If the verify state test succeeds then an INQUIRY command is 
+issued to logical unit zero.  The peripheral qualifier field in the INQUIRY 
+data is examined to determine if the SCSI device is a processor device type 
+and then the AENC bit is examined.  An AENC bit of zero indicates that 
+asynchronous event notification is not supported by the SCSI device.  An AENC 
+bit of one, indicates that asynchronous event notification is supported by the 
+SCSI device.
+
+  Disabling of asynchronous event notification can be done by using a vendor-
+specific hardware mechanism (e.g., switch or jumper), or by issuing control 
+mode pages to devices that support saved parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+G. Fast SCSI Skew Time
+
+  This Appendix is included to explain the skew budget for the fast SCSI 
+option which is defined in Section 4.
+
+  Synchronous transfer rates using a transfer period between 100 ns and 200 ns 
+are known as the "fast SCSI" option.  Fast data transfer times have been 
+tested using the following skew budget (Figure G-1) with the differential 
+alternative using transceivers with 25 meters of 0.08042 square mm (28 AWG) 
+twisted pair cable as specified in 4.2.3.  The transceivers were subjected to 
+a maximum temperature difference of 25 degrees celsius and a maximum of 200 mV 
+of VCC difference.
+
+          +----------------------------------------------+
+          |         FAST  SCSI JITTER BUDGET             |
+          |---+-------------------------------+----------|
+          | # |           parameter           |  +-budget|
+          |---+-------------------------------+----------|
+          | a |  clock offset                 |     5    |
+          | b |  transmitting logic skew      |     3    |
+          | c |  foil delay                   |     1    | TRANSMITTER
+          | d |  transmitter prop. delay skew |     6    |
+          | e |  foil delay                   |     1    |
+          | f |  drop cable prop. delay       |     1    |
+          |----------------------------------------------|
+          |                CONNECTOR                     |
+          |----------------------------------------------|
+          | g |  external cable - skew        |     5    |
+          |   |  between pairs                |          |
+          | h |  distortion due to cable      |     1    |
+          |   |  imbalance                    |          | CABLE
+          | i |  distortion due to            |     2    |
+          |   |  intersymbol interference     |          |
+          | j |  bias distortion              |     2    |
+          |----------------------------------------------|
+          |                CONNECTOR                     |
+          |----------------------------------------------|
+          | k |  drop cable prop. delay       |     1    |
+          | l |  foil delay                   |     1    |
+          | m |  receiver skew                |     9    | RECEIVER
+          | n |  foil delay                   |     1    |
+          | o |  logic setup/hold             |     5    |
+          |---+-------------------------------+----------|
+          |     TOTAL                              44nS  |
+          +----------------------------------------------+
+
+                       Figure G-1: Fast SCSI Jitter Budget
+
+
+  Mapping the above jitter or skew budget to the SCSI format in 4.7 and 4.8 is 
+done in Figure G-2.
+
+
+
+            +-------------------------------------------+
+            | Table # |   parameter in 4.7-8   |  value |
+            |---------+------------------------+--------|
+            | g       |  Fast Cable Skew Delay |  5     |
+            | h - n   |  Fast Deskew Delay     |  ~20   |
+            | o       |  Fast Hold Time        |  ~10   |
+            | *       |  Fast Assertion Period |  30    |
+            | *       |  Fast Negation Period  |  30    |
+            +-------------------------------------------+
+
+                      Figure G-2: Mapping of Jitter to SCSI
+
+
+  NOTES:  
+  (1)  Values preceded with "~" are rounded up from the numbers shown in the 
+     previous table.
+  (2)  The assertion and negation pulse widths are derived from isolated pulse 
+     measurements and represent a minimum pulse width with a satisfactory 
+     margin.
+
+  The maximum driver skew allowed was 6 ns (tPLH min. - tPHL max.) and the 
+maximum receiver skew tested was 9 ns (tPLH min. - tPHL max.).  Values greater 
+than these could be used if other numbers could be reduced -- the sum is what 
+is important.
+
+  Fast data transfer timing parameters were not tested for the single-ended 
+transceiver option prior to publication of this standard.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+H. Other SCSI Standardization Activities
+
+This appendix provides information on other formal standardization activities 
+related to SCSI.
+
+H.1. SCSI-3 Standards Project
+
+  Accredited Standards Committee X3 has approved a project proposal to 
+maintain and enhance the SCSI-2 standard.  This project is assigned to the 
+X3T9.2 Task Group which developed this standard and the SCSI-1 standard.  
+Please contact the Chairman of X3T9.2 for further information concerning this 
+project.
+
+H.2. Digital Data Exchange for Color Electronic Prepress Systems
+
+  Accredited Standards Committee IT8 is developing a standard for the exchange 
+of digital data between color electronic prepress systems and direct digital 
+color proofers.  These are devices that prepare color pictures for high 
+quality color printing.  Please contact the Secretary of IT8 for further 
+information concerning this project.
+
+H.3. Fiber Channel
+
+  Accredited Standards Committee X3 has approved a project proposal to develop 
+a fiber optic channel physical layer for the Intelligent Peripheral Interface 
+(IPI), SCSI, and the High Performance Parallel Interface (HPPI).  This project 
+is assigned to the X3T9.3 Task Group.  Please contact the Chairman of X3T9.3 
+for further information concerning this project.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I. Numeric Order Codes
+
+This Appendix contains SCSI-2 additional sense codes and operation codes in 
+numeric order as a reference.  In the event of a conflict with the 
+alphabetical definitions of these codes in Table 7-41 and in the appropriate 
+tables of commands in sections 7 through 17, those definitions should be 
+regarded as correct.
+
+                     Table I-1: ASC and ASCQ Assignments
+==============================================================================
+                 ASC AND ASCQ ASSIGNMENTS
+
+      D          = DIRECT ACCESS DEVICE
+       T         = SEQUENTIAL ACCESS DEVICE
+        L        = PRINTER DEVICE
+         P       = PROCESSOR DEVICE
+          W      = WRITE ONCE READ MULTIPLE DEVICE
+           R     = READ ONLY (CD-ROM) DEVICE
+            S    = SCANNER DEVICE
+             O   = OPTICAL MEMORY DEVICE
+              M  = MEDIA CHANGER DEVICE
+               C = COMMUNICATION DEVICE
+BYTE
+12 13 DTLPWRSOMC DESCRIPTION
+-- --            ------------------------------------------------------------
+00 00 DTLPWRSOMC NO ADDITIONAL SENSE INFORMATION
+00 01  T         FILEMARK DETECTED
+00 02  T    S    END-OF-PARTITION/MEDIUM DETECTED
+00 03  T         SETMARK DETECTED
+00 04  T    S    BEGINNING-OF-PARTITION/MEDIUM DETECTED
+00 05  T    S    END-OF-DATA DETECTED
+00 06 DTLPWRSOMC I/O PROCESS TERMINATED
+00 11      R     AUDIO PLAY OPERATION IN PROGRESS
+00 12      R     AUDIO PLAY OPERATION PAUSED
+00 13      R     AUDIO PLAY OPERATION SUCCESSFULLY COMPLETED
+00 14      R     AUDIO PLAY OPERATION STOPPED DUE TO ERROR
+00 15      R     NO CURRENT AUDIO STATUS TO RETURN
+01 00 D   W  O   NO INDEX/SECTOR SIGNAL
+02 00 D   WR OM  NO SEEK COMPLETE
+03 00 DTL W SO   PERIPHERAL DEVICE WRITE FAULT
+03 01  T         NO WRITE CURRENT
+03 02  T         EXCESSIVE WRITE ERRORS
+04 00 DTLPWRSOMC LOGICAL UNIT NOT READY, CAUSE NOT REPORTABLE
+04 01 DTLPWRSOMC LOGICAL UNIT IS IN PROCESS OF BECOMING READY
+04 02 DTLPWRSOMC LOGICAL UNIT NOT READY, INITIALIZING COMMAND REQUIRED
+04 03 DTLPWRSOMC LOGICAL UNIT NOT READY, MANUAL INTERVENTION REQUIRED
+04 04 DTL    O   LOGICAL UNIT NOT READY, FORMAT IN PROGRESS
+05 00 DTL WRSOMC LOGICAL UNIT DOES NOT RESPOND TO SELECTION
+06 00 D   WR OM  NO REFERENCE POSITION FOUND
+07 00 DTL WRSOM  MULTIPLE PERIPHERAL DEVICES SELECTED
+08 00 DTL WRSOMC LOGICAL UNIT COMMUNICATION FAILURE
+08 01 DTL WRSOMC LOGICAL UNIT COMMUNICATION TIME-OUT
+==============================================================================
+
+
+               Table I-1: ASC and ASCQ Assignments (Continued)
+
+==============================================================================
+BYTE
+12 13 DTLPWRSOMC DESCRIPTION
+-- --            ------------------------------------------------------------
+08 02 DTL WRSOMC LOGICAL UNIT COMMUNICATION PARITY ERROR
+09 00 DT  WR O   TRACK FOLLOWING ERROR
+09 01     WR O   TRACKING SERVO FAILURE
+09 02     WR O   FOCUS SERVO FAILURE
+09 03     WR O   SPINDLE SERVO FAILURE
+0A 00 DTLPWRSOMC ERROR LOG OVERFLOW
+0B 00
+0C 00  T    S    WRITE ERROR
+0C 01 D   W  O   WRITE ERROR RECOVERED WITH AUTO REALLOCATION
+0C 02 D   W  O   WRITE ERROR - AUTO REALLOCATION FAILED
+0D 00
+0E 00
+0F 00
+10 00 D   W  O   ID CRC OR ECC ERROR
+11 00 DT  WRSO   UNRECOVERED READ ERROR
+11 01 DT  W SO   READ RETRIES EXHAUSTED
+11 02 DT  W SO   ERROR TOO LONG TO CORRECT
+11 03 DT  W SO   MULTIPLE READ ERRORS
+11 04 D   W  O   UNRECOVERED READ ERROR - AUTO REALLOCATE FAILED
+11 05     WR O   L-EC UNCORRECTABLE ERROR
+11 06     WR O   CIRC UNRECOVERED ERROR
+11 07     W  O   DATA RESYCHRONIZATION ERROR
+11 08  T         INCOMPLETE BLOCK READ
+11 09  T         NO GAP FOUND
+11 0A DT     O   MISCORRECTED ERROR
+11 0B D   W  O   UNRECOVERED READ ERROR - RECOMMEND REASSIGNMENT
+11 0C D   W  O   UNRECOVERED READ ERROR - RECOMMEND REWRITE THE DATA
+12 00 D   W  O   ADDRESS MARK NOT FOUND FOR ID FIELD
+13 00 D   W  O   ADDRESS MARK NOT FOUND FOR DATA FIELD
+14 00 DTL WRSO   RECORDED ENTITY NOT FOUND
+14 01 DT  WR O   RECORD NOT FOUND
+14 02  T         FILEMARK OR SETMARK NOT FOUND
+14 03  T         END-OF-DATA NOT FOUND
+14 04  T         BLOCK SEQUENCE ERROR
+15 00 DTL WRSOM  RANDOM POSITIONING ERROR
+15 01 DTL WRSOM  MECHANICAL POSITIONING ERROR
+15 02 DT  WR O   POSITIONING ERROR DETECTED BY READ OF MEDIUM
+16 00 D   W  O   DATA SYNCHRONIZATION MARK ERROR
+17 00 DT  WRSO   RECOVERED DATA WITH NO ERROR CORRECTION APPLIED
+17 01 DT  WRSO   RECOVERED DATA WITH RETRIES
+17 02 DT  WR O   RECOVERED DATA WITH POSITIVE HEAD OFFSET
+17 03 DT  WR O   RECOVERED DATA WITH NEGATIVE HEAD OFFSET
+17 04     WR O   RECOVERED DATA WITH RETRIES AND/OR CIRC APPLIED
+17 05 D   WR O   RECOVERED DATA USING PREVIOUS SECTOR ID
+17 06 D   W  O   RECOVERED DATA WITHOUT ECC - DATA AUTO-REALLOCATED
+17 07 D   W  O   RECOVERED DATA WITHOUT ECC - RECOMMEND REASSIGNMENT
+==============================================================================
+
+
+               Table I-1: ASC and ASCQ Assignments (Continued)
+
+==============================================================================
+BYTE
+12 13 DTLPWRSOMC DESCRIPTION
+-- --            ------------------------------------------------------------
+18 00 DT  WR O   RECOVERED DATA WITH ERROR CORRECTION APPLIED
+18 01 D   WR O   RECOVERED DATA WITH ERROR CORRECTION AND RETRIES APPLIED
+18 02 D   WR O   RECOVERED DATA - DATA AUTO-REALLOCATED
+18 03      R     RECOVERED DATA WITH CIRC
+18 04      R     RECOVERED DATA WITH LEC
+18 05 D   WR O   RECOVERED DATA - RECOMMEND REASSIGNMENT
+19 00 D      O   DEFECT LIST ERROR
+19 01 D      O   DEFECT LIST NOT AVAILABLE
+19 02 D      O   DEFECT LIST ERROR IN PRIMARY LIST
+19 03 D      O   DEFECT LIST ERROR IN GROWN LIST
+1A 00 DTLPWRSOMC PARAMETER LIST LENGTH ERROR
+1B 00 DTLPWRSOMC SYNCHRONOUS DATA TRANSFER ERROR
+1C 00 D      O   DEFECT LIST NOT FOUND
+1C 01 D      O   PRIMARY DEFECT LIST NOT FOUND
+1C 02 D      O   GROWN DEFECT LIST NOT FOUND
+1D 00 D   W  O   MISCOMPARE DURING VERIFY OPERATION
+1E 00 D   W  O   RECOVERED ID WITH ECC CORRECTION
+1F 00
+20 00 DTLPWRSOMC INVALID COMMAND OPERATION CODE
+21 00 DT  WR OM  LOGICAL BLOCK ADDRESS OUT OF RANGE
+21 01         M  INVALID ELEMENT ADDRESS
+22 00 D          ILLEGAL FUNCTION (SHOULD USE 20 00, 24 00, OR 26 00)
+23 00
+24 00 DTLPWRSOMC INVALID FIELD IN CDB
+25 00 DTLPWRSOMC LOGICAL UNIT NOT SUPPORTED
+26 00 DTLPWRSOMC INVALID FIELD IN PARAMETER LIST
+26 01 DTLPWRSOMC PARAMETER NOT SUPPORTED
+26 02 DTLPWRSOMC PARAMETER VALUE INVALID
+26 03 DTLPWRSOMC THRESHOLD PARAMETERS NOT SUPPORTED
+27 00 DT  W  O   WRITE PROTECTED
+28 00 DTLPWRSOMC NOT READY TO READY TRANSITION (MEDIUM MAY HAVE CHANGED)
+28 01         M  IMPORT OR EXPORT ELEMENT ACCESSED
+29 00 DTLPWRSOMC POWER ON, RESET, OR BUS DEVICE RESET OCCURRED
+2A 00 DTL WRSOMC PARAMETERS CHANGED
+2A 01 DTL WRSOMC MODE PARAMETERS CHANGED
+2A 02 DTL WRSOMC LOG PARAMETERS CHANGED
+2B 00 DTLPWRSO C COPY CANNOT EXECUTE SINCE HOST CANNOT DISCONNECT
+2C 00 DTLPWRSOMC COMMAND SEQUENCE ERROR
+2C 01       S    TOO MANY WINDOWS SPECIFIED
+2C 02       S    INVALID COMBINATION OF WINDOWS SPECIFIED
+2D 00  T         OVERWRITE ERROR ON UPDATE IN PLACE
+2E 00
+2F 00 DTLPWRSOMC COMMANDS CLEARED BY ANOTHER INITIATOR
+30 00 DT  WR OM  INCOMPATIBLE MEDIUM INSTALLED
+30 01 DT  WR O   CANNOT READ MEDIUM - UNKNOWN FORMAT
+30 02 DT  WR O   CANNOT READ MEDIUM - INCOMPATIBLE FORMAT
+30 03 DT         CLEANING CARTRIDGE INSTALLED
+==============================================================================
+
+               Table I-1: ASC and ASCQ Assignments (Continued)
+
+==============================================================================
+BYTE
+12 13 DTLPWRSOMC DESCRIPTION
+-- --            ------------------------------------------------------------
+31 00 DT  W  O   MEDIUM FORMAT CORRUPTED
+31 01 D L    O   FORMAT COMMAND FAILED
+32 00 D   W  O   NO DEFECT SPARE LOCATION AVAILABLE
+32 01 D   W  O   DEFECT LIST UPDATE FAILURE
+33 00  T         TAPE LENGTH ERROR
+34 00
+35 00
+36 00   L        RIBBON, INK, OR TONER FAILURE
+37 00 DTL WRSOMC ROUNDED PARAMETER
+38 00
+39 00 DTL WRSOMC SAVING PARAMETERS NOT SUPPORTED
+3A 00 DTL WRSOM  MEDIUM NOT PRESENT
+3B 00  TL        SEQUENTIAL POSITIONING ERROR
+3B 01  T         TAPE POSITION ERROR AT BEGINNING-OF-MEDIUM
+3B 02  T         TAPE POSITION ERROR AT END-OF-MEDIUM
+3B 03   L        TAPE OR ELECTRONIC VERTICAL FORMS UNIT NOT READY
+3B 04   L        SLEW FAILURE
+3B 05   L        PAPER JAM
+3B 06   L        FAILED TO SENSE TOP-OF-FORM
+3B 07   L        FAILED TO SENSE BOTTOM-OF-FORM
+3B 08  T         REPOSITION ERROR
+3B 09       S    READ PAST END OF MEDIUM
+3B 0A       S    READ PAST BEGINNING OF MEDIUM
+3B 0B       S    POSITION PAST END OF MEDIUM
+3B 0C       S    POSITION PAST BEGINNING OF MEDIUM
+3B 0D         M  MEDIUM DESTINATION ELEMENT FULL
+3B 0E         M  MEDIUM SOURCE ELEMENT EMPTY
+3C 00
+3D 00 DTLPWRSOMC INVALID BITS IN IDENTIFY MESSAGE
+3E 00 DTLPWRSOMC LOGICAL UNIT HAS NOT SELF-CONFIGURED YET
+3F 00 DTLPWRSOMC TARGET OPERATING CONDITIONS HAVE CHANGED
+3F 01 DTLPWRSOMC MICROCODE HAS BEEN CHANGED
+3F 02 DTLPWRSOMC CHANGED OPERATING DEFINITION
+3F 03 DTLPWRSOMC INQUIRY DATA HAS CHANGED
+40 00 D          RAM FAILURE (SHOULD USE 40 NN)
+40 NN DTLPWRSOMC DIAGNOSTIC FAILURE ON COMPONENT NN (80H-FFH)
+41 00 D          DATA PATH FAILURE (SHOULD USE 40 NN)
+42 00 D          POWER-ON OR SELF-TEST FAILURE (SHOULD USE 40 NN)
+43 00 DTLPWRSOMC MESSAGE ERROR
+44 00 DTLPWRSOMC INTERNAL TARGET FAILURE
+45 00 DTLPWRSOMC SELECT OR RESELECT FAILURE
+46 00 DTLPWRSOMC UNSUCCESSFUL SOFT RESET
+47 00 DTLPWRSOMC SCSI PARITY ERROR
+48 00 DTLPWRSOMC INITIATOR DETECTED ERROR MESSAGE RECEIVED
+49 00 DTLPWRSOMC INVALID MESSAGE ERROR
+4A 00 DTLPWRSOMC COMMAND PHASE ERROR
+4B 00 DTLPWRSOMC DATA PHASE ERROR
+==============================================================================
+
+               Table I-1: ASC and ASCQ Assignments (Continued)
+
+==============================================================================
+BYTE
+12 13 DTLPWRSOMC DESCRIPTION
+-- --            ------------------------------------------------------------
+4C 00 DTLPWRSOMC LOGICAL UNIT FAILED SELF-CONFIGURATION
+4D 00
+4E 00 DTLPWRSOMC OVERLAPPED COMMANDS ATTEMPTED
+4F 00
+50 00  T         WRITE APPEND ERROR
+50 01  T         WRITE APPEND POSITION ERROR
+50 02  T         POSITION ERROR RELATED TO TIMING
+51 00  T     O   ERASE FAILURE
+52 00  T         CARTRIDGE FAULT
+53 00 DTL WRSOM  MEDIA LOAD OR EJECT FAILED
+53 01  T         UNLOAD TAPE FAILURE
+53 02 DT  WR OM  MEDIUM REMOVAL PREVENTED
+54 00    P       SCSI TO HOST SYSTEM INTERFACE FAILURE
+55 00    P       SYSTEM RESOURCE FAILURE
+56 00
+57 00      R     UNABLE TO RECOVER TABLE-OF-CONTENTS
+58 00        O   GENERATION DOES NOT EXIST
+59 00        O   UPDATED BLOCK READ
+5A 00 DTLPWRSOM  OPERATOR REQUEST OR STATE CHANGE INPUT (UNSPECIFIED)
+5A 01 DT  WR OM  OPERATOR MEDIUM REMOVAL REQUEST
+5A 02 DT  W  O   OPERATOR SELECTED WRITE PROTECT
+5A 03 DT  W  O   OPERATOR SELECTED WRITE PERMIT
+5B 00 DTLPWRSOM  LOG EXCEPTION
+5B 01 DTLPWRSOM  THRESHOLD CONDITION MET
+5B 02 DTLPWRSOM  LOG COUNTER AT MAXIMUM
+5B 03 DTLPWRSOM  LOG LIST CODES EXHAUSTED
+5C 00 D      O   RPL STATUS CHANGE
+5C 01 D      O   SPINDLES SYNCHRONIZED
+5C 02 D      O   SPINDLES NOT SYNCHRONIZED
+5D 00
+5E 00
+5F 00
+60 00       S    LAMP FAILURE
+61 00       S    VIDEO ACQUISITION ERROR
+61 01       S    UNABLE TO ACQUIRE VIDEO
+61 02       S    OUT OF FOCUS
+62 00       S    SCAN HEAD POSITIONING ERROR
+63 00      R     END OF USER AREA ENCOUNTERED ON THIS TRACK
+64 00      R     ILLEGAL MODE FOR THIS TRACK
+65 00
+66 00
+67 00
+68 00
+69 00
+6A 00
+6B 00
+6C 00
+==============================================================================
+
+               Table I-1: ASC and ASCQ Assignments (Continued)
+
+==============================================================================
+BYTE
+12 13 DTLPWRSOMC DESCRIPTION
+-- --            ------------------------------------------------------------
+6D 00
+6E 00
+6F 00
+70 00
+71 00
+72 00
+73 00
+74 00
+75 00
+76 00
+77 00
+78 00
+79 00
+7A 00
+7B 00
+7C 00
+7D 00
+7E 00
+7F 00
+                 ------------------------------------------
+80 XX     \
+THROUGH    >     VENDOR SPECIFIC.
+FF XX     /
+
+XX 80     \
+THROUGH    >     VENDOR SPECIFIC QUALIFICATION OF STANDARD ASC.
+XX FF     /
+                 ALL CODES NOT SHOWN OR BLANK ARE RESERVED.
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      Table I-2: SCSI-2 Operation Codes
+
+==============================================================================
+Device Columns M = Mandatory
+Key:           O = Optional
+               V = Vendor unique
+                 = Reserved (Blank)
+
+   D          = Direct-Access Device
+    T         = Sequential-Access Device
+     L        = Printer Device
+      P       = Processor Device
+       W      = Write-Once Device
+        R     = CD-ROM Device
+         S    = Scanner Device
+          O   = Optical Memory Device
+           M  = Medium Changer Device
+            C = Communication Device
+
+OP DTLPWRSOMC Description
+-- ---------- ----------------------------------------------------------------
+00 MMMMMMMMMM TEST UNIT READY
+01  M         REWIND
+01 O V OO OO  REZERO UNIT
+02 VVVVVV  V
+03 MMMMMMMMMM REQUEST SENSE
+04   O        FORMAT
+04 M      O   FORMAT UNIT
+05 VMVVVV  V  READ BLOCK LIMITS
+06 VVVVVV  V
+07         O  INITIALIZE ELEMENT STATUS
+07 OVV O  OV  REASSIGN BLOCKS
+08          M GET MESSAGE(06)
+08 OMV OO OV  READ(06)
+08    O       RECEIVE
+09 VVVVVV  V
+0A   M        PRINT
+0A          M SEND MESSAGE(06)
+0A    M       SEND(06)
+0A OM  O  OV  WRITE(06)
+0B O   OO OV  SEEK(06)
+0B   O        SLEW AND PRINT
+0C VVVVVV  V
+0D VVVVVV  V
+0E VVVVVV  V
+0F VOVVVV  V  READ REVERSE
+10   O O      SYNCHRONIZE BUFFER
+10 VM VVV     WRITE FILEMARKS
+11 VMVVVV     SPACE
+12 MMMMMMMMMM INQUIRY
+13 VOVVVV     VERIFY(06)
+14 VOOVVV     RECOVER BUFFERED DATA
+15 OMO OOOOOO MODE SELECT(06)
+==============================================================================
+
+                Table I-2: SCSI-2 Operation Codes (Continued)
+
+==============================================================================
+OP DTLPWRSOMC Description
+-- ---------- ----------------------------------------------------------------
+16 M   MM MO  RESERVE
+16  MM   M    RESERVE UNIT
+17 M   MM MO  RELEASE
+17  MM   M    RELEASE UNIT
+18 OOOOOOOO   COPY
+19 VMVVVV     ERASE
+1A OMO OOOOOO MODE SENSE(06)
+1B  O         LOAD UNLOAD
+1B       O    SCAN
+1B   O        STOP PRINT
+1B O   OO O   STOP START UNIT
+1C OOOOOOOOOO RECEIVE DIAGNOSTIC RESULTS
+1D MMMMMMMMMM SEND DIAGNOSTIC
+1E OO  OO OO  PREVENT ALLOW MEDIUM REMOVAL
+1F
+20 V   VV V
+21 V   VV V
+22 V   VV V
+23 V   VV V
+24 V   VVM    SET WINDOW
+25       O    GET WINDOW
+25 M   M  M   READ CAPACITY
+25      M     READ CD-ROM CAPACITY
+26 V   VV
+27 V   VV
+28          O GET MESSAGE(10)
+28 M   MMMM   READ(10)
+29 V   VV O   READ GENERATION
+2A          O SEND MESSAGE(10)
+2A       O    SEND(10)
+2A M   M  M   WRITE(10)
+2B  O         LOCATE
+2B         O  POSITION TO ELEMENT
+2B O   OO O   SEEK(10)
+2C V      O   ERASE(10)
+2D V   O  O   READ UPDATED BLOCK
+2E O   O  O   WRITE AND VERIFY(10)
+2F O   OO O   VERIFY(10)
+30 O   OO O   SEARCH DATA HIGH(10)
+31       O    OBJECT POSITION
+31 O   OO O   SEARCH DATA EQUAL(10)
+32 O   OO O   SEARCH DATA LOW(10)
+33 O   OO O   SET LIMITS(10)
+34       O    GET DATA BUFFER STATUS
+34 O   OO O   PRE-FETCH
+34  O         READ POSITION
+35 O   OO O   SYNCHRONIZE CACHE
+36 O   OO O   LOCK UNLOCK CACHE
+==============================================================================
+
+                Table I-2: SCSI-2 Operation Codes (Continued)
+
+==============================================================================
+OP DTLPWRSOMC Description
+-- ---------- ----------------------------------------------------------------
+37 O      O   READ DEFECT DATA(10)
+38     O  O   MEDIUM SCAN
+39 OOOOOOOO   COMPARE
+3A OOOOOOOO   COPY AND VERIFY
+3B OOOOOOOOOO WRITE BUFFER
+3C OOOOOOOOOO READ BUFFER
+3D     O  O   UPDATE BLOCK
+3E O   OO O   READ LONG
+3F O   O  O   WRITE LONG
+40 OOOOOOOOOO CHANGE DEFINITION
+41 O          WRITE SAME
+42      O     READ SUB-CHANNEL
+43      O     READ TOC
+44      O     READ HEADER
+45      O     PLAY AUDIO(10)
+46
+47      O     PLAY AUDIO MSF
+48      O     PLAY AUDIO TRACK INDEX
+49      O     PLAY TRACK RELATIVE(10)
+4A
+4B      O     PAUSE RESUME
+4C OOOOOOOOOO LOG SELECT
+4D OOOOOOOOOO LOG SENSE
+4E
+4F
+50
+51
+52
+53
+54
+55 OOO OOOOOO MODE SELECT(10)
+56
+57
+58
+59
+5A OOO OOOOOO MODE SENSE(10)
+5B
+5C
+5D
+5E
+5F
+A0
+A1
+A2
+A3
+A4
+A5         M  MOVE MEDIUM
+A5      O     PLAY AUDIO(12)
+==============================================================================
+
+                Table I-2: SCSI-2 Operation Codes (Continued)
+
+==============================================================================
+OP DTLPWRSOMC Description
+-- ---------- ----------------------------------------------------------------
+A6         O  EXCHANGE MEDIUM
+A7
+A8          O GET MESSAGE(12)
+A8     OO O   READ(12)
+A9      O     PLAY TRACK RELATIVE(12)
+AA          O SEND MESSAGE(12)
+AA     O  O   WRITE(12)
+AB
+AC        O   ERASE(12)
+AD
+AE     O  O   WRITE AND VERIFY(12)
+AF     OO O   VERIFY(12)
+B0     OO O   SEARCH DATA HIGH(12)
+B1     OO O   SEARCH DATA EQUAL(12)
+B2     OO O   SEARCH DATA LOW(12)
+B3     OO O   SET LIMITS(12)
+B4
+B5
+B5         O  REQUEST VOLUME ELEMENT ADDRESS
+B6
+B6         O  SEND VOLUME TAG
+B7        O   READ DEFECT DATA(12)
+B8
+B8         O  READ ELEMENT STATUS
+B9
+BA
+BB
+BC
+BD
+BE
+BF
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+J. Vendor Identification
+
+This Appendix contains the list of SCSI-2 vendor identifications as of the 
+date of this document.  The purpose of this list is to help avoid redundant 
+usage of vendor identifications.  Task Group X3T9.2 of Accredited Standards 
+Committee X3 maintains an informal list of vendor identifications currently in 
+use.  Please contact the chairman of X3T9.2 prior to using a new vendor 
+identification to avoid conflicts.
+
+                    Table J-1: Vendor Identification List
+
+==============================================================================
+ID        Organization
+--------  --------------------------------------------------------------------
+3M        3M Company
+ADAPTEC   Adaptec
+ADSI      Adaptive Data Systems, Inc. (a Western Digital subsidiary)
+AMCODYNE  Amcodyne
+ANAMATIC  Anamartic Limited (England)
+ANCOT     ANCOT Corp.
+ANRITSU   Anritsu Corporation
+APPLE     Apple Computer, Inc.
+ARCHIVE   Archive
+ASPEN     Aspen Peripherals
+AST       AST Research
+AT&T      AT&T
+ATTO      ATTO Technology Inc.
+ATX       Alphatronix
+BALLARD   Ballard Synergy Corp.
+BERGSWD   Berg Software Design
+BULL      Bull Peripherals Corp.
+CALIPER   Caliper (California Peripheral Corp.)
+CAST      Advanced Storage Tech
+CDC       Control Data or MPI
+CHEROKEE  Cherokee Data Systems
+CIE&YED   YE Data, C.Itoh Electric Corp.
+CIPHER    Cipher Data Products
+Ciprico   Ciprico, Inc.
+CNGR SFW  Congruent Software, Inc.
+COGITO    Cogito
+COMPORT   Comport Corp.
+CONNER    Conner Peripherals
+CROSFLD   Crosfield Electronics
+CSM, INC  Computer SM, Inc.
+CYGNET    Cygnet Systems, Inc.
+DATABOOK  Databook, Inc.
+DATACOPY  Datacopy Corp.
+DATAPT    Datapoint Corp.
+DEC       Digital Equipment
+DENON     Denon/Nippon Columbia
+==============================================================================
+
+
+
+
+              Table J-1: Vendor Identification List (Continued)
+
+==============================================================================
+ID        Organization
+--------  --------------------------------------------------------------------
+DEST      DEST Corp.
+DGC       Data General Corp.
+DIGIDATA  Digi-Data Corporation
+DILOG     Distributed Logic Corp.
+DTC       Data Technology Corp.
+DPT       Distributed Processing Technology
+DXIMAGIN  DX Imaging
+EMULEX    Emulex
+EPSON     Epson
+EXABYTE   Exabyte Corp.
+FILENET   FileNet Corp.
+FUJI      Fuji Electric Co., Ltd. (Japan)
+FUJITSU   Fujitsu
+FUTURED   Future Domain Corp.
+GIGATAPE  GIGATAPE GmbH
+GIGATRND  GigaTrend Incorporated
+Goidelic  Goidelic Precision, Inc.
+GOULD     Gould
+HITACHI   Hitachi America Ltd or Nissei Sangyo America Ltd
+HONEYWEL  Honeywell Inc.
+HP        Hewlett Packard
+IBM       International Business Machines
+ICL       ICL
+IGR       Intergraph Corp.
+IMPRIMIS  Imprimis Technology Inc.
+IOC       I/O Concepts, Inc.
+IOMEGA    Iomega
+ISi       Information Storage inc.
+JVC       JVC Information Products Co.
+KODAK     Eastman Kodak
+KONAN     Konan
+KONICA    Konica Japan
+LAPINE    Lapine Technology
+LASERDRV  LaserDrive Limited
+LMS       Laser Magnetic Storage International Company
+MATSHITA  Matsushita
+MAXTOR    Maxtor Corp.
+MELA      Mitsubishi Electronics America
+MELCO     Mitsubishi Electric (Japan)
+MICROBTX  Microbotics Inc.
+MICROP    Micropolis
+MICROTEK  Microtek Storage Corp
+MINSCRIB  Miniscribe
+MOTOROLA  Motorola
+NAI       North Atlantic Industries
+==============================================================================
+
+
+
+
+              Table J-1: Vendor Identification List (Continued)
+
+==============================================================================
+ID        Organization
+--------  --------------------------------------------------------------------
+NatSemi   National Semiconductor Corp.
+NCL       NCL America
+NCR       NCR Corporation
+NEC       NEC
+NISCA     NISCA Inc.
+NKK       NKK Corp.
+NT        Northern Telecom
+OSI       Optical Storage International
+OPTIMEM   Cipher/Optimem
+OPTOTECH  Optotech
+OTL       OTL Engineering
+PERTEC    Pertec Peripherals Corporation
+PFTI      Performance Technology Inc.
+PRAIRIE   PrairieTek
+PTI       Peripheral Technology Inc.
+PRIAM     Priam
+QUALSTAR  Qualstar
+QUANTEL   Quantel Ltd.
+QUANTUM   Quantum Corp.
+RADSTONE  Radstone Technology
+RICOH     Ricoh
+RODIME    Rodime
+RTI       Reference Technology
+SANYO     SANYO Electric Co., Ltd.
+SEAGATE   Seagate
+SIEMENS   Siemens
+SMS       Scientific Micro Systems/OMTI
+SONY      Sony Corporation Japan
+SPERRY    Sperry (now Unisys Corp.)
+STK       Storage Technology Corporation
+SUN       Sun Microsystems, Inc.
+SYSGEN    Sysgen
+T-MITTON  Transmitton England
+TALLGRAS  Tallgrass Technologies
+TANDBERG  Tandberg Data A/S
+TANDON    Tandon
+TEAC      TEAC Japan
+Tek       Tektronix
+TI-DSG    Texas Instruments
+TOSHIBA   Toshiba Japan
+UNISYS    Unisys
+USDC      US Design Corp.
+VERBATIM  Verbatim Corporation
+VRC       Vermont Research Corp.
+WangDAT   WangDAT
+WANGTEK   Wangtek
+WDIGTL    Western Digital
+XEBEC     Xebec Corporation
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> End of Document <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

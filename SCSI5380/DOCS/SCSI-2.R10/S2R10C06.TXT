@@ -1,0 +1,1320 @@
+6. SCSI Commands and Status
+
+  This section defines the SCSI command and status structures and gives 
+several examples.
+
+  By keeping to a minimum the functions essential to communicate via this 
+protocol, a wide range of peripheral devices of varying capability can operate 
+in the same environment.  Because subsets of the full architecture may be 
+implemented, optional functions are noted.
+
+6.1. Command Implementation Requirements
+
+  The first byte of all SCSI commands shall contain an operation code as 
+defined in this standard.  Targets shall implement all commands with a 
+mandatory operation code (see 6.1.2) both in section 7 and in the appropriate 
+section for their device type.
+
+6.1.1. Reserved
+
+  Reserved bits, fields, bytes, and code values are set aside for future 
+standardization.  Their use and interpretation may be specified by future 
+extensions to this standard.  A reserved bit, field, or byte shall be set to 
+zero, or in accordance with a future extension to this standard.  A target 
+that receives a reserved bit, field, or byte that is not zero or receives a 
+reserved code value shall terminate the command with CHECK CONDITION status 
+and the sense key shall be set to ILLEGAL REQUEST.  It shall also be 
+acceptable for a target to interpret a bit, field, byte, or code value in 
+accordance with a future extension to this standard.
+
+6.1.2. Operation Code Types
+
+Operation 
+Code Type  Description
+---------  -------------------------------------------------------------------
+M          Mandatory - Commands so designated shall be implemented in order to 
+           meet the minimum requirement of this standard.
+
+O          Optional - Commands so designated, if implemented, shall be 
+           implemented as defined in this standard.
+
+V          Vendor specific - Operation codes so designated are available for 
+           vendor defined commands.  See the vendor specifications where 
+           compatibility is desired.
+
+R          Reserved - Operation codes so designated shall not be used.  They 
+           are reserved for future extensions to this standard.
+
+
+
+
+
+
+
+
+
+6.2. Command Descriptor Block
+
+  A command is communicated by sending a command descriptor block to the 
+target.  For several commands, the command descriptor block is accompanied by 
+a list of parameters sent during the DATA OUT phase.  See the specific 
+commands for detailed information.
+
+  The command descriptor block always has an operation code as its first byte 
+and a control byte as its last byte.
+
+  For all commands, if there is an invalid parameter in the command descriptor 
+block, then the target shall terminate the command without altering the 
+medium.
+
+
+      Table 6-1: Typical Command Descriptor Block for Six-byte Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    | (MSB)                                      |
+-----|------------------------------                                      ---|
+ 2   |                           Logical Block Address (if required)         |
+-----|---                                                                 ---|
+ 3   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+     |                           Transfer Length (if required)               |
+ 4   |                           Parameter List Length (if required)         |
+     |                           Allocation Length (if required)             |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Table 6-2: Typical Command Descriptor Block for Ten-byte Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                                                                       |
+-----|---                        Logical Block Address (if required)      ---|
+ 4   |                                                                       |
+-----|---                                                                 ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   | (MSB)                     Transfer Length (if required)               |
+-----|---                        Parameter List Length (if required)      ---|
+ 8   |                           Allocation Length (if required)       (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Table 6-3: Typical Command Descriptor Block for Twelve-byte Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                                                                       |
+-----|---                        Logical Block Address (if required)      ---|
+ 4   |                                                                       |
+-----|---                                                                 ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 7   |                           Transfer Length (if required)               |
+-----|---                        Parameter List Length (if required)      ---|
+ 8   |                           Allocation Length (if required)             |
+-----|---                                                                 ---|
+ 9   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+10   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+11   |                           Control                                     |
+==============================================================================
+
+6.2.1. Operation Code
+
+  The operation code (Table 6-4) of the command descriptor block has a group 
+code field and a command code field.  The three-bit group code field provides 
+for eight groups of command codes.  The five-bit command code field provides 
+for thirty-two command codes in each group.  Thus, a total of 256 possible 
+operation codes exist.  Operation codes are defined in the subsequent Sections 
+of this document.
+
+  The group code specifies one of the following groups:
+
+  Group 0 - six-byte commands (see Table 6-1)
+  Group 1 - ten-byte commands (see Table 6-2)
+  Group 2 - ten-byte commands (see Table 6-2)
+  Group 3 - reserved
+  Group 4 - reserved
+  Group 5 - twelve-byte commands (see Table 6-3)
+  Group 6 - vendor specific 
+  Group 7 - vendor specific
+
+
+
+
+
+                          Table 6-4: Operation Code
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+==============================================================================
+     |        Group Code        |                Command Code                |
+==============================================================================
+
+
+6.2.2. Logical Unit Number
+
+  The logical unit number is defined in the IDENTIFY message (5.6.7).  The 
+target shall ignore the logical unit number specified within the command 
+descriptor block if an IDENTIFY message was received.  It is recommended that 
+the logical unit number in the command descriptor block be set to zero.  
+
+  NOTICE:  The logical unit number field is included in the command descriptor 
+  block for compatibility with some SCSI-1 devices.  This field may be 
+  reclaimed in SCSI-3.  New implementations should use the outbound IDENTIFY 
+  message, which is mandatory in SCSI-2, to establish the I_T_L nexus.
+
+
+6.2.3. Logical Block Address
+
+  The logical block address on logical units or within a partition on device 
+volumes shall begin with block zero and be contiguous up to the last logical 
+block on that logical unit or within that partition.
+
+  A six-byte command descriptor block contains a 21-bit logical block address.  
+The ten-byte and the twelve-byte command descriptor blocks contain 32-bit 
+logical block addresses.  Logical block addresses in additional parameter data 
+have their length specified for each occurrence.  See the specific command 
+descriptions.
+
+6.2.4. Transfer Length
+
+  The transfer length field specifies the amount of data to be transferred, 
+usually the number of blocks.  For several commands the transfer length 
+indicates the requested number of bytes to be sent as defined in the command 
+description.  For these commands the transfer length field may be identified 
+by a different name.  See the following descriptions and the individual 
+command descriptions for further information.
+
+  Commands that use one byte for the transfer length allow up to 256 blocks of 
+data to be transferred by one command.  A transfer length value of 1 to 255 
+indicates the number of blocks that shall be transferred.  A value of zero 
+indicates 256 blocks.
+
+  In commands that use multiple bytes for the transfer length, a transfer 
+length of zero indicates that no data transfer shall take place.  A value of 
+one or greater indicates the number of blocks that shall be transferred.
+
+  Refer to the specific command description for further information.
+
+
+6.2.5. Parameter List Length
+
+  The parameter list length is used to specify the number of bytes sent during 
+the DATA OUT phase.  This field is typically used in command descriptor blocks 
+for parameters that are sent to a target (e.g., mode parameters, diagnostic 
+parameters, log parameters, etc.).  A parameter length of zero indicates that 
+no data shall be transferred.  This condition shall not be considered as an 
+error.  
+
+6.2.6. Allocation Length
+
+  The allocation length field specifies the maximum number of bytes that an 
+initiator has allocated for returned data.  An allocation length of zero 
+indicates that no data shall be transferred.  This condition shall not be 
+considered as an error.  The target shall terminate the DATA IN phase when 
+allocation length bytes have been transferred or when all available data have 
+been transferred to the initiator, whichever is less.  
+
+  The allocation length is used to limit the maximum amount of data (e.g., 
+sense data, mode data, log data, diagnostic data, etc.) returned to an 
+initiator.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6.2.7. Control Field
+
+  The control field is the last byte of every command descriptor block.  The 
+control field is defined in Table 6-5.
+
+                           Table 6-5: Control Field
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+==============================================================================
+     | Vendor specific |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+
+  The flag bit specifies which message the target shall return to the 
+initiator if the link bit is one and the command completes without error.  
+Implementation of the flag bit is optional.  
+
+  The flag bit should be set to zero if the link bit is zero.  If link bit is 
+zero and the flag bit is one, the target shall return CHECK CONDITION status.  
+The sense key shall be set to ILLEGAL REQUEST.
+
+  If the flag bit is zero and the link bit is one, and if the command 
+completes successfully, the target shall send the LINKED COMMAND COMPLETE 
+message.  If the flag bit is one and the link bit is one, and if the command 
+completes successfully, the target shall send the LINKED COMMAND COMPLETE 
+(WITH FLAG) message.  
+
+  IMPLEMENTORS NOTE:  The flag bit is typically used to cause an interrupt in 
+  the initiator between linked commands.
+
+  The link bit is used to continue the I/O process across multiple commands.  
+Implementation of the link bit is optional.  
+
+  A link bit of one indicates that the initiator requests a continuation of 
+the I/O process and that the target should enter the command phase upon 
+successful completion of the current command. 
+
+  If the link bit is one, and if the command completes successfully, the 
+target shall return INTERMEDIATE or INTERMEDIATE-CONDITION MET status and 
+shall then send one of the two messages defined by the flag bit.
+
+  If either of the link and flag bits are set to one, and the target does not 
+implement linked commands, it shall return CHECK CONDITION status.  The sense 
+key shall be set to ILLEGAL REQUEST.
+
+
+
+
+
+
+
+
+
+
+6.3. Status 
+
+  The status byte and status byte code are specified in Tables 6-6 and 6-7.  A 
+status byte shall be sent from the target to the initiator during the STATUS 
+phase at the completion of each command unless the command is terminated by 
+one of the following events:  
+  (1) an ABORT message
+  (2) an ABORT TAG message
+  (3) a BUS DEVICE RESET message
+  (4) a CLEAR QUEUE message
+  (5) a hard reset condition
+  (6) an unexpected disconnect (see 5.1.1)
+
+  The STATUS phase normally occurs at the end of a command but in some case 
+may occur prior to transferring the command descriptor block.
+
+                           Table 6-6: Status Byte
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+==============================================================================
+     |     Reserved    |               Status Byte Code             |Reserved|
+==============================================================================
+
+                         Table 6-7: Status Byte Code 
+ 
+==============================================================================
+     Bits of Status Byte
+-----------------------------
+7   6   5   4   3   2   1   0    Status
+------------------------------------------------------------------------------
+R   R   0   0   0   0   0   R    GOOD
+R   R   0   0   0   0   1   R    CHECK CONDITION
+R   R   0   0   0   1   0   R    CONDITION MET
+R   R   0   0   1   0   0   R    BUSY
+R   R   0   1   0   0   0   R    INTERMEDIATE
+R   R   0   1   0   1   0   R    INTERMEDIATE-CONDITION MET
+R   R   0   1   1   0   0   R    RESERVATION CONFLICT
+R   R   1   0   0   0   1   R    COMMAND TERMINATED
+R   R   1   0   1   0   0   R    QUEUE FULL
+
+     All Other Codes             Reserved
+==============================================================================
+
+Key: R - Reserved bit
+
+  A definition of the status byte codes is given below.
+
+  GOOD.  This status indicates that the target has successfully completed the 
+command.
+
+  CHECK CONDITION.  This status indicates that a contingent allegiance 
+condition has occurred (see 6.6).
+
+
+  CONDITION MET.  This status or INTERMEDIATE-CONDITION MET is returned 
+whenever the requested operation is satisfied (see the SEARCH DATA and PRE-
+FETCH commands).  
+
+  BUSY.  This status indicates that the target is busy.  This status shall be 
+returned whenever a target is unable to accept a command from an otherwise 
+acceptable initiator (i.e., no reservation conflicts).  The recommended 
+initiator recovery action is to issue the command again at a later time.
+
+  INTERMEDIATE.  This status or INTERMEDIATE-CONDITION MET shall be returned 
+for every successfully completed command in a series of linked commands 
+(except the last command), unless the command is terminated with CHECK 
+CONDITION, RESERVATION CONFLICT, or COMMAND TERMINATED status.  If 
+INTERMEDIATE or INTERMEDIATE-CONDITION MET status is not returned, the series 
+of linked commands is terminated and the I/O process is ended.
+
+  INTERMEDIATE-CONDITION MET.  This status is the combination of the CONDITION 
+MET and INTERMEDIATE statuses.
+
+  RESERVATION CONFLICT.  This status shall be returned whenever an initiator 
+attempts to access a logical unit or an extent within a logical unit that is 
+reserved with a conflicting reservation type for another SCSI device (see the 
+RESERVE and RESERVE UNIT commands).  The recommended initiator recovery action 
+is to issue the command again at a later time.
+
+  COMMAND TERMINATED.  This status shall be returned whenever the target 
+terminates the current I/O process after receiving a TERMINATE I/O PROCESS 
+message (see 5.6.22).  This status also indicates that a contingent allegiance 
+condition has occurred (see 6.6).
+
+  QUEUE FULL.  This status shall be implemented if tagged queuing is 
+implemented.  This status is returned when a SIMPLE QUEUE TAG, ORDERED QUEUE 
+TAG, or HEAD OF QUEUE TAG message is received and the command queue is full.  
+The I/O process is not placed in the command queue.
+
+6.4. Command Examples
+
+  The following sections give examples of typical command processing in the 
+SCSI environment.  
+
+
+6.4.1. Single Command Example
+  An I/O process containing one untagged READ command is used in this section 
+to illustrate a simple I/O process on the SCSI bus.  This example does not 
+include error or exception conditions.
+
+  The initiator has one set of active pointers that includes a command 
+pointer, a data pointer, and a status pointer.  In addition, the initiator has 
+one set of saved pointers for each I/O process that it is able to concurrently 
+manage.  The initiator sets up the saved pointers to point to the appropriate 
+bytes for the I/O process and copies the saved pointers to the active 
+pointers.  It then arbitrates for the SCSI bus, and upon winning arbitration, 
+selects the target.  Once the target is selected, the target assumes control 
+of the I/O process.
+
+  During the SELECTION phase, the initiator asserts the ATN signal to inform 
+the target that the initiator wishes to send a message.  The target enters the 
+MESSAGE OUT phase and transfers the IDENTIFY message from the initiator.  This 
+message informs the target of which logical unit is to be used.  At this 
+point, an I_T_L nexus has been established for the I/O process.  This nexus 
+associates the initiator's pointers with the I/O process.
+
+  The target switches to the COMMAND phase and transfers the command 
+descriptor block from the initiator.  In this case, the command descriptor 
+block contains a READ command.  The target interprets the command and switches 
+to the DATA IN phase, transfers the data, switches to STATUS phase, sends GOOD 
+status, switches to MESSAGE IN phase, and transfers a COMMAND COMPLETE 
+message.  After successfully sending the COMMAND COMPLETE message, the target 
+goes to the BUS FREE phase by releasing the BSY signal and the I/O process 
+ends.
+
+6.4.2. Disconnect Example
+
+  In the above single command example, the length of time necessary to obtain 
+the data may require a time-consuming physical positioning operation.  In 
+order to improve system throughput, the target may disconnect from the 
+initiator, thereby freeing the SCSI bus to allow other I/O process to occur.  
+
+  After the target has received the READ command (and has determined that 
+there will be a delay), it disconnects from the SCSI bus by sending a 
+DISCONNECT message and by going to the BUS FREE phase.
+
+  After the target retrieves the requested data from the peripheral device it 
+arbitrates for the SCSI bus.  Upon winning arbitration, it reselects the 
+initiator and sends an IDENTIFY message to the initiator via the MESSAGE IN 
+phase.  This revives the I_T_L nexus so that the initiator can retrieve the 
+correct set of pointers for the I/O process.  The initiator restores the 
+active pointers to their most recent saved values (which, in this case, are 
+the initial values) and the target continues (as in the single command 
+example) to finish the I/O process.
+
+  If target wishes to disconnect after transferring part of the data (e.g., 
+while crossing a cylinder boundary), it may do so by sending a SAVE DATA 
+POINTER message and a DISCONNECT message to the initiator and then 
+disconnecting.  When reconnection is completed, the current data pointer is 
+restored to its value immediately prior to the SAVE DATA POINTER message.
+
+  On those occasions when an error or exception condition occurs and the 
+target elects to repeat the information transfer, the target may repeat the 
+transfer by either issuing a RESTORE POINTERS message or by disconnecting 
+without issuing a SAVE DATA POINTER message.  When reconnection is completed, 
+the most recent saved pointer values are restored.
+
+
+
+
+
+
+
+
+6.4.3. Linked Command Example
+
+  An I/O process may contain multiple commands "linked" together.  Upon 
+completing a linked command successfully, the target automatically proceeds to 
+the next linked command for the I/O process.  All commands in a series of 
+linked commands are addressed to the same nexus and are part of a single I/O 
+process.
+
+  The commands are not entirely independent.  When using the relative address 
+bit (see 8.1.10), the address of the last logical block accessed by one of the 
+commands is available to the next command.  Thus one can search for a 
+particular data pattern using a SEARCH DATA command and then read the logical 
+block containing the data pattern with a READ command linked to the SEARCH 
+DATA command.  One can also read a logical block at a specified displacement 
+from the block containing the data pattern.
+
+  A LINKED COMMAND COMPLETE or LINKED COMMAND COMPLETE (WITH FLAG) message is 
+sent from the target to the initiator to indicate that a linked command 
+completed.  The initiator then updates the saved pointers for the nexus so 
+that subsequent transfers from the target reference the next command of the 
+series.  Command processing of linked and single commands is similar except 
+that relative addressing is permitted in linked commands.
+
+  For example, a successful completion of a SEARCH DATA EQUAL command causes 
+the target to continue with the linked READ command from the initiator.  If 
+the relative address bit in the READ command has been set to one, and the 
+address field of the READ command is set to zero, the target transfers the 
+successfully searched block to the initiator. 
+
+6.5. Command Processing Considerations and Exception Conditions 
+
+  The following sections describe some exception conditions and errors 
+associated with command processing and the sequencing of commands.
+
+6.5.1. Programmable Operating Definition
+
+  Some applications require that the operating definition of a logical unit be 
+modified to meet the special requirements of a particular initiator.  The 
+program-controlled modification of the operating definition is typically 
+provided to allow operating systems to change the operating definition of a 
+more recently developed targets to one which is more compatible with the 
+operating system.  This ability requires that the system comply with the low-
+level hardware definitions of SCSI-2.
+
+  The parameters that can be changed by modifying the operating definition of 
+a logical unit include the vendor identification, the device type, the device 
+model, the SCSI compliance level, the SCSI specification level, the command 
+set, and other parameters.  The low-level hardware parameters including signal 
+timing and parity definitions cannot be changed by modifying the operating 
+definition.  The present operating definition of a logical unit with respect 
+to an initiator can be determined at any time by execution of an INQUIRY 
+command.  In some vendor-specific cases, it may also be necessary to perform 
+other commands including MODE SENSE and READ CAPACITY.
+
+
+  Each logical unit begins at a particular operating definition.  If the 
+logical unit supports the CHANGE DEFINITION command, the present operating 
+definition can be changed to any other operating definition supported by the 
+logical unit.  The actual details of the operating definition of a logical 
+unit are vendor-specific.  If the operating definition is changed to one that 
+does not include the CHANGE DEFINITION command, the target should continue to 
+accept the CHANGE DEFINITION command.
+
+  If an error occurs during execution of a CHANGE DEFINITION command, the 
+original operating definition remains in effect after the command is executed. 
+The new operating definition becomes active only after successful execution of 
+the CHANGE DEFINITION command.  
+
+  Since new operating definitions may preclude the execution of I/O processes 
+that are already in progress, the target may disconnect to allow completion of 
+any I/O processes that are in progress.  Operating definition changes that may 
+cause conflicts with the normal operation from other initiators shall be 
+indicated to those initiators by generating a unit attention condition for 
+each other initiator.  The additional sense code shall be set to CHANGED 
+OPERATING DEFINITION.
+
+  An initiator may request a list of the operating definitions that the target 
+supports and descriptive text for each operating definition using the INQUIRY 
+command.
+
+6.5.2. Incorrect Initiator Connection
+
+  An incorrect initiator connection occurs on a reconnection if:
+  (1) an initiator attempts to reconnect to an I/O process, and
+  (2) a soft reset condition has not occurred, and 
+  (3) the initiator does not send an ABORT, ABORT TAG, BUS DEVICE RESET, CLEAR 
+QUEUE, or TERMINATE I/O PROCESS message during the same MESSAGE OUT phase as 
+the IDENTIFY message.
+
+  An incorrect initiator connection also occurs on an initial connection when 
+an initiator:
+  (1) attempts to establish an I_T_L_Q nexus when an I_T_L nexus already 
+exists from a previous connection, or
+  (2) attempts to establish an I_T_L nexus when an I_T_L_Q nexus already 
+exists unless there is a contingent allegiance or extended contingent 
+allegiance condition present for the logical unit or target routine.
+
+  A target that detects an incorrect initiator connection shall abort all I/O 
+processes for the initiator on the logical unit or target routine and shall 
+return CHECK CONDITION status.  The sense key shall be set to ABORTED COMMAND 
+and the additional sense code shall be set to OVERLAPPED COMMANDS ATTEMPTED.
+
+  If an initiator reconnects to an I/O process and a soft reset condition has 
+occurred, the target shall meet the requirements of 5.2.2.2.
+
+  IMPLEMENTORS NOTES:  
+  (1) An incorrect initiator connection may be indicative of a serious error 
+  and, if not detected, could result in an I/O process operating with a wrong 
+  set of pointers.  This is considered a catastrophic failure on the part of 
+  the initiator.  Therefore, vendor-specific error recovery procedures may be 
+  required to guarantee the data integrity on the medium.  The target may 
+  return additional sense data to aid in this error recovery procedure (e.g., 
+  sequential-access devices may return the residue of blocks remaining to be 
+  written or read at the time the second command was received).
+  (2)  Some targets may not detect an incorrect initiator connection until 
+  after the command descriptor block has been received.
+
+
+6.5.3. Selection of an Invalid Logical Unit
+
+  The target's response to selection of a logical unit which is not valid is 
+described in the following paragraphs.
+
+  The logical unit may not be valid because:
+  (1) the target does not support the logical unit (e.g., some targets support 
+only one peripheral device).  In response to an INQUIRY command the target 
+shall return the INQUIRY data with the peripheral qualifier set to the value 
+required in Table 7-16.  In response to any other command except REQUEST SENSE 
+the target shall terminate the command with CHECK CONDITION status.  In 
+response to a REQUEST SENSE command the target shall return sense data.  The 
+sense key shall be set to ILLEGAL REQUEST and the additional sense code shall 
+be set to LOGICAL UNIT NOT SUPPORTED.
+  (2) the target supports the logical unit, but the peripheral device is not 
+currently attached to the target.  In response to an INQUIRY command the 
+target shall return the INQUIRY data with the peripheral qualifier set to the 
+value required in Table 7-16.  In response to any other command except REQUEST 
+SENSE the target shall terminate the command with CHECK CONDITION status.  In 
+response to a REQUEST SENSE command the target shall return sense data.  The 
+sense key shall be set to ILLEGAL REQUEST and the additional sense code shall 
+be set to LOGICAL UNIT NOT SUPPORTED.
+  (3) the target supports the logical unit and the peripheral device is 
+attached, but not operational.  In response to an INQUIRY command the target 
+shall return the INQUIRY data with the peripheral qualifier set to the value 
+required in Table 7-16.  The target's response to any command other than 
+INQUIRY and REQUEST SENSE is vendor specific.
+  (4) the target supports the logical unit but is incapable of determining if 
+the peripheral device is attached or is not operational when it is not ready.  
+In response to an INQUIRY command the target shall return the INQUIRY data 
+with the peripheral qualifier set to the value required in Table 7-16.  In 
+response to a REQUEST SENSE command the target shall return the REQUEST SENSE 
+data with a sense key of NO SENSE unless a prior error condition exists.  The 
+target's response to any other command is vendor specific.
+
+6.5.4. Parameter Rounding
+
+  Certain parameters sent to a target with various commands contain a range of 
+values.  Targets may choose to implement only selected values from this range.  
+When the target receives a value that it does not support, it either rejects 
+the command (CHECK CONDITION status with ILLEGAL REQUEST sense key) or it 
+rounds the value received to a supported value.  The target shall reject 
+unsupported values unless rounding is permitted in the description of the 
+parameter.
+
+  Rounding of parameter values, when permitted, shall be performed as follows:  
+A target that receives a parameter value that is not an exact supported value 
+shall adjust the value to one that it supports and shall return CHECK 
+CONDITION status with a sense key of RECOVERED ERROR.  The additional sense 
+code shall be set to ROUNDED PARAMETER.  The initiator is responsible to issue 
+an appropriate command to learn what value the target has selected.
+
+  IMPLEMENTORS NOTE:  Generally, the target should adjust maximum-value fields 
+  down to the next lower supported value than the one specified by the 
+  initiator.  Minimum-value fields should be rounded up to the next higher 
+  supported value than the one specified by the initiator.  In some cases, the 
+  type of rounding (up or down) is explicitly specified in the description of 
+  the parameter.
+
+6.5.5. Asynchronous Event Notification 
+
+  Implementation of asynchronous event notification is optional.  This 
+protocol can be used to inform processor devices that an asynchronous event 
+has occurred.  A SEND command with an AEN bit of one is issued to a processor 
+device with a subsequent data phase that includes the REQUEST SENSE 
+information.  SCSI devices that respond to an INQUIRY command as a processor 
+device type with asynchronous event notification capability may be notified of 
+asynchronous events using this protocol.  An SCSI device has to be capable of 
+acting as an initiator in order to perform asynchronous event notification.
+
+  IMPLEMENTORS NOTE:  Asynchronous event notification cannot be used with a 
+  device that acts as a temporary initiator (e.g., devices executing COPY 
+  commands) since they are not identified as a processor device.
+
+  Parameters affecting the use of asynchronous event notification are 
+contained in the control mode page (see 7.3.3.1).
+
+  The four uses of asynchronous event notification are:
+  (1) informing a processor of an error condition encountered after command 
+completion
+  (2) informing all processor devices that a newly initialized device is 
+available
+  (3) informing all processor devices of other unit attention conditions
+  (4) informing all processor devices of other asynchronous events.
+
+  Other uses of asynchronous event notification are not prohibited, however 
+this protocol is not intended to be used while an I_T_L or I_T_L_Q nexus 
+exists between the processor device (i.e., the initiator of the nexus) and the 
+other SCSI device (i.e., the target of the nexus).  Asynchronous event 
+notification is not intended for use with target routines (i.e., an I_T_R or 
+I_T_R_Q nexus).
+
+  An example of the first case above is a device that implements a write 
+cache.  If the target is unable to write cached data to the medium, it may use 
+an asynchronous event notification to inform the initiator of the failure.  An 
+extended contingent allegiance condition may also be established during the 
+same I_T_L nexus used for the asynchronous event notification (see 5.6.9).
+
+
+
+
+
+  An example of the third case above is a device that supports removable 
+media.  Asynchronous event notification may be used to inform an initiator of 
+a not-ready-to-ready transition (medium changed) or of an operator initiated 
+event (e.g., activating a write protect switch or activating a start or stop 
+switch).
+
+  An example of the fourth case above is a sequential-access device performing 
+a REWIND command with the immediate bit set to one.  Asynchronous event 
+notification may be used to inform an initiator that the beginning of medium 
+has been reached.  Completion of a CD-ROM AUDIO PLAY command started in the 
+immediate mode is another example of this case.
+
+  Notification of an asynchronous event is performed using the SEND command 
+with the AEN bit set to one.  The information identifying the condition being 
+reported shall be returned during the DATA OUT phase of the SEND command (see 
+11.2.2.).  The data sent is shown in Table 11-4.
+
+  An error condition or unit attention condition shall be reported once per 
+occurrence of the event causing it.  The target may choose to use an 
+asynchronous event notification or to return CHECK CONDITION status on a 
+subsequent command, but not both.  Notification of command-related error 
+conditions shall be sent only to the processor that initiated the I/O process.
+
+  The asynchronous event notification protocol can be used to notify processor 
+devices that a system resource has become available.  If a target chooses to 
+use this method, the sense key in the sense data sent to the processor device 
+shall be set to UNIT ATTENTION. 
+
+  The asynchronous event notification protocol shall be used only to SCSI 
+devices that return processor device type with an AENC bit of one in response 
+to an INQUIRY command.  The INQUIRY command should be issued to logical unit 
+zero of each SCSI device responding to selection.  This procedure shall be 
+conducted prior to the first asynchronous event notification and shall be 
+repeated whenever the device deems it appropriate or when an event occurs that 
+may invalidate the current information.  (See 5.6.21, SYNCHRONOUS DATA 
+TRANSFER REQUEST message, for examples of these events.)
+
+  Each SCSI device that returns processor device type with an AENC bit of one 
+shall be issued a TEST UNIT READY command to determine that the SCSI device is 
+ready to receive an asynchronous event notification.  An SCSI device returning 
+CHECK CONDITION status is issued a REQUEST SENSE command.  This clears any 
+pending unit attention condition.  An SCSI device that returns processor 
+device type with an AENC bit of one and returns GOOD status when issued a TEST 
+UNIT READY command shall accept a SEND command with an AEN bit of one.
+
+  IMPLEMENTORS NOTE: An SCSI device which can use asynchronous event 
+  notification at initialization time should provide means to defeat these 
+  notifications.  This can be done with a switch or jumper wire.  Devices 
+  which implement saved parameters may alternatively save the asynchronous 
+  event notification permissions either on a per SCSI device basis or as a 
+  system wide option.  In any case, a device conducts a survey with INQUIRY 
+  commands to be sure that the devices on the SCSI bus are appropriate 
+  destinations for SEND commands with an AEN bit of one.  (The devices on the 
+  bus or the SCSI ID assignments may have changed.)  
+
+6.5.6. Unexpected Reselection
+
+  An unexpected reselection occurs if an SCSI device attempts to reconnect to 
+an I/O process for which a nexus does not exist.  An SCSI device should 
+respond to an unexpected reselection by sending an ABORT message.
+
+6.6. Contingent Allegiance Condition
+
+  The contingent allegiance condition shall exist following the return of 
+CHECK CONDITION or COMMAND TERMINATED status and may optionally exist 
+following an unexpected disconnect.  The contingent allegiance condition shall 
+be preserved for the I_T_x nexus until it is cleared.  The contingent 
+allegiance condition shall be cleared upon the generation of a hard reset 
+condition, or by an ABORT message, a BUS DEVICE RESET message, or any 
+subsequent command for the I_T_x nexus.  While the contingent allegiance 
+condition exists the target shall preserve the sense data for the initiator.  
+
+  While the contingent allegiance condition exists, if the target is unable to 
+maintain separate sense data, the target shall respond to any other requests 
+for access to the logical unit or target routine from another initiator with a 
+BUSY status.  Execution of queued commands for the logical unit or target 
+routine for which the contingent allegiance condition exists shall be 
+suspended until the contingent allegiance condition is cleared.
+
+6.7. Extended Contingent Allegiance Condition
+
+  Implementation of extended contingent allegiance is optional.  The extended 
+contingent allegiance condition extends the contingent allegiance condition 
+for an I_T_x nexus.  This condition is generated by the target sending an 
+INITIATE RECOVERY message to the initiator following CHECK CONDITION or 
+COMMAND TERMINATED status and prior to the COMMAND COMPLETE message.  This 
+condition shall be preserved until it is cleared by a BUS DEVICE RESET 
+message, a RELEASE RECOVERY message, or a hard reset condition.
+
+  While the extended contingent allegiance condition exists the target shall 
+respond to any other request for access to the logical unit from another 
+initiator with BUSY status.  Execution of queued commands for the logical unit 
+for which the extended contingent allegiance condition exists shall be 
+suspended until the RELEASE RECOVERY message is received by the target.
+
+  IMPLEMENTORS NOTES:  
+  (1) It is not required to generate an extended contingent allegiance 
+  condition for every CHECK CONDITION or COMMAND TERMINATED status that 
+  occurs.  Simple errors not requiring an extended recovery may be dealt with 
+  by using the contingent allegiance protocol.
+  (2) During the existence of the extended contingent allegiance condition,  
+  appropriate error recovery sequences may be executed.  Such commands can 
+  correct data, modify or delete queued commands, perform LOG SENSE commands 
+  and obtain diagnostic information.  Extended contingent allegiance is 
+  recommended for error conditions that may require execution of multiple-step 
+  error-recovery protocols without interference from other initiators.
+
+
+
+
+  An extended contingent allegiance condition may also be generated using an 
+asynchronous event notification protocol.  When the event is detected, the bus 
+device which detected the event assumes the initiator role and transmits a 
+SEND command with an AEN bit of one to the appropriate device(s) (see 11.2.2).
+
+  If the device wishes to generate an extended contingent allegiance condition 
+during an asynchronous event notification, it shall send an INITIATE RECOVERY 
+message following the IDENTIFY message (and following any queue tag message) 
+and prior to the COMMAND phase of the SEND command.  An extended contingent 
+allegiance condition can be generated for only one I_T_L nexus at a time.  The 
+extended contingent allegiance condition is cleared when a RELEASE RECOVERY 
+message is received from the device to which the INITIATE RECOVERY message was 
+sent.  The generation of a hard reset condition, or receipt of a BUS DEVICE 
+RESET message shall also clear the extended contingent allegiance condition.
+
+  During an extended contingent allegiance only untagged I/O processes from 
+the SCSI device to which the INITIATE RECOVERY message was sent shall be 
+executed by the target.  If the initiator sends a queue tag message the target 
+shall respond with QUEUE FULL status.  After the extended contingent 
+allegiance condition is cleared any commands remaining in the command queue 
+shall be executed.
+
+6.8. Queued I/O Processes
+
+  The implementation of queuing for I/O processes is optional.  Queuing of I/O 
+processes allows a target to accept multiple I/O processes for execution at a 
+later time.  
+
+  There are two methods for implementation of queuing, tagged and untagged. 
+Tagged queuing allows a target to accept multiple I/O processes from each 
+initiator for each logical unit or target routine.  Untagged queuing allows a 
+target to accept one I/O process from each initiator for each logical unit.  
+
+  A target may be capable of both methods of queuing, but only one method may 
+be used by an initiator at a time.  Other initiators may choose the other 
+queuing method; in that case, the target may manage both types of queued 
+commands.
+
+  Untagged queuing may be supported by SCSI-1 or SCSI-2 devices.  Tagged 
+queuing is new in SCSI-2.
+
+6.8.1. Untagged Queuing
+
+  Untagged queuing allows a target to accept a command from an initiator for a 
+logical unit or target routine while a command from another initiator is being 
+executed.  Only one command for each I_T_x nexus shall be accepted at a time.  
+
+  An I/O process may be initiated any time the BUS FREE phase exists even if 
+an I/O process from a different initiator is  active.  If the disconnect 
+privilege is not granted in the IDENTIFY message of the new I/O process, the 
+target may either suspend the active I/O process or it may return BUSY status 
+to the new I/O process.
+
+
+
+  The I_T_x nexus sufficiently specifies the relationship so that the target 
+can reconnect to the initiator to restore the pointers for I/O process as long 
+as only one I/O process per I_T_x nexus is issued.  It is the responsibility 
+of the initiator to assure that only one such I/O process is issued at any 
+time (see 6.5.2).
+
+6.8.2. Tagged Queuing
+
+  Tagged queuing allows a target to accept multiple I/O processes from the 
+same or different initiators until the logical unit's command queue is full.  
+If an I/O process is received and the command queue is full, the target shall 
+terminate the I/O process with QUEUE FULL status.  
+
+  The command queue is setup by the target for each supported logical unit and 
+target routine.  Initiators may add or delete I/O processes to the queue.  
+When adding an I/O process, the initiator may specify fixed order of 
+execution, allow the target to define the order of execution, or specify that 
+the I/O process is to be executed next.
+
+  If the disconnect privilege is not granted in the IDENTIFY message for a 
+tagged I/O process the target shall return BUSY status.
+
+  The queue tag messages (see 5.6.17) allow the initiator to establish a 
+unique I_T_L_Q nexus to identify each I/O process.  The I_T_L_Q nexus allows 
+the target to reconnect to a specific I/O process and allows the initiator to 
+restore the set of pointers for that I/O process.  An initiator may have 
+several I/O processes ongoing to the same or different logical units or target 
+routines as long as each has a unique nexus.
+
+  If only SIMPLE QUEUE TAG messages are used, the target may execute the 
+commands in any order that is deemed desirable within the constraints of the 
+queue management algorithm specified in the control mode page (see 7.3.3.1).  
+
+  If ORDERED QUEUE TAG messages are used, the target shall execute the 
+commands in the order received with respect to other commands received with 
+ORDERED QUEUE TAG messages.  All commands received with an SIMPLE QUEUE TAG 
+message prior to a command received with an ORDERED QUEUE TAG message, 
+regardless of initiator, shall be executed before that command with the 
+ORDERED QUEUE TAG message.  All commands received with an SIMPLE QUEUE TAG 
+message after a command received with an ORDERED QUEUE TAG message, regardless 
+of initiator, shall be executed after that command with the ORDERED QUEUE TAG 
+message. 
+
+  A command received with a HEAD OF QUEUE TAG message is placed first in the 
+queue, to be executed next.  A command received with a HEAD OF QUEUE TAG 
+message shall not suspend an I/O process for which the target has begun 
+execution.  Consecutive commands received with HEAD OF QUEUE TAG messages are 
+executed in a last-in-first-out order.
+
+  An I/O process received without a queue tag message while there are any 
+tagged I/O commands in the command queue from the same initiator is an 
+incorrect initiator connection (see 6.5.2) unless there is a contingent 
+allegiance or extended contingent allegiance condition.
+
+
+  A series of linked commands are a single I/O process, and are assigned the 
+queue tag established in the initial connection.  A command received with a 
+HEAD OF QUEUE TAG message shall not suspend a series of linked commands for 
+which the target has begun execution.
+
+  The RESERVE and RELEASE commands should be sent with an ORDERED QUEUE TAG 
+message.  Use of the HEAD OF QUEUE TAG message with these commands could 
+result in reservation conflicts with previously issued commands.  
+
+  The TEST UNIT READY and INQUIRY commands are often sent with a HEAD OF QUEUE 
+TAG message, since the information returned has no effect on the condition of 
+the logical unit. 
+
+  Two error recovery options are allowed.  The error recovery option to be 
+used is specified in the control mode page (see 7.3.3.1).  
+
+  The first post-recovery option is to continue execution of commands in the 
+queue after the contingent allegiance or extended contingent allegiance 
+condition has cleared.  The target returns BUSY status to other initiators 
+while the contingent allegiance or extended contingent allegiance condition 
+exists.  During this time all commands in the queue are suspended.  All 
+commands used for recovery operations shall be untagged commands.  The queue 
+may be modified by removing all or selected commands in the queue as part of 
+the recovery procedure.  
+
+  If commands are combined by the queuing algorithm such that the error 
+affects more than one command, then a contingent allegiance condition shall be 
+generated for all affected commands.
+
+  The second recovery option clears the queue after the contingent allegiance 
+or extended contingent allegiance condition has been cleared.  When the queue 
+is cleared because of this recovery option, a unit attention condition shall 
+be generated for all other initiators and the additional sense code shall be 
+set to COMMANDS CLEARED BY ANOTHER INITIATOR.
+
+  Deferred errors are normally related to a command that has already 
+completed.  As such, there is no attempt to return the queue tag value 
+assigned to the original command.
+
+  A device that does not support tagged queuing for any reason (e.g., not 
+implemented, disabled by the DQue bit in the control mode page, or it has been 
+switched to an operating definition that does not include tagged queuing) 
+shall respond to any queue tag message with a MESSAGE REJECT message.  The 
+target shall continue the I/O process as if it was an untagged I/O process.
+
+  Tagged queuing may also be temporarily disabled internal to the SCSI device 
+during certain initialization periods or to control internal resource 
+utilization.  During these periods the target may elect to return QUEUE FULL 
+status or it may respond to any queue tag message with a MESSAGE REJECT 
+message.
+
+
+
+
+
+  Several messages may be used to clear part or all of the command queue.  
+Please refer to the ABORT, ABORT TAG, BUS DEVICE RESET, and CLEAR QUEUE 
+messages in Section 5 for details.
+
+6.8.3. Example of Queued I/O Process
+
+  An example of I/O process queuing benefits from the consideration of the 
+execution of a number of commands.  After each command, the state of the queue 
+kept in the target is shown to indicate the function actually performed by the 
+queuing.
+
+6.8.3.1. Typical Sequences for Tagged Queuing
+  An I/O process using tagged queuing uses the following sequences for normal 
+execution.  The initiator first arbitrates for the SCSI bus, and after 
+successfully obtaining the SCSI bus, selects the appropriate SCSI device.  The 
+ATN signal is asserted during the SELECTION phase to indicate that a MESSAGE 
+OUT phase is requested by the initiator.  The first message byte transferred 
+is an IDENTIFY message.  The ATN signal continues to be asserted during the 
+MESSAGE OUT phase to indicate that the initiator has another message.  The 
+second message byte transferred is the first byte of the appropriate queue tag 
+message, in this case a SIMPLE QUEUE TAG message.  The third and last message 
+byte is transmitted containing the second byte of the queue tag message, the 
+queue tag.  As it is transferred, the ATN signal is negated to indicate that 
+no more message bytes are available.  The target then transfers the command 
+descriptor block.  Assuming the command requires disconnection, the target 
+transmits a DISCONNECT message to the initiator and then enters the BUS FREE 
+phase.  The target places the command, identified by the I_T_L_Q nexus, at the 
+appropriate place in the command queue.
+
+  When the target removes I/O processes from the queue for execution, a 
+physical latency period may occur.  At the end of this period, when the target 
+is prepared to transfer the appropriate data, the target begins an ARBITRATION 
+phase and, upon winning, enters a RESELECTION phase.  After a successful 
+reselection, the target sends the IDENTIFY message followed by a SIMPLE QUEUE 
+TAG message with the queue tag value originally sent by the initiator.  The 
+initiator uses the I_T_L_Q nexus to identify the correct set of pointers and 
+control blocks associated with the I/O process and to establish the necessary 
+conditions for data transfer.  The target begins data transfer.  When the data 
+transfer is successfully completed, the target returns GOOD status and 
+terminates the I/O process with a COMMAND COMPLETE message.
+
+6.8.3.2. Example of Tagged Queuing 
+  An example of the execution of five queued I/O processes is described to 
+demonstrate how tagged queuing operates.  All tagged I/O processes are from 
+one initiator to a single logical unit of a single target.  The five I/O 
+processes are defined in Table 6-8.  The target is a direct-access device.  At 
+the time the I/O processes are first being executed, it is assumed that the 
+actuator is in position to access logical block 10000.
+
+
+
+
+
+
+
+               Table 6-8: Commands in Order Received by Target
+
+                                   Queue  Logical
+                                    Tag    Block   Transfer
+       Command  Queue Tag Message  Value  Address   Length     Status  
+       -------  -----------------  -----  -------  ---------  ---------
+        READ          SIMPLE        01h    10000     1000      Queued
+        READ          SIMPLE        02h      100        1      Queued  
+        READ         ORDERED        03h     1000     1000      Queued  
+        READ          SIMPLE        04h    10000        1      Queued
+        READ          SIMPLE        05h     2000     1000      Queued  
+
+  The optimum order would require that those blocks close to the actuator 
+position be the first blocks accessed, followed by those increasingly far from 
+the actuator position.  However, the command with queue tag 03h is an ordered 
+I/O process, so that all simple I/O processes transferred previously must be 
+executed before, while all simple I/O processes transferred after the ordered 
+I/O process must be executed after the ordered I/O process.
+
+  If a target supports an optimizing algorithm the actual order in which the 
+I/O processes are executed could be as shown in Table 6-9.
+
+                  Table 6-9: Commands in Order of Execution
+
+                                   Queue  Logical
+                                    Tag    Block   Transfer
+       Command  Queue Tag Message  Value  Address   Length     Status  
+       -------  -----------------  -----  -------  ---------  ---------
+        READ          SIMPLE        01h    10000     1000      Queued
+        READ          SIMPLE        02h      100        1      Queued  
+        READ         ORDERED        03h     1000     1000      Queued  
+        READ          SIMPLE        05h     2000     1000      Queued  
+        READ          SIMPLE        04h    10000        1      Queued
+
+
+  I/O processes with queue tag values 01h and 02h are executed in the order 
+received since the actuator is already in position to execute I/O process 01h.  
+I/O process 02h must be executed before I/O process 04h or 05h because the 
+ordered I/O process 03h was transmitted after I/O processes 01h and 02h but 
+before I/O processes 04h and 05h.  I/O process 03h is then executed after I/O 
+process 02h.  The I/O processes 04h and 05h are executed after the ordered I/O 
+process 03h.  I/O process 05h is executed before I/O process 04h because the 
+actuator is in position to access block 2000 after executing I/O process 03h.  
+I/O process 04h is executed last. 
+
+  As an example of the operation of the HEAD OF QUEUE TAG I/O process, 
+consider that a new I/O process, identified by a HEAD OF QUEUE TAG message 
+with a queue tag of 08h, is transmitted to the target while the ordered I/O 
+process 03h is being executed.  The I/O process 03h continues execution, but 
+the new HEAD OF QUEUE TAG I/O process is placed in the queue for execution 
+before all subsequent I/O processes.  In this case, the queue for execution 
+after the ordered I/O process 03h was executed would appear as shown in Table 
+6-10.
+
+
+              Table 6-10: Modified by HEAD OF QUEUE TAG Message
+
+                                   Queue  Logical
+                                    Tag    Block   Transfer
+       Command  Queue Tag Message  Value  Address   Length     Status
+       -------  -----------------  -----  -------  ---------  ---------
+        READ         ORDERED        03h     1000      1000    Executing
+        READ      HEAD OF QUEUE     08h        0         8     Queued
+        READ          SIMPLE        05h     2000      1000     Queued
+        READ          SIMPLE        04h    10000         1     Queued  
+
+  To obtain maximum performance gains using tagged queuing requires careful 
+implementation of the queuing algorithms in the target.  In addition, 
+initiators should allow a maximum number of simple I/O processes to be 
+executed with a minimum number of ordered I/O processes.  RESERVE and RELEASE 
+commands, SET LIMITS commands, and appropriate software locking conventions 
+should be used to guarantee the proper relationship between the commands 
+executed and the data stored on the peripheral devices.  These conventions are 
+not defined by this standard.
+
+6.9. Unit Attention Condition
+
+  The target shall generate a unit attention condition for each initiator on 
+each valid logical unit whenever the target has been reset by a BUS DEVICE 
+RESET message, a hard reset condition, or by a power-on reset.  The target 
+shall also generate a unit attention condition on the affected logical unit(s) 
+for each initiator whenever one of the following events occurs:
+  (1) A removable medium may have been changed.
+  (2) The mode parameters in effect for this initiator have been changed by 
+  another initiator.
+  (3) The version or level of microcode has been changed.
+  (4) Tagged commands queued for this initiator were cleared by another 
+  initiator.
+  (5) INQUIRY data has been changed.
+  (6) The mode parameters in effect for this initiator have been restored from 
+  non-volatile memory.
+  (7) A change in the condition of a synchronized spindle.
+  (8) Any other event occurs that requires the attention of the initiator.
+
+  IMPLEMENTORS NOTES:
+  (1)  Targets may queue unit attention conditions on logical units.  After 
+  the first unit attention condition is cleared, another unit attention 
+  condition may exist (e.g., a power on condition followed by a microcode 
+  change condition).  The initiator can clear all pending unit attention 
+  conditions by repeatedly sending the REQUEST SENSE command until a sense key 
+  other than UNIT ATTENTION is returned by the target.
+  (2)  See 6.5.3 for requirements concerning selection of an invalid logical 
+  unit.
+
+  The unit attention condition shall persist on the logical unit for each 
+initiator until that initiator clears the condition as described in the 
+following paragraphs.
+
+
+
+  If an INQUIRY command is received from an initiator to a logical unit with a 
+pending unit attention condition (before the target generates the contingent 
+allegiance condition), the target shall perform the INQUIRY command and shall 
+not clear the unit attention condition.  If the INQUIRY command is received 
+after the target has generated the contingent allegiance condition for a 
+pending unit attention condition, then the unit attention condition on the 
+logical unit shall be cleared, and the target shall perform the INQUIRY 
+command.
+
+  If any other command is received after the target has generated the 
+contingent allegiance condition for a pending unit attention condition, the 
+unit attention condition on the logical unit shall be cleared, and if no other 
+unit attention condition is pending the target shall perform the command.  If 
+another unit attention condition is pending the target shall not perform the 
+command and shall generate another contingent allegiance condition.
+
+  If a REQUEST SENSE command is received from an initiator with a pending unit 
+attention condition (before the target generates the contingent allegiance 
+condition), then the target may either:
+  (1) report any pending sense data and preserve the unit attention condition 
+on the logical unit or
+  (2) report the unit attention condition, may discard any pending sense data, 
+and clear the unit attention condition on the logical unit for that initiator.
+
+  If the target has already generated the contingent allegiance condition for 
+the unit attention condition, the target shall perform the second action 
+listed above.
+
+  If an initiator issues a command other than INQUIRY or REQUEST SENSE while a 
+unit attention condition exists for that initiator (prior to generating the 
+contingent allegiance condition for the unit attention condition), the target 
+shall not perform the command and shall report CHECK CONDITION status unless a 
+higher priority status as defined by the target is also pending (e.g., BUSY or 
+RESERVATION CONFLICT).
+
+  If after generating the contingent allegiance condition for a pending unit 
+attention condition, the next command received from that initiator on the 
+logical unit is not REQUEST SENSE, then that command shall be performed and 
+the unit attention condition shall be cleared for that initiator on the 
+logical unit and the sense data is lost (see 6.6).
+
+  If a target becomes a temporary initiator to issue a SEND command with an 
+AEN bit of one, which informs the initiator (temporary target) of the unit 
+attention condition, and the SEND command completes with GOOD status, then the 
+target shall clear the unit attention condition for that initiator on the 
+logical unit (see 6.5.5).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1072 @@
+From coffin@ROCKY2.ROCKEFELLER.EDU Thu Mar 22 08:13:03 1990
+Flags: 000000000001
+Return-Path: <coffin@ROCKY2.ROCKEFELLER.EDU>
+Received: from ROCKY2.ROCKEFELLER.EDU by rascal.ics.utexas.edu. (4.0/SMI-4.0)
+	id AA28432; Thu, 22 Mar 90 08:12:52 CST
+Received: by ROCKY2.ROCKEFELLER.EDU (5.61/1.34)
+	id AA14797; Thu, 22 Mar 90 09:13:04 -0500
+Message-Id: <9003221413.AA14797@ROCKY2.ROCKEFELLER.EDU>
+To: werner@rascal.ics.utexas.edu
+Subject: scsiDocs-Part 7 of 7
+Date: Thu, 22 Mar 90 09:12:52 -0500
+From: coffin@ROCKY2.ROCKEFELLER.EDU
+
+
+
+.fo Appendix A                           #
+.pn 174
+Appendixes    (These Appendixes are not part of American National Standard 
+              Small Computer System Interface, X3.131.198_, but are included 
+              for information only.)
+
+ Appendix A 
+
+ SCSI Signal Sequence Example 
+
+This appendix is included to provide an example of the timing of an SCSI 
+command that includes most of the SCSI bus phases (Figure A1).  In this 
+example, the target does not disconnect from the SCSI bus prior to completing 
+the command.
+
+  The following notes apply to Figure A1:
+
+GENERAL NOTE:
+
+  In a typical system, the computer's host adapter acts as the "initiator" and 
+the peripheral device's controller acts as the "target".  In general, this 
+standard does not attempt to distinguish between a computer and its host 
+adapter.  These functions may be separate or merged.  The term "initiator" 
+encompasses both.  Similarly, the term "target" does not distinguish between 
+the peripheral device and its controller, which may be separate or merged.  
+The term "SCSI device" refers to a device that may be connected to the SCSI 
+bus.  An SCSI device may act as in the initiator role, the target role, or 
+both roles.
+
+TIMING NOTES:
+
+ Bus Settle Delay.   The minimum time to wait for the SCSI bus to settle after 
+changing certain control signals.
+
+ Bus Free Delay.   The minimum time that an SCSI device must wait from its 
+detection of BUS FREE phase until it may assert BSY and its ID bit.
+
+ Bus Set Delay.   The maximum time that an SCSI device may wait to assert BSY 
+and its ID bit after BUS FREE phase was last detected if it intends to 
+participate in the ARBITRATION phase.
+
+ Bus Clear Delay.   The maximum time for an SCSI device to stop driving all 
+signals after BUS FREE phase is detected, after SEL is received during 
+ARBITRATION phase, or after RST becomes true.
+
+ Arbitration Delay.   The minimum time that an SCSI device must wait after 
+asserting BSY for arbitration until it may examine the DATA BUS to determine 
+whether it won.  There is no maximum time.
+.pa
+
+.. Figure A1 goes here.
+.pa
+
+DATA BUS NOTES:
+
+  (1)  DB(7) is the most significant bit.
+
+  (2)  DB(7) is the highest priority arbitration bit.
+
+  (3)  DB(P) is the data parity bit (odd).  Parity is not valid during the 
+ARBITRATION phase.  Use of parity is a system option (i.e., a system is 
+configured so that all SCSI devices on a bus generate parity and have parity 
+detection enabled, or all SCSI devices have parity detection disabled or not 
+implemented).
+
+BUS PHASE NOTES:
+
+ BUS FREE phase.   BUS FREE phase begins when SEL and BSY are both continuously 
+false for a bus settle delay.  It ends when SEL or BSY becomes true.
+
+ ARBITRATION phase.   Implementation of this phase is optional.  If there is 
+more than one initiator, then all initiators must implement this phase.  
+Targets that do not implement this phase cannot disconnect from the bus until 
+the command has completed.  SCSI devices that implement the COPY command must 
+implement ARBITRATION phase.
+
+  At least one bus free delay after first detecting BUS FREE phase, but no 
+more than a bus set delay after the bus was last free, the initiator asserts 
+BSY and its assigned SCSI device ID bit on the DATA BUS.  The initiator waits 
+an arbitration delay, then examines the DATA BUS.  If a higher priority SCSI 
+device ID bit is true, the initiator loses arbitration and releases BSY and 
+its ID bit.  Otherwise, the initiator wins arbitration and asserts SEL.  SCSI 
+devices must release BSY and their ID bit within a bus clear delay after SEL 
+becomes true (even if they have not yet examined the DATA BUS).
+
+  The winning SCSI device waits at least a bus clear delay plus a bus settle 
+delay after asserting SEL before changing any signals on the bus.
+
+ SELECTION phase.   The I/O signal is false during this phase to distinguish it 
+>From the RESELECTION phase.
+
+  NON-ARBITRATING SYSTEMS:  In such systems, the initiator waits at least a 
+bus clear delay after detecting BUS FREE phase, then it asserts the target's 
+ID bit and, optionally, the initiator's ID bit on the DATA BUS.  After at 
+least two deskew delays, the initiator asserts SEL.
+
+  ARBITRATING SYSTEMS:  In such systems, the SCSI device that won arbitration 
+has both BSY and SEL asserted.  After at least a bus clear delay plus a bus 
+settle delay, it places both the target's and the initiator's ID bits on the 
+DATA BUS.  At least two two deskew delays later, it releases BSY.
+
+  ALL SYSTEMS:  The target determines that it is selected when SEL and its 
+SCSI ID bit are true and BSY and I/O are false for at least a bus settle 
+delay.  The target then asserts BSY within a selection abort time after it 
+last determined that it was still being selected.  (The target is not required 
+to respond to a selection within a selection abort time;  but it must insure 
+that it will not assert BSY more than a selection abort time after the 
+initiator aborts a selection attempt.)
+
+
+.fo Appendix A                         176.1
+  At least two deskew delays after the initiator detects BSY true, it releases 
+SEL and may change or release the DATA BUS.
+
+ COMMAND phase.   The target asserts C/D and negates I/O and MSG for all of the 
+bytes transferred during this phase.  The direction of transfer is from the 
+initiator to the target.
+
+  HANDSHAKE PROCEDURE:  The target asserts REQ.  Upon detecting REQ true, the 
+initiator drives the DATA BUS to the desired value, waits at least one deskew 
+delay plus a cable skew delay and then asserts ACK.  The initiator continues 
+to drive the DATA BUS until REQ is false.
+
+  When ACK is true at the target, the target reads the DATA BUS and then 
+negates REQ.
+
+  When REQ becomes false at the initiator, the initiator may change or release 
+the DATA BUS and negate ACK.
+
+  The target may continue to request command bytes by asserting REQ again.  
+The number of command bytes is determined by the group code (most significant 
+3 bits) that is contained in the first command byte.
+
+ DATA IN phase.   The target asserts I/O and negates C/D and MSG for all of the 
+bytes transferred during this phase.  The direction of transfer is from the 
+target to the initiator.
+
+  HANDSHAKE PROCEDURE:  The target first drives the DATA BUS to their desired 
+values, waits at least one deskew delay plus a cable skew delay, and then 
+asserts REQ.  The target continues to drive the DATA BUS until ACK is true.
+
+  When REQ is true at the initiator, the initiator reads the DATA BUS and then 
+asserts ACK.
+
+  When ACK is true at the target, the target may change or release the DATA 
+BUS and negate REQ.
+
+  When REQ is false at the initiator, the initiator negates ACK.  After ACK is 
+false, the target may continue the transfer by driving the DATA BUS and 
+asserting REQ as described above.
+
+ DATA OUT phase (not shown in the figure).   The target negates C/D, I/O, and 
+MSG for all of the bytes transferred during this phase.  The direction of 
+transfer is from the initiator to the target.  (Refer to the handshake 
+procedure and the timing chart for the COMMAND phase.)
+
+ STATUS phase.   The target asserts C/D and I/O and negates MSG for the byte 
+transferred during this phase.  The direction of transfer is from the target 
+to the initiator.  (Refer to the handshake procedure and the timing chart for 
+the DATA IN phase.)
+
+ MESSAGE phase.   The target C/D, I/O, and MSG during the byte transferred 
+during this phase.  Typically, a COMMAND COMPLETE message would be sent at 
+this point.  The direction of transfer is from the target to the initiator.  
+(Refer to the handshake procedure and the timing chart for the DATA IN phase.)
+
+ BUS FREE phase.   The target returns to BUS FREE phase by releasing BSY.  Both 
+
+the target and the initiator release all bus signals within a bus clear delay 
+after BSY is continuously false for a bus settle delay.
+.fo Appendix A                         176.2
+.pa
+
+                                                              
+.pn 177
+.fo Appendix B                           #
+ Appendix B 
+
+ Typical Bus Phase Sequence 
+
+This appendix is included to provide an example of the SCSI bus phase sequence 
+for a typical READ command (Tables B1 and B2).  In this example, the target 
+does not disconnect from the SCSI bus prior to completing the command.
+
+                                    Table B1 
+                      Typical READ Command Phase Sequence 
+
+==============================================================================
+                                   Signals
+               ---------------------------------------------------------------
+               B  S  A  M  C  I  R  A  R    D    D
+               S  E  T  S  /  /  E  C  S    B    B
+Bus Phase      Y  L  N  G  D  O  Q  K  T  (7-0) (P)    Comment
+------------------------------------------------------------------------------
+BUS FREE       -  -  -  -  -  -  -  -  -    -    -     SCSI bus is available. 
+
+ARBITRATION    1  -  -  -  -  -  -  -  -    ID   X     Initiator tries to get 
+     "            1                                    the SCSI bus.
+
+SELECTION      1  1  1  -  -  -  -  0  -  ID I,T V     Initiator has SCSI bus 
+     "         -  1                       ID I,T V     and selects a target.
+     "         1  1                       ID I,T V     ATN is on. 
+     "         1  -                         X    X
+
+MESSAGE OUT    1  -  1  1  1  0  0  0  -    X    X     Target has control of
+     "               1           1  0       X    X     the bus and gets the 
+     "               1           1  0       X    X     IDENTIFY message from
+     "               1           1  1    Message V     the initiator. 
+     "               1           0  1       X    X
+     "               0           0  0       X    X
+
+COMMAND        1  -  0  0  1  0  0  0  -    X    X     Target gets a command 
+     "                           1  0       X    X     from the initiator. 
+     "                           1  1    Command V     (This phase is repeated 
+     "                           0  1       X    X     for each byte.)
+     "                           0  0       X    X
+==============================================================================
+.pa
+
+                                    Table B2 
+                Typical READ Command Phase Sequence (Continued) 
+
+==============================================================================
+                                   Signals
+               ---------------------------------------------------------------
+               B  S  A  M  C  I  R  A  R    D    D
+               S  E  T  S  /  /  E  C  S    B    B
+Bus Phase      Y  L  N  G  D  O  Q  K  T  (7-0) (P)    Comment
+------------------------------------------------------------------------------
+DATA IN        1  -  0  0  0  1  0  0  -    X    X     Target sends data to 
+     "                           1  0  Read Data V     the initiator.  (This
+     "                           1  1       X    X     phase is repeated for
+     "                           0  1       X    X     each byte.)
+     "                           0  0       X    X
+
+STATUS         1  -  0  0  1  1  0  0  -    X    X     Target sends status to 
+     "                           1  0    Status  V     the initiator. 
+     "                           1  1       X    X
+     "                           0  1       X    X
+     "                           0  0       X    X
+
+MESSAGE IN     1  -  0  1  1  1  0  0  -    X    X     Target sends a COMMAND 
+     "                           1  0    Message V     COMPLETE message to the
+     "                           1  1       X    X     initiator. 
+     "                           0  1       X    X
+     "                           0  0       X    X
+
+
+BUS FREE       -  -  -  -  -  -  -  -  -    -    -     SCSI bus is available. 
+==============================================================================
+
+Key:  -       =  Signal driver is passive.
+      0       =  Signal is false.
+      1       =  Signal is true.
+      "Blank" =  Signal state is the same as the previous line.
+      ID      =  SCSI ID for arbitration.
+      ID I,T  =  SCSI ID of initiator and target.
+      V       =  Parity is valid.
+      X       =  The signal is not guaranteed to be in a known state.
+.pa
+
+                                                                               
+.pn 179
+.fo Appendix C                           #
+ Appendix C 
+
+ SCSI System Operation 
+
+This appendix is included to provide an explanation of the relationship of the 
+various pieces of an SCSI system.  This appendix also provides additional 
+information about the use of SCSI in a multi-tasking system.  Such systems 
+typically use a host adapter printed-circuit board to interface from the host 
+memory to the SCSI bus.  Although other architectures are possible (including 
+native or imbedded SCSI), the host adapter logic still exists as part of the 
+system.  The term "initiator" is used throughout this standard to encompass 
+all such architectures.  The term "host adapter" is used within this appendix 
+to refer to the logic that interfaces from the host memory to the SCSI bus.
+
+ C1. Host Memory / Host Adapter / SCSI Controller Relationship 
+
+The SCSI architecture utilizes the concept of host memory blocks for command, 
+data, and status interchange between the host system and the SCSI controller.  
+In the middle of this exchange is the SCSI host adapter, which acts as the 
+SCSI peripheral's gateway into host memory.  The host adapter is an important 
+portion of the overall intelligence of SCSI.  Along with providing an 
+information path from the SCSI bus to the host bus, the host adapter is 
+intimately involved in assuring data integrity and proper performance of the 
+I/O subsystem. 
+
+  In order to fully understand SCSI operation, the concepts of I/O memory 
+blocks and logical threads must be detailed.  Figure C1 presents a block 
+diagram of a single host/single peripheral SCSI I/O subsystem.  The host 
+memory contains three I/O blocks:  command, data, and status.  The SCSI 
+controller needs to read the command block and write to the status block in 
+order to perform the task specified by the host (in the command block).  
+Likewise, the controller needs to both read and write the data block.  As was 
+previously mentioned, the SCSI controller "reaches into host memory" via the 
+SCSI host adapter.  The host adapter must know the addresses of the command, 
+data, and status blocks in order for it to "reach" into the right spot in 
+memory.  In other words, the host adapter must be given a pointer to the start 
+of each block by the host.  As the SCSI controller takes information from the 
+command block, the memory pointer for the command block advances to the 
+next byte.  The same is true for the data and status pointers.
+
+  SCSI architecture provides for two sets of three pointers within the host 
+adapter.  The first set is known as the current (or active) pointer values.  
+These are the pointers to the next command, data, or status byte to be 
+transferred between the host memory and the SCSI controller.  There is only 
+one set of current pointers in the host adapter.  The current pointers are 
+shared amoung all devices and are used by the current device connected to the 
+host adapter.  The second set is known as the saved pointer values.  There is 
+one set of saved pointers for each supported logical thread.  For command and 
+status, these pointers always point to the start of the memory command block 
+and memory status block.  The saved data pointer points to the start of the 
+data block at the beginning of the SCSI command.  It remains at this value 
+until the controller sends a SAVE DATA POINTER message to the host adapter 
+which in turn saves the value of the current data pointer.  The controller may 
+retrieve the saved value by sending a RESTORE POINTERS message.  This moves 
+the saved value of each pointer into the current pointer registers.  Whenever 
+an SCSI device disconnects from the bus, only the saved pointer values are 
+
+retained.  The current pointer values are set from the saved values upon the 
+next reconnection.  The current and saved pointers provide an efficient means 
+of error retry and recovery during large data exchanges on the SCSI bus.
+
+ C2. SCSI READ Command Example 
+
+One method to understanding the host/host adapter/SCSI peripheral relationship 
+is via an example.  Let us consider the case of a multiple sector READ command 
+that will cross a cylinder boundary on a direct-access device such as a disk.
+
+  The first activity in the I/O operation is for the system to create a 
+command descriptor block in memory and determine where the data and status are 
+to be written in host memory.  The host then sends a command to the host 
+adapter that includes the starting address (pointer) for each of the command, 
+data, and status blocks and the SCSI address of the peripheral to perform the 
+operation.  In this example, there is only one SCSI controller and physical 
+disk, but its address is required in order for the host adapter to select it.
+
+  Upon receiving the command, the host adapter arbitrates for the SCSI bus and 
+wins (due to the lack of competing devices) and proceeds to select the target 
+SCSI device with the ATN signal asserted.  The ATTENTION condition indicates 
+to the SCSI target that the initiator (the host adapter) has a message to send 
+to the target.
+
+  After the SELECTION phase is completed, the disk controller responds to the 
+initiator's ATTENTION condition by receiving a message from the initiator.  
+This message, generated by the host adapter, indicates the desired logical 
+unit number in the target and whether the initiator can support bus 
+disconnect.  In this example, the initiator supports disconnect.
+
+  Input/output activity from this point will be controlled entirely by the 
+target.  The host adapter is simply an "arm" of the target used to reach into 
+host memory.  Utilizing this arm, the target reads in the command descriptor 
+block (CDB).
+
+  After decoding the instruction, the controller determines that a disk seek 
+is required to get the starting data block.  Since the SCSI bus will not be 
+utilized until data has been read from the disk, the target controller 
+disconnects from the bus.  The disconnect process includes the transmission of 
+a SAVE DATA POINTER message and DISCONNECT message from the target to the host 
+adapter.  The host adapter responds to the SAVE DATA POINTER message by saving 
+the current data pointer, which is still set to the start of the data block.  
+After transmission of the DISCONNECT message the target will release BSY, 
+freeing the bus.
+
+  Although the initiator host adapter and target disk controller are 
+disconnected, they are logically connected or, "threaded", together.  Both 
+devices know they have a command to finish and will return to that job at a 
+later point in time.  The principle of logical threads allows many I/O 
+commands to execute in the system simultaneously, utilizing a single physical 
+bus.  The thread is actually not between the host adapter and the disk 
+controller, but runs all the way from the host memory I/O block to the 
+peripheral device performing the operation. (See Figure C2 for a pictorial 
+presentation of this concept.)
+
+  Once the target has started filling its data buffers, it can transmit data 
+
+to the initiator, but first it must reestablish the physical path.  The 
+reselection process involves the target arbitrating for the bus and 
+reselecting the host adapter.  After the physical reconnection is made, the 
+target sends an IDENTIFY message to the host adapter to indicate which target 
+logical unit is reconnecting.  This information provides reconnection, to the 
+correct thread into host memory.  After reconnection, the roles of the 
+initiator and target are just as they were prior to disconnect.  The target 
+transfers data into host memory via the host adapter.  The data transfer 
+continues until the disk reaches the end of its cylinder and the disk 
+controller determines that a second physical seek is required to complete the 
+READ command.  The target again performs a SAVE DATA POINTER message and a 
+DISCONNECT message.  However, this time the current data pointer is not at the 
+beginning of the memory data block.  The saved value at disconnect reflects 
+the change.
+
+  After seek completion and transfer of data into its buffer, the controller 
+reconnects to the host adapter and completes the data transfer as requested by 
+the READ command.  At this point, the controller sends ending status into host 
+memory via the host adapter.  The final action of the target is to send to the 
+host adapter a COMMAND COMPLETE message and disconnect from the SCSI bus.  The 
+target has completed its operation and considers the logical thread broken.
+
+  Upon receipt of the COMMAND COMPLETE message, the host adapter signals the 
+host that the I/O command is complete.  This signal can be an interrupt or the 
+setting of a flag read by the host in a polled I/O environment.  This action 
+by the host adapter breaks the thread between the host adapter and the I/O 
+memory blocks of the host.  The host reviews the status of the operation in 
+the status block and proceeds to utilize the data transferred into the data 
+block.
+
+ C3. I/O Channel Concept 
+
+The I/O channel concept fully utilizes the high performance capability of 
+SCSI.  The I/O channel is basically an intelligent SCSI host adapter that can 
+maintain multiple simultaneous threads between host memory I/O blocks and 
+different SCSI devices. 
+
+  The I/O channel utilizes a single direct memory access (DMA) path into host 
+memory supporting the DMA operations of numerous SCSI peripherals.  Since the 
+SCSI bus is a single physical bus and most host computers have a single 
+physical backplane bus, multiple DMA channels into memory are not necessary.  
+In many implementations of a multiple DMA channel architecture, when a channel 
+is accessing memory, all other channels are idle.  In such implementations, a 
+single channel supporting multiple threads can supply the same performance as 
+separate DMA peripherals.  An obvious advantage to the host is lower system 
+cost as well as the saving in backplane card slots.
+
+  In the READ command example discussed in Section C2, the I/O channel is the 
+SCSI host adapter.  The host gives the I/O channel a command by providing it 
+with pointers to the I/O memory blocks and the SCSI peripheral address.  This 
+establishes a thread between the host adapter and the host I/O memory blocks.  
+The I/O channel then opens a subchannel that is assigned the task of managing 
+the physical link and logical thread between the host adapter and the target 
+controller.  All physical connections and reconnections to the host adapter 
+are managed by this subchannel.  The number of active or open subchannels an 
+I/O channel can support is totally dependent upon its design.  The SCSI 
+
+definition could, in theory, support an I/O channel with up to 56 subchannels 
+(14,336 subchannels, if the EXTENDED IDENTIFY message is implemented).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 Figure C1. Snapshot Prior to Initial Selection 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   Figure C2. Snapshot Prior to Data Transfer 
+
+                                                                   
+.pn 184
+.fo Appendix D                           #
+ Appendix D   
+
+ Recommended Shielded Connectors 
+
+
+Three alternative shielded connector systems are defined by this appendix.  
+For each alternative, the connector shielding system shall provide a dc 
+resistance of less than 10 milliohms from the cable shield at its termination 
+point to the SCSI device enclosure.
+
+  In order to support daisy-chain connections, SCSI devices that use shielded 
+connectors should provide two shielded device connectors on the device 
+enclosure.  These two connectors may be wired "one-to-one" with a stub to the 
+SCSI device's drivers and receivers provided the maximum stub length is not 
+violated.  Alternatively, two cables may be run from the two shielded 
+connectors to the drivers and receivers so that the maximum stub length is not 
+violated.  The length of the cable within the device enclosure is included 
+when calculating the total cable length of the SCSI bus.
+
+   D1 Shielded Connector, Alternative 1.   The shielded cable connector 
+(Figure D1) shall be a 50-conductor connector consisting of two rows of 25 
+female contacts with adjacent contacts 2.54 mm (0.1 in) apart.  The nonmating 
+portion of the connector is shown for reference only.
+
+  The shielded SCSI device connector (Figure D2) shall be a 50-conductor 
+connector consisting of two rows of 25 male pins with adjacent pins 2.54 mm 
+(0.1 in) apart.  The nonmating portion of the connector is shown for reference 
+only.
+
+  The connector pin assignments shall be as shown in Table 4-1 for single-
+ended drivers and as shown in Table 4-2 for differential drivers.
+
+   D2 Shielded Connector, Alternative 2.   The shielded device connector 
+(Figure D3) shall be a 50-conductor connector consisting of two rows of ribbon 
+contacts spaced 2.16 mm (0.085 in) apart.  The nonmating portion of the 
+connector is shown for reference only.  FCC document Part 68 Subpart F 68.500 
+should be used for reference.
+
+  The shielded cable connector (Figure D4) shall be a 50-conductor connector 
+consisting of two rows of ribbon contacts spaced 2.16 mm (0.085 in) apart. The 
+nonmating portion of the connector is shown for reference only.
+
+  The connector pin assignments shall be as shown in Table D1 for single-ended 
+drivers and as shown in Table D2 for differential drivers.
+
+   D3 EUROCARD Boxes   For boards in EUROCARD boxes (IEC 297 or DIN 41494) the 
+EMI-screen may be in the front of the boards and in this case a screened cable 
+and connector may be attached through the front panel to the board connector 
+specified in section 4.3.  It is thereby possible to use the flat ribbon cable 
+specified in this standard or the shielded cable, as required by users.
+.pa
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Figure D1a. Female Shielded SCSI Cable Connector, Alternative 1 
+.pa
+
+==============================================================================
+Dimensions    Millimeters              Inches              
+------------------------------------------------------------------------------
+   A1         60.96  +  0.15             2.400  +  0.006       
+   A2         66.29  +  0.18             2.610  +  0.007
+   A3          2.54  +  0.15             0.100  +  0.006
+   A4          2.54  +  0.15             0.100  +  0.006
+   A5          8.56  +  0.41             0.337  +  0.016       
+   A6         11.93 Minimum            0.470 Minimum       
+   A7         65.02  +  0.18             2.560  +  0.007
+   A8          5.46                    0.215               
+   A9          4.14  +  0.25             0.163  +  0.010       
+   A10        60.20 Maximum            2.370 Maximum       
+   A11         6.60                    0.260               
+   A12         1.27 Maximum            0.050 Maximum       
+   A13         0.64 Maximum            0.025 Maximum       
+   A14         6.604 + 0.25, - 0.13    0.260 + 0.010, - 0.005
+   A15        13.46                    
+.fo Appendix E                           #
+ Appendix E 
+
+ Conformance 
+
+This appendix contains recommendations on conformance statements to this 
+standard.
+
+ E1.  Alternatives 
+
+This standard contains various alternatives that are mutually exclusive within 
+a system.
+
+  (1)  Single-ended or differential drivers.
+  (2)  Termination power supplied by the cable or not.
+  (3)  Parity implemented or not.
+  (4)  "Hard" RESET or "soft" RESET.
+  (5)  Reservation queuing implemented or not.
+
+ E2.  Levels of Conformance 
+
+  By specifying which alternatives (listed above) are implemented, an 
+environment is created enabling different features to be implemented.  These 
+features are divided into three nested minimum levels as shown in Table E1.
+
+                                    Table E1 
+                             Levels of Conformance 
+
+==============================================================================
+Level        Initiator                           Target
+------------------------------------------------------------------------------
+  0     Accept COMMAND COMPLETE        Implement the mandatory commands   
+        message.                       of section 7.                      
+                                                                          
+        Accept GOOD and CHECK          Implement the mandatory commands   
+        CONDITION status codes.        of the supported device type(s).   
+                                                                          
+                                       Implement the COMMAND COMPLETE     
+                                       message.                           
+                                                                          
+                                       If messages other than COMMAND     
+                                       COMPLETE are implemented, then     
+                                       implement MESSAGE REJECT message   
+                                       also.                              
+                                                                          
+                                       Implement GOOD and CHECK CONDITION 
+                                       statuses.                          
+------------------------------------------------------------------------------
+  1     Same as above plus             Same as above.
+        ARBITRATION phase.
+------------------------------------------------------------------------------
+  2     Same as above plus             Same as above plus implement the
+        accept DISCONNECT,             MESSAGE REJECT and IDENTIFY messages
+        MESSAGE REJECT,                and implement all extended commands
+        IDENTIFY, and SAVE             in section 7 and for the supported
+        DATA POINTER messages          device type(s).
+==============================================================================
+
+ E3.  Options 
+
+ E3.1  Optional Commands.   This standard specifies a number of additional 
+commands that can be implemented in each level.  Some of these commands, if 
+implemented, require the implementation of other optional commands, messages, 
+or both.  In this case, these additional commands, messages, or both shall 
+also be implemented.
+
+ E3.2  Optional Messages.   This standard specifies a number of additional 
+optional messages that may be implemented at any level.
+
+ E3.3  Other options.   Within some commands, additional features, called 
+"options", are described.  These options need not necessarily be implemented.
+
+ E4.  Statement of Conformance 
+
+Any statement of conformance to this standard should declare which of the 
+alternates listed in section E1 and which of the three conformance levels are 
+implemented.  In addition, it should indicate which of the options listed in 
+section E3 are implemented, if any.  In the case of optional messages, the 
+conformance statement should state whether the message is generated, accepted, 
+or both.
+
+  If the synchronous data transfer option is implemented, any statement of 
+conformance should so indicate and state both the maximum REQ/ACK offset and 
+the minimum transfer period implemented.
+.pa
+
+                                                          
+.pn 195
+.fo Appendix F                           #
+ Appendix F 
+
+ Additional Medium Type and Density Code Standards 
+
+In sections 8 and 9 of this standard, the MODE SELECT and MODE SENSE commands 
+define medium type codes and density codes for certain flexible disks and 
+magnetic tapes.  ANSI standards or X3 draft documents are referenced for code 
+values if a standard or draft document exists for that code value.  In many 
+cases, other standards also exist for a code value.  Tables F1 and F2 in this 
+appendix provide references to those standards for these code values.
+
+DISCLAIMER:  It is not the purpose of this appendix to indicate that these 
+standards are exactly equivalent to each other.  However, these standards may 
+be applicable.  Please refer to sections 8 and 9 for additional information 
+concerning the medium type or density code.
+
+
+                                  Table F1 
+                        Direct-access Medium Type Codes 
+
+==============================================================================
+Code Value                       Medium Type
+----------  ------------------------------------------------------------------
+ 00 H -02 H     See section 8.
+                   
+            Flexible Disk Reference Standard(s)
+            ------------------------------------------------------------------
+   05 H       X3.73-1980,  ECMA-54,  ISO 5654/1-1984, ISO 5654/2-1982
+   06 H       X3B8-140,    ECMA-59
+   09 H       X3B8/78-139
+   0A H       X3.121-1984, ECMA-69,  ISO 7065/1-1985, ISO 7065/2-1985
+   0D H       X3.82-1980,  ECMA-66,  ISO 6596/1-1985, ISO 6596/2-1985
+   12 H       X3.125-1984, ECMA-70,  ISO 7487/1-1985, ISO 7487/2-1985,
+                                   ISO 7487/3-1985
+   16 H       X3.126-198X, ECMA-78,  DIS 8378/1,      DIS 8378/2,     DIS 8378/3
+   1A H       X3B8/85-199, ECMA-99,  DIS 8630/1,      DIS 8630/2
+   1E H       X3.137-198X, ECMA-100, DIS 8860/1,      DIS 8860/2
+
+            Direct-access Magnetic Tape Standard(s)
+            ------------------------------------------------------------------
+   40 H       X3B5/85-138 (Note 1),  ECMA TC19/83/39
+   44 H       X3B5/85-138 (Note 1),  ECMA TC19/83/39
+
+80 H   _  FF H    Vendor unique
+All others  Reserved
+==============================================================================
+NOTE:
+  (1)  The referenced standard is for unrecorded miniature cartridge media.  
+The usage referred to here is for serial GCR recording using a format known as 
+QIC-100.  Since X3B5 issues a new document number for each revision of their 
+working draft document, please contact the Chairman of X3B5 for the latest 
+document number.
+.pa
+
+                                  Table F2 
+                        Sequential-access Density Codes 
+
+==============================================================================
+Code Value                             Density
+----------  ------------------------------------------------------------------
+   00 H       See section 9.
+
+            Magnetic Tape Reference Standard(s)
+            ------------------------------------------------------------------
+   01 H       X3.22-1983,                 ECMA-62
+   02 H       X3.39-1973                  ECMA-62
+   03 H       X3.54-1976,                 ECMA-62
+   04 H       Old format known as QIC-11
+   05 H       X3.136-198X,                ECMA-98
+   06 H       X3B5/85-98 (Note 1)
+   07 H       X3.116-198X,                ECMA-79
+   08 H       X3B5/85-77 (Note 1)
+   09 H       X3B5/85-76 (Note 1)
+   0A H 
+   0B H       X3.55, X3.56-198X,          ECMA-46, ISO 4057-1979
+
+80 H   _  FF H    Vendor unique
+All others  Reserved
+==============================================================================
+NOTES:
+  (1)  Working Draft.  X3B5 assigns a new document number to each revision of 
+their documents.  Please contact the Chairman of X3B5 for the latest document 
+number.
+.pa
+
+                                                                                                 
+.fo Appendix G                           #
+ Appendix G 
+
+ Future Standardization 
+
+This appendix is included to provide insight into some possible future 
+extensions to SCSI that are being considered by X3T9.2.  Although X3T9.2 has 
+addressed some of these extensions, many details remain to be resolved.  
+Further work by X3T9.2 may result in changes or additions to these extensions.  
+Please contact the Chairman of X3T9.2 for the current status of this activity.
+
+  Six new commands are being considered, three for targets that support 
+caching, one to provide a means to read the medium defect data, and two to 
+provide a standardized method for writing and reading the target's data buffer 
+(principally intended to support start-of-day tests that insure data path 
+integrity).  The tentative operation codes are as follows:
+
+==============================================================================
+Operation
+  Code      Type   Command Name             Device Types
+------------------------------------------------------------------------------
+   34 H        O     PRE-FETCH                \  Direct Access, Write-Once
+   35 H        O     FLUSH CACHE               > Read-Multiple, and
+   36 H        O     LOCK/UNLOCK CACHE        /  Read-Only Direct Access
+   37 H        O     READ DEFECT DATA         Direct Access
+   3B H        O     WRITE BUFFER             All
+   3C H        O     READ BUFFER              All
+------------------------------------------------------------------------------
+
+
+  New parameters are being considered in several of the existing commands:
+
+  (1) Cache control bits are being considered for bits 3 and 4 of byte 1 in 
+several group 1 commands, including READ, WRITE, WRITE AND VERIFY, and VERIFY.
+
+  (2) Byte 1 of the Defect List in the FORMAT UNIT command may be used to 
+provide additional defect management control.
+
+  (3) Bits 0  _  3 of byte 3 of the Inquiry Data in the INQUIRY command may be 
+used to identify that the device supports certain additions to the standard.  
+One such addition that is being considered is optional fields within the 
+Inquiry Data to identify the manufacturer and the product model information.
+
+  (4) Extensions to the MODE SELECT and MODE SENSE commands are being 
+considered to provide a standard means to control certain target parameters.  
+Bits 0  _  5 of byte 2 of the MODE SENSE command are being considered for use in 
+controlling which target parameters are returned by this command.
+.pa
+
+          
+William E. Burr (Chairman)
+John B. Lohmeyer (Vice Chairman)
+
+Ezra R. Alcudia                    Keith Amundsen  Alt
+J. L. Amstutz                      Karen Anneberg  
+Bob Bender                         Charles Brill 
+John Blagaila                      Larry Boucher 
+Tom Briggs                         Paul Clement  
+David T. Cornaby                   George E. Clark 
+David F. Craft, Jr.                Steve Cooper  
+Jay Cunningham                     Gary Crowell  
+Willard S. Davidson                Jon Ericson  
+Terry Dawson                       Tom Fiers 
+Phil Devin                         Stephen Fitzgerald  
+Louis C. Domshy                    Marty Francis  
+Norm Dornseif                      William Homans  
+Alan Ebright                       J. V. Howell  
+Anita  Freeman                     Skip Kilsdonk 
+Abe Gindi                          Jim Korpi 
+William A. Horton                  Lawrence J. Lamers  
+Frank Krulc                        Keith Mueller 
+Patrick E. Lannan                  Don Nanneman  
+Daniel Loski                       Doug Nolff  
+William C. Mavity                  Richard Reiser  
+Gene Milligan                      William H. Roberts  
+Bob Mortensen                      Floyd E. Ross 
+Gary S. Robinson                   D. Michael Robinson 
+Don Rodgers                        Jay Seashore  
+Arnold J. Roccati                  Chuck Spatafore 
+Jack Schiffhauer                   Jeff Stai 
+Ralph H. Schultz                   Paul Stavish  
+Moshe Segal
+Delbert L. Shoemaker 
+Tim Slaton 
+Robert N. Snively
+Adrienne Turenne 
+Norm Zimmerman 
+Ron Tranquilli 
+Bob Bender                         G. Atterbury 
+John Blagaila                      Charles Brill  
+Fred Ciechowski                    William E. Burr  
+George Clark                       Roger Cormier  
+Stephen W. Cooper                  Hank Dorris  
+Louis C. Domshy                    Thomas A. Fiers  
+Robert Dugan                       Henry Ginter 
+Ross H. Jaibaji                    William J. McClain 
+Patrick Lannan                     William Mosenthal, Jr. 
+Gene Milligan                      Kirk Moulton 
+Tom Morrow
+Mike Newton
+Gary S. Robinson
+Arnold John Roccati
+Floyd E. Ross
+Holly S. White
+SCSI secretariat target initiator synchronous asynchronous lsb msb 
+millimeter meter millimeters meters inch inches eia rs bsy sel msg req ack atn 
+
+rst db arbitration skew deskew assertion selection reselection 
+parity 
+0A 0B 0C 0D 0E 0F
+1A 1B 1C 1D 1E 1F
+2A 2B 2C 2D 2E 2F
+3A 3B 3C 3D 3E 3F
+4A 4B 4C 4D 4E 4F
+5A 5B 5C 5D 5E 5F
+6A 6B 6C 6D 6E 6F
+7A 7B 7C 7D 7E 7F
+8A 8B 8C 8D 8E 8F
+9A 9B 9C 9D 9E 9F
+A0 A1 A2 A3 A4 A5 A6 A7 A8 A9 AA AB AC AD AE AF
+B0 B1 B2 B3 B4 B5 B6 B7 B8 B9 BA BB BC BD BE BF
+C0 C1 C2 C3 C4 C5 C6 C7 C8 C9 CA CB CC CD CE CF
+D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA DB DC DD DE DF
+E0 E1 E2 E3 E4 E5 E6 E7 E8 E9 EA EB EC ED EE EF
+F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF
+FFFFFFFF
+reladr filemark filemarks 
+eom ili peripheral peripherals optical priority priorities 
+descriptor descriptors selftest devofl unitofl bytchk reassign medium 
+diagnostic configuring standard standards standardization
+mandatory extended optional vendor unique reserve reserved reservation
+term defect ascending sector track cylinder address addresses 
+appendix appendixes 3rdpty id extent segment exclusive access shared
+conflict conflicts logical unit sense select mode allocation
+density densities flexible disk magnetic parameter byte bit bytes bits
+immed immediate prevent prevention condition conditions status statuses es
+capacity substantial pmi
+recover recovered recoverable unrecovered unrecoverable 
+seek verify verification search 
+invert record spndat transfer equal equality inequality
+offset displacement terminate pattern length field fields
+specify specifies specifying
+rdinh wrinh inhibit boundary subsequent beginning load point limit limits
+residue operate operating operation
+bytcmp miscompare buffer buffered bpi non inverted nrzi pe phase encoded gcr
+recording group cartridge qic ansc ansi differential ended committee x3 x3t9
+x3t9.2 subcommittee interfaces task conjunction characteristics characteristic
+generators receivers receiver driver drivers balanced digital multipoint 
+systems systems available electronic industries industry association eye 
+street nw washington erase erased erases software hardware re-ten font slew 
+channel flush retain check checks checking ebc wp crc ecc etc blkvfy
+verified intermediate met tasking multi thread threaded reach reaches adapter 
+host subchannel subchannels 
+ns xx awg cdb dma emc esd ncr rmb xxx mil mils ohms abort daisy diode 
+fonts octal octet queue queues queued queuing reset retry tries two's amoung 
+append cmplst elects glitch polled ported pulses resend rewind rezero shroud 
+subset subsets unit's update aborted advalid assists briefly buffers copying 
+deleted detects disable ensure ensures extents fmtdata generic 
+nonzero obtains options simular sourced termpwr timeout totally updates 
+wichita accessed actively backflow diskette entirely equaling executes 
+foreword imbedded mainline nonblank normally pointer pointers
+connect connection connections interconnection interconnections connector 
+connectors 
+
+decoding device's diffsens disables reselect restores retrieve retrying 
+snapshot target's undriven unsigned verifies accessing adversely backplane 
+circuitry correctly executing impedance initially interlock logically 
+lowercase megabytes milliohms nonlinked nonmating overflows precludes 
+qualifier reconnect removable reselects resending submittal subscript 
+subsystem suppliers tensioned trade offs typically unchanged unprinted 
+unwritten uppercase adequately arbitrates configured contending disconnect 
+exhaustive explicitly handshakes hysteresis identifier impedances initiators 
+interleave internally intimately mismatches moderately nanosecond nongeneric 
+optionally previously reassigned reconnects referenced reselected separately 
+sequential terminator tolerances truncation unshielded addressable 
+arbitrating disconnects effectively encompasses enumeration hexadecimal 
+identically implementor initiator's integrators malfunction microsecond 
+millisecond nanoseconds nonextended nonshielded permissible positioning 
+reselecting terminators uncompleted unprocessed unsatisfied unspecified 
+unsupported additionally collectively continuously determinable electrically 
+implementors intentionally interrogated malfunctions milliseconds 
+nonrecovered peripheral's programmable reconnecting reconnection 
+reselectable subsequently successfully successively transferring 
+architectures compatibility disconnecting disconnection effectiveness 
+inadvertently misconnection noncumulative reconnections reestablish 
+reestablished semiconductor nonarbitrating nonrecoverable unsuccessfully 
+discontinuities electromagnetic implementations
+mm od ol th IDs LSI LUN renegotiate renegotiation 
+negate negates negated negating negation 
+volt volts millivolt millivolts
+amp amps milliamp milliamps
+providing 
+SASI VLSI dpANS backup Harvey Rosenfeld highly widely Adaptec Fujitsu Shugart 
+adapters Adaptive megabyte Bernoulli floodtide unbounded physically processors 
+subsystems intersymbol dramatically multibillion technologies alternatively 
+comparatively formalization clarifications 
+CPI discard nonfatal undefined incorrectly gaithersburg
+CS MC DIS MFM CPMM ECMA IMFM radian cassette serially unrecorded
+BSR FCC PRE cache caching subpart retension superceded superceding 
+principally parenthetical
+TC PN DIN EMI FRC IEC ISO BPMM FTPI FTPMM aborts redrew legible Amphenol 
+EUROCARD mutually alternates computer's disclaimer necessarily
+                       
+

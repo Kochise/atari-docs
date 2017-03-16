@@ -1,0 +1,440 @@
+11. Processor Devices
+
+11.1. Model for Processor Devices
+
+  The SCSI processor device is a target with the characteristics of a primary 
+computing device, typically a personal computer, minicomputer, mainframe 
+computer, or auxiliary computing device or server.  Such a primary computing 
+device is often called a host.  The processor device receives or provides 
+packets of data as requested by the initiator.  
+
+  In the SCSI processor device, the target accepts and provides the data 
+packets transferred according to the commands of the initiator.  The initiator 
+and the processor device are both assumed to know the rules by which 
+information is exchanged between them, how the information is interpreted by 
+the processor device, and when it is allowable to exchange the information.  
+These rules are not specified by this standard.
+
+  The initiator requests that the processor device accept a packet of data by 
+transmitting a SEND command.  The initiator requests that the processor device 
+return a packet of data by transmitting a RECEIVE command.  A COPY command can 
+also be transmitted to the processor device to request that it serve as a copy 
+manager.  The actual data flow can be between the processor device and another 
+SCSI device or can be between two SCSI devices under control of the processor 
+device acting as a copy manager.
+
+  If a processor device temporarily has no resource available to manage a data 
+packet from the initiator, has no data packet to provide to the initiator, or 
+has no resources assigned to perform the operation, the device may then choose 
+one of the following responses: 
+  1) Terminate the command with CHECK CONDITION status and the sense key NOT 
+READY with the appropriate additional sense code for the condition.  This is 
+the appropriate response to a TEST UNIT READY command. 
+  2) Disconnect until the necessary resource or data packet becomes available, 
+and then reconnect to the initiator and resume the operation.
+  3) Terminate the command with BUSY status.
+
+  More than one Logical Unit  can be implemented by a processor device.   
+Logical Units can serve as additional paths to a single resource, and/or each 
+logical unit can serve as a path to different resources within the device.  A 
+single logical unit may also serve as a path to multiple resources if the 
+processor device can interpret information within the data packet and route 
+the packet to the appropriate resource.  If the logical unit addressed by the 
+initiator does not have an available resource or data packet associated with 
+it, the processor device may choose to treat the logical unit as an invalid 
+logical unit (see 6.5.3) or respond as described in the previous paragraph.
+
+  If the processor device determines that an error or unusual condition has 
+occurred while performing an operation specified by the contents of a data 
+packet, the information describing the condition is normally returned as a 
+part of a data packet.  If the processor device determines that an error or 
+unusual condition has occurred while executing the SCSI command from the 
+initiator, the command is terminated with a CHECK CONDITION and the failures 
+are identified through a REQUEST SENSE command.
+
+
+  The SCSI processor device is distinguished from a SCSI communications device 
+by the fact that the primary destination of the data packets is within the 
+target device.  A SCSI communications device, in contrast, passes the data on 
+to an ultimate destination outside the target through a network.  Many types 
+of devices may find it convenient to function as processor devices if no other 
+suitable SCSI device type exists and if the packet exchange protocol dictated 
+by the processor device model meets their functional requirements.  Devices 
+requiring totally incompatible protocols and command sets should be examined 
+carefully to be sure that the incompatibilities are based on functional 
+requirements.  If  they are, they should be treated as vendor unique device 
+types.
+
+  Several examples of processor device implementations are provided to clarify 
+the range of utility of the SCSI processor device.
+
+11.1.1. Host to Host Communication, SEND Only
+
+  A host system, (Host A), takes the initiator role and selects a processor 
+device (Host B), transmitting a packet to Host B using the SEND command.  The 
+SEND command contains an operating system call that requests data from the 
+local storage devices attached to Host B.  After performing the functions 
+required by the data packet, Host B assumes the initiator mode and selects 
+Host A as a processor device and uses a SEND command to transmit the requested 
+data back to Host A.  Host A thus acts as a primary computer and Host B as a 
+specialized data server computer.  Note that the SEND command is sufficient to 
+perform a complete transaction if both Host A and Host B are capable of acting 
+as initiators.  This provides the capability of a high bandwidth inter-
+communication among nearby host processors.
+
+11.1.2. Host to Host Communication, SEND and RECEIVE
+
+  A host system (Host A) takes the initiator role and selects a processor 
+device (Host B), transmitting a packet using the SEND command to Host B 
+containing instructions about an operation to be performed.  Host A again 
+takes the initiator role and sends the data to be used by Host B in the 
+operation.  Host A then assumes that a result will be obtained consistent with 
+rules understood by both devices.  Host A generates a RECEIVE command to 
+obtain the result from Host B.  If the result is not yet ready, Host B may 
+disconnect until the calculation is complete and the requested data packet can 
+be returned to Host A.  Note that Host A need not support target mode and Host 
+B need not support initiator mode to successfully complete an exchange between 
+the two devices.
+
+11.1.3. Host to Special Output Peripheral
+
+  A special co-processor device which can use the processor device command set 
+is a high performance graphics display terminal.  The initiator sends control 
+and data packets to the display terminal that contain the image to be 
+displayed.  Only the SEND command would be required.  A peripheral failure 
+would be indicated through the normal CHECK CONDITION / REQUEST SENSE 
+protocol. 
+
+
+
+
+11.1.4. Host to Special Input Peripheral
+
+  A second special co-processor device which can use the processor device 
+command set is a data acquisition subsystem.  Such subsystems may multiplex 
+and compact streams of data from many sources.  A host could control the data 
+acquisition modes and the selection of data streams by transmitting control 
+packets to the processor device using the SEND command.  The host could then 
+obtain the acquired data by executing a series of RECEIVE commands.  The data 
+acquisition device could also serve as an initiator, selecting peripheral 
+storage devices and storing the compacted acquired data there for later access 
+directly by the host or through Host to Host communication protocols.  A 
+peripheral failure would be indicated through the normal CHECK CONDITION / 
+REQUEST SENSE protocol.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11.2. Commands for Processor Devices
+
+  The commands for processor devices shall be as shown in Table 11-1.
+
+                  Table 11-1: Commands for Processor Devices
+
+==============================================================================
+                                 Operation                                    
+Command Name                       Code    Type   Section  Page
+------------------------------------------------------------------------------
+CHANGE DEFINITION                  40h      O      7.2.1
+COMPARE                            39h      O      7.2.2                      
+COPY                               18h      O      7.2.3                      
+COPY AND VERIFY                    3Ah      O      7.2.4                      
+INQUIRY                            12h      M      7.2.5                      
+LOG SELECT                         4Ch      O      7.2.6
+LOG SENSE                          4Dh      O      7.2.7
+READ BUFFER                        3Ch      O      7.2.12                      
+RECEIVE                            08h      O     11.2.1
+RECEIVE DIAGNOSTIC RESULTS         1Ch      O      7.2.13                       
+REQUEST SENSE                      03h      M      7.2.14                       
+SEND                               0Ah      M     11.2.2
+SEND DIAGNOSTIC                    1Dh      M      7.2.15                      
+TEST UNIT READY                    00h      M      7.2.16                     
+WRITE BUFFER                       3Bh      O      7.2.17                     
+==============================================================================
+
+  Key: M  =  Command implementation is mandatory.
+       O  =  Command implementation is optional.
+       
+  The following operation codes are vendor specific: 02h, 05h, 06h, 09h, 0Ch, 
+0Dh, 0Eh, 0Fh, 10h, 11h, 13h, 14h, 19h, C0h through FFh.  All remaining 
+operation codes for processor devices are reserved for future standardization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11.2.1. RECEIVE Command
+
+                         Table 11-2: RECEIVE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (08h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Allocation Length                           |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The RECEIVE command (Table 11-2) requests the target transfer data to the 
+initiator.  The contents of the data are not defined by this standard.
+
+11.2.2. SEND Command
+
+                           Table 11-3: SEND Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (0Ah)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         |  AEN   |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The SEND command (Table 11-3 requests the target transfer data from the 
+initiator.
+
+  An asynchronous event notification (AEN) bit of one indicates that the data 
+to be transferred conforms to AEN data format as defined in Table 11-4.  A 
+SEND command with an AEN bit of one shall only be issued to logical unit zero.
+
+
+  An AEN bit of zero indicates that the data to be transferred are vendor-
+specific.
+
+  The transfer length specifies the length in bytes of data that shall be sent 
+during the DATA OUT phase.  A transfer length of zero indicates that no data 
+shall be sent.  This condition shall not be considered as an error.
+
+                  Table 11-4: SEND Command - AEN Data Format
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |     Reserved    | LUNTAR |     Reserved    |          LUNTRN          |
+-----|-----------------------------------------------------------------------|
+ 1   |                               Reserved                                |
+-----|-----------------------------------------------------------------------|
+ 2   |                               Reserved                                |
+-----|-----------------------------------------------------------------------|
+ 3   |                               Reserved                                |
+-----|-----------------------------------------------------------------------|
+ 4 to|                               Sense Data Byte (0)                     |
+- - -|- -                                                                 - -|
+ n+4 |                               Sense Data Byte (n)                     |
+==============================================================================
+
+
+  A logical unit target (LUNTAR) bit of zero specifies that the asynchronous 
+event occurred on a logical unit.  A LUNTAR bit of one specifies that the 
+asynchronous event occurred on a target routine.
+
+  If the LUNTAR bit is zero, the logical unit number target routine number 
+(LUNTRN) field specifies on which logical unit the asynchronous event 
+occurred.  If the LUNTAR bit is one, the LUNTRN field specifies on which 
+target routine the asynchronous event occurred.
+
+  The sense data bytes are defined in Table 7-35.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11.3. Parameters for Processor Devices
+
+11.3.1. Diagnostic Parameters
+
+  This section defines the descriptors and pages for diagnostic parameters 
+used with processor devices. 
+
+  The diagnostic page codes for processor devices are defined in Table 11-5.
+
+                      Table 11-5: Diagnostic Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+   00h        List of Supported Parameters Page                     7.3.1.1
+01h - 3Fh     Reserved (for all device type pages)                 
+40h - 7Fh     Reserved
+80h - FFh     Vendor-specific pages
+==============================================================================
+
+
+11.3.2. Log Parameters
+
+  This section defines the descriptors and pages for log parameters used with 
+processor devices. 
+
+  The log page codes for processor devices are defined in Table 11-6.
+
+                          Table 11-6: Log Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+   01h        Buffer Over-Run/Under-Run Page                        7.3.2.1
+   07h        Last n Error Events Page                              7.3.2.3
+   00h        List of Supported Parameters Page                     7.3.2.5
+   06h        Non-Medium Error Page                                 7.3.2.4
+02h - 05h     Reserved                              
+08h - 2Fh     Reserved                              
+30h - 3Eh     Vendor-specific pages
+   3Fh        Reserved                              
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+11.4. Glossary for Processor Devices
+
+host.  A device with the characteristics of a primary computing device, 
+typically a personal computer, workstation, minicomputer, mainframe computer, 
+or auxiliary computing device or server.
+
+data packet.  The data transferred during the DATA IN phase of a RECEIVE 
+command, or during the DATA OUT phase of a SEND command. A data packet often 
+contains information at the beginning or end of the packet that describes the 
+contents of the packet. A data packet might contain control or status 
+information for the destination device.
+
+resource.  A part of the device required to operate on or store the data 
+packet. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

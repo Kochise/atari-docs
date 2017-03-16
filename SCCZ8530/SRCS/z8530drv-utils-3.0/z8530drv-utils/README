@@ -1,0 +1,71 @@
+
+     SCC.C - Linux driver for Z8530 based HDLC cards for AX.25
+			Version 3.0
+
+Kernel versions below 2.0.21 are not supported!
+
+For the English documentation read (sic!) doc/scc_eng.doc
+                                          ===============
+
+(*) New features (relative to 2.4):
+
+    - I removed the KISS TNC emulator (TTY driver)
+    - Uses sk_buffer memory anagement
+    - Doesn't have own queues anymore
+    - Reduced overhead of /proc/net/z8530drv output
+    - Streamlined quite a lot things
+    - Invented brand new, never seen before bugs... ;-)
+
+(*) The driver does NOT support a simple BayCom MODEM. It needs a
+    Z8530 based controller board.
+
+(*) It should at least work with the following Z8530-SCC boards and
+    connected MODEMs
+
+    - BayCom USCC
+
+    - PA0HZP card with and without ESCC and/or external clock divider
+      (up to 19200 baud (loopback))
+
+    - TCM3105 modem, 4k8 modem, 9k6 DF9IC modem (loopback), HAPN 4k8 modem
+      (connected to a SCC board, of course!)
+
+The full copyright (-left?) notice is in Copying.Z8530DRV 
+(please read it, too)
+
+
+*****
+
+Kernel-Versionen unterhalb 2.0.0 werden nicht unterstützt!
+
+Die deutsche Version der Dokumentation befindet sich in doc/scc_ger.doc
+                                                        ===============
+
+Bitte VORHER LESEN!
+
+(*) Neu in Version 3.0:
+
+
+(*) Der Treiber unterstützt kein BayCom-Einfachstmodem. Er benötigt
+    eine Einsteck-Karte mit dem Z8530 SCC chip.
+
+(*) Der Treiber sollte zumindest mit den folgenden Z8530-SCC Karten
+    und MODEMs zusammenarbeiten:
+
+    - BayCom USCC
+
+    - PA0HZP-Karte mit und ohne ESCC-Chip und/oder Vollduplex-Teiler
+      (bis 19200 baud im Loopback getestet)
+
+    - TCM 3105 modem, 4k8 modem, 9k6 DF9IC modem (loopback), HAPN 4k8 modem
+      (natürlich an eine SCC-Karte angeschlossen!)
+
+
+Der vollständige Copyright-Vermerk befindet sich in Copying.Z8530DRV
+(bitte auch lesen!)
+
+-----
+
+Joerg Reuter	ampr-net: dl1bke@db0pra.ampr.org
+		AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU
+		Internet: jreuter@lykos.oche.de

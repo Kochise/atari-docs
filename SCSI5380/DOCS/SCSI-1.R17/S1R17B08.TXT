@@ -1,0 +1,2200 @@
+8. Command Descriptions for Direct-Access Devices
+
+8.1 Group 0 Commands for Direct-Access Devices.  The Group 0 commands for 
+direct-access devices shall be as shown in Table 8-1.
+
+                                  Table 8-1
+                  Group 0 Commands for Direct-Access Devices
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00H       O     TEST UNIT READY                    7.1.1
+   01H       O     REZERO UNIT                        8.1.1
+   02H       V
+   03H       M     REQUEST SENSE                      7.1.2
+   04H       M     FORMAT UNIT                        8.1.2
+   05H       V
+   06H       V
+   07H       O     REASSIGN BLOCKS                    8.1.3
+   08H       M     READ                               8.1.4
+   09H       V
+   0AH       M     WRITE                              8.1.5
+   0BH       O     SEEK                               8.1.6
+   0CH       V
+   0DH       V
+   0EH       V
+   0FH       V
+   10H       V
+   11H       V
+   12H       E     INQUIRY                            7.1.3
+   13H       V
+   14H       V
+   15H       O     MODE SELECT                        8.1.7
+   16H       O     RESERVE                            8.1.8
+   17H       O     RELEASE                            8.1.9
+   18H       O     COPY                               7.1.4
+   19H       V
+   1AH       O     MODE SENSE                         8.1.10
+   1BH       O     START/STOP UNIT                    8.1.11
+   1CH       O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1DH       O     SEND DIAGNOSTIC                    7.1.6
+   1EH       O     PREVENT/ALLOW MEDIUM REMOVAL       8.1.12
+   1FH       R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+
+
+
+  8.1.1 REZERO UNIT Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  01H
+
+                                  Table 8-2
+                             REZERO UNIT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The REZERO UNIT command (Table 8-2) requests that the target set the logical 
+unit to a specific state.  See vendor specifications for details.
+
+  8.1.2 FORMAT UNIT Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Mandatory
+             Operation Code:  04H
+
+                                  Table 8-3
+                             FORMAT UNIT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | FmtData| CmpLst |   Defect List Format     |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Vendor Unique                               |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Interleave (MSB)                            |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Interleave (LSB)                            |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The FORMAT UNIT command (Table 8-3) ensures that the medium is formatted so 
+that all data blocks can be accessed.  There is no guarantee that the medium 
+has or has not been altered.  In addition, the medium may be certified and 
+control structures be created for the management of the medium and defects.
+
+  The FORMAT UNIT command is both a mandatory command and an extended command 
+with multiple options (see Table 8-4).
+
+  The FORMAT UNIT command shall be rejected with RESERVATION CONFLICT status 
+if any extent (see 8.1.8.2) in the specified logical unit is reserved.
+
+  A format data (FmtData) bit of one indicates that format data is supplied 
+during the DATA OUT phase.  The defect list included with this data specifies 
+the defects that shall be entered into the defect map.  The format of the 
+defect list is determined by defect list format.  A FmtData bit of zero 
+indicates that the DATA OUT phase shall not occur (no defect data shall be 
+supplied by the initiator).
+
+  A complete list (CmpLst) bit of one indicates the data supplied is the 
+complete list of known defects.  Any previous initiator-specified defect map 
+or defect data shall be erased.  The target may add to this list as it formats 
+the medium.  The result is to purge any previous initiator-specified defect 
+list and to build a new defect list.  A CmpLst bit of zero indicates that the 
+data supplied is in addition to existing defect data using the current format.  
+When using the block format, the defect list refers to the current block 
+length (and not to the new block length, if it is different) and the defect 
+list refers to current logical block addresses (not physical addresses).  The 
+target may add to this list as it formats the medium.
+
+  The defect list format field specifies additional information related to the 
+defect list.  (See Table 8-4 for further information.)
+
+  The interleave field requests that the logical blocks be related in a 
+specific fashion to the physical blocks to facilitate speed matching.  An 
+interleave value of zero requests that the target use its default interleave.  
+An interleave value of one requests that consecutive logical blocks be placed 
+in consecutive physical order.  Values of two or greater are vendor unique.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 8-4
+                        FORMAT UNIT Command Variations
+
+==============================================================================
+    Bit Reference
+---------------------
+4    3    2    1    0
+FmtData
+|    CmpLst
+|    |    Defect List
+|    |      Format
+|    |    |    |    |    Command Type   Comments
+---------------------    ------------   --------------------------------------
+0    X    X    X    X    Mandatory      Format with no defect data sent from 
+                                        the initiator to the target.
+
+1    0    0    X    X    Extended       Format adding the defects specified in 
+                                        the defect list to the known defects.  
+                                        (See Table 8-5.)
+
+1    1    0    X    X    Optional       Format using defects in the defect 
+                                        list as the full set of known defects.  
+                                        (See Table 8-5.)
+
+1    0    1    0    0    Optional       Format adding the defects in the 
+                                        defect list to the known defects.  
+                                        (See Table 8-6.)
+
+1    1    1    0    0    Optional       Format using the defects in the defect 
+                                        list as the full set of known defects.  
+                                        (See Table 8-6.)
+
+1    0    1    0    1    Optional       Format adding the defects in the 
+                                        defect list to the known defects.  
+                                        (See Table 8-7.)
+
+1    1    1    0    1    Optional       Format using the defects in the defect 
+                                        list as the full set of known defects.  
+                                        (See Table 8-7.)
+
+1    X    1    1    0    Vendor unique
+
+1    0    1    1    1    Reserved
+
+1    1    1    1    1    Reserved
+==============================================================================
+
+X = 1 or 0 (i.e., don't care term).
+
+
+
+
+
+
+
+  The defect lists shown in Tables 8-5, 8-6, and 8-7 contain a four-byte 
+header followed by one or more defect descriptors.  The length of the defect 
+descriptors vary with the format of the defect list.
+
+  The defect list length in each table specifies the total length in bytes of 
+the defect descriptors that follow.  In Table 8-5, the defect list length is 
+equal to four times the number of defect descriptors.  In Tables 8-6 and 8-7, 
+the defect list length is equal to eight times the number of defect 
+descriptors.
+
+                                  Table 8-5
+                          Defect List - Block Format
+
+==============================================================================
+Byte |                        Defect List Header                             |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Defect List Length (MSB)                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Defect List Length (LSB)                    |
+==============================================================================
+     |                        Defect Descriptor(s)                           |
+==============================================================================
+ 0   |                           Defect Block Address (MSB)                  |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Defect Block Address                        |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Defect Block Address                        |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Defect Block Address (LSB)                  |
+==============================================================================
+
+  Each defect descriptor for the block format specifies a four-byte defect 
+block address that contains the defect.  The defect descriptors shall be in 
+ascending order.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 8-6
+                    Defect List - Bytes From Index Format
+
+==============================================================================
+Byte |                        Defect List Header                             |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Defect List Length (MSB)                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Defect List Length (LSB)                    |
+==============================================================================
+     |                        Defect Descriptor(s)                           |
+==============================================================================
+ 0   |                           Cylinder Number of Defect (MSB)             |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Cylinder Number of Defect                   |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Cylinder Number of Defect (LSB)             |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Head Number of Defect                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Defect Bytes from Index (MSB)               |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Defect Bytes from Index                     |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Defect Bytes from Index                     |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Defect Bytes from Index (LSB)               |
+==============================================================================
+
+  Each defect descriptor for the bytes from index format specifies the 
+beginning of an eight-byte defect location on the medium.  Each defect 
+descriptor is comprised of the cylinder number of defect, the head number of 
+defect, and the defect bytes from index.  The defect descriptors shall be in 
+ascending order.  For determining ascending order, the cylinder number of 
+defect is considered the most significant part of the address and the defect 
+bytes from index is considered the least significant part of the address.
+
+  A defect bytes from index of FFFFFFFFH indicates that the entire track shall 
+be reassigned.
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 8-7
+                     Defect List - Physical Sector Format
+
+==============================================================================
+Byte |                        Defect List Header                             |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Defect List Length (MSB)                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Defect List Length (LSB)                    |
+==============================================================================
+     |                        Defect Descriptor(s)                           |
+==============================================================================
+ 0   |                           Cylinder Number of Defect (MSB)             |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Cylinder Number of Defect                   |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Cylinder Number of Defect (LSB)             |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Head Number of Defect                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Defect Sector Number (MSB)                  |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Defect Sector Number                        |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Defect Sector Number                        |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Defect Sector Number (LSB)                  |
+==============================================================================
+
+  Each defect descriptor for the physical sector format specifies a sector-
+size defect location comprised of the cylinder number of defect, the head 
+number of defect, and the defect sector number.  The defect descriptors shall 
+be in ascending order.  For determining ascending order, the cylinder number 
+of defect is considered the most significant part of the address and the 
+defect sector number is considered the least significant part of the address.
+
+  A defect sector number of FFFFFFFFH indicates that the entire track shall be 
+reassigned.
+
+
+
+
+
+
+
+
+
+
+
+
+
+  8.1.3 REASSIGN BLOCKS Command
+
+     Peripheral Device Type:  Direct Access and Write-Once Read-Multiple
+        Operation Code Type:  Optional
+             Operation Code:  07H
+
+                                  Table 8-8
+                           REASSIGN BLOCKS Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The REASSIGN BLOCKS command (Table 8-8) requests the target to reassign the 
+defective logical blocks to an area on the logical unit reserved for this 
+purpose.
+
+  The initiator transfers a defect list that contains the logical block 
+addresses to be reassigned.  The target shall reassign the physical medium 
+used for each logical block address in the list.  The data contained in the 
+logical blocks specified in the defect list may be altered, but the data in 
+all other logical blocks on the medium shall be preserved.
+
+  The effect of specifying a logical block to be reassigned that previously 
+has been reassigned is to reassign the block again.  Thus, over the life of 
+the medium, a logical block can be assign to multiple physical addresses 
+(until no more spare locations remain on the medium).
+
+  The REASSIGN BLOCKS defect list (Table 8-9) contains a four-byte header 
+followed by one or more defect descriptors.  The length of each defect 
+descriptor is four bytes.
+
+  The defect list length specifies the total length in bytes of the defect 
+descriptors that follow.  The defect list length is equal to four times the 
+number of defect descriptors.
+
+
+
+
+
+
+
+                                  Table 8-9
+                         REASSIGN BLOCKS Defect List
+
+==============================================================================
+Byte |                        Defect List Header                             |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Defect List Length (MSB)                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Defect List Length (LSB)                    |
+==============================================================================
+     |                        Defect Descriptor(s)                           |
+==============================================================================
+ 0   |                           Defect Logical Block Address (MSB)          |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Defect Logical Block Address                |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Defect Logical Block Address                |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Defect Logical Block Address (LSB)          |
+==============================================================================
+
+  The defect descriptor specifies a four-byte defect logical block address 
+that contains the defect.  The defect descriptors shall be in ascending order.
+ 
+  If the logical unit has insufficient capacity to reassign all of the 
+defective logical blocks, the command shall terminate with a CHECK CONDITION 
+status and the sense key shall be set to MEDIUM ERROR.  The logical block 
+address of the first logical block not reassigned shall be returned in the 
+information bytes of the sense data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  8.1.4 READ Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Mandatory
+             Operation Code:  08H
+
+                                  Table 8-10
+                                 READ Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The READ command (Table 8-10) requests that the target transfer data to the 
+initiator.
+
+  The logical block address specifies the logical block at which the read 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data to transferred.  A transfer length of zero indicates that 256 logical 
+blocks shall be transferred.  Any other value indicates the number of logical 
+blocks that shall be transferred.
+
+  The most recent data value written in the addressed logical block shall be 
+returned.
+
+  This command shall be terminated with a RESERVATION CONFLICT status if any 
+reservation access conflict (see 8.1.8) exists and no data shall be read.
+
+  If any of the following conditions occur, this command shall be terminated 
+with a CHECK CONDITION status, and if extended sense is implemented, the sense 
+key shall be set as indicated in the following table.  This table does not 
+provide an exhaustive enumeration of all conditions that may cause the CHECK 
+CONDITION status.
+
+
+
+
+
+
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note)
+
+Target reset or medium change since
+last command from this initiator                  UNIT ATTENTION
+
+Unrecoverable read error                          MEDIUM ERROR
+
+Recovered read error                              RECOVERED ERROR
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+NOTE:  The extended sense information bytes shall be set to the logical block 
+address of the first invalid address.
+
+  8.1.5 WRITE Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Mandatory
+             Operation Code:  0AH
+
+                                  Table 8-11
+                                WRITE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The WRITE command (Table 8-11) requests that the target write the data 
+transferred by the initiator to the medium.
+
+  The logical block address specifies the logical block at which the write 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data to transferred.  A transfer length of zero indicates that 256 logical 
+blocks shall be transferred.  Any other value indicates the number of logical 
+blocks that shall be transferred.
+
+
+  This command shall be terminated with a RESERVATION CONFLICT status if any 
+reservation access conflict (see 8.1.8) exists and no data shall be written.
+
+  If any of the following conditions occur, this command shall be terminated 
+with a CHECK CONDITION status, and if extended sense is implemented, the sense 
+key shall be set as indicated in the following table.  This table does not 
+provide an exhaustive enumeration of all conditions that may cause the CHECK 
+CONDITION status.
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note)
+
+Target reset or medium change since
+last command from this initiator                  UNIT ATTENTION
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+NOTE:  The extended sense information bytes shall be set to the logical block 
+address of the first invalid address.  In this case, no data shall be 
+written on the logical unit.
+
+  8.1.6 SEEK Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  0BH
+
+                                  Table 8-12
+                                 SEEK Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SEEK command (Table 8-12) requests that the logical unit seek to the 
+specified logical block address.
+
+
+
+  8.1.7 MODE SELECT Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  15H
+
+                                  Table 8-13
+                             MODE SELECT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SELECT command (Table 8-13) provides a means for the initiator to 
+specify medium, logical unit, or peripheral device parameters to the target.
+
+  The  parameter list length specifies the length in bytes of the MODE SELECT 
+parameter list that shall be transferred during the DATA OUT phase.  A 
+parameter list length of zero indicates that no data shall be transferred.  
+This condition shall not be considered as an error.
+
+  The MODE SELECT parameter list (Table 8-14) contains a four-byte header, 
+followed by zero or more block descriptors, followed by the vendor unique 
+parameters, if any.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 8-14
+                          MODE SELECT Parameter List
+
+==============================================================================
+Byte |                        MODE SELECT Header                             |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Medium Type                                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Block Descriptor Length                     |
+==============================================================================
+     |                        Block  Descriptor(s)                           |
+==============================================================================
+ 0   |                           Density Code                                |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Blocks                            |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Block Length (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Block Length (LSB)                          |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0 _ n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  Code values for the medium type field are defined in Table 8-14.1.
+
+                                 Table 8-14.1
+                       Direct-access Medium Type Codes
+
+==============================================================================
+  Code Value                       Medium Type
+  ----------  ----------------------------------------------------------------
+     00H      Default medium type (currently mounted medium type)
+     01H      Flexible disk, single-sided; unspecified medium
+     02H      Flexible disk, double-sided; unspecified medium
+         
+                                 Flexible Disks
+              Diameter    Bit Density  Track Density  Number    Reference
+              mm (inch)   Bits/Radian  /mm (/inch)    Of Sides  Standard
+              ----------  -----------  -------------  --------  --------------
+     05H      200 (8.0)      6 631       1.9 (48)        1      X3.73-1980
+     06H      200 (8.0)      6 631       1.9 (48)        2      X3B8-140
+     09H      200 (8.0)     13 262       1.9 (48)        1      X3B8/78-139
+     0AH      200 (8.0)     13 262       1.9 (48)        2      X3.121-1984
+     0DH      130 (5.25)     3 979       1.9 (48)        1      X3.82-1980
+     12H      130 (5.25)     7 958       1.9 (48)        2      X3.125-1984
+     16H      130 (5.25)     7 958       3.8 (96)        2      X3.126-198X
+     1AH      130 (5.25)    13 262       3.8 (96)        2      DIS 8630
+     1EH       90 (3.5)      7 958       5.3 (135)       2      X3.137-198X
+
+                         Direct-access Magnetic Tapes
+              Width                Density       Reference
+              mm. (Inch)   Tracks  FTPMM (FTPI)  Standard     Note
+              -----------  ------  ------------  -----------  ----
+     40H       6.3 (0.25)    12    394 (10 000)  X3B5/85-138   1
+     44H       6.3 (0.25)    24    394 (10 000)  X3B5/85-138   1
+
+  80H _ FFH   Vendor unique
+  All others  Reserved
+==============================================================================
+NOTES:
+  (1)  The referenced standard is for unrecorded miniature cartridge media.  
+The usage referred to here is for serial GCR recording using a format known as 
+QIC-100.  Since X3B5 issues a new document number for each revision of their 
+working draft document, please contact the Chairman of X3B5 for the latest 
+document number.
+  (2)  See appendix F for additional standards that may be applicable.
+
+
+  The block descriptor length specifies the length in bytes of all the block 
+descriptors.  It is equal to the number of block descriptors times eight and 
+does not include the vendor unique parameters, if any.  A block descriptor 
+length of zero indicates that no block descriptors shall be included in the 
+parameter list.  This condition shall not be considered as an error.
+
+  Each block descriptor specifies the medium characteristics for all or part 
+of a logical unit.  Each block descriptor contains a density code, a number of 
+blocks, and a block length.
+
+  Code values for the density code field shall be assigned as follows:
+
+  00H         Default (default density of medium)
+  01H         Flexible disk, single-density
+  02H         Flexible disk, double-density
+  03H _ 7FH   Reserved
+  80H _ FFH   Vendor unique
+
+  The number of blocks field specifies the number of logical blocks on the 
+medium that meet the density code and block length in the block descriptor.  A 
+number of blocks of zero indicates that all of the remaining logical blocks of 
+the logical unit shall have the medium characteristics specified by the block 
+descriptor.
+
+  The block length specifies the length in bytes of each logical block 
+described by the block descriptor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  8.1.8 RESERVE Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  16H
+
+                                  Table 8-15
+                               RESERVE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | 3rdPty | Third Party Device ID    | Extent |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reservation Identification                  |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Extent List Length (MSB)                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Extent List Length (LSB)                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RESERVE command (Table 8-15) is used to reserve logical units or, if the 
+extent reservation option is implemented, extents within logical units for the 
+use of the initiator.  If third-party reservation option is implemented, the 
+logical units or extents may be reserved for another specified SCSI device.  
+The RESERVE and RELEASE commands provide the basic mechanism for contention 
+resolution in multiple-initiator systems.
+
+     8.1.8.1 Logical Unit Reservation.  If the extent bit is zero, this 
+command shall request that the entire logical unit be reserved for the 
+exclusive use of the initiator until the reservation is superceded by another 
+valid RESERVE command from the initiator that made the reservation or until 
+released by a RELEASE command from the same initiator, by a BUS DEVICE RESET 
+message from any initiator, or by a "hard" RESET condition.  A logical unit 
+reservation shall not be granted if the logical unit or any extent is reserved 
+by another initiator.  It shall be permissible for an initiator to reserve a 
+logical unit that is currently reserved by that initiator.  If the extent bit 
+is zero, the reservation identification and the extent list length shall be 
+ignored.
+
+  If the logical unit, or any extent within the logical unit is reserved for 
+another initiator, the target shall respond by either:
+
+  (1)  returning a RESERVATION CONFLICT status
+
+  (2)  queuing the reservation request and then disconnecting until all 
+previously queued reservations have been released and the logical unit is 
+available, then reconnecting to perform the reservation
+
+  If, after honoring the reservation, any other initiator then subsequently 
+attempts to perform any command on the reserved logical unit other than a 
+RESERVE command, which may be queued, or a RELEASE command, which shall be 
+ignored, then the command shall be rejected with RESERVATION CONFLICT status. 
+
+     8.1.8.2 Extent Reservation (Optional).  The reservation identification 
+provides a means for an initiator to identify each extent reservation.  This 
+allows an initiator in a multiple tasking environment, to have multiple 
+reservations outstanding.  The reservation identification is used in the 
+RELEASE command to specify which reservation is to be released.  It is also 
+used in superceding RESERVE commands to specify which reservation is to be 
+superceded.
+
+  If the extent reservation option is implemented, then the extent release 
+option (see 8.1.9.2) shall also be implemented.  These options permit multiple 
+extents within the logical unit to be reserved, each with a separate 
+reservation type.
+
+  If the extent bit is one, and the extent reservation option is implemented, 
+then the target shall process the reservation request as follows:
+
+  (1)  The extent list shall be checked for the number of extents in the 
+reservation request.  If the extent list length is zero, no reservations shall 
+be changed and this condition shall not be treated as an error.  If the extent 
+list contains more extents than are supported on the logical unit, the command 
+shall be terminated with a CHECK CONDITION status and the sense key shall be 
+set to ILLEGAL REQUEST.  If the extent list contains more extents than are 
+currently available on the logical unit, then the target shall either:
+     (a)  return RESERVATION CONFLICT status 
+     (b)  queue the request and disconnect until sufficient extents are made 
+  available.  When sufficient extents are available, the target shall 
+  reconnect to continue processing the request.
+
+  (2)  The extent list shall be checked for valid extent logical block 
+addresses.  If any logical block address is invalid for this logical unit, the 
+command shall be terminated with a CHECK CONDITION status and the sense key 
+shall be set to ILLEGAL REQUEST.  The extent list shall be checked for invalid 
+extent overlaps (as defined by reservation type) with other extent descriptors 
+in the extent list and if invalid overlaps are found, the command shall be 
+terminated with a CHECK CONDITION status and the sense key shall be set to 
+ILLEGAL REQUEST.
+
+  (3)  If the requested reservation does not conflict with any active or 
+previously requested reservation, the extents specified shall be reserved 
+until superceded by another valid RESERVE command from the initiator that made 
+the reservation or until released by a RELEASE command from the same 
+initiator, by a BUS DEVICE RESET message from any initiator, or by a "hard" 
+RESET condition.  If either of the last two conditions occur, the next command 
+from each initiator shall be terminated with a CHECK CONDITION status and the 
+sense key shall be set to UNIT ATTENTION.
+
+  (4)  If the reservation request conflicts with a reservation already active 
+or a reservation request that is already queued, then the target shall either:
+     (a)  return RESERVATION CONFLICT status
+     (b)  queue the reservation and disconnect until it is allowed to be 
+  active.  Reservations are only made active when all extents are free from 
+  conflict with active or previously queued reservations.
+
+  If the extent bit is one, and the extent reservation option is not 
+implemented, then the RESERVE command shall be rejected with CHECK CONDITION 
+status and the sense key shall be set to ILLEGAL REQUEST.
+
+                                  Table 8-16
+                      Data Format of Extent Descriptors
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |         Reserved                           | RelAdr | Reservation Type|
+-----|-----------------------------------------------------------------------|
+ 1   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Blocks                            |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Logical Block Address (LSB)                 |
+==============================================================================
+
+  The size of the extent list shall be defined by the extent list length 
+parameter.  The extent list shall consist of zero or more descriptors as shown 
+in Table 8-16.  Each extent descriptor defines an extent beginning at the 
+specified logical block address for the specified number of blocks.  If the 
+number of blocks is zero, the extent shall begin at the specified logical 
+block address and continue through the last logical block address on the 
+logical unit.
+
+  The reservation type field shall determine the type of reservation to be 
+effected for each extent.  Four types of reservations are possible as follows:
+
+  DB(1) DB(0)  Reservation Type
+  ----- -----  ----------------
+    1     0    Read Exclusive 
+    0     1    Write Exclusive
+    1     1    Exclusive Access
+    0     0    Read Shared
+
+Read Exclusive.  While this reservation is active, no other initiator shall be 
+permitted read operations to the indicated extent.  This reservation shall not 
+inhibit write operations from any initiator or conflict with a write exclusive 
+reservation; however, read exclusive, exclusive access, and read shared 
+reservations that overlap this extent shall conflict with this reservation.
+
+Write Exclusive.  While this reservation is active, no other initiator shall 
+be permitted write operations to the indicated extent.  This reservation shall 
+not inhibit read operations from any initiator or conflict with a read 
+exclusive reservation from any initiator.  This reservation shall conflict 
+with write exclusive, exclusive access, and read shared reservations that 
+overlap this extent.
+
+Exclusive Access.  While this reservation is active, no other initiator shall 
+be permitted any access to the indicated extent.  All reservation types that 
+overlap this extent shall conflict with this reservation.
+
+Read Shared.  While this reservation is active, no write operations shall be 
+permitted by any initiator to the indicated extent.  This reservation shall 
+not inhibit read operations from any initiator or conflict with a read shared 
+reservation.  Read exclusive, write exclusive, and exclusive access 
+reservations that overlap with this extent shall conflict with this 
+reservation.
+
+  If the relative address bit is one, the logical block address shall be 
+treated as a two's complement displacement.  This displacement shall be added 
+to the logical block address last accessed on the logical unit to form the 
+logical block address for this extent.  This feature is only available when 
+linking commands and requires that a previous command in the linked group has 
+accessed a logical block on the logical unit; if not, the RESERVE command 
+shall be terminated with a CHECK CONDITION status and the sense key shall be 
+set to ILLEGAL REQUEST.
+
+  If an initiator attempts a command to a logical block that has been 
+reserved and that access is prohibited by the reservation, the command shall 
+not be performed and the command shall be terminated with a RESERVATION 
+CONFLICT status.  If a reservation conflict precludes any part of the command, 
+none of the command shall be performed.  COPY commands shall be terminated 
+with a CHECK CONDITION status and the sense key shall be set to DATA PROTECT 
+if any part of the copy operation is prohibited by an active reservation.  If 
+any extent in a logical unit is reserved in any way, a FORMAT UNIT command 
+shall be rejected with a RESERVATION CONFLICT status.
+
+     8.1.8.3 Third Party Reservation (Optional).  The third-party reservation 
+option for the RESERVE command allows an initiator to reserve a logical unit 
+or extents within a logical unit for another SCSI device.  This option is 
+intended for use in multiple-initiator systems that use the COPY command.  Any 
+target that implements the third-party reservation option shall also implement 
+the third-party release option (see 8.1.9.3).
+
+  If the third-party (3rdPty) bit is zero, then the third-party reservation 
+option is not requested.  If the 3rdPty bit is one and the third-party 
+reservation option is implemented, then the RESERVE command shall reserve the 
+specified logical unit or extents for the SCSI device specified in the third-
+party device ID field.  The target shall preserve the reservation until it is 
+superceded by another valid RESERVE command from the initiator that made the 
+reservation or until it is released by the same initiator, by a BUS DEVICE 
+RESET message from any initiator, or a "hard" RESET condition.  The target 
+shall ignore any attempt to release the reservation made by any other 
+initiator.
+
+  If the 3rdPty bit is one and the third-party reservation option is not 
+implemented, then the target shall reject the RESERVE command with a CHECK 
+CONDITION status and the sense key shall be set to ILLEGAL REQUEST. 
+
+     8.1.8.4 Superceding Reservations.  An initiator that holds a current 
+reservation may modify that reservation by issuing another RESERVE command to 
+the same logical unit and, if the extent bit is one, using the same 
+reservation identification.  The superceding RESERVE command shall release the 
+previous reservation state when the new reservation request is granted.  The 
+previous reservation shall not be modified if the new reservation request 
+cannot be granted.  If the superceding reservation cannot be granted because 
+of conflicts with a previous active reservation (other than the reservation 
+being superceded), then the target shall either:
+
+  (1)  return RESERVATION CONFLICT status
+
+  (2)  queue the reservation request and disconnect until it is allowed to be 
+active.  The reservation request shall be made active when it is free from 
+conflict with all active reservations.  A superceding reservation takes 
+priority over any previously queued reservation request.
+
+IMPLEMENTORS NOTE:  Superceding reservations are principally intended to allow 
+the SCSI device ID to be changed on a reservation using the third-party 
+reservation option.  This capability is necessary for certain situations when 
+using the COPY command.
+
+  8.1.9 RELEASE Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  17H
+
+                                  Table 8-17
+                               RELEASE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | 3rdPty | Third Party Device ID    | Extent |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reservation Identification                  |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RELEASE command (Table 8-17) is used to release previously reserved 
+logical units, or, if the extent release option is implemented, previously 
+reserved extents within logical units.  It is not an error for an initiator to 
+attempt to release a reservation that is not currently active.  In this case, 
+the target returns GOOD status without altering any other reservation.
+
+     8.1.9.1 Logical Unit Release.  If the extent bit is zero, this command 
+shall cause the target to terminate all logical unit and extent reservations 
+that are active from the initiator to the specified logical unit.
+ 
+     8.1.9.2 Extent Release (Optional).  If the extent bit is one and the 
+extent release option is not implemented, then the RELEASE command shall be 
+terminated with a CHECK CONDITION status and the sense key shall be set to 
+ILLEGAL REQUEST.  This option shall be implemented if the extent reservation 
+option (see 8.1.8.2) is implemented.
+
+  If the extent bit is one and the extent release option is implemented, this 
+command shall cause any reservation from the requesting initiator with a 
+matching reservation identification to be terminated.  Other reservations from 
+the requesting initiator shall remain in effect.
+
+  If the logical unit queues reservations, then when a RELEASE command is 
+processed, the reservation queue shall be examined on a first-in first-out 
+basis.  If there are one or more reservations in the queue that can now be 
+activated, the logical unit shall first disconnect from the initiator.  It 
+shall then successively reconnect with each initiator whose queued reservation 
+may now be activated.  A queued reservation request shall not be activated if 
+it conflicts with any previously queued reservation.  After first granting all 
+possible queued reservations, the unit shall reconnect with the initiator of 
+the RELEASE command to terminate the command.
+
+  If a logical unit that queues reservations receives a RELEASE command from a 
+second initiator while it is disconnected during processing of a previous 
+RELEASE command, it shall then disconnect from the second initiator and 
+suspend processing of the second RELEASE until after reconnection with the 
+first initiator, or until it is determined that reconnection has failed.
+
+     8.1.9.3 Third Party Release (Optional).  The third-party release option 
+for the RELEASE command allows an initiator to release a logical unit or 
+extents within a logical unit that were previously reserved using the third-
+party reservation option (see 8.1.8.3).  This option shall be implemented if 
+the third-party reservation option is implemented.  This option is intended 
+for use in multiple-initiator systems that use the COPY command.
+
+  If the third-party (3rdPty) bit is zero, then the third-party release option 
+is not requested.  If the 3rdPty bit is one and the target implements the 
+third-party release option, then the target shall release the specified 
+logical unit or extents, but only if the reservation was made using the third-
+party reservation option by the initiator that is requesting the release for 
+the same SCSI device as specified in the third-party device ID field.
+
+  If the 3rdPty bit is one and the target does not implement the third-party 
+release option, then the target shall terminate the command with a CHECK 
+CONDITION status and the sense key shall be set to ILLEGAL REQUEST.
+
+
+
+  8.1.10 MODE SENSE Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  1AH
+
+                                  Table 8-18
+                              MODE SENSE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SENSE command (Table 8-18) provides a means for a target to report 
+its medium, logical unit, or peripheral device parameters to the initiator.  
+It is a complementary command to the MODE SELECT command for support of medium 
+that may contain multiple block lengths or densities.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for returned MODE SENSE data.  An allocation length of zero 
+indicates that no MODE SENSE data shall be transferred.  This condition shall 
+not be considered as an error.  Any other value indicates the maximum number 
+of bytes that shall be transferred.  The target shall terminate the DATA IN 
+phase when allocation length bytes have been transferred or when all available 
+MODE SENSE data have been transferred to the initiator, whichever is less.
+
+  The MODE SENSE data (Table 8-19) contains a four-byte header, followed by 
+zero or more eight-byte block descriptors, followed by the vendor unique 
+parameters, if any. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 8-19
+                               MODE SENSE Data
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Sense Data Length                           |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Medium Type                                 |
+-----|-----------------------------------------------------------------------|
+ 2   |   WP   |                  Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Block Descriptor Length                     |
+==============================================================================
+     |                        Block Descriptor(s)                            |
+==============================================================================
+ 0   |                           Density Code                                |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Blocks                            |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Block Length (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Block Length (LSB)                          |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0 _ n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  The sense data length specifies the length in bytes of the following MODE 
+SENSE data that is available to be transferred during the DATA IN phase.  The 
+sense data length does not include itself.
+
+  Code values for the medium type field are defined in Table 8-14.1.
+
+  A write protected (WP) bit of zero indicates that the medium is write 
+enabled.  A WP bit of one indicates that the medium is write protected.
+
+  The block descriptor length specifies the length in bytes of all the block 
+descriptors.  It is equal to the number of block descriptors times eight and 
+does not include the vendor unique parameters, if any.  A block descriptor 
+length of zero indicates that no block descriptors shall be included in the 
+parameter list.  This condition shall not be considered as an error.
+
+  Each block descriptor specifies the medium characteristics for all or part 
+of a logical unit.  Each block descriptor contains a density code, a number of 
+blocks, and a block length.
+
+  Code values for the density code field shall be assigned as follows:
+
+  00H         Default (only one density supported)
+  01H         Flexible disk, single density
+  02H         Flexible disk, double density
+  03H _ 7FH   Reserved
+  80H _ FFH   Vendor unique
+
+  The number of blocks field specifies the number of logical blocks of the 
+medium that meets the density code and block length in the block descriptor.  
+A number of blocks of zero indicates that all of the remaining logical blocks 
+of the logical unit have the medium characteristics specified by the block 
+descriptor.
+
+  The block length specifies the length in bytes of each logical block.
+
+  8.1.11 START/STOP UNIT Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  1BH
+
+                                  Table 8-20
+                           START/STOP UNIT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Immed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                           |  Start |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The START/STOP UNIT command (Table 8-20) requests that the target enable or 
+disable the logical unit for further operations.
+
+  An immediate (Immed) bit of one indicates that status shall be returned as 
+soon as the operation is initiated.  An Immed bit of zero indicates that 
+status shall be returned after the operation is completed.
+
+  A start bit of one requests the logical unit be made ready for use.  A start 
+bit of zero requests that the logical unit be stopped.
+  8.1.12 PREVENT/ALLOW MEDIUM REMOVAL Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  1EH
+
+                                  Table 8-21
+                     PREVENT/ALLOW MEDIUM REMOVAL Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                           | Prevent|
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The PREVENT/ALLOW MEDIUM REMOVAL command (Table 8-21) requests that the 
+target enable or disable the removal of the medium in the logical unit.
+
+  A prevent bit of one shall inhibit mechanisms that normally allow removal of 
+the medium.  A prevent bit of zero shall allow removal of the medium.
+
+  This prevention of medium removal condition shall terminate upon receipt of 
+a PREVENT/ALLOW MEDIUM REMOVAL command with the prevent bit set to zero, or by 
+the receipt of a BUS DEVICE RESET message from any initiator or by a "hard" 
+RESET condition.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+8.2 Group 1 Commands for Direct-Access Devices.  The Group 1 commands for 
+direct-access devices shall be as shown in Table 8-22.
+
+                                  Table 8-22
+                  Group 1 Commands for Direct-Access Devices
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   20H       V
+   21H       V
+   22H       V
+   23H       V
+   24H       V
+   25H       E     READ CAPACITY                      8.2.1
+   26H       V
+   27H       V
+   28H       E     READ                               8.2.2
+   29H       V
+   2AH       E     WRITE                              8.2.3
+   2BH       O     SEEK                               8.2.4
+   2CH       V
+   2DH       V
+   2EH       O     WRITE AND VERIFY                   8.2.5
+   2FH       O     VERIFY                             8.2.6
+   30H       O     SEARCH DATA HIGH                   8.2.7.1
+   31H       O     SEARCH DATA EQUAL                  8.2.7.2
+   32H       O     SEARCH DATA LOW                    8.2.7.3
+   33H       O     SET LIMITS                         8.2.8
+   34H       R
+   35H       R
+   36H       R
+   37H       R
+   38H       R
+   39H       O     COMPARE                            7.2.1
+   3AH       O     COPY AND VERIFY                    7.2.2
+   3BH       R
+   3CH       R
+   3DH       R
+   3EH       R
+   3FH       R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+
+
+
+
+
+  8.2.1 READ CAPACITY Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Extended
+             Operation Code:  25H
+
+                                  Table 8-23
+                            READ CAPACITY Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved              | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   | Vendor Unique   |         Reserved                           |  PMI   |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The READ CAPACITY command (Table 8-23) provides a means for the initiator to 
+request information regarding the capacity of the logical unit.
+
+  A partial medium indicator (PMI) bit of zero indicates that the information 
+returned in the READ CAPACITY data shall be the logical block address and 
+block length (in bytes) of the last logical block of the logical unit.  The 
+logical block address in the command descriptor block shall be to set zero for 
+this option.
+
+  A PMI bit of one indicates that the information returned shall be the 
+logical block address and block length (in bytes) of the last logical block 
+address after which a substantial delay in data transfer will be encountered.  
+This logical block address shall be greater than or equal to the logical block 
+address specified in the command descriptor block.  (Implementors note:  This 
+function is intended to assist storage management software in determining 
+whether there is sufficient space on the current track, cylinder, etc. to 
+contain a frequently accessed data structure such as a file directory or file 
+index.)
+
+  The eight bytes of READ CAPACITY data shown in Table 8-24 shall be sent 
+during the DATA IN phase of the command.
+                                  Table 8-24
+                              READ CAPACITY Data
+
+==============================================================================
+Byte |                        Description                                    |
+==============================================================================
+ 0   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Block Length (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Block Length (LSB)                          |
+==============================================================================
+
+  8.2.2 READ Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Extended
+             Operation Code:  28H
+
+                                  Table 8-25
+                                 READ Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved              | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+  The READ command (Table 8-25) requests that the target transfer data to the 
+initiator.
+
+  The logical block address specifies the logical block at which the read 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data that shall be transferred.  A transfer length of zero indicates that no 
+logical blocks shall be transferred.  This condition shall not be considered 
+as an error.  Any other value indicates the number of logical blocks that 
+shall be transferred.
+
+  The most recent data value written in the addressed logical block shall be 
+returned.
+
+  This command shall be terminated with a RESERVATION CONFLICT status if any 
+reservation access conflict (see 8.1.8) exists and no data shall be read.
+
+  If any of the following conditions occur, this command shall return a CHECK 
+CONDITION status and the sense key shall be set as indicated in the following 
+table.  This table does not provide an exhaustive enumeration of all 
+conditions that may cause the CHECK CONDITION status.
+
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note)
+
+Target reset or medium change
+since last command from this initiator            UNIT ATTENTION
+
+Unrecovered read error                            MEDIUM ERROR
+
+Recoverable read error                            RECOVERED ERROR
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+
+NOTE:  The extended sense information bytes shall be set to the logical block 
+address of the first invalid address. 
+
+
+
+
+
+
+
+
+
+
+
+
+  8.2.3 WRITE Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Extended
+             Operation Code:  2AH
+
+                                  Table 8-26
+                                WRITE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved              | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The WRITE command (Table 8-26) requests that the target write the data 
+transferred by the initiator to the medium.
+
+  The logical block address specifies the logical block at which the write 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data that shall be transferred.  A transfer length of zero indicates that no 
+logical blocks shall be transferred.  This condition shall not be considered 
+as an error and no data shall be written.  Any other value indicates the 
+number of logical blocks that shall be transferred.
+
+  This command shall be terminated with a RESERVATION CONFLICT status if any 
+reservation access conflict (see 8.1.8) exists and no data shall be written.
+
+  If any of the following conditions occur, this command shall be terminated 
+with a CHECK CONDITION status and the sense key shall be set as indicated in 
+the following table.  This table does not provide an exhaustive enumeration of 
+all conditions that may cause the CHECK CONDITION status.
+
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note)
+
+Target reset or medium change since the
+last command from this initiator                  UNIT ATTENTION
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+NOTE:  The extended sense information bytes shall be set to the logical block 
+address of the first invalid address.  In this case,  no data shall be 
+written on the logical unit. 
+
+  8.2.4 SEEK Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  2BH
+
+                                  Table 8-27
+                                 SEEK Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SEEK command (Table 8-27) requests that the logical unit seek to the 
+specified logical block address.
+
+
+
+
+  8.2.5 WRITE AND VERIFY Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  2EH
+
+                                  Table 8-28
+                           WRITE AND VERIFY Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved     | BytChk | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The WRITE AND VERIFY command (Table 8-28) requests that the target write the 
+data transferred from the initiator to the medium and then verify that the 
+data is correctly written.
+
+  A byte check (BytChk) bit of zero causes the verification to be simply a 
+medium verification (CRC, ECC, etc).  A BytChk bit of one causes a byte-by-
+byte compare of data written on the peripheral device and the data transferred 
+from the initiator.  If the compare is unsuccessful, the command shall be 
+terminated with a CHECK CONDITION status and the sense key shall be set to 
+MISCOMPARE.
+
+  The logical block address specifies the logical block at which the write 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data that shall be transferred.  A transfer length of zero indicates that no 
+logical blocks shall be transferred.  This condition shall not be considered 
+as an error and no data shall be written.  Any other value indicates the 
+number of logical blocks that shall be transferred.
+
+
+  8.2.6 VERIFY Command
+
+     Peripheral Device Type:  Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  2FH
+
+                                  Table 8-29
+                                VERIFY Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |         Reserved         | BytChk | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Verification Length (MSB)                   |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Verification Length (LSB)                   |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The VERIFY command (Table 8-29) requests that the target verify the data 
+written on the medium.
+
+  A byte check (BytChk) bit of zero causes the verification to be simply a 
+medium verification (CRC, ECC, etc).  A BytChk bit of one causes a byte-by-
+byte compare of data on the medium and the data transferred from the 
+initiator.  If the compare is unsuccessful, the command shall be terminated 
+with a CHECK CONDITION status and the sense key shall be set to MISCOMPARE.
+
+  The logical block address specifies the logical block at which the verify 
+operation shall begin.
+
+  The verification length specifies the number of contiguous logical blocks of 
+data that shall be verified.  A transfer length of zero indicates that no 
+logical blocks shall be verified.  This condition shall not be considered as 
+an error.  Any other value indicates the number of logical blocks that shall 
+be verified.
+
+
+
+
+  8.2.7 SEARCH DATA Commands
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  30H, 31H, or 32H
+
+                                  Table 8-30
+                             SEARCH DATA Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | Invert |     Reserved    | SpnDat | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SEARCH DATA commands (Table 8-30) search one or more logical blocks for 
+equality or inequality to a data pattern.  The concept of records within a 
+logical block is used to allow multiple records within a logical block to be 
+searched.
+
+  The invert bit determines whether the search condition is to be inverted.  
+See 8.2.7.1 through 8.2.7.3 for a description of the search conditions for the 
+individual SEARCH DATA commands.
+
+  A spanned data (SpnDat) bit of zero indicates that each record shall be 
+wholly contained within a single block.  Any space at the end of a block that 
+is smaller than the record length is ignored by the SEARCH DATA commands.   A 
+SpnDat bit of one indicates that records span block boundaries.  Thus, a 
+record may start in one block and end in the next or a subsequent block.
+
+  A transfer length of zero indicates that no data shall be searched.  This 
+condition shall be treated the same as an unsatisfied search. 
+
+  A link bit of zero indicates a nonlinked command and if the search is 
+satisfied, the command shall be terminated with a CONDITION MET status.  A 
+REQUEST SENSE command can then be issued to determine the logical block 
+address and record offset of the matching record.  If the search is not 
+satisfied and no error occurs, the command shall be terminated with GOOD 
+status.
+
+  A link bit of one indicates a command is linked to the SEARCH DATA command 
+and if the search is satisfied, CONDITION MET status is returned and the next 
+command is executed.  If the RelAdr bit in the next command is one, the 
+logical block address of the next command is used as a displacement from the 
+logical block address at which the search was satisfied.  If a linked search 
+is not satisfied, the command is terminated with a CHECK CONDITION status.  A 
+REQUEST SENSE command may then be issued.
+
+  A REQUEST SENSE command following a satisfied SEARCH DATA command shall:
+
+  (1) Return a sense key of EQUAL if the search was satisfied by an exact 
+match.  If the search was satisfied by an inequality then a sense key of NO 
+SENSE shall be returned.
+
+  (2) Return the valid bit set to one.
+
+  (3) Return the logical block address of the logical block containing the 
+first matching record in the information bytes.
+
+  (4) Return the record offset of the matching record in the first four bytes 
+of additional sense bytes.
+
+  A REQUEST SENSE command following an unsatisfied SEARCH DATA command shall:
+
+  (1) Return a sense key of NO SENSE, if no errors occurred during the command 
+execution.
+
+  (2) Return the valid bit set to zero.
+
+  The SEARCH DATA parameter list (Table 8-31) contains a fourteen-byte header, 
+followed by one or more search argument descriptors. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 8-31
+                          SEARCH DATA Parameter List
+
+==============================================================================
+Byte |                        Parameter List Header                          |
+==============================================================================
+ 0   |                           Logical Record Length (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Logical Record Length                       |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Record Length                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Record Length (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           First Record Offset (MSB)                   |
+-----|-----------------------------------------------------------------------|
+ 5   |                           First Record Offset                         |
+-----|-----------------------------------------------------------------------|
+ 6   |                           First Record Offset                         |
+-----|-----------------------------------------------------------------------|
+ 7   |                           First Record Offset (LSB)                   |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Number of Records (MSB)                     |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Number of Records                           |
+-----|-----------------------------------------------------------------------|
+10   |                           Number of Records                           |
+-----|-----------------------------------------------------------------------|
+11   |                           Number of Records (LSB)                     |
+-----|-----------------------------------------------------------------------|
+12   |                           Search Argument Length (MSB)                |
+-----|-----------------------------------------------------------------------|
+13   |                           Search Argument Length (LSB)                |
+==============================================================================
+     |                        Search Argument Descriptor(s)                  |
+==============================================================================
+ 0   |                           Displacement (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Displacement                                |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Displacement                                |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Displacement (LSB)                          |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Pattern Length (MSB)                        |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Pattern Length (LSB)                        |
+-----|-----------------------------------------------------------------------|
+6 _ n|                           Pattern                                     |
+==============================================================================
+
+  The logical record length field specifies the record length in bytes.
+
+  The first record offset field specifies the number of bytes that shall be 
+ignored in the first logical block before the search begins.  The value in the 
+first record offset field shall not exceed the length of the logical block.  
+Subsequent logical blocks shall be searched beginning with the first byte in 
+the logical block.  This permits one or more records to be skipped initially.
+
+  The number of records field specifies the maximum number of records that 
+shall be searched by this command.  An unsatisfied search shall terminate when 
+the number of records or the number of blocks (from the command descriptor 
+block) have been exhausted.
+
+  The search argument length specifies the length in bytes of all the search 
+argument descriptors that follow.  Since the pattern length can vary, there is 
+no fixed multiple of the search argument descriptor to determine the search 
+argument length.
+
+  The search argument descriptors specify one or more search conditions to 
+execute within a single record in order to satisfy the search.  Each search 
+argument descriptor is made up of a displacement, a pattern length, and a 
+pattern.
+
+  The displacement field specifies the displacement in bytes of the first byte 
+of the data to be compared from the start of the logical record.
+
+  The pattern length field specifies the length in bytes of the pattern that 
+follows.
+
+  The pattern specifies the data to compare to the logical record.
+
+     8.2.7.1 SEARCH DATA HIGH Command.  The SEARCH DATA HIGH command 
+(Table 8-30, operation code 30H) shall be satisfied by the first logical 
+record searched that contains data that satisfies all of the search argument 
+descriptor(s).  If the invert bit in the command descriptor block is zero, the 
+search argument descriptor(s) shall be satisfied by data in the logical record 
+being greater than the data in the pattern.  If the invert bit is one, the 
+search argument descriptor(s) shall be satisfied by data in the logical record 
+being less than or equal to the data in the pattern.  (See 8.2.7.)
+
+     8.2.7.2 SEARCH DATA EQUAL Command.  The SEARCH DATA EQUAL command 
+(Table 8-30, operation code 31H) shall be satisfied by the first logical 
+record searched that contains data that satisfies all of the search argument 
+descriptor(s).  If the invert bit in the command descriptor block is zero, the 
+search argument descriptor(s) shall be satisfied by data in the logical record 
+being equal to the data in the pattern.  If the invert bit is one, the search 
+argument descriptor(s) shall be satisfied by data in the logical record being 
+not equal to the data in the pattern.  (See 8.2.7.)
+
+     8.2.7.3 SEARCH DATA LOW Command.  The SEARCH DATA LOW command 
+(Table 8-30, operation code 32H) shall be satisfied by the first logical 
+record searched that contains data that satisfies all of the search argument 
+descriptor(s).  If the invert bit in the command descriptor block is zero, the 
+search argument descriptor(s) shall be satisfied by data in the logical record 
+being less than the data in the pattern.  If the invert bit is one, the search 
+argument descriptor(s) shall be satisfied by data in the logical record being 
+greater than or equal to the data in the pattern.  (See 8.2.7.)
+
+
+ 8.2.8 SET LIMITS Command
+
+     Peripheral Device Type:  Direct Access, Write-Once Read-Multiple, and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  33H
+
+                                  Table 8-32
+                              SET LIMITS Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |         Reserved         | RdInh  | WrInh  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SET LIMITS command (Table 8-32) defines the range within which 
+subsequent linked commands may operate.  A second SET LIMITS command may not 
+be linked to a chain of commands in which a SET LIMITS command has already 
+been issued.
+
+  A read inhibit (RdInh) bit of one indicates that read operations within the 
+range are inhibited.  A write inhibit (WrInh) bit of one indicates that write 
+operations within the range are inhibited.
+
+  The logical block address specifies the starting address for the range.  The 
+number of blocks specifies the number of logical blocks within the range.  A 
+number of blocks of zero indicates that the range shall extend to the last 
+logical block on the logical unit.
+
+  Any attempt to access outside of the restricted range or any attempt to 
+perform an inhibited operation within the restricted range shall not be 
+performed.  The command shall be terminated with CHECK CONDITION status and, 
+if extended sense is implemented, the sense key shall be set to DATA PROTECT.  
+A second SET LIMITS command within a linked list of commands shall be rejected 
+with CHECK CONDITION status and, if extended sense is implemented, the sense 
+key shall be set to DATA PROTECT.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

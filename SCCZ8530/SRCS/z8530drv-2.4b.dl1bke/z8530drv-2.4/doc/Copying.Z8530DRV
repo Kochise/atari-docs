@@ -1,0 +1,114 @@
+
+ ********************************************************************
+ *    SCC.C - Linux driver for Z8530 based HDLC cards for AX.25     * 
+ ********************************************************************
+			Version 2.4
+
+General notes
+=============
+
+(or: my point of view)
+
+The driver and the programs in this archive are UNDER CONSTRUCTION.
+The code is very likely to fail, and so your kernel could --- even 
+a whole network. So you'd better follow some advices:
+
+1. Do not use it on systems which run processes vital for human
+   life or are connected to such systems.
+
+2. Do not use it on systems containing any important data, or connected
+   to systems with such data.
+
+3. If you connect a radio transmitter to your SCC card (that's what I 
+   suppose), remember that YOU are responsible for any transmission.
+
+Well, it's YOUR computer, not mine. It's YOUR data, not mine. I warned
+you...  (*)
+
+This driver is intended for Amateur Radio use. If you are running it
+for commercial purposes, please drop me a note. I am nosy...
+
+
+...BUT:
+ 
+! You  m u s t  recognize the appropriate legislations of your country !
+! before you connect a radio to the SCC board and start to transmit or !
+! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !
+
+(and that is A FACT, not someone's point of view!)
+
+For non-Amateur-Radio use please note that you might need a special
+allowance/licence from the designer of the SCC Board and/or the
+MODEM. 
+
+Also read the disclaimer of warrenty and fitness, please...
+
+
+Copyright notice
+================
+
+
+   ********************************************************************
+   *   SCC.C - Linux driver for Z8530 based HDLC cards for AX.25      *
+   ********************************************************************
+
+
+   ********************************************************************
+
+	Copyright 1993, 1996 by Joerg Reuter DL1BKE
+
+	portions (c) 1993 Guido ten Dolle PE1NNZ
+
+   ********************************************************************
+   
+   The driver and the programs in this archive are UNDER CONSTRUCTION.
+   The code is likely to fail, and so your kernel could --- even 
+   a whole network. 
+
+   This driver is intended for Amateur Radio use. If you are running it
+   for commercial purposes, please drop me a note. I am nosy...
+
+   ...BUT:
+ 
+   ! You  m u s t  recognize the appropriate legislations of your country !
+   ! before you connect a radio to the SCC board and start to transmit or !
+   ! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !
+
+   For non-Amateur-Radio use please note that you might need a special
+   allowance/licence from the designer of the SCC Board and/or the
+   MODEM. 
+
+   This program is free software; you can redistribute it and/or modify 
+   it under the terms of the (modified) GNU General Public License 
+   delivered with the LinuX kernel source.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should find a copy of the GNU General Public License in 
+   /usr/src/linux/COPYING; 
+   
+   ******************************************************************** 
+
+
+   ...If you find any portions of the code that are copyrighted to you,
+   and you don't want to see in here, please send me a private (!) 
+   message to my internet site. I will change it as soon as possible. 
+   Please don't flame to the tcp-group or anywhere else. Thanks!
+
+
+Joerg Reuter	ampr-net: dl1bke@db0pra.ampr.org
+		AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU
+		Internet: jreuter@lykos.oche.de
+		
+
+
+
+(*) Gert Doering, author of Mgetty + Sendfax, on his software:
+
+"Use it at your own risk, there is  n o  warranty. If it erases all the
+ data on your hard disk, damges your hardware, or kills your dog, that
+ is entirely your problem."                    ----------------- 
+

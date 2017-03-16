@@ -1,0 +1,10 @@
+Music Analyzer (release 5, August 95)
+for the Atari Falcon. Music Analyzer is
+a small (not very usefull) program that
+takes the incoming sound from the ADC and
+uses the DSP to convert it into graphics,
+which means: two scopes, a 2*14-band
+spectrum analyzer and a left vs. right
+scope. With mouse control (no GEM). All
+source codes are included. Written by
+Roel van de Kraats (kraats@fys.ruu.nl)

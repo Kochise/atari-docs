@@ -1,0 +1,54 @@
+##############DMA Sound System                                     ###########
+-------+-----+-----------------------------------------------------+----------
+$FF8900|byte |Buffer interrupts                         BIT 3 2 1 0|R/W (F030)
+       |     |TimerA-Int at end of record buffer -----------' | | ||
+       |     |TimerA-Int at end of replay buffer -------------' | ||
+       |     |MFP-15-Int (I7) at end of record buffer ----------' ||
+       |     |MFP-15-Int (I7) at end of replay buffer ------------'|
+-------+-----+-----------------------------------------------------+----------
+$FF8901|byte |DMA Control Register              BIT 7 . 5 4 . . 1 0|R/W
+       |     |1 - select record register -----------+   | |     | ||    (F030)
+       |     |0 - select replay register -----------'   | |     | ||    (F030)
+       |     |Loop record buffer -----------------------' |     | ||    (F030)
+       |     |DMA Record on ------------------------------'     | ||    (F030)
+       |     |Loop replay buffer -------------------------------' ||     (STe)
+       |     |DMA Replay on --------------------------------------'|     (STe)
+-------+-----+-----------------------------------------------------+----------
+$FF8903|byte |Frame start address (high byte)                      |R/W  (STe)
+$FF8905|byte |Frame start address (mid byte)                       |R/W  (STe)
+$FF8907|byte |Frame start address (low byte)                       |R/W  (STe)
+$FF8909|byte |Frame address counter (high byte)                    |R    (STe)
+$FF890B|byte |Frame address counter (mid byte)                     |R    (STe)
+$FF890D|byte |Frame address counter (low byte)                     |R    (STe)
+$FF890F|byte |Frame end address (high byte)                        |R/W  (STe)
+$FF8911|byte |Frame end address (mid byte)                         |R/W  (STe)
+$FF8913|byte |Frame end address (low byte)                         |R/W  (STe)
+-------+-----+-----------------------------------------------------+----------
+$FF8920|byte |DMA Track Control                     BIT 5 4 . . 1 0|R/W (F030)
+       |     |00 - Set DAC to Track 0 ------------------+-+     | ||
+       |     |01 - Set DAC to Track 1 ------------------+-+     | ||
+       |     |10 - Set DAC to Track 2 ------------------+-+     | ||
+       |     |11 - Set DAC to Track 3 ------------------+-'     | ||
+       |     |00 - Play 1 Track --------------------------------+-+|
+       |     |01 - Play 2 Tracks -------------------------------+-+|
+       |     |10 - Play 3 Tracks -------------------------------+-+|
+       |     |11 - Play 4 Tracks -------------------------------+-'|
+-------+-----+-----------------------------------------------------+----------
+$FF8921|byte |Sound mode control                BIT 7 6 . . . . 1 0|R/W  (STe)
+       |     |0 - Stereo, 1 - Mono -----------------' |         | ||
+       |     |0 - 8bit -------------------------------+         | ||
+       |     |1 - 16bit (F030 only) ------------------'         | ||    (F030)
+       |     |Frequency control bits                            | ||
+       |     |00 - Off (F030 only) -----------------------------+-+|    (F030)
+       |     |00 - 6258hz frequency (STe only) -----------------+-+|
+       |     |01 - 12517hz frequency ---------------------------+-+|
+       |     |10 - 25033hz frequency ---------------------------+-+|
+       |     |11 - 50066hz frequency ---------------------------+-'|
+       |     |Samples are always signed. In stereo mode, data is   |
+       |     |arranged in pairs with high pair the left channel,low|
+       |     |pair right channel. Sample length MUST be even in    |
+       |     |either mono or stereo mode.                          |
+       |     |Example: 8 bit Stereo : LRLRLRLRLRLRLRLR             |
+       |     |        16 bit Stereo : LLRRLLRRLLRRLLRR (F030)      |
+       |     |2 track 16 bit stereo : LLRRllrrLLRRllrr (F030)      |
+-------+-----+-----------------------------------------------------+----------

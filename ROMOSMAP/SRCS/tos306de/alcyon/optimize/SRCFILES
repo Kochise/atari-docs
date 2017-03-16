@@ -1,0 +1,6 @@
+OPTIMIZE_SRCS = optimize.c
+OPTIMIZE_OBJS = $(OPTIMIZE_SRCS:.c=.o)
+
+SRCS = $(OPTIMIZE_SRCS)
+
+EXTRA_DIST = GNUmakefile Makefile SRCFILES

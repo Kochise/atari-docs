@@ -1,0 +1,31 @@
+I see that you have just added Claus Brod's version of various bugfixes
+for TOS 1.4  Perhaps you are aware of the following, but I suspect you may 
+not be.
+
+POOLFIX1, 2 & 3 were fixes for a TOS 1.4 problem issued by Atari USA themselves
+- versions 1 & 2 themselves contained bugs (!!) and Atari have withdrawn them.
+POOLFIX3 is Atari's official fix for the problem.
+
+POOLFIX4 is Brod's attempt to 'improve' on this fix and add one or two 
+modifications of his own.  It has no connection with Atari whatsoever.
+In fact, Brod came under very heavy fire for issuing this program under the
+name POOLFIX4.  He has since apologised and asked that it be distributed
+under some other name (I forget what).
+
+Thus POOLFIX4 is in no sense an upgrade to POOLFIX3 - simply an unsupported
+alternative.
+
+I see that you have placed POOLFIX4 in m269 in place of the official Atari
+POOLFIX3.  May I suggest that both of these, and knowledge of their very
+different status, should be made available to users?
+
+Please do not take this as criticism - I know you folks have your work cut
+out to keep up with all the software that's being circulated, and that 
+at  face value, the new program appears to be an upgrade of the old.
+Feel free to attach these remarks to m269.msg, if that makes your job any 
+easier!
+
+Regards - Russ
+
+[Ed. I've re-instated POOLFIX3 as micros/atari/m415]
+

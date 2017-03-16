@@ -1,0 +1,306 @@
+<HTML>
+<HEAD>
+<TITLE>Speccy Techy AY-3-8912 Soundchip Info</TITLE>
+</HEAD>
+
+<BODY>
+<center>
+<img src="../gfx/header.gif" align="middle" border=0 ALT="Speccy">
+</center>
+
+<H1>The AY-3-8910/8912 sound synthesizer IC</H1>
+
+<H2>Overview</H2>
+
+<P>The AY-3-8910/8912 is a sound generator IC containing three tone generators
+and a white noise generator. In addition to its sound producing capabilities,
+the AY-3-8910 has two 8-bit I/O ports and the AY-3-8912 has one.</P>
+
+<H2>Pinouts (AY-3-8912 only)</H2>
+
+<PRE>
+	       +----+--+----+
+Channel C out -+  1 |__| 28 +- DA0
+	       |            |
+       Test 1 -+            +- DA1
+	       |            |
+	  +5V -+            +- DA2
+	       |            |
+Channel B out -+            +- DA3
+	       |            |
+Channel A out -+            +- DA4
+	       |            |
+	  GND -+            +- DA5
+	       |            |
+	 IOA7 -+            +- DA6
+	       |            |
+	 IOA6 -+            +- DA7
+	       |            |
+	 IOA5 -+            +- BC1
+	       |            |
+	 IOA4 -+            +- BC2
+	       |            |
+	 IOA3 -+            +- BDIR
+	       |            |
+	 IOA2 -+            +- A8
+	       |            |  _____
+	 IOA1 -+            +- RESET
+	       |            |
+	 IOA0 -+ 14      15 +- CLK
+	       +------------+
+</PRE>
+
+
+<P>DA0-DA7 are multiplexed data and address lines, as used in the range of GI
+processors that this IC was originally part of. The BC1 and BDIR pins are
+used to control the IC as follows:</P>
+
+<PRE>
+Function       BDIR   BC1
+	
+Inactive         0     0
+Read             0     1
+Write            1     0
+Latch address    1     1
+</PRE>
+
+<P>In addition to using BC1 and BDIR, A8 should be taken high to enable the
+chip. IOA0-IOA7 are the input/output pins (the AY-3-8910 has an additional
+set marked IOB0-IOB7). The IC does not contain an internal oscillator - the
+clock input to the CLK pin should fall between 1MHz-2MHz, so a typical Z80
+system's clock would need to be divided.</P>
+
+<H2>Registers</H2>
+
+<P>The AY-3-8910/8912 contains 16 internal registers as follows:</P>
+
+<PRE>
+<TR><TH>Register</TH>        <TH>Function</TH>                        <TH>Range</TH></TR>
+
+<TR><TD>0              Channel A fine pitch            8-bit (0-255)</TD></TR>
+<TR><TD>1              Channel A course pitch          4-bit (0-15)</TD></TR>
+<TR><TD>2              Channel B fine pitch            8-bit (0-255)</TD></TR>
+<TR><TD>3              Channel B course pitch          4-bit (0-15)</TD></TR>
+<TR><TD>4              Channel C fine pitch            8-bit (0-255)</TD></TR>
+<TR><TD>5              Channel C course pitch          4-bit (0-15)</TD></TR>
+<TR><TD>6              Noise pitch                     5-bit (0-31)</TD></TR>
+<TR><TD>7              Mixer                           8-bit (see below)</TD></TR>
+<TR><TD>8              Channel A volume                4-bit (0-15, see below)</TD></TR>
+<TR><TD>9              Channel B volume                4-bit (0-15, see below)</TD></TR>
+<TR><TD>10              Channel C volume                4-bit (0-15, see below)</TD></TR>
+<TR><TD>11              Envelope fine duration          8-bit (0-255)</TD></TR>
+<TR><TD>12              Envelope course duration        8-bit (0-255)</TD></TR>
+<TR><TD>13              Envelope shape                  4-bit (0-15)</TD></TR>
+<TR><TD>14              I/O port A                      8-bit (0-255)</TD></TR>
+<TR><TD>15              I/O port B                      8-bit (0-255)</TD></TR>
+</PRE>
+
+<H3>Notes</H3>
+
+<UL>
+<LI>The AY-3-8912 does not contain register 15.
+<LI>The volume registers (8, 9 and 10) contain a 4-bit setting but if bit
+    5 is set then that channel uses the envelope defined by register 13 and
+    ignores its volume setting.
+<LI>The mixer (register 7) is made up of the following bits (low=enabled):
+
+<PRE>
+Bit: 7        6        5        4        3        2        1        0
+   _         _
+   I/O       I/O   Noise    Noise    Noise     Tone     Tone     Tone
+     B        A        C        B        A        C        B        A
+</PRE>
+    The AY-3-8912 ignores bit 7 of this register.
+</UL>
+
+<H2>Envelopes</H2>
+
+<P>The AY-3-8910/8912 contains the following preset envelopes or waveforms (set
+using control register 13). Note that these affect volume only and not the
+pitch:</P>
+
+<PRE>
+ 0      \__________     single decay then off
+
+ 4      /|_________     single attack then off
+
+ 8      \|\|\|\|\|\     repeated decay
+
+ 9      \__________     single decay then off
+
+10      \/\/\/\/\/\     repeated decay-attack
+	  _________
+11      \|              single decay then hold
+
+12      /|/|/|/|/|/     repeated attack
+	 __________
+13      /               single attack then hold
+
+14      /\/\/\/\/\/     repeated attack-decay
+
+15      /|_________     single attack then off
+</PRE>
+
+<H2>Pitch values</H2>
+
+<P>The course and fine pitch registers for each channel are used in the
+following fashion (assuming channel A):</P>
+
+<P>Registers 0 and 1 operate together to form channel A's final pitch. The eight
+least significant bits are sent to register 0 and the four most significant
+bits are sent to register 1. The output frequency is equal to the IC's
+incoming clock frequency divided by 16 and then further divided by the number
+written to the course and fine pitch registers, so the higher the number
+written to these, the lower the pitch. For example, if a frequency of 1KHz
+was required and the IC's clock frequency was 1MHz, a total division rate
+of 1000 would be needed. The sound generator itself divides by 16 so the
+course and fine pitch registers must provide a further division by 62.5 (due
+to the fact that 1000/16 is 62.5). A division rate of 62 or 63 will be
+accurate enough, since the registers can only store whole numbers. Therefore,
+62 or 63 would be written to register 0 and 0 would be written to register
+1.</P>
+
+<P>The following frequency table may be useful in musical applications:</P>
+
+<TABLE>
+<TR><TH>Note</TH><TH>Frequency (Hz)</TH><TH>Note</TH><TH>Frequency (Hz)</TH></TR>
+<TR>
+ <TD>A</TD><TD>220</TD><TD>D#</TD><TD>311.1</TD></TR>
+ <TD>A#</TD><TD>233.3</TD><TD>E</TD><TD>329.63</TD></TR>
+ <TD>B</TD><TD>246.94</TD><TD>F</TD><TD>349.23</TD></TR>
+ <TD>middle C</TD><TD>261.63</TD><TD>F#</TD><TD>370</TD></TR>
+ <TD>C#</TD><TD>277.2</TD><TD>G</TD><TD>392</TD></TR>
+ <TD>D</TD><TD>293.66</TD><TD>G#</TD><TD>415.3</TD></TR>
+</TABLE>
+
+<H2>Applications</H2>
+
+<P>The AY-3-8910/8912 (and derivatives) has found its way into a variety of
+home computers and games consoles including the following:</P>
+
+<UL>
+<LI>Sinclair ZX Spectrum 128/+2/+3
+<LI>Amstrad CPC 464/664/6128
+<LI>Mattel Intellivision
+<LI>BBC Micro
+<LI>Atari ST
+<LI>Sega Master System
+</UL>
+
+<P>There are also a few AY emulators available at the time of writing:</P>
+<UL>
+<LI><A HREF="../emulator.html#z80">Z80</A> - The Spectrum emulator by Gerton
+    Lunter for PCs and compatibles which utilises the Adlib sound generator
+    present on most Soundblaster-compatible cards. This package fully emulates
+    the Spectrum 48/128 (apart from 4-bit sample output) and is well worth
+    looking at.
+<LI>DeliAY - by Patrik Rak for the Commodore Amiga. This comes as
+    an add-on for "DeliTracker" (a music player) and emulates a Z80
+    and AY-3-8912 (in a Spectrum-like fashion) giving very accurate
+    results. A growing number of Spectrum tunes are being gathered
+    together to run under this player.
+<LI><A HREF="http://www.mygale.org/09/leonard/index.html">YM Player</A> and
+    converter tool (from Z80 .out files). Lots of tunes at the site too.
+</UL>
+
+<H2><A NAME="port">Port Specifics</A></H2>
+
+<P>The control (register select) and data output ports are as follows (in decimal):</P>
+
+<TABLE BORDER="1">
+<CAPTION>Machine Port Addresses</CAPTION>
+<TR><TH>Machine Name</TH><TH>Control</TH><TH>Data</TH></TR>
+<TR><TD>Spectrum</TD><TD>65533</TD><TD>49149</TD>
+<TR><TD>TS2068</TD><TD>245</TD><TD>246</TD>
+</TR>
+</TABLE>
+
+<P>So, to produce a simple sound from BASIC ...</P>
+
+<CODE>
+<PRE>
+	10 LET ayctrl=65533
+	20 LET aydata = 49149
+	30 OUT ayctrl,7 : REM select the mixer register
+	40 OUT aydata,62 : REM enable channel A only
+	50 OUT ayctrl,1 : REM channel A course pitch
+	60 OUT aydata,50 : REM set it
+	70 OUT ayctrl,8 : REM channel A volume
+	80 OUT aydata,15 : REM set it to maximum
+</PRE>
+</CODE>
+
+<P>... or from assembler ...</P>
+
+<PRE>
+	ayctrl  EQU     65533
+	aydata  EQU     49149
+
+	start   ld      d,7             ; select the mixer register
+		ld      e,62            ; enable channel A only
+		call    outer           ; send it to PSG
+		ld      d,1             ; channel A course pitch
+		ld      e,50            ; pitch value
+		call    outer           ; send it to PSG
+		ld      d,8             ; channel A volume
+		ld      e,15            ; maximum
+		call    outer           ; send it to PSG
+		ret
+
+	outer   ld      bc,ayctrl       ; select control port
+		out     (c),d           ; send specified value
+		ld      bc,aydata       ; select data port
+		out     (c),e           ; send specified value
+		ret
+</PRE>
+
+<P>For an easy way to generate the required course and fine pitch values, try
+the following program:</P>
+
+<PRE>
+	10 INPUT "Note value ",n
+	20 INPUT "Octave ",o
+	30 LET f=INT(n/2^o)
+	40 LET c=INT(f/256)
+	50 PRINT "Fine = ";f;"  Course = ";c
+</PRE>
+
+<P>The pitch values required by this program are as follows:</P>
+
+<PRE>
+Note            Value                   Note            Value
+
+C               3421                    F#              2419
+C#              3228                    G               2283
+D               3047                    G#              2155
+D#              2876                    A               2034
+E               2715                    A#              1920
+F               2562                    B               1892
+</PRE>
+
+<H2>References</H2>
+
+<P>Micro Interfacing Circuits - Book 2, by R. A. Penfold, ISBN 0-85934-106-2,
+Spectrum 128 manual, (c) 1986 Sinclair Research Ltd,
+Sinclair User magazine, 1986 (issue unknown).</P>
+
+<P>This text was entered by Alastair Booker on 4th April 1995. Please feel free
+to contact me regarding anything contained in this document. I have produced
+a generic AY-3-8912 interface circuit for Z80-based systems and will make
+this available to anyone who requires it.</P>
+
+<P>email: <A HREF="mailto:ali@squark.demon.co.uk">ali@squark.demon.co.uk</A></P>
+
+<HR>
+
+<P>
+<A HREF="index.html">Technical Index</A>
+<A HREF="pdcontacts.html">PD Groups page</A>
+<A HREF="../index.html">Intro page</A>
+</P>
+
+<P>File last updated: 16 June 1998 (HTML converted by John Garner)<BR>
+Author: <A HREF="mailto:ali@squark.demon.co.uk ">Alastair Booker</A>, credits
+also to Alvin Albrecht for TS2068 port info</P>
+</BODY>
+</HTML>

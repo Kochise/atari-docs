@@ -1,0 +1,57 @@
+File name:	POOLFX92.DOC		Revision date:	1992.03.05
+Revised by:	Ulf Ronald Andersson	Creation date:	1992.03.03
+
+File purpose:	Document release of POOLFX92.PRG
+
+Since 'Poolfix' has been around for quite a while you may find it hard
+to believe that it still contained two quite dangerous bugs:
+
+  1:  The safe compaction of freed RAM was never made for the gendos
+      function 'Mshrink', even though it is necessary in some cases.
+      This error may cause the ROM bug to BOMB your ST.
+
+  2:  The "safe" compaction itself, which is called for ANY gemdos
+      function following a RAM release, would often trash register 'd1'
+      even though all functions except 'Super' are specified to restore
+      d1 to the value it had on entry to the function.
+      This error may cause error-free programs to BOMB your ST.
+
+In short, these versions provided a NEW way to BOMB your ST, and this
+without even fully eliminating the original bug in ROM.
+
+I have scanned the code both of 'Poolfix3.Prg' and of 'Poolfix4.Prg'
+and have seen that both these errors exist in them.  'Poolfix4.Prg'
+also has another error which may cause BOMBs when programs need their
+own reset-routines linked in.
+
+Since I need a remedy for the ROM bug, I obviously had to make this new
+version of 'Poolfix'.  I have named it 'Poolfx92.Prg' so no doubt shall
+exist of what version is most recent, and this should be the final
+version.  I really have TRIED to make it BOMB, but it wouldn't !!!
+
+Since this code is based on that of two other authors, I obviously have
+no copyright claims to make.  This is still FREEWARE, although ATARI
+of course owns the copyright.
+
+I have chosen to release the source code for my own version, as well as
+that for the two other versions mentioned above.  These files are in
+format suitable for Devpac 2.  They are found with the original 'DOCs'
+in folder 'Poolfix', and some definition files are in folder 'TOS'.
+
+These sources are provided mainly so that any user should be able to
+see for himself what I have done, in case of doubt.
+
+I strongly recommend that any 'archives' of this program should include
+both this document, and the older ones, to keep things perfectly legal.
+Unfortunately most "Sysop's" do not realize that removing or changing
+a file that holds a program's copyright notice may be against the law,
+unless they also remove the program itself from any public access.
+
+I hope you all find this version useful!
+
+	Ulf Ronald Andersson
+	H”der V„g 7
+	S-145 70 Norsborg
+	Sweden
+
+ --------------------- end of file:  POOLFX92.DOC ---------------------

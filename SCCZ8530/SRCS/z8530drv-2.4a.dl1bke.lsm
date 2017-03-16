@@ -1,0 +1,23 @@
+Begin3
+Title:          Z8530 kernel driver
+Version:        2.4a.dl1bke
+Entered-date:   17MAY95
+Description:    Z8530 kernel driver with KISS emulator for AX.25
+                (Amateur Packet Radio) operation
+Keywords:       ham, amateur, AX.25, KISS, HDLC, SCC
+Author:         jreuter@lykos.oche.de (Joerg Reuter)
+Maintained-by:  
+Primary-site:   ftp.ucsd.edu /hamradio/packet/tcpip/incoming
+		z8530drv-2.4a.dl1bke.tar.gz
+		z8530drv-2.4a.README
+Alternate-site: db0bm.automation.fh-aachen.de /incoming/dl1bke/
+		insl1.etec.uni-karlsruhe.de   /pub/hamradio/linux/
+Original-site:  
+Platforms:      Z8530 based HDLC controller board (BayCom USCC, 
+                PA0HZP OptoSCC, etc) needed. No, it does NOT work with
+                a simple BayCom RS232 MODEM. You'll also need the
+                kernel AX.25 package by Alan Cox or a KA9Q-NET/NOS
+                port for Linux (for example WAMPES). And, of course,
+                an amateur radio licence for "real" operation...
+Copying-policy: GPL
+End

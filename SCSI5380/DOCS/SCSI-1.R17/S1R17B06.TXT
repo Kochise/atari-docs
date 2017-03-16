@@ -1,0 +1,605 @@
+6. SCSI Commands 
+
+This section defines the SCSI command structure and gives several examples.
+
+  The command definitions assume a data structure providing the appearance at 
+the interface of a contiguous set of logical blocks of a fixed or explicitly 
+defined data length.  The SCSI device maps the physical characteristics of the 
+attached peripheral devices to one of several logical structures defined by 
+the device type code.
+
+  A single command may transfer one or more logical blocks of data.  Multiple 
+commands may be linked if they are sent to the same logical unit.  A target 
+may disconnect from the SCSI bus to allow activity by other SCSI devices while 
+a logical unit is being prepared to transfer data.
+
+  Upon command completion (successful or unsuccessful), the target returns a 
+status byte to the initiator.  Since most error and exception conditions 
+cannot be adequately described with a single status byte, one status code, 
+CHECK CONDITION, indicates that additional information is available.  The 
+initiator may issue a REQUEST SENSE command to retrieve this additional 
+information. 
+
+  By keeping to a minimum the functions essential to communicate via this 
+protocol, a wide range of peripheral devices of varying capability can operate 
+in the same environment.
+
+  Because subsets of the full architecture may be implemented, optional 
+functions are noted.
+
+6.1 Command Implementation Requirements.  The first byte of any SCSI command 
+shall contain an operation code as defined in this document.  Three bits (bits 
+7 - 5) of the second byte of each SCSI command specify the logical unit if it 
+is not specified using the IDENTIFY message (see 5.5.2).  The last byte of all 
+SCSI commands shall contain a control byte as defined in 6.2.6.
+
+  6.1.1 Reserved.  Reserved bits, fields, bytes, and code values are set aside 
+for future standardization.  Their use and interpretation will be specified by 
+future extensions to this standard.  A reserved bit, field, or byte shall be 
+set to zero, or in accordance with a future extension to this standard.  A 
+target that receives a reserved bit, field, or byte that is not zero or 
+receives a reserved code value shall terminate the command with a CHECK 
+CONDITION status and, if extended sense is implemented, the sense key shall be 
+set to ILLEGAL REQUEST.  It shall also be acceptable for a target to interpret 
+the bit, field, byte, or code value in accordance with a future extension to 
+this standard.
+
+  6.1.2 Operation Code Types
+
+Operation 
+Code Type  Description
+---------  -------------------------------------------------------------------
+M          Mandatory - Commands so designated shall be implemented in order to 
+           meet the minimum requirement of this standard.
+
+E          Extended - Commands so designated shall be implemented in addition 
+           to mandatory commands to meet the extended requirement of this 
+           standard.
+
+O          Optional - Commands so designated, if implemented, shall be 
+           implemented as defined in this standard.
+
+V          Vendor unique - Operation codes so designated are available for 
+           vendor defined commands.  See the vendor specifications where 
+           compatibility is desired.
+
+R          Reserved - Operation codes so designated shall not be used.  They 
+           are reserved for future extensions to this standard.
+
+  6.1.3 Unit Attention Condition.  A unit attention condition for a logical 
+unit shall begin for each initiator whenever the removable medium may have 
+been changed or the target has been reset (by a BUS DEVICE RESET message or a 
+"hard" RESET condition).  The unit attention condition shall persist for each 
+initiator until that initiator issues a command to the logical unit other than 
+REQUEST SENSE or INQUIRY for which the target shall return CHECK CONDITION 
+status.  If the next command from that initiator to the logical unit 
+(following the CHECK CONDITION status) is REQUEST SENSE, and if the target 
+supports extended sense, then the UNIT ATTENTION sense key shall be returned.  
+(If any command other than REQUEST SENSE is received, the unit attention 
+condition is lost.)  
+
+  If an INQUIRY command is received from an initiator with a pending unit 
+attention condition (before the target reports CHECK CONDITION status), the 
+target shall perform the INQUIRY command and shall not clear the unit 
+attention condition.
+
+  If a REQUEST SENSE command is received from an initiator with a pending unit 
+attention condition (before the target reports CHECK CONDITION status), then 
+the target may either:
+
+  (1) report any pending sense data and preserve the unit attention condition
+  (2) discard any pending sense data, report UNIT ATTENTION sense key, and 
+clear the unit attention condition for that initiator.
+
+  If an initiator issues a command other than INQUIRY or REQUEST SENSE while a 
+unit attention condition exists for that initiator, the target shall not 
+perform the command and shall report CHECK CONDITION status.
+
+6.2 Command Descriptor Block.  A request to a peripheral device is performed 
+by sending a command descriptor block to the target.  For several commands, 
+the request is accompanied by a list of parameters sent during the DATA OUT 
+phase.  See the specific commands for detailed information.
+
+  The command descriptor block always has an operation code as the first byte 
+of the command.  This is followed by a logical unit number, command parameters 
+(if any), and a control byte.
+
+  For all commands, if there is an invalid parameter in the command descriptor 
+block, then the target shall terminate the command without altering the 
+medium.
+
+  6.2.1 Operation Code.  The operation code (Table 6-1) of the command 
+descriptor block has a group code field and a command code field.  The three-
+bit group code field provides for eight groups of command codes.  The five-bit 
+command code field provides for thirty-two command codes in each group.  Thus, 
+a total of 256 possible operation codes exist.  Operation codes are defined in 
+Sections 7 through 13.
+
+  The group code specifies one of the following groups:
+
+  Group 0 - six-byte commands (see Table 6-2)
+  Group 1 - ten-byte commands (see Table 6-3)
+  Group 2 - reserved
+  Group 3 - reserved
+  Group 4 - reserved
+  Group 5 - twelve-byte commands (see Table 6-4)
+  Group 6 - vendor unique 
+  Group 7 - vendor unique
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 6-1
+                                Operation Code
+
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |        Group Code        |                Command Code                |
+==============================================================================
+
+
+                                  Table 6-2
+            Typical Command Descriptor Block for Six-byte Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |Logical Block Address (if required) (MSB)   |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (if required) (LSB)   |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (if required)               |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control Byte                                |
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 6-3
+            Typical Command Descriptor Block for Ten-byte Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |              Reserved             | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (if required) (MSB)   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (if required) (LSB)   |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (if required) (MSB)         |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (if required) (LSB)         |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control Byte                                |
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 6-4
+          Typical Command Descriptor Block for Twelve-byte Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   |   Logical Unit Number    |              Reserved             | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (if required) (MSB)   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address (if required)         |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (if required) (LSB)   |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Transfer Length (if required) (MSB)         |
+-----|-----------------------------------------------------------------------|
+10   |                           Transfer Length (if required) (LSB)         |
+-----|-----------------------------------------------------------------------|
+11   |                           Control Byte                                |
+==============================================================================
+
+  6.2.2 Logical Unit Number.  The logical unit number addresses one of up to 
+eight physical or virtual devices attached to a target.  This method of 
+addressing is provided for systems that do not implement the IDENTIFY message.  
+A target that accepts an IDENTIFY message shall use the logical unit number 
+specified within the message.  In this case, the target shall ignore the 
+logical unit number specified within the command descriptor block.  
+(Implementors note:  It is a good practice for initiators that implement the 
+IDENTIFY message to specify the same logical unit number in the command 
+descriptor block.)
+
+  6.2.3 Logical Block Address.  The logical block address on logical units 
+shall begin with block zero and be contiguous up to the last logical block on 
+that logical unit.
+
+  Group 0 command descriptor blocks contain 21-bit logical block addresses.  
+Groups 1 and 5 command descriptor blocks contain 32-bit logical block 
+addresses.
+
+  The logical block concept implies that the initiator and target shall have 
+previously established the number of data bytes per logical block.  This may 
+be established through the use of the READ CAPACITY command or the MODE SENSE 
+command or by prior arrangement.
+
+  6.2.4 Relative Address Bit.  The relative address (RelAdr) bit of the 
+group 1 and group 5 commands is set to one to indicate that the logical block 
+address portion of the command descriptor block is a two's complement 
+displacement.  This negative or positive displacement is to be added to the 
+logical block address last accessed on the logical unit to form the logical 
+block address for this command.  This feature is only available when linking 
+commands.  The feature requires that a previous command in the linked group 
+have accessed a block of data on the logical unit.  (For an example of the 
+operation of this function, see Section 6.3.3.)
+
+  6.2.5 Transfer Length.  The transfer length specifies the amount of data to 
+be transferred, usually the number of blocks.  For several commands the 
+transfer length indicates the requested number of bytes to be sent as defined 
+in the command description.  For these commands the transfer length field may 
+be identified by a different name.  See the following descriptions and the 
+individual command descriptions for further information.
+
+  Commands that use one byte for transfer length allow up to 256 blocks of 
+data to be transferred by one command.  A transfer length value of 1 to 255 
+indicates the number of blocks that shall transferred.  A value of zero 
+indicates 256 blocks.
+
+  Commands that use two bytes for transfer length allow up to 65,535 blocks of 
+data to be transferred by one command.  In this case, a transfer length of 
+zero indicates that no data transfer shall take place.  A value of 1 to 65,535 
+indicates the number of blocks that shall be transferred. 
+
+  For several commands more than two bytes are allocated for transfer length.  
+Refer to the specific command description for further information.
+
+  The transfer length of the commands that are used to send a list of 
+parameters to a target is called the parameter list length.  The parameter 
+list length specifies the number of bytes sent during the DATA OUT phase.
+
+  The transfer length of the commands that are used to return sense data (e.g. 
+REQUEST SENSE, INQUIRY, MODE SENSE, etc) to an initiator is called the 
+allocation length.  The allocation length specifies the number of bytes that 
+the initiator has allocated for returned data.  The target shall terminate the 
+DATA IN phase when allocation length bytes have been transferred or when all 
+available sense data have been transferred to the initiator, whichever is 
+less.
+
+  6.2.6 Control Byte.  The control byte is the last byte of every command 
+descriptor block.  A typical control byte is described in Table 6-5.
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 6-5
+                                 Control Byte
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+Last | Vendor unique   |            Reserved               |  Flag  |  Link  |
+==============================================================================
+
+ Bit    Description
+-----   ----------------------------------------------------------------------
+7 _ 6   Vendor unique
+
+5 _ 2   Reserved
+
+  1     Flag bit - If the link bit is zero, then the flag bit shall be set to 
+        zero.  If the link bit is one, and if the command terminates 
+        successfully, the target shall send LINKED COMMAND COMPLETE message if 
+        the flag bit is zero and shall send LINKED COMMAND COMPLETE (WITH 
+        FLAG) message if the flag bit is one.  Typically, this bit is used to 
+        cause an interrupt in the initiator between linked commands.
+
+  0     Link bit - This bit is set to one to indicate that the initiator 
+        desires an automatic link to the next command upon successful 
+        completion of the current command.  Implementation of linked commands 
+        is optional.  If the link bit is one, targets that implement linked 
+        commands, upon successful termination of the command, shall return 
+        INTERMEDIATE status and shall then send one of the two messages 
+        defined by the flag bit (above).
+
+        Targets that do not implement linked commands shall return a CHECK 
+        CONDITION status and, if extended sense is implemented, shall set the 
+        sense key to ILLEGAL REQUEST if either of the link and flag bits are 
+        set to one.
+
+6.3 Command Examples
+
+  6.3.1 Single Command Example.  A typical operation on the SCSI bus is likely 
+to include a single READ command to a peripheral device.  This operation is 
+described in detail starting with a request from the initiator.  This example 
+assumes that no linked commands and no malfunctions or errors occur.
+
+  The initiator has active pointers and a set of stored pointers representing 
+active disconnected SCSI devices (an initiator without disconnect capability 
+does not require stored pointers).  The initiator sets up the active pointers 
+for the operation requested, arbitrates for the SCSI bus, and selects the 
+target.  Once this process is completed, the target assumes control of the 
+operation.
+
+  The target obtains the command from the initiator (in this case, a READ 
+command).  The target interprets the command and executes it.  In this case, 
+the target gets the data from the peripheral device and sends it to the 
+initiator.  At the completion of the READ command, the target sends a status 
+byte to the initiator.  To end the operation, the target sends a COMMAND 
+COMPLETE message to the initiator.
+
+  6.3.2 Disconnect Example.  In the above single command example, the length 
+of time necessary to obtain the data may require a time-consuming physical 
+seek.  In order to improve system throughput, the target may disconnect from 
+the initiator, freeing the SCSI bus to allow other requests to be sent to 
+other logical units.  To do this, the initiator needs to be reselectable and 
+capable of restoring the pointers upon reconnection.  The target needs to be 
+capable of arbitrating for the SCSI bus and reselecting the initiator.
+
+  After the target has received the READ command (and has determined that 
+there will be a delay), it disconnects by sending a DISCONNECT message and 
+releasing BSY.
+
+  When the data are ready to be transferred, the target reconnects to the 
+initiator.  As a result of this reconnection, the initiator restores the 
+pointers to their most recent saved values (which, in this case, are the 
+initial values) and the target continues (as in the single command example) to 
+finish the operation.  The initiator recognizes that the operation is complete 
+when COMMAND COMPLETE message is received.
+
+  If target wishes to disconnect after transferring part of the data (e.g., 
+while crossing a cylinder boundary), it may do so by sending a SAVE DATA 
+POINTER message and a DISCONNECT message to the initiator and then 
+disconnecting.  When reconnection is completed, the current data pointer value 
+is restored to its value immediately prior to the SAVE DATA POINTER message.
+
+  On those occasions when an error or exception condition occurs and the 
+target elects to repeat the information transfer, the target may repeat the 
+transfer by either issuing a RESTORE POINTERS message or by disconnecting 
+without issuing a SAVE DATA POINTER message.  When reconnection is completed, 
+the most recent saved pointer values are restored.
+
+  6.3.3 Linked Command Example.  The link function defines a relationship 
+between commands that when combined with the relative address bit, allows 
+previous operations to modify subsequent operations.  Link makes high-
+performance functions possible by providing a relative addressing capability 
+and allowing multiple command execution without invoking the functional 
+component of the initiator.
+
+  If the desired data address (in the previously described READ command 
+example) is unknown, but a search key defined as some particular bytes of a 
+field is known, then by linking the READ command to a SEARCH DATA EQUAL 
+command, the data can be quickly and effectively transferred to the initiator. 
+
+  A LINKED COMMAND COMPLETE message is sent from the target to the initiator 
+to indicate linked command completion.  The initiator then updates the stored 
+pointers so that subsequent requests from the target will reference the next 
+command of the chain.  Command processing of linked and single commands is 
+simular except that relative addressing is permitted in linked commands.  
+Linked commands shall be addressed to a single logical unit.
+
+  For example, the successful completion of a SEARCH DATA EQUAL command causes 
+the target to fetch the linked READ command from the initiator.  If the 
+relative address bit in the READ command has been set to one, and the address 
+field of the READ command is set to zero, the target transfers the 
+successfully searched block to the initiator. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

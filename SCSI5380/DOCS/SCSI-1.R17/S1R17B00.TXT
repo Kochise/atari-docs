@@ -1,0 +1,615 @@
+                                                             BSR X3.131-198_
+NOTE:  Revision 17B consists of changes made by the          X3T9/84-40 REV 1B
+X3T9.2 task group at their December 10, 1985 meeting.        X3T9.2/82-2
+These changes were made in order to make the X3T9.2          REV 17B
+draft proposed standard consistent with the ISO/TC97/SC13 
+draft proposal.  See page 1.1 for a changed page list.
+
+
+
+
+
+
+
+                                draft proposed
+                          American National Standard
+                          for information systems -
+
+
+                    SMALL COMPUTER SYSTEM INTERFACE (SCSI)
+
+
+                              December 16, 1985
+
+
+
+
+
+
+
+Secretariat
+
+Computer and Business Equipment Manufacturers Association
+
+
+Abstract:  This standard defines mechanical, electrical, and functional 
+requirements for attaching small computers with each other and with low- to 
+medium-performance intelligent peripherals such as rigid disks, flexible 
+disks, magnetic tape devices, printers, and optical disks.  The resulting 
+interface facilitates the interconnection of small computers and intelligent 
+peripherals and thus provides a common interface specification for both 
+systems integrators and suppliers of intelligent peripherals.
+
+
+
+
+
+
+POINTS OF CONTACT:
+
+William E. Burr (X3T9.2 Chairman)      John B. Lohmeyer (X3T9.2 Vice Chairman)
+U.S. Department of Commerce            NCR Corporation
+National Bureau of Standards           3718 N. Rock Road
+Technology A-216                       Wichita, KS 67226
+Gaithersburg, MD 20899                 (316) 688-8703 
+(301) 921-3723
+                              CHANGED PAGE LIST
+
+At their December 10, 1985 meeting, the X3T9.2 task group made a number of 
+changes to Revision 17 of this document.  (Revision 17A was distributed at the 
+meeting proposing some of the changes; the remainder of the changes were made 
+at the meeting.)  The primary reason for making these changes is to keep this 
+document consistent with the ISO/TC97/SC13 SCSI draft proposal.  The pages 
+that have changed since Revision 17 are listed below:
+
+   Page                                  Change
+  -------  -------------------------------------------------------------------
+
+     1     Changed revision number and date.
+   1.1     Replaced changed page list.
+     2     Editorial revisions to the foreword.
+  7-7.1    Revised the Table of Contents to reflect the document changes.
+     9     Added description of the contents of appendixes D - G.
+    12     Moved section 4.3.2, Shielded Connectors into Appendix D.  Merged 
+           section 4.3.1 into section 4.3.
+ 12.1-12.2 \
+   17-19    \  Deleted pages 
+ 19.1-19.4  /  (Information moved to Appendix D).
+ 21.1-21.2 /
+   20-21   Deleted second line of Table titles.
+    24     Redrew figures 4-5 through 4-7.
+    26     Redrew figure 4-9.
+    37     Clarified that multiple messages may be sent during a message phase.
+    38     Clarification to the MESSAGE OUT phase error handling.
+    41     Redrew figures 5-1 and 5-2.
+    43     Editorial clarification.
+    49     Deleted "immediately".
+  50-50.1  Clarified that unit attention condition is on a per logical unit 
+           basis.  Also clarified "other" command is other than REQUEST SENSE.
+   65-66   Added ISO version field to the INQUIRY data.
+   93.1    Revised Table 8-14.1 to reference the latest X3B5 document number 
+           and to refer to Appendix F for additional standards.
+   94-99   Editorial clarifications to the RESERVE and RELEASE commands.
+   113     Clarified which status codes are to be returned on SEARCH DATA 
+           commands.
+   119     Clarified that READ BLOCK LIMITS returns the target's capability as 
+           opposed to its current setting.
+   132     Added code values 0BH through 0DH to Table 9-14.1.
+ 132.2-133 Editorial clarifications to the RESERVE UNIT and RELEASE UNIT 
+           commands.
+  147-149  Editorial clarifications to the RESERVE UNIT and RELEASE UNIT 
+           commands.
+ 174-176.2 Revised Appendix A to make the figure legible.
+  182-183  Redrew figures C1 and C2.
+  184-192  Added Appendix D, Recommended Shielded Connectors.  Most of this 
+           information was previously in section 4.3.2.
+  193-194  Added Appendix E, Conformance.
+  195-196  Added Appendix F, Additional Medium Type and Density Code Standards.
+   197     Appendix G was previously Appendix D.  Editorial clarification.
+
+
+
+                                   FOREWORD
+    (This Foreword is not part of American National Standard X3.131-198_.)
+
+The development of comparatively inexpensive VLSI device controllers have 
+recently changed the economics of interfaces for small system storage devices. 
+Where expensive controller logic was once shared among as many devices as 
+possible, in many cases it now makes economic sense to build a controller in 
+each device.  This is particularly true for high-performance storage devices, 
+where the intimate interactions of the recording medium, the recording 
+mechanism, and the recording code cause intersymbol interference and error 
+recovery problems that are highly specific to the chosen technologies, and are 
+best resolved within the device itself.  
+
+Moreover, the number of types of storage devices for small computers, and the 
+industry that builds them, have grown dramatically in the past few years.  In 
+particular, the emergence of physically small, but comparatively high-capacity 
+and high-performance fixed-medium magnetic disk devices (virtually non-
+existent in the late 1970s, but a multibillion dollar business in the mid-
+1980s) has driven the development of small computer systems and caused a need 
+for other classes of devices, such as streaming cartridge tape drives, for 
+backup and data interchange.
+
+Because device interfaces are very specific to device types, many device level 
+interface standards would be required to service all small computer device 
+types.  Because backplane buses reside at the center of computers, and have 
+dramatic performance effects, many different ones are needed for different 
+system requirements.  To connect every backplane bus to every device interface 
+through a controller would require an almost unbounded number of specific 
+controller products.  
+
+In addition, in many systems today, it is not the computer which is "central", 
+it is the storage facility.  That is, one or two large capacity storage 
+subsystems serve several computers.  An interface adapted to this reality was 
+needed.  
+
+By 1982, all the needs given above were widely recognized in the industry and 
+by the members of X3T9 and its Task Groups.  A commercial small system 
+parallel bus, the Shugart Associates System Interface (SASI), generally met 
+the small system requirements for a device-independent peripheral or system 
+bus and had enjoyed significant market success.  It was offered to X3T9.2 as 
+the basis for a standard.  X3T9.2 chose the name Small Computer System 
+Interface (SCSI) for that standard and began work at its April 1982 meeting.  
+The present SCSI dpANS is a formalization and extension of the SASI.  Many 
+existing SASI devices are SCSI compatible.
+
+Since April 1982, X3T9.2 has held plenary sessions, at two month intervals, 
+plus numerous informal working meetings.  The original SASI has been extended 
+in a number of ways, including:
+
+  (1)  A differential electrical option has been added to allow use of longer 
+cables (up to 25 meters) in environments where common mode noise is a concern.
+
+  (2)  A synchronous transfer option has been developed allowing maximum 
+transfer rates in the 3 to 4 megabyte per second range.
+
+  (3)  An optional "extended" command set has been added, allowing for very 
+large capacity storage devices (a block address space of 232 blocks versus 221 
+for SASI), and Inquiry commands that allow self-configuring driver software. 
+
+  (4)  Command sets for magnetic tape (both start/stop and streaming), 
+printers, processors, optical disks, and read-only optical disks have been 
+added to the proposed SCSI standard, in addition to those for magnetic disks.  
+
+Although it might have been premature in April 1982 to claim that SASI was 
+then a de facto standard, this surely is the case for SASI/SCSI today.  SCSI 
+compatible host adapters, controllers, and peripheral devices are now widely 
+manufactured around the world.  Host adapters are available for most small 
+computers with accessible backplane buses.  SCSI controllers are widely 
+available for all the de jure and de facto standard magnetic disk and magnetic 
+tape device interfaces.  Small high-capacity fixed-medium magnetic disks, 
+rigid removable-medium magnetic disks, high-capacity Bernoulli-effect flexible 
+disks, and other closed-loop high-capacity flexible disk products, as well as 
+optical disk products, are all available with integral SCSI controllers.  SCSI 
+subsystems that integrate both a rigid-disk and a streaming-tape drive into a 
+single package are also available.  SCSI interface chips are available, and 
+some disk controller chip sets also provide SCSI support.
+
+Since a large number of companies have implemented and tested the SCSI during 
+the development of the proposed standard, no separate test program has been 
+deemed necessary.  At the February 1984 meeting of X3T9.2, representatives of 
+the following companies stated, for the record, that their companies had 
+implemented and tested SCSI:  Adaptec, Adaptive Data, Data Technology Corp., 
+Fujitsu America, Inc., NCR Corp., and Shugart Corp.  This is not a complete 
+list of companies implementing products using SCSI nor is it a promise by 
+these companies to offer SCSI products.  
+
+The SCSI fills an urgent need, provides for the future, and is consonant with 
+actual commercial practice.  Most important, the timing is right.  SCSI 
+catches the floodtide of new, high-performance storage devices for small 
+systems, and promises to bring a measure of needed order to what would 
+otherwise be a chaotic and fragmented market.  
+
+This standard specifies the mechanical, electrical, and functional 
+requirements for a small computer input/output bus interface, and command sets 
+for peripheral device types, particularly storage devices, commonly used with 
+small computers.
+
+Suggestions for improvement of this standard will be welcome.  They should be 
+sent to the Computer and Business Equipment Manufacturers Association, 311 
+First Street, NW, Suite 500, Washington, DC 20001.
+
+This standard was processed and approved for submittal to ANSI by American 
+National Standards Committee on Computers and Information Processing, X3.  
+Committee approval of the standard does not imply that all committee members 
+voted for its approval.
+
+
+
+
+
+
+
+At the time it approved this standard, the X3 Committee had the following 
+members:
+
+TO BE DETERMINED
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Subcommittee X3T9 on I/O interfaces, which reviewed this standard, had the 
+following members:
+
+Delbert L. Shoemaker (Chairman)
+Ron Tranquilli (Vice Chairman)
+
+Bob Bender                         G. Atterbury (Alt)
+John Blagaila                      Charles Brill (Alt) 
+Fred Ciechowski                    William E. Burr (Alt) 
+George Clark                       Roger Cormier (Alt) 
+Stephen W. Cooper                  Hank Dorris (Alt) 
+Louis C. Domshy                    Thomas A. Fiers (Alt) 
+Robert Dugan                       Henry Ginter (Alt)
+Ross H. Jaibaji                    William J. McClain (Alt)
+Patrick Lannan                     William Mosenthal, Jr. (Alt)
+Gene Milligan                      Kirk Moulton (Alt)
+Tom Morrow
+Mike Newton
+Gary S. Robinson
+Arnold John Roccati
+Floyd E. Ross
+Holly S. White
+
+
+(Note: The name lists on this page and the following page are incomplete and 
+they will be updated upon final approval of this standard.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Task Group X3T9.2 on Lower-Level Interfaces, which developed this standard, 
+had the following members:
+
+William E. Burr (Chairman)
+John B. Lohmeyer (Vice Chairman)
+
+Ezra R. Alcudia                    Keith Amundsen (Alt) 
+J. L. Amstutz                      Karen Anneberg (Alt) 
+Bob Bender                         Charles Brill (Alt)
+John Blagaila                      Larry Boucher (Alt)
+Tom Briggs                         Paul Clement (Alt) 
+David T. Cornaby                   George E. Clark (Alt)
+David F. Craft, Jr.                Steve Cooper (Alt) 
+Jay Cunningham                     Gary Crowell (Alt) 
+Willard S. Davidson                Jon Ericson (Alt) 
+Terry Dawson                       Tom Fiers (Alt)
+Phil Devin                         Stephen Fitzgerald (Alt) 
+Louis C. Domshy                    Marty Francis (Alt) 
+Norm Dornseif                      William Homans (Alt) 
+Alan Ebright                       J. V. Howell (Alt) 
+Anita  Freeman                     Skip Kilsdonk (Alt)
+Abe Gindi                          Jim Korpi (Alt)
+William A. Horton                  Lawrence J. Lamers (Alt) 
+Frank Krulc                        Keith Mueller (Alt)
+Patrick E. Lannan                  Don Nanneman (Alt) 
+Daniel Loski                       Doug Nolff (Alt) 
+William C. Mavity                  Richard Reiser (Alt) 
+Gene Milligan                      William H. Roberts (Alt) 
+Bob Mortensen                      Floyd E. Ross (Alt)
+Gary S. Robinson                   D. Michael Robinson (Alt)
+Don Rodgers                        Jay Seashore (Alt) 
+Arnold J. Roccati                  Chuck Spatafore (Alt)
+Jack Schiffhauer                   Jeff Stai (Alt)
+Ralph H. Schultz                   Paul Stavish (Alt) 
+Moshe Segal
+Delbert L. Shoemaker 
+Tim Slaton 
+Robert N. Snively
+Adrienne Turenne 
+Norm Zimmerman 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      T A B L E   O F   C O N T E N T S 
+
+  1. Scope...................................................................8
+
+  2. Referenced Standard.....................................................9
+
+  3. Glossary and Conventions................................................9
+     3.1  Glossary...........................................................9
+     3.2  Editorial Conventions.............................................11
+
+  4. Physical Characteristics...............................................11
+     4.1  Physical Description..............................................11
+     4.2  Cable Requirements................................................11
+     4.3  Connector Requirements............................................12
+     4.4  Electrical Description............................................22
+     4.5  SCSI Bus..........................................................25
+     4.6  SCSI Bus Signals..................................................27
+     4.7  SCSI Bus Timing...................................................30
+
+  5. Logical Characteristics................................................31
+     5.1  SCSI Bus Phases...................................................31
+     5.2  SCSI Bus Conditions...............................................38
+     5.3  SCSI Bus Phase Sequences..........................................40
+     5.4  SCSI Pointers.....................................................42
+     5.5  Message System Specification......................................42
+
+  6. SCSI Commands .........................................................49
+     6.1  Command Implementation Requirements...............................50
+     6.2  Command Descriptor Block........................................50.1
+     6.3  Command Examples..................................................55
+
+  7. Command Descriptions for All Device Types..............................57
+     7.1  Group 0 Commands for All Device Types.............................57
+     7.2  Group 1 Commands for All Device Types.............................76
+     7.3  Group 2 Commands for All Device Types.............................79
+     7.4  Group 3 Commands for All Device Types.............................79
+     7.5  Group 4 Commands for All Device Types.............................79
+     7.6  Group 5 Commands for All Device Types.............................79
+     7.7  Group 6 Commands for All Device Types.............................79
+     7.8  Group 7 Commands for All Device Types.............................79
+
+  8. Command Descriptions for Direct-Access Devices.........................80
+     8.1  Group 0 Commands for Direct-Access Devices........................80
+     8.2  Group 1 Commands for Direct-Access Devices.......................104
+
+  9. Group 0 Command Descriptions for Sequential-Access Devices............117
+
+ 10. Group 0 Command Descriptions for Printer Devices......................140
+
+ 11. Group 0 Command Descriptions for Processor Devices....................152
+
+ 12. Command Descriptions for Write-Once Read-Multiple Devices.............155
+     12.1  Group 0 Commands for Write-Once Read-Multiple Devices...........155
+     12.2  Group 1 Commands for Write-Once Read-Multiple Devices...........164
+
+
+ 13. Command Descriptions for Read-Only Direct-Access Devices..............170
+     13.1  Group 0 Commands for Read-Only Direct-Access Devices............170
+     13.2  Group 1 Commands for Read-Only Direct-Access Devices............171
+
+ 14. Status ...............................................................172
+
+
+                        L I S T   O F   F I G U R E S 
+
+ 4-1  Nonshielded SCSI Device Connector.....................................13
+ 4-2  Nonshielded Cable Connector...........................................15
+ 4-5  Termination for Single-Ended Devices..................................24
+ 4-6  Termination for Differential Devices..................................24
+ 4-7  Differential Driver Protection Circuit (Optional).....................24
+ 4-8  SCSI ID Bits..........................................................25
+ 4-9  Sample SCSI Configurations............................................26
+
+ 5-1  Phase Sequences without Arbitration...................................41
+ 5-2  Phase Sequences with Arbitration......................................41
+ 5-3  Simplified SCSI System................................................42
+
+
+Appendixes
+
+ Appendix A................................................................174
+
+ SCSI Signal Sequence Example
+
+   Appendix A Figures
+     A1:  SCSI Timing Chart ...............................................175
+
+ Appendix B................................................................177
+
+ Typical Bus Phase Sequence
+
+ Appendix C................................................................179
+
+ SCSI System Operation
+
+     C1.  Host Memory / Host Adapter / SCSI Controller Relationship........179
+     C2.  SCSI READ Command Example........................................180
+     C3.  I/O Channel Concept..............................................181
+
+   Appendix C Figures
+     C1:  Snapshot Prior to Initial Selection..............................182
+     C2:  Snapshot Prior to Data Transfer..................................183
+
+ Appendix D................................................................184
+
+ Recommended Shielded Connectors
+
+     D1.  Shielded Connector, Alternative 1................................184
+     D2.  Shielded Connector, Alternative 2................................184
+     D3.  EUROCARD Boxes...................................................184
+
+
+   Appendix D Figures
+     D1:  Female Shielded SCSI Cable Connector, Alternative 1..............185
+     D2:  Male Shielded SCSI Device Connector, Alternative 1...............187
+     D3:  Shielded SCSI Device Connector, Alternative 2....................189
+     D4:  Shielded SCSI Cable Connector, Alternative 2.....................190
+
+ Appendix E................................................................193
+
+ Conformance
+
+     E1.  Alternatives.....................................................193
+     E2.  Levels of Conformance............................................193
+     E3.  Options..........................................................194
+     E4.  Statement of Conformance.........................................194
+
+ Appendix F................................................................195
+
+ Additional Medium Type and Density Code Standards
+
+ Appendix G................................................................197
+
+ Future Standardization    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

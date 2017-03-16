@@ -1,0 +1,379 @@
+                          Covering Your Bases
+
+  An explanation of how to convert from base 10 to base 2, 8, or 16
+
+
+This little article was prompted by the Sierra game RAMA, a 
+wonderful game that relies rather heavily on traditional number 
+theory. (No, wait! I know your eyes are glazing over already when you 
+saw "number theory, but really, what I'm going to explain is very 
+straightforward).
+
+
+                      Let's talk about bases.
+
+When humans were first designing counting, they needed a system for 
+keeping track of them. While they _eventually_ came up with writing 
+numbers (and some numbers took longer than others), originally they 
+counted fingers (the Abdominizer hadn't been invented yet, or we'd
+all be counint base 20).   10 fingers for humans, so we use baas 10
+The theory in RAMA is that aliens would use a similar reasoning
+towards coming up with their own base system. 
+
+
+In RAMA, humans use base 10, while another races uses base 8 (the
+8 colored squares (ignore the smaller 4 color sqaures on the left side -
+it's the large area of the square that's relevant), and yet another
+uses base 16 (the 16 symbols). The center panel on the right side (as
+you enter) to each "teaching" area shows you what symbol corresponds
+to how many items.
+
+
+
+
+                     Base 10 (Decimal)
+
+Now, when I say base 10, that means there are 10 _unique_ digits in 
+the numbers system. Those numbers are:
+
+              0   1   2   3   4   5   6   7   8   9                                                     
+
+Yep, that's 10 digits - count `em. 0 counts as a digit.
+You'll notice that  10  is not amongst those numbers - because there is 
+no such _single_ digit as 10 - it's two digits that represent something 
+special - we'll get to that in a moment.
+
+Whatever the base, the maximum value is one _less_ than the base. 
+
+So, for base 10 (which we all use), the largest single digit is 9. In Base 
+8, or Octal, the largest digit is 7 and the legal digits are:
+
+             0    1    2    3    4    5    6    7
+
+Since all the base 8 numbers fall within base 10's range, we just use 
+the same symbols for the numbers.
+
+We run into a small problem with base 16, because it's last number is 
+(16 - 1 =) 15 and there must be _single_ digits for all numbers from 0 
+to 15 in base 16. For whatever reason, the current convention just 
+starts using upper-case letters when the numbers run out. So the valid 
+number sequence for base 16 is:
+
+0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+
+Yes, this looks a bit weird, but it works. But, you might say, why go 
+thru all this rigmarole - just use 10 instead of A. Well, if 10 actually 
+meant ten, we would - but it doesn't.
+
+
+
+
+
+
+                    The Weight of A Number
+
+
+As we learn in school, the position of each digit in a number has a 
+particular meaning. Let's say I have 12 apples, denoted here by X 
+symbols
+
+    X       X      X
+    X       X      X     
+    X       X      X
+    X       X      X          
+
+
+Now, when I say "12", what exactly does that mean. 12 = 10 + 2., 
+which can also be written as   12 = ( 1 x 10 )  +  ( 2 x  1 ). Putting that 
+into English, we have "there is 1 group of 10s and 2 groups of 1
+ 
+   X       X       X       X
+   X       X                      
+   X       X      
+   X       X                
+   X       X
+
+Remember grade school and the "tens column" and "hundreds 
+column"? Those are the weights of those columns. Applying that to 
+12, we get  
+
+          12 = 10 + 2     = (1 x 10) + (2 x 1)
+
+because the 1 is in the 10s column and the 2 is in the 1s column.
+The first four columns in the base 10 (decimal) system have these
+weights:
+
+                   |  1000  |   100   |   10   |    1   |
+
+
+or, expressing
+that in terms
+of powers of
+10		
+
+                   | 10x10x10  |   10x10    |    10     |    1   |
+
+                     10 to 3rd      10 to 2nd      10 to 1    10 to zero
+
+
+(note that any number to 0th power is 1).
+
+
+
+
+So, 12 means
+
+                  | 10 to 1 power (=10) |   10 to zero power (= 1)
+
+                          1                           2
+
+
+
+
+The number 9 could be considered really as  09 or
+
+                  | 10 to 1 power (=10) |   10 to zero power (= 1)
+
+
+                          0                           9
+
+
+i.e. I have no 10s and 9 1s.
+
+
+
+
+
+If I had the number 34, how many 10s are there?  3
+After that, how many 1s are left? 4
+
+
+                | 10 to 1 power (=10) |   10 to zero power (= 1)
+
+                        3                           4
+
+
+
+
+
+
+
+
+
+                          Pieces of  8
+
+
+Octal, or base 8, works the same way - except when the number is 
+greater than 7 we "carry the one" instead of when the number is 
+greater than 9. Let's use the 12 apples again.
+
+
+    X       X      X
+    X       X      X     
+    X       X      X
+    X       X      X          
+
+
+Now, how many (groups of) 8s are in 12? 1
+How many (groups of) 1s are left? 4
+
+
+    X X      X     X     X     X
+    X X           
+    X X      
+    X X                
+
+So, 12 in base 10 is the same as 14 base 8. 
+
+
+The "weights" of base 8 are similar to base 10, except they are based 
+on the number 8 instead of 10
+
+
+            |   8x8x8   |     8x8      |      8       |       1       |
+
+              8 to 3rd       8 to 2nd       8 to 1       8 to zero
+
+                512           64               8                1
+
+
+A second example: Converting 312 base 10 to base 8
+
+How many 512s are there in 312?             0
+How many 64s are there in 312?              4      312 - (4x64) = 56
+How many 8s are there in the remaining 56?  7      56 - 56 = 0
+How many 1s are there in the remaining 0?   0
+
+So, the answer is 0470, or since we drop leading 0s, just  0470
+
+
+What if we want to convert base 8 to base 10? Reverse the process.
+
+
+
+Example:  Given 27 base 8, what is the base 10 equivalent?
+
+                |     8x8      |      8       |       1       |
+                        
+                                      2              7
+                                 = (2 x 8)  +   ( 7 x 1 ) 
+                                 = 23 base 10
+
+
+
+Let's go one step farther and do addition:
+
+Example:  Add two octal numbers - 26 and 37
+
+There are two ways of doing this. The slow way is to convert the octal 
+numbers back to decimal, add them, then convert the answer back to 
+base 8. Ick!  The faster way is to add them just like you would any 
+other number, except remembering to carry the 1 (and subtract 8) any 
+time a column adds up to more than 7. Let's see
+
+                          1
+                          26
+                       +  37
+                     -----------
+                          65
+
+When we added the 7 and 6, we got a number greater than 7 so we 
+subtract 8, leave the remainder and carry the 1 to the next column. If 
+that second column had been more than 7 we would have carried again 
+creating a third column.
+
+Subtraction works exactly the same as decimal subtraction too, except 
+that you "borrow" 8 instead of 10. Fortunately, the RAMA game won't 
+ask you for negative number answers so we won't dwell on those now.
+
+
+
+
+
+
+
+                    Your FACE is a very big number
+
+Now we come to the tricky one, base 16. But really, other than the 
+additional "digits" it acts the same way. We call the extra numbers A, 
+B, C, D, E, and F - the system in RAMA has symbols for all 16 
+numbers. 
+
+Again, the columns are weighted, but we use 16 instead of 8s or 10s
+
+
+
+
+
+   |   16x16x16   |     16x16       |      16       |        1      |
+
+      16 to 3rd         16 to 2nd         16 to 1       16 to zero
+
+       4096            256                  16               1
+
+
+Going back to our 12 apples, we ask ourselves..
+
+
+
+    X       X      X
+    X       X      X     
+    X       X      X
+    X       X      X          
+
+
+Now, how many 16s are in 12? 0
+How many 1s are left? 12
+
+
+X     X     X     X     X     X     X     X     X     X     X     X
+
+ 
+Recall, from the first part, that 12, being 2 digits, can't be used and 
+that in hexadecimal (hexi = 6 and decimal = 10, so 6+10 or base 16) 
+uses the letter  C  as 12. 
+So 12 in base 10 is the same as  C in base 16. Weird, huh?
+But it follows in the normal pattern of how we deal with numbers, as 
+with base 10 and base 8.
+
+
+Let's try another example. 
+
+What is 110 in base 16?
+
+
+How many 16s are in 110?  6     110 - (6 x 16) = 110 - 96 = 14
+How many 1s are in the remaining 14 = E
+
+So, 110 base 10 is equal to 4E base 16
+
+
+
+Going the other way, we translate base 16 to base 10 just like we did 
+with base 8 to base 10, except using 16s
+
+Example:  What is the base 10 equivalent of 19A
+
+
+
+       |      16x16       |      16          |       1      |
+
+               1                  9                  A
+
+        = ( 1 x (16x16))  + ( 9 x 16 )  +  (A x 1)
+
+        = ( 1 x 256 ) +  (144) + (10)                   ( A is 10)
+
+        = 410 base 10
+
+
+Finally, base 16 follows all the rules of subtraction and addition we've 
+mentioned regarding "carrying"/"borrowing".  For example, let's 
+subtract 2C from 40 - both hexadecimal numbers.
+
+                                   40
+                               -   2C
+                              -----------
+
+The C, or `12' must be subtracted from the 0 which is too small. So, 
+we "borrow" a 16 from the `4', leaving 3
+
+                                 3(16)
+                              -  2  C
+                              ---------
+                                 1  4
+
+in the right column, we subtracted 12 from 16, which left 4.
+
+
+
+Example:   Add the two hexadecimal numbers 47  and C4
+
+                          
+                                47
+                            +   C4 
+                           ----------
+                               10B
+
+
+7 + 4 is 11, which is  B in  base 16.   C, or 12, + 4 is 16, so we drop 
+down a 0 and carry the 1 to the next left column (as we would if the 
+two numbers had added up to 10 in base 10 numbers).
+
+
+Well, I hope this helps some of you out. If you were looking for all the 
+answers - sorry. The game doesn't always ask the same values in the 
+displays at Bankok, but if you understand _how_ to get the answers 
+then it shouldn't be a problem. For those of you with scientific 
+calculators, or Win '95 (and maybe Windows and Mac), you can also 
+check to see if you have a calculator that can handle octal and 
+hexadecimal conversions
+
+
+This file is copyrighted 1996 by Dave Timoney. All rights reserved.
+Sysops may freely post this file on their BBS, FTP, or Web sites as long
+as the do not modify the file, other than file type conversion and
+re-formatting.
+
+
+

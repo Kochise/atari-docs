@@ -1,0 +1,5 @@
+Z8530 network device driver for Linux kernel AX.25.
+belongs into linux. See LSM file for details.
+
+vy 73 de Joerg DL1BKE
+  

@@ -1,0 +1,59 @@
+
+CBHD - Hard disk driver for all Atari-compatible with SCSI-Driver
+
+½ Claus Brod, Steffen Engel 1996
+
+INTRODUCTION
+
+  CBHD is a hard disk driver, known from the book 'Scheibenkleister' by 
+  Claus Brod.
+
+  From version 4.50 CBHD is freeware, meaning that all files may be copied
+  unchanged and distributed free of charge.
+
+  All rights to CBHD and the associated source texts belong to the authors.
+
+  The essential component is the SCSI-driver in CBHD/SCSIDRV.PRG and 
+  SCSI.RAM. 
+
+  Pleaser be sure to read the documentation for the driver (CBHD.TXT, 
+  CBHD.HYP, or translate the UDO sources in a format of your choice)
+
+
+WARNING
+
+  Owners of an Atari Falcon should definitely read the text about the Falcon
+  in the documentation. Some Falcons, due to a hardware error, can produce
+  write errors when accessing SCSI devices. In particular, very fast hard
+  disc drivers (like CBHD) can provoke this problem.
+
+  ALIA 
+
+  Owners of an ALIA have to switch on the ALIA-recognition with CBHDCONF!
+
+MAGICMAC
+
+  Under MagicMac you can let CBHD0 manage the ACSI-compatible hard drives.
+  Please pay attention to the 'MagicMac' chapter in the CBHD documentation.
+
+LIABILITY
+
+  The software was programmed and tested with the greatest care.
+
+  We, Steffen Engel and Claus Brod, can accept no liability for direct or 
+  indirect damage, whether financial, material or any other type that have 
+  been caused by using programs included in this archive or distribution.
+  The same applies to the English translators, Roger Cain and Peter West.
+
+  CBHD was programmed and tested with the greatest care, though we can not  
+  offer any guarantee that CBHD is free of faults.
+
+  In particular when using write-caches of any kind we disclaim all 
+  liability. Write-caches are basically extraordinary difficult to realise
+  under TOS. Safe write-caches on the Atari are also unknown.
+
+  Error desscriptions, suggestions and wishes for further development of 
+  CBHD will be accepted gladly.
+
+
+Steffen Engel, Braunschweig, December 1996

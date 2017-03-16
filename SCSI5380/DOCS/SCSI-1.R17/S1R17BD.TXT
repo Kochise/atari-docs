@@ -1,0 +1,495 @@
+Appendix D  
+
+Recommended Shielded Connectors
+
+
+Three alternative shielded connector systems are defined by this appendix.  
+For each alternative, the connector shielding system shall provide a dc 
+resistance of less than 10 milliohms from the cable shield at its termination 
+point to the SCSI device enclosure.
+
+  In order to support daisy-chain connections, SCSI devices that use shielded 
+connectors should provide two shielded device connectors on the device 
+enclosure.  These two connectors may be wired "one-to-one" with a stub to the 
+SCSI device's drivers and receivers provided the maximum stub length is not 
+violated.  Alternatively, two cables may be run from the two shielded 
+connectors to the drivers and receivers so that the maximum stub length is not 
+violated.  The length of the cable within the device enclosure is included 
+when calculating the total cable length of the SCSI bus.
+
+  D1 Shielded Connector, Alternative 1.  The shielded cable connector 
+(Figure D1) shall be a 50-conductor connector consisting of two rows of 25 
+female contacts with adjacent contacts 2.54 mm (0.1 in) apart.  The nonmating 
+portion of the connector is shown for reference only.
+
+  The shielded SCSI device connector (Figure D2) shall be a 50-conductor 
+connector consisting of two rows of 25 male pins with adjacent pins 2.54 mm 
+(0.1 in) apart.  The nonmating portion of the connector is shown for reference 
+only.
+
+  The connector pin assignments shall be as shown in Table 4-1 for single-
+ended drivers and as shown in Table 4-2 for differential drivers.
+
+  D2 Shielded Connector, Alternative 2.  The shielded device connector 
+(Figure D3) shall be a 50-conductor connector consisting of two rows of ribbon 
+contacts spaced 2.16 mm (0.085 in) apart.  The nonmating portion of the 
+connector is shown for reference only.  FCC document Part 68 Subpart F 68.500 
+should be used for reference.
+
+  The shielded cable connector (Figure D4) shall be a 50-conductor connector 
+consisting of two rows of ribbon contacts spaced 2.16 mm (0.085 in) apart. The 
+nonmating portion of the connector is shown for reference only.
+
+  The connector pin assignments shall be as shown in Table D1 for single-ended 
+drivers and as shown in Table D2 for differential drivers.
+
+  D3 EUROCARD Boxes  For boards in EUROCARD boxes (IEC 297 or DIN 41494) the 
+EMI-screen may be in the front of the boards and in this case a screened cable 
+and connector may be attached through the front panel to the board connector 
+specified in section 4.3.  It is thereby possible to use the flat ribbon cable 
+specified in this standard or the shielded cable, as required by users.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Figure D1a. Female Shielded SCSI Cable Connector, Alternative 1
+
+==============================================================================
+Dimensions    Millimeters              Inches              
+------------------------------------------------------------------------------
+   A1         60.96 + 0.15             2.400 + 0.006       
+   A2         66.29 + 0.18             2.610 + 0.007
+   A3          2.54 + 0.15             0.100 + 0.006
+   A4          2.54 + 0.15             0.100 + 0.006
+   A5          8.56 + 0.41             0.337 + 0.016       
+   A6         11.93 Minimum            0.470 Minimum       
+   A7         65.02 + 0.18             2.560 + 0.007
+   A8          5.46                    0.215               
+   A9          4.14 + 0.25             0.163 + 0.010       
+   A10        60.20 Maximum            2.370 Maximum       
+   A11         6.60                    0.260               
+   A12         1.27 Maximum            0.050 Maximum       
+   A13         0.64 Maximum            0.025 Maximum       
+   A14         6.604 + 0.25, - 0.13    0.260 + 0.010, - 0.005
+   A15        13.46                    0.530
+   A16        12.45 + 0.38             0.490 + 0.015
+==============================================================================
+NOTES:
+  (1) Fifty Contacts on 2.54-mm (0.100-inch) spacing = 60.96 mm (2.40 inch).
+  (2) Tolerances +_ 0.127 mm (0.005 inch) noncumulative, unless specified 
+  otherwise.
+
+
+       Figure D1b. Female Shielded SCSI Cable Connector, Alternative 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Figure D2a. Male Shielded SCSI Device Connector, Alternative 1
+
+==============================================================================
+Dimensions    Millimeters           Inches               
+------------------------------------------------------------------------------
+   B1         66.65 + 0.15          2.624 + 0.006        
+   B2         65.28                 2.570                
+   B3          0.69                 0.027                
+   B4          5.77 + 0.81          0.227 + 0.032
+   B5          9.14                 0.360                
+   B6          3.30                 0.130                
+   B7          2.54                 0.100                
+   B8          2.54                 0.100                
+   B9*         2.84                 0.112                
+   B10         0.15                 0.006
+   B11         0.38                 0.015                
+   B12         8.15 + 0.76, - 0.48  0.321 + 0.030, - 0.019
+   B13         0.64 + 0.02          0.025 + 0.001        
+   B14*        0.64 Square          0.025 Square
+   B15        78.84                 3.104
+   B16*        5.77                 0.227
+   B17*        2.92                 0.115
+   B18         4.83                 0.190
+   B19*        3.18                 0.125
+   B20*        1.52                 0.060
+   B21        67.31                 2.650
+   B22         9.65                 0.380
+==============================================================================
+NOTES:
+  (1) Fifty Contacts on 2.54-mm (0.100-inch) spacing = 60.96 mm (2.40 inch).
+  (2) Tolerances + 0.127 mm (0.005 inch) noncumulative, unless specified 
+  otherwise.
+  (3) Dimensions listed with asterisks (*) are shown for reference only.
+
+
+        Figure D2b. Male Shielded SCSI Device Connector, Alternative 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           Figure D3. Shielded SCSI Device Connector, Alternative 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           Figure D4. Shielded SCSI Cable Connector, Alternative 2
+
+                                   Table D1
+                         Single-Ended Pin Assignments
+                     (Shielded Connector, Alternative 2)
+
+==============================================================================
+                            Signal      Pin Number
+------------------------------------------------------------------------------
+                            -DB(0)          26
+                            -DB(1)          27
+                            -DB(2)          28
+                            -DB(3)          29
+                            -DB(4)          30
+                            -DB(5)          31
+                            -DB(6)          32
+                            -DB(7)          33
+                            -DB(P)          34
+                            GROUND          35
+                            GROUND          36
+                            GROUND          37
+                            TERMPWR         38
+                            GROUND          39
+                            GROUND          40
+                            -ATN            41
+                            GROUND          42
+                            -BSY            43
+                            -ACK            44
+                            -RST            45
+                            -MSG            46
+                            -SEL            47
+                            -C/D            48
+                            -REQ            49
+                            -I/O            50
+==============================================================================
+NOTES:
+  (1) Pins 1_12 and 14_25 shall be connected to ground.  Pin 13 should be left 
+open.  Some products designed prior to the generation of this standard 
+connected this pin to ground.
+  (2) The minus sign next to the signals indicates active low.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                   Table D2
+                         Differential Pin Assignments
+                     (Shielded Connector, Alternative 2)
+
+==============================================================================
+              Signal Name        Pin Number         Signal Name
+------------------------------------------------------------------------------
+              SHIELD GROUND      1        26        GROUND 
+              +DB(0)             2        27        -DB(0) 
+              +DB(1)             3        28        -DB(1) 
+              +DB(2)             4        29        -DB(2) 
+              +DB(3)             5        30        -DB(3) 
+              +DB(4)             6        31        -DB(4) 
+              +DB(5)             7        32        -DB(5) 
+              +DB(6)             8        33        -DB(6) 
+              +DB(7)             9        34        -DB(7) 
+              +DB(P)            10        35        -DB(P) 
+              DIFFSENS          11        36        GROUND 
+              GROUND            12        37        GROUND 
+              TERMPWR           13        38        TERMPWR
+              GROUND            14        39        GROUND 
+              +ATN              15        40        -ATN 
+              GROUND            16        41        GROUND 
+              +BSY              17        42        -BSY 
+              +ACK              18        43        -ACK 
+              +RST              19        44        -RST 
+              +MSG              20        45        -MSG 
+              +SEL              21        46        -SEL 
+              +C/D              22        47        -C/D 
+              +REQ              23        48        -REQ 
+              +I/O              24        49        -I/O 
+              GROUND            25        50        GROUND 
+==============================================================================
+NOTE:
+  (1) SHIELD GROUND is optional on some cables.  (Implementors note:  Some 
+shielded flat ribbon cables use pin 1 as a connection to the shield.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

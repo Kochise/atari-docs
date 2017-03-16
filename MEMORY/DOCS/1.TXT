@@ -1,0 +1,114 @@
+; /// SSAVCALL 3.02 - ATARI Falcon030 System - ATARI Falcon030 - KOSS 2000 ////
+
+; Author   : Kochise
+; Date     : 07/29/07/2000
+; Type     : HARDWARE Informations
+; Language : None
+; Sequence : None
+; Purpose  : ATARI Falcon030 System Vectors
+
+; Machina  : ATARI Falcon030
+; O.S.     : SSAVCALL 3
+
+; ### HardWare Informations ###################################################
+; Address     Size Status Name         Purpose
+;         0.w LONG READ   Initial SSP  When Turning ON the Computer, the SSP
+
+Address Size  Description                                           Name
+-------+-----+-----------------------------------------------------+----------
+##############System Crash Page                                    ###########
+-------+-----+-----------------------------------------------------+----------
+$000380|long |Validates System Crash Page if $12345678             |proc_lives
+$000384|.....|Saved registers D0-D7                                |proc_dregs
+$0003A4|.....|Saved registers A0-A7                                |proc_aregs
+$0003C4|long |Vector number of crash exception                     |proc_enum
+$0003C8|long |Saved USP                                            |proc_usp
+$0003CC|.....|Saved 16 words from exception stack                  |proc_stk
+-------+-----+-----------------------------------------------------+----------
+##############System Variables                                     ###########
+-------+-----+-----------------------------------------------------+----------
+$000400|long |GEM Event timer vector                               |etv_timer
+$000404|long |GEM Critical error handler                           |etv_critic
+$000408|long |GEM Program termination vector                       |etv_term
+$00040C|long |GEM Additional vector #1 (Unused)                    |etv_xtra
+   :   |  :  | :      :        :     :    :                        |   :
+$00041C|long |GEM Additional vector #5 (Unused)                    |etv_xtra
+$000420|long |Validates memory configuration if $752019F3          |memvalid
+$000424|word |Copy of contents of $FF8001                          |memctrl
+$000426|long |Validates resvector if $31415926                     |resvalid
+$00042A|long |Reset vector                                         |resvector
+$00042E|long |Physical top of RAM                                  |phystop
+$000432|long |Start of TPA (user memory)                           |_membot
+$000436|long |End of TPA (user memory)                             |_memtop
+$00043A|long |Validates memcntrl and memconf if $237698AA          |memval2
+$00043E|word |If nonzero, floppy disk VBL routine is disabled      |flock
+$000440|word |Floppy Seek rate - 0:6ms, 1:12ms, 2:2ms, 3:3ms       |seekrate
+$000442|word |Time between two timer calls (in milliseconds)       |_timer_ms
+$000444|word |If not zero, verify floppy disk writes               |_fverify
+$000446|word |Default boot device                                  |_bootdev
+$000448|word |0 - NTSC (60hz), <>0 - PAL (50hz)                    |palmode
+$00044A|word |Default video resolution                             |defshiftmod
+$00044C|word |Copy of contents of $FF8260                          |sshiftmod
+$00044E|long |Pointer to video RAM (logical screen base)           |_v_bas_ad
+$000452|word |If not zero, VBL routine is not executed             |vblsem
+$000454|word |Number of vertical blank routines                    |nvbls
+$000456|long |Pointer to list of vertical blank routines           |_vblqueue
+$00045A|long |If not zero, points to color palette to be loaded    |colorptr
+$00045E|long |If not zero, points to video ram for next VBL        |screenpt
+$000462|long |Counter for number of VBLs                           |_vbclock
+$000466|long |Number of VBL routines executed                      |_frclock
+$00046A|long |Vector for hard disk initialization                  |hdv_init
+$00046E|long |Vector for resolution change                         |swv_vec
+$000472|long |Vector for getbpb for hard disk                      |hdv_bpb
+$000476|long |Vector for read/write routine for hard disk          |hdv_rw
+$00047A|long |Vector for hard disk boot                            |hdv_boot
+$00047E|long |Vector for hard disk media change                    |hdv_mediach
+$000482|word |If not zero, attempt to load "COMMAND.PRG" on boot   |_comload
+$000484|byte |Attribute vector for console output       BIT 3 2 1 0|conterm
+       |     |Return "kbshift" for BIOS conin --------------' | | ||
+       |     |System bell (1 - on) ---------------------------' | ||
+       |     |Key repeat (1 - on) ------------------------------' ||
+       |     |Key click (1 - on) ---------------------------------'|
+$000486|long |Return address for TRAP #14                  (unused)|trp14ret
+$00048A|long |Return address for critical error handler    (unused)|criticret
+$00048E|long |Memory descriptor block                              |themd
+$00049E|long |Space for additional memory descriptors              |themdmd
+$0004A2|long |Pointer to BIOS save registers block                 |savptr
+$0004A6|word |Number of connected floppy drives                    |_nflops
+$0004A8|long |Vector for screen output                             |con_state
+$0004AC|word |Temporary storage for cursor line position           |save_row
+$0004AE|long |Pointer to save area for exception processing        |sav_context
+$0004B2|long |Pointer to buffer control block for GEMDOS data      |_bufl
+$0004B6|long |Pointer to buffer control block for GEMDOS fat/dir   |_bufl
+$0004BA|long |Counter for 200hz system clock                       |_hz_200
+$0004BC|long |Pointer to default environment string                |the_env
+$0004C2|long |Bit allocation for physical drives (bit 0=A, 1=B..)  |_drvbits
+$0004C6|long |Pointer to 1024-byte disk buffer                     |_dskbufp
+$0004CA|long |Pointer to autoexecute path                          |_autopath
+$0004CE|long |Pointer to VBL routine #1                            |_vbl_lis
+   :   |  :  |  :      :  :     :     :                            |    :
+$0004EA|long |Pointer to VBL routine #8                            |_vbl_lis
+$0004EE|word |Flag for screen -> printer dump                      |_dumpflg
+$0004F0|word |Printer abort flag                                   |_prtabt
+$0004F2|long |Pointer to start of OS                               |_sysbase
+$0004F6|long |Global shell pointer                                 |_shell_p
+$0004FA|long |Pointer to end of OS                                 |end_os
+$0004FE|long |Pointer to entry point of OS                         |exec_os
+$000502|long |Pointer to screen dump routine                       |scr_dump
+$000506|long |Pointer to _lstostat()                               |prv_lsto
+$00050A|long |Pointer to _lstout()                                 |prv_lst
+$00050E|long |Pointer to _auxostat()                               |prv_auxo
+$000512|long |Pointer to _auxout()                                 |prv_aux
+$000516|long |If AHDI, pointer to pun_info                         |pun_ptr
+$00051A|long |If $5555AAAA, reset                                  |memval3
+$00051E|long |8 Pointers to input-status routines                  |xconstat
+$00053E|long |8 Pointers to input routines                         |xconin
+$00055E|long |8 Pointers to output-status routines                 |xcostat
+$00057E|long |8 Pointers to output routines                        |xconout
+$00059E|word |If not 0, then not 68000 - use long stack frames     |_longframe
+$0005A0|long |Pointer to cookie jar                                |_p_cookies
+$0005A4|long |Pointer to end of FastRam                            |ramtop
+$0005A8|long |Validates ramtop if $1357BD13                        |ramvalid
+$0005AC|long |Pointer to routine for system bell                   |bell_hook
+$0005B0|long |Pointer to routine for system keyclick               |kcl_hook
+-------+-----+-----------------------------------------------------+----------

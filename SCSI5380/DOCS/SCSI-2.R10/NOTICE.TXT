@@ -1,0 +1,23 @@
+
+                                 N O T I C E
+
+This area contains material that has been copyrighted by the American National 
+Standards Institute (ANSI).  It is being made available to you in accordance 
+with the terms of ANSI's copyright.  For your convenience, the copyright 
+notice is reproduced below.
+
+------------------------------------------------------------------------------
+
+This is a draft proposed American National Standard of Accredited Standards
+Committtee X3.  As such this is not a completed standard.  The X3T9 Technical
+Committee may modify this document as a result of comments received during
+its approval as a standard.
+
+
+COPYRIGHT NOTICE:  This draft standard is based upon ANSI X3.131-1986, a 
+document which is copyrighted by the American National Standards Institute 
+(ANSI).  In accordance with the usual ANSI policy on the revision of 
+standards, this draft standard may be reproduced, for the purpose of review 
+and comment only, without further permission, provided this notice is 
+included.  All other rights are reserved.
+

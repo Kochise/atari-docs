@@ -1,0 +1,1188 @@
+From coffin@ROCKY2.ROCKEFELLER.EDU Thu Mar 22 08:07:13 1990
+Flags: 000000000001
+Return-Path: <coffin@ROCKY2.ROCKEFELLER.EDU>
+Received: from ROCKY2.ROCKEFELLER.EDU by rascal.ics.utexas.edu. (4.0/SMI-4.0)
+	id AA28411; Thu, 22 Mar 90 08:07:02 CST
+Received: by ROCKY2.ROCKEFELLER.EDU (5.61/1.34)
+	id AA14719; Thu, 22 Mar 90 09:07:14 -0500
+Message-Id: <9003221407.AA14719@ROCKY2.ROCKEFELLER.EDU>
+To: werner@rascal.ics.utexas.edu
+Subject: scsiDocs-Part 3 of 7
+Date: Thu, 22 Mar 90 09:06:59 -0500
+From: coffin@ROCKY2.ROCKEFELLER.EDU
+
+
+.fo Section 7                            #
+ 7. Command Descriptions for All Device Types 
+
+ 7.1 Group 0 Commands for All Device Types.   These commands shall be as listed 
+in Table 7-1.
+
+                                   Table 7-1 
+                  Group 0 Common Commands for All Device Types 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00 H        O     TEST UNIT READY                    7.1.1
+   01 H        *
+   02 H        V
+   03 H        M     REQUEST SENSE                      7.1.2
+   04 H        *
+   05 H        *
+   06 H        V
+   07 H        *
+   08 H        *
+   09 H        V
+   0A H        *
+   0B H        *
+   0C H        V
+   0D H        V
+   0E H        V
+   0F H        *
+   10 H        *
+   11 H        *
+   12 H        E     INQUIRY                            7.1.3
+   13 H        *
+   14 H        *
+   15 H        *
+   16 H        *
+   17 H        *
+   18 H        O     COPY                               7.1.4
+   19 H        *
+   1A H        *
+   1B H        *
+   1C H        O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1D H        O     SEND DIAGNOSTIC                    7.1.6
+   1E H        *
+   1F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+     *  =  These operation codes may have different meanings for specific 
+           types of peripheral devices.  (See the appropriate section for 
+           further information.)
+.pa
+
+   7.1.1 TEST UNIT READY Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Optional
+             Operation Code:  00 H 
+
+                                   Table 7-2 
+                            TEST UNIT READY Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The TEST UNIT READY command (Table 7-2) provides a means to check if the 
+logical unit is ready.  This is not a request for a self test.  If the logical 
+unit would accept an appropriate medium-access command without returning CHECK 
+CONDITION status, this command shall return a GOOD status.
+
+   7.1.2 REQUEST SENSE Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Mandatory
+             Operation Code:  03 H 
+
+                                   Table 7-3 
+                             REQUEST SENSE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The REQUEST SENSE command (Table 7-3) requests that the target transfer 
+sense data to the initiator.
+
+  The sense data shall be valid for a CHECK CONDITION status returned on the 
+prior command.  This sense data shall be preserved by the target for the 
+initiator until retrieved by the REQUEST SENSE command or until the receipt of 
+any other command for the same logical unit from the initiator that issued the 
+command resulting in the CHECK CONDITION status.  Sense data shall be cleared 
+upon receipt of any subsequent command to the logical unit from the initiator 
+receiving the CHECK CONDITION status.  In the case of the single initiator 
+option (see 5.1.3.4), the target shall assume that the REQUEST SENSE command 
+is from the same initiator.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for returned sense data.  An allocation length of zero indicates 
+that four bytes of sense data shall be transferred.  Any other value indicates 
+the maximum number of bytes that shall be transferred.  The target shall 
+terminate the DATA IN phase when allocation length bytes have been transferred 
+or when all available sense data have been transferred to the initiator, 
+whichever is less.
+
+  The REQUEST SENSE command shall return the CHECK CONDITION status only to 
+report fatal errors for the REQUEST SENSE command.  For example:
+
+  (1) The target receives a nonzero reserved bit in the command descriptor 
+block.
+  (2) An unrecovered parity error occurs on the DATA BUS. 
+  (3) A target malfunction prevents return of the sense data.
+
+If any nonfatal error occurs during the execution of the REQUEST SENSE 
+command, the target shall return the sense data with GOOD status.
+
+  Following a fatal error on a REQUEST SENSE command, sense data may be 
+invalid. 
+
+  A target may implement the nonextended, the extended, or both sense data 
+formats.  (Implementors note:  Targets that implement both sense data formats 
+may select the nonextended sense data format in response to an allocation 
+length of zero.  Other methods of selection are also feasible.)
+
+      7.1.2.1 Nonextended Sense.   The format of the sense data is determined by 
+the error class.   Error classes 0 through 6 use the nonextended sense data 
+format (Table 7-4).  Error class 7 is described in Section 7.1.2.2.
+.pa
+
+                                   Table 7-4 
+                         Nonextended Sense Data Format 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   | AdValid|        Error Class       |        Error Code                 |
+-----|-----------------------------------------------------------------------|
+ 1   | Vendor Unique            |Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (LSB)                 |
+==============================================================================
+
+  The address valid (AdValid) bit indicates that the logical block address 
+field contains valid information related to the error code.
+
+  The error class specifies a class of errors with error classes 0 through 6 
+being vendor unique.  For these classes, the error code is vendor unique.
+
+      7.1.2.2 Extended Sense.   Error class 7 specifies extended sense.  Error 
+code zero specifies the extended sense data format.  Error code F H  specifies a 
+vendor unique data format for extended sense.  Error codes 1 H  through E H  are 
+reserved.
+
+  The extended sense data format is shown in Table 7-5.
+
+                                   Table 7-5 
+                           Extended Sense Data Format 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   | Valid  |   Error Class (7)        |         Error Code (0)            |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Segment Number                              |
+-----|-----------------------------------------------------------------------|
+ 2   |Filemark|  EOM   |  ILI   |Reserved|         Sense Key                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Information Byte (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Information Byte                            |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Information Byte                            |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Information Byte (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Additional Sense Length (n)                 |
+-----|-----------------------------------------------------------------------|
+ 8  _  |                           Additional Sense Bytes                      |
+ n+7 |                                                                       |
+==============================================================================
+
+
+  The information bytes are not defined if the valid bit is zero.  If the 
+valid bit is one, the information bytes contain valid information as follows:
+
+  (1) The unsigned logical block address associated with the sense key, for 
+direct-access devices (Type 0), write-once read-multiple devices (Type 4), and 
+read-only direct-access devices (Type 5).
+
+  (2) The difference (residue) of the requested length minus the actual length 
+in either bytes or blocks, as determined by the command, for sequential-access 
+devices (Type 1), printer devices (Type 2), and processor devices (Type 3).  
+(Negative values are indicated by two's complement notation.)
+
+  (3) The difference (residue) of the requested number of blocks minus the
+actual number of blocks copied or compared for the current segment descriptor 
+of a COPY, COMPARE, or COPY AND VERIFY command.
+
+  The segment number contains the number of the current segment descriptor if 
+the extended sense is in response to a COPY, COMPARE, or COPY AND VERIFY 
+command.  Up to 256 segments are supported beginning with segment zero.
+
+  The filemark bit indicates that the current command has read a filemark.  
+This bit is only used for sequential-access devices.
+
+  The end-of-medium (EOM) bit indicates that an end-of-medium condition (end-
+of-tape, beginning-of-tape, out-of-paper, etc) exists on a sequential access 
+device or printer device.  For sequential-access devices, this bit indicates 
+that the unit is at or past the early-warning end-of-tape if the direction was 
+forward or that the command could not be completed because beginning-of-tape 
+was encountered if the direction was reverse.  Direct-access devices shall not 
+use this bit; instead, these devices shall report attempts to access beyond 
+the end-of-medium as ILLEGAL REQUEST sense key (see Table 7-6).
+
+  The incorrect length indicator (ILI) bit indicates that the requested 
+logical block length did not match the logical block length of the data on the 
+medium.
+
+  The sense keys are described in Tables 7-6 and 7-7.
+
+  The additional sense length specifies the number of additional sense bytes 
+to follow.  If the allocation length of the command descriptor block is too 
+small to transfer all of the additional sense bytes, the additional sense 
+length is not adjusted to reflect the truncation.
+
+  The additional sense bytes contain command-specific, peripheral-device-
+specific data, or both kinds of data that further define the nature of the 
+CHECK CONDITION status.  The COPY, COMPARE, COPY AND VERIFY, and SEARCH DATA 
+commands define a standard purpose for some of these bytes.  Except as 
+described in these commands, the additional sense bytes are vendor unique.
+.pa
+
+                                   Table 7-6 
+                         Sense Key (0 H -7 H ) Descriptions 
+
+==============================================================================
+Sense Key  Description
+---------  -------------------------------------------------------------------
+   0 H       NO SENSE.  Indicates that there is no specific sense key 
+           information to be reported for the designated logical unit.  This 
+           would be the case for a successful command or a command that 
+           received a CHECK CONDITION status because one of the filemark, EOM, 
+           or ILI bits is set to one.
+
+   1 H       RECOVERED ERROR.  Indicates that the last command completed 
+           successfully with some recovery action performed by the target.  
+           Details may be determinable by examining the additional sense bytes 
+           and the information bytes.
+
+   2 H       NOT READY.  Indicates that the logical unit addressed cannot be 
+           accessed.  Operator intervention may be required to correct this 
+           condition.
+
+   3 H       MEDIUM ERROR.  Indicates that the command terminated with a 
+           nonrecovered error condition that was probably caused by a flaw in 
+           the medium or an error in the recorded data.
+
+   4 H       HARDWARE ERROR.  Indicates that the target detected a 
+           nonrecoverable hardware failure (for example, controller failure, 
+           device failure, parity error, etc) while performing the command or 
+           during a self test.
+
+   5 H       ILLEGAL REQUEST.  Indicates that there was an illegal parameter in 
+           the command descriptor block or in the additional parameters 
+           supplied as data for some commands (FORMAT UNIT, SEARCH DATA, etc).  
+           If the target detects an invalid parameter in the command 
+           descriptor block, then it shall terminate the command without 
+           altering the medium.  If the target detects an invalid parameter in 
+           the additional parameters supplied as data, then the target may 
+           have already altered the medium.
+
+   6 H       UNIT ATTENTION.  Indicates that the removable medium may have been 
+           changed or the target has been reset.  See 6.1.3 for more detailed 
+           information about the unit attention condition.
+
+   7 H       DATA PROTECT.  Indicates that a command that reads or writes the 
+           medium was attempted on a block that is protected from this 
+           operation.  The read or write operation is not performed.
+==============================================================================
+.pa
+
+                                   Table 7-7 
+                         Sense Key (8 H -F H ) Descriptions 
+
+==============================================================================
+Sense Key  Description
+---------  -------------------------------------------------------------------
+   8 H       BLANK CHECK.  Indicates that a write-once read-multiple device or a 
+           sequential-access device encountered a blank block while reading or 
+           a write-once read-multiple device encountered a nonblank block 
+           while writing.
+
+   9 H       Vendor unique.  This sense key is available for reporting vendor 
+           unique conditions.
+
+   A H       COPY ABORTED.  Indicates a COPY, COMPARE, or COPY AND VERIFY 
+           command was aborted due to an error condition on the source device, 
+           the destination device, or both.  (See 7.1.4.2 for additional 
+           information about this sense key.)
+
+   B H       ABORTED COMMAND.  Indicates that the target aborted the command.  
+           The initiator may be able to recover by trying the command again.
+
+   C H       EQUAL.  Indicates a SEARCH DATA command has satisfied an equal 
+           comparison.
+
+   D H       VOLUME OVERFLOW.  Indicates that a buffered peripheral device has 
+           reached the end-of-medium and data remains in the buffer that has 
+           not been written to the medium.  A RECOVER BUFFERED DATA command(s) 
+           may be issued to read the unwritten data from the buffer.
+
+   E H       MISCOMPARE.  Indicates that the source data did not match the data 
+           read from the medium.
+
+   F H       This sense key is reserved.
+==============================================================================
+.pa
+
+ 7.1.3 INQUIRY Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Extended
+             Operation Code:  12 H 
+
+                                   Table 7-8 
+                                INQUIRY Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The INQUIRY command (Table 7-8) requests that information regarding 
+parameters of the target and its attached peripheral device(s) be sent to the 
+initiator.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for returned INQUIRY data.  An allocation length of zero indicates 
+that no INQUIRY data shall be transferred.  This condition shall not be 
+considered as an error.  Any other value indicates the maximum number of bytes 
+that shall be transferred.  The target shall terminate the DATA IN phase when 
+allocation length bytes have been transferred or when all available INQUIRY 
+data have been transferred to the initiator, whichever is less.
+
+  The INQUIRY command shall return a CHECK CONDITION status only when the 
+target cannot return the requested INQUIRY data.  (Implementors note:  It is 
+recommended that the INQUIRY data be returned even though the peripheral 
+device may not be ready for other commands.)
+
+  If an INQUIRY command is received from an initiator with a pending unit 
+attention condition (before the target reports CHECK CONDITION status), the 
+target shall perform the INQUIRY command and shall not clear the unit 
+attention condition.  (See 6.1.3.)
+
+  The INQUIRY data (Table 7-9) contains a five byte header, followed by the 
+vendor unique parameters, if any.
+.pa
+
+                                   Table 7-9 
+                                  INQUIRY Data 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Peripheral Device Type                      | 
+-----|-----------------------------------------------------------------------|
+ 1   |  RMB   |                  Device-Type Qualifier                       |
+-----|-----------------------------------------------------------------------|
+ 2   |   ISO Version   |       ECMA Version       |       ANSI Version       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Additional Length (n)                       |
+==============================================================================
+     |                       Vendor Unique Parameters                        |
+==============================================================================
+5  _   |                           Vendor Unique                               |
+n+4  |                           Parameter Bytes                             |
+==============================================================================
+
+The peripheral device type is shown in Table 7-10.
+
+                                   Table 7-10 
+                             Peripheral Device Type 
+
+==============================================================================
+  Code         Description
+------------------------------------------------------------------------------
+  00 H           Direct-access device (e.g., magnetic disk)
+  01 H           Sequential-access device (e.g., magnetic tape)
+  02 H           Printer device
+  03 H           Processor device
+  04 H           Write-once read-multiple device (e.g., some optical disks)
+  05 H           Read-only direct-access device (e.g., some optical disks)
+  06 H   _  7E H     Reserved
+  7F H           Logical unit not present
+  80 H   _  FF H     Vendor unique
+==============================================================================
+
+  A removable medium (RMB) bit of zero indicates that the medium is not 
+removable.  A RMB bit of one indicates that the medium is removable.
+
+  The device-type qualifier is a seven bit user specified code.  This code may 
+be set with switches or by some other means by the target or peripheral 
+device.   SCSI devices that do not support this feature shall return all zero 
+bits.  This feature allows each user to assign unique codes to each specific 
+type of peripheral device that is supported on the system being used.  These 
+codes may then be used by self-configuring software to determine what specific 
+peripheral device is at each logical unit number.  This is especially valuable 
+for systems that support multiple types of removable medium.
+
+  The usage of nonzero code values in the ISO version and ECMA version fields 
+are defined by the International Standards Organization and the European 
+
+Computer Manufacturers Association, respectively.  A zero code value in these 
+fields shall indicate that the target does not claim compliance to the ISO or 
+ECMA versions of SCSI.  Note that it is possible to claim compliance to more 
+than one of these SCSI standards.
+
+  The ANSI version indicates the implemented version of this standard and is 
+defined as shown in Table 7-11.
+
+                                   Table 7-11 
+                                  ANSI Version 
+
+==============================================================================
+  Code        Description
+------------------------------------------------------------------------------
+   0 H          Version is unspecified.  (Use this code if you are implementing 
+              to this document - it is not published, yet.)
+   1 H          This version.  This code shall be used by SCSI devices that 
+              claim to comply with this standard (upon ANSI publication)
+   2 H   _  7 H     Reserved
+==============================================================================
+
+  The additional length shall specify the length in bytes of the vendor unique 
+parameters.  If the allocation length of the command descriptor block is too 
+small to transfer all of the vendor unique parameters, the additional length 
+shall not be adjusted to reflect the truncation.
+
+   7.1.4 COPY Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Optional
+             Operation Code:  18 H 
+
+                                   Table 7-12 
+                                  COPY Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Parameter List Length (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The COPY command (Table 7-12) provides a means to copy data from one logical 
+unit to another or the same logical unit.  The logical units may reside on the 
+same SCSI device or different SCSI devices.  Some SCSI devices that implement 
+this command may not support copies to or from another SCSI device or third 
+
+party copies (both logical units reside on other SCSI devices).
+
+  The parameter list length specifies the length in bytes of the parameters 
+that shall be sent during the DATA OUT phase of the command.  A parameter list 
+length of zero indicates that no data shall be transferred.  This condition 
+shall not be considered as an error.
+
+  The COPY parameter list (Table 7-13) begins with a four-byte header that 
+contains the COPY function code and priority.  Following the header is one or 
+more segment descriptors.
+
+                                   Table 7-13 
+                              COPY Parameter List 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |         COPY Function Code                 |         Priority         |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Vendor Unique                               |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+==============================================================================
+     |                         Segment Descriptor(s)                         |
+==============================================================================
+ 0  _  |                           Segment Descriptor 0                        |
+ xx  |                     (See specific table for length.)                  |
+-----|-----------------------------------------------------------------------|
+     |                                 .                                     |
+     |                                 .                                     |
+     |                                 .                                     |
+-----|-----------------------------------------------------------------------|
+ 0  _  |                           Segment Descriptor n                        |
+ xx  |                     (See specific table for length.)                  |
+==============================================================================
+
+  The COPY function code defines a specific format for the segment 
+descriptors.  The COPY function codes are defined in Table 7-14.
+
+  The priority field of the COPY parameter list establishes the relative 
+priority of this COPY command to other commands being executed by the same 
+target.  All other commands are assumed to have a priority of 1.  Priority 0 
+is the highest priority with increasing values indicating lower priorities.
+
+  The segment descriptor formats are determined by the COPY function code. 
+The segment descriptor format used for write-once read-multiple devices and 
+for read-only direct-access devices shall be the same as for direct-access 
+devices.  The segment descriptor format used for printer devices and for 
+processor devices shall be the same as for sequential-access devices.  Thus a 
+COPY from a write-once read-multiple device to a printer device uses the same 
+segment descriptor format as for a COPY from a direct-access device to a 
+sequential-access device.  (See Table 7-14.)  The segment descriptor formats 
+are described in Tables 7-15 through 7-17.  A maximum of 256 segment 
+
+descriptors are permitted.  The segment descriptors are identified by 
+ascending numbers beginning with zero.
+
+
+                                   Table 7-14 
+                                 COPY Functions 
+
+==============================================================================
+Peripheral Device Type     COPY      Segment
+----------------------   Function   Descriptor
+Source     Destination     Code       Table               Comment
+------------------------------------------------------------------------------
+ 00 H            01 H          00 H       Table 7-15
+ 00 H            02 H          00 H       Table 7-15
+ 00 H            03 H          00 H       Table 7-15
+ 04 H            01 H          00 H       Table 7-15          Direct Access
+ 04 H            02 H          00 H       Table 7-15               to
+ 04 H            03 H          00 H       Table 7-15        Sequential Access
+ 05 H            01 H          00 H       Table 7-15
+ 05 H            02 H          00 H       Table 7-15
+ 05 H            03 H          00 H       Table 7-15
+
+ 01 H            00 H          01 H       Table 7-15        Sequential Access
+ 01 H            04 H          01 H       Table 7-15               to
+ 03 H            00 H          01 H       Table 7-15          Direct Access
+ 03 H            04 H          01 H       Table 7-15
+
+ 00 H            00 H          02 H       Table 7-16
+ 00 H            04 H          02 H       Table 7-16          Direct Access
+ 04 H            00 H          02 H       Table 7-16               to
+ 04 H            04 H          02 H       Table 7-16          Direct Access
+ 05 H            00 H          02 H       Table 7-16
+ 05 H            04 H          02 H       Table 7-16
+
+ 01 H            01 H          03 H       Table 7-17
+ 01 H            02 H          03 H       Table 7-17        Sequential Access
+ 01 H            03 H          03 H       Table 7-17               to
+ 03 H            01 H          03 H       Table 7-17        Sequential Access
+ 03 H            02 H          03 H       Table 7-17
+ 03 H            03 H          03 H       Table 7-17
+==============================================================================
+
+Peripheral device type:  00 H   Direct-access device
+                         01 H   Sequential-access device
+                         02 H   Printer device
+                         03 H   Processor device
+                         04 H   Write-once read-multiple device
+                         05 H   Read-only direct-access device
+
+COPY function code:  00 H         Direct access to sequential access
+                     01 H         Sequential access to direct access
+                     02 H         Direct access to direct access
+                     03 H         Sequential access to sequential access
+                     04 H   _  0F H   Reserved
+                     10 H   _  1F H   Vendor unique
+.pa
+
+      7.1.4.1 Errors Detected by the Managing SCSI Device.   Two classes of 
+unusual conditions may occur during execution of a COPY command.  The first 
+class consists of those unusual conditions detected by the SCSI device that 
+received the COPY command and is managing the execution of the command.  These 
+conditions include parity errors while transferring the COPY command and 
+status byte, invalid parameters in the COPY command, invalid segment 
+descriptors, and inability of the SCSI device controlling the COPY functions 
+to continue operating.  In the event of such an unusual condition, the SCSI 
+device managing the COPY shall:
+
+  (1) Terminate the COPY command with a CHECK CONDITION status.
+
+  (2) Return the sense data in the extended sense format.  The valid bit shall 
+be set to one.  The segment number shall contain the number of the segment 
+descriptor being processed at the time the unusual condition is detected.  The 
+sense key shall contain the sense key code describing the unusual condition.  
+The information bytes shall contain the difference between the number of 
+blocks field in the segment descriptor being processed at the time of the 
+failure and the number of blocks successfully copied.  This number is the 
+residue of unprocessed blocks remaining for the segment descriptor.
+
+      7.1.4.2 Errors Detected by a Target.   The second class of errors consists 
+of unusual conditions detected by the SCSI device transferring data at the 
+request of the SCSI device managing the transfer.  The SCSI device managing 
+the COPY command detects unusual conditions by receiving a CHECK CONDITION 
+status from one of the SCSI devices it is managing.  It then shall recover the 
+sense data associated with the unusual condition.
+
+  The SCSI device managing the COPY command may also be the source or 
+destination SCSI device (or both).  It shall distinguish between a failure of 
+the management of the COPY and a failure of the data transfer being requested.  
+It shall then create the appropriate sense data internally.
+
+  After recovering the sense data associated with the detected error, the SCSI 
+device managing the COPY command shall:
+
+  (1) Terminate the COPY command with a CHECK CONDITION status.
+
+  (2) Return the sense data in the extended sense format.  The valid bit shall 
+be set to one.  The segment number shall contain the number of the segment 
+descriptor being processed at the time the unusual condition is detected.  The 
+sense key shall be set to COPY ABORTED.  The information bytes shall contain 
+the difference between the number of blocks field in the segment descriptor 
+being processed at the time of the failure and the number of blocks 
+successfully copied.  This number is the residue of unprocessed blocks 
+remaining for the segment descriptor.  The additional sense length shall 
+specify the number of additional sense bytes.
+
+  The first additional sense byte shall specify the byte number, relative to 
+the first byte of sense data of the beginning of the source logical unit's 
+status byte and sense data.  A zero value indicates that no status byte or 
+sense data is being returned for the source logical unit.  The first byte of 
+the area pointed to by the first additional sense byte shall contain the 
+status byte from the source logical unit.  The subsequent bytes shall contain, 
+unchanged, the sense data recovered from the source logical unit.
+
+
+  The second additional sense byte shall specify the byte number, relative to 
+the first byte of sense data of the beginning of the destination logical 
+unit's status byte and sense data.  A zero value indicates that no status byte 
+or sense data is being returned for the destination logical unit.  The first 
+byte of the area pointed to by the second additional sense byte shall contain 
+the status byte from the destination logical unit.  The subsequent bytes shall 
+contain, unchanged, the sense data recovered from the destination logical 
+unit.
+
+      7.1.4.3 COPY Function Code 00 H  and 01 H .   The format for the segment 
+descriptors for COPY transfers between direct-access and sequential-access 
+devices is specified in Table 7-15.  This format is required for COPY function 
+codes 00 H  or 01 H .  The segment descriptor may be repeated up to 256 times 
+within the parameter list length specified in the command descriptor block.
+
+
+                                   Table 7-15 
+             Segment Descriptor for COPY Function Codes 00 H  and 01 H  
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   | Source Address           |   Reserved      | Source LUN               |
+-----|-----------------------------------------------------------------------|
+ 1   | Destination Address      |   Reserved      | Destination LUN          |
+-----|-----------------------------------------------------------------------|
+ 2   |           Sequential-Access Device Block-Length (MSB)                 | 
+-----|-----------------------------------------------------------------------|
+ 3   |           Sequential-Access Device Block-Length (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |           Direct-Access Device Number of Blocks (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 5   |           Direct-Access Device Number of Blocks                       |
+-----|-----------------------------------------------------------------------|
+ 6   |           Direct-Access Device Number of Blocks                       |
+-----|-----------------------------------------------------------------------|
+ 7   |           Direct-Access Device Number of Blocks (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 8   |           Direct-Access Device Logical Block Address (MSB)            |
+-----|-----------------------------------------------------------------------|
+ 9   |           Direct-Access Device Logical Block Address                  |
+-----|-----------------------------------------------------------------------|
+10   |           Direct-Access Device Logical Block Address                  |
+-----|-----------------------------------------------------------------------|
+11   |           Direct-Access Device Logical Block Address (LSB)            |
+==============================================================================
+
+  Source address and destination address fields specify the SCSI devices and 
+the source LUN and destination LUN fields specify the logical units to use for 
+this segment of the COPY command.  Some SCSI devices may not support "third-
+party" COPY in which the copying SCSI device is not the source or destination 
+device.  Some SCSI devices only support COPY within the SCSI device and not to 
+other SCSI devices.  If an unsupported COPY operation is requested, the 
+command shall be terminated with a CHECK CONDITION status and the sense key 
+shall be set to ILLEGAL REQUEST.
+
+
+  The sequential-access device block-length field specifies the block-length 
+to be used on the sequential-access logical unit during this segment of the 
+COPY command.  If this block-length is known by the SCSI device managing the 
+COPY to be not supported, the command shall be terminated with a CHECK 
+CONDITION status and the sense key shall be set to ILLEGAL REQUEST.  If the 
+block-length is found to be invalid while executing a read or write operation 
+to the sequential-access device, the command shall be terminated with a CHECK 
+CONDITION status and the sense key shall be set to COPY ABORTED.
+
+  The direct-access device number of blocks field specifies the number of 
+blocks in the current segment.  A value of zero indicates that no blocks shall 
+be transferred in this segment.  The direct-access device logical block 
+address specifies the starting logical block address on the logical unit for 
+this segment.
+
+      7.1.4.4 COPY Function Code 02 H .   The format for the segment descriptors 
+for COPY transfers among direct-access devices is specified by Table 7-16.  
+This format is required for COPY function code 02 H .  The segment descriptor 
+may be repeated up to 256 times within the parameter list length specified in 
+the command descriptor block.
+.pa
+
+                                   Table 7-16 
+                 Segment Descriptor for COPY Function Code 02 H  
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   | Source Address           |   Reserved      | Source LUN               |
+-----|-----------------------------------------------------------------------|
+ 1   | Destination Address      |   Reserved      | Destination LUN          |
+-----|-----------------------------------------------------------------------|
+ 2   |                              Reserved                                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                              Reserved                                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                   Source Number of Blocks (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                   Source Number of Blocks                             |
+-----|-----------------------------------------------------------------------|
+ 6   |                   Source Number of Blocks                             |
+-----|-----------------------------------------------------------------------|
+ 7   |                   Source Number of Blocks (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                   Source Logical Block Address (MSB)                  |
+-----|-----------------------------------------------------------------------|
+ 9   |                   Source Logical Block Address                        |
+-----|-----------------------------------------------------------------------|
+10   |                   Source Logical Block Address                        |
+-----|-----------------------------------------------------------------------|
+11   |                   Source Logical Block Address (LSB)                  |
+-----|-----------------------------------------------------------------------|
+12   |              Destination Logical Block Address (MSB)                  |
+-----|-----------------------------------------------------------------------|
+13   |              Destination Logical Block Address                        |
+-----|-----------------------------------------------------------------------|
+14   |              Destination Logical Block Address                        |
+-----|-----------------------------------------------------------------------|
+15   |              Destination Logical Block Address (LSB)                  |
+==============================================================================
+
+  The source address and destination address fields specify the SCSI devices 
+and the source LUN and destination LUN specify the logical units to use for 
+this segment of the COPY command.  Some SCSI devices may not support "third-
+party" COPY in which the copying SCSI device is not the source or destination 
+device.  Some SCSI devices only support COPY within the SCSI device and not to 
+other SCSI devices.  If an unsupported COPY operation is requested, the 
+command shall be terminated with a CHECK CONDITION status and the sense key 
+shall be set to ILLEGAL REQUEST.
+
+  The source number of blocks field specifies the number of blocks to be 
+transferred from the source device during command execution.  The source 
+logical block address field specifies the starting logical block address on 
+the source device.   The destination logical block address field specifies the 
+starting logical block address on the destination device.
+.pa
+
+      7.1.4.5 COPY Function Code 03 H .   The format for the segment descriptors 
+for COPY transfers among sequential-access devices is specified by Table 7-17.  
+This format is required for COPY function code 03 H .  The segment descriptor 
+may be repeated up to 256 times within the parameter list length specified in 
+the command descriptor block.
+
+                                   Table 7-17 
+                 Segment Descriptor for COPY Function Code 03 H  
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   | Source Address           |   Reserved      | Source LUN               |
+-----|-----------------------------------------------------------------------|
+ 1   | Destination Address      |   Reserved      | Destination LUN          |
+-----|-----------------------------------------------------------------------|
+ 2   |                              Reserved                                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                              Reserved                                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Source Block Length (MSB)                   |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Source Block Length (LSB)                   |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Destination Block Length (MSB)              |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Destination Block Length (LSB)              |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Source Number of Blocks (MSB)               |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Source Number of Blocks                     |
+-----|-----------------------------------------------------------------------|
+10   |                           Source Number of Blocks                     |
+-----|-----------------------------------------------------------------------|
+11   |                           Source Number of Blocks (LSB)               |
+==============================================================================
+
+  Source address and destination address fields specify the SCSI devices and 
+the source LUN and destination LUN fields specify the logical units to use for 
+this segment of the COPY command.  Some SCSI devices may not support "third-
+party" COPY in which the copying SCSI device is not the source or destination 
+device.  Some SCSI devices only support COPY within the SCSI device and not to 
+other SCSI devices.  If an unsupported COPY operation is requested, the 
+command shall be terminated with a CHECK CONDITION status and the sense key 
+shall be set to ILLEGAL REQUEST.
+
+  The source block-length field specifies the block-length of the source 
+device for this segment of the COPY.  A zero in this field indicates variable 
+block-length.  For nonzero values, this field shall match the logical unit's 
+actual block-length.  If block-length mismatches are detected by the SCSI 
+device managing the COPY, the command shall be terminated with a CHECK 
+CONDITION status and the sense key shall be set to ILLEGAL REQUEST.  If the 
+mismatches are detected during the read operation by the COPY manager, the 
+command shall be terminated with a CHECK CONDITION status and the sense key 
+shall be set to COPY ABORTED.
+
+
+  The destination block-length field specifies the block-length to be used on 
+the destination logical unit during the COPY.  Destination block-length 
+mismatches are handled in the same manner as source block-length mismatches.
+
+  The source number of blocks field specifies the number of blocks to be 
+transferred from the source device during this segment.  A value of zero 
+indicates that no blocks shall be transferred.
+
+   7.1.5 RECEIVE DIAGNOSTIC RESULTS Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Optional
+             Operation Code:  1C H 
+
+                                   Table 7-18 
+                       RECEIVE DIAGNOSTIC RESULTS Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Allocation Length (MSB)                     |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length (LSB)                     |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RECEIVE DIAGNOSTIC RESULTS command (Table 7-18) requests analysis data 
+be sent to the initiator after completion of a SEND DIAGNOSTIC command (see 
+7.1.6).
+
+  The allocation length shall specify the number of bytes that the initiator 
+has allocated for returned diagnostic data.  An allocation length of zero 
+indicates that no diagnostic data shall be transferred.  Any other value 
+indicates the maximum number of bytes that shall be transferred.  The target 
+terminates the DATA IN phase when allocation length bytes have been 
+transferred or when all available diagnostic data have been transferred to the 
+initiator, whichever is less.
+
+  The diagnostic data returned is vendor unique.
+
+NOTE:  Although diagnostic software is generally device-specific, this command 
+and the SEND DIAGNOSTIC command provide a means to isolate the operating 
+system software from the device-specific diagnostic software.  Hence the 
+operating system can remain device-independent.  This also allows diagnostic 
+software to be more easily ported to other operating systems.
+.pa
+
+   7.1.6 SEND DIAGNOSTIC Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Optional
+             Operation Code:  1D H 
+
+                                   Table 7-19 
+                            SEND DIAGNOSTIC Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |      Reserved   |SelfTest| DevOfL | UnitOfL|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Parameter List Length (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SEND DIAGNOSTIC command (Table 7-19) requests the target to perform 
+diagnostic tests on itself, on the attached peripheral devices, or on both.  
+This command is usually followed by a RECEIVE DIAGNOSTIC RESULTS command, 
+except when the self test (SelfTest) bit is one.
+
+  The parameter list length specifies the length in bytes of the parameter 
+list that shall be transferred during the DATA OUT phase.  A parameter list 
+length of zero indicates that no data shall be transferred.  This condition 
+shall not be considered as an error.  The parameter list is vendor unique.
+
+  A logical unit off-line (UnitOfL) bit of one enables write operations on 
+user medium or operations that affect user visible medium positioning.  An 
+SCSI device off-line (DevOfL) bit of one enables diagnostic operations that 
+may adversely affect operations to other logical units on the same target.
+
+  The logical unit off-line and SCSI device off-line bits are generally set by 
+operating system software, while the parameter list is prepared by diagnostic 
+application software.  Thus, by preventing operations that are not enabled by 
+these bits, the target assists the operating system in protecting its 
+resources.
+
+  A self test bit of one directs the target to complete its default self test.  
+If the self test is requested, the parameter list length shall be set to zero 
+and no data shall be transferred.  If the self test successfully passes, the 
+command shall be terminated with a GOOD status; otherwise, the command shall 
+be terminated with a CHECK CONDITION status and, if extended sense is 
+implemented, the sense key shall be set to HARDWARE ERROR.
+
+NOTE: See the note under the RECEIVE DIAGNOSTIC RESULTS command (7.1.5).
+.pa
+
+ 7.2 Group 1 Commands for All Device Types.   These commands shall be as listed 
+in Table 7-20.
+
+                                   Table 7-20 
+                     Group 1 Commands for All Device Types 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   20 H        V
+   21 H        V
+   22 H        V
+   23 H        V
+   24 H        V
+   25 H        *
+   26 H        V
+   27 H        V
+   28 H        *
+   29 H        V
+   2A H        *
+   2B H        *
+   2C H        V
+   2D H        V
+   2E H        *
+   2F H        *
+   30 H        *
+   31 H        *
+   32 H        *
+   33 H        *
+   34 H        R
+   35 H        R
+   36 H        R
+   37 H        R
+   38 H        R
+   39 H        O     COMPARE                            7.2.1
+   3A H        O     COPY AND VERIFY                    7.2.2
+   3B H        R
+   3C H        R
+   3D H        R
+   3E H        R
+   3F H        R
+==============================================================================
+
+Key: O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+     *  =  These operation codes may have different meanings for specific 
+           types of peripheral devices.  (See the appropriate section for 
+           further information.)
+.pa
+
+   7.2.1 COMPARE Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Optional
+             Operation Code:  39 H 
+
+                                   Table 7-21 
+                                COMPARE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                   Reserved                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Parameter List Length (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Parameter List Length (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The COMPARE command (Table 7-21) provides the means to compare data from one 
+logical unit with another or the same logical unit in a manner similar to the 
+COPY command. 
+
+  This command functions in the same manner as the COPY command, except that 
+the data from the source is compared on a byte-by-byte basis with the data 
+>From the destination.  The parameter list transferred to the target is the 
+same as for the COPY command.  This parameter list contains the information to 
+identify the logical units involved in the comparison and the length of the 
+comparison.  (See 7.1.4 for additional information about the COPY command.)
+
+  If the comparison is unsuccessful, the command shall be terminated with a 
+CHECK CONDITION status and the sense key shall be set to MISCOMPARE.  The 
+remaining fields in the extended sense shall be set as documented in the COPY 
+command.
+.pa
+
+   7.2.2 COPY AND VERIFY Command 
+
+     Peripheral Device Type:  All
+        Operation Code Type:  Optional
+             Operation Code:  3A H 
+
+                                   Table 7-22 
+                            COPY AND VERIFY Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |        Reserved          | BytChk |Reserved|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Parameter List Length (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Parameter List Length (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The COPY AND VERIFY command (Table 7-22) performs the same function as the 
+COPY command, except that a verification of the data written to the 
+destination logical unit is performed after the data is written.  The 
+parameter list transferred to the target is the same as for the COPY command.  
+This parameter list contains the information to identify the logical units 
+involved in the copy and the length of the copy.  (See 7.1.4 for additional 
+information about the COPY command.)
+
+  A byte check (BytChk) bit of zero causes the verification to be simply a 
+medium verification (CRC, ECC, etc).  A BytChk bit of one causes a byte-by-
+byte comparison of data written to the destination logical unit and the data 
+read from the source logical unit.
+
+  If the comparison is unsuccessful, the command shall be terminated with a 
+CHECK CONDITION status and the sense key shall be set to MISCOMPARE.  The 
+remaining fields in the extended sense shall be set as documented in the COPY 
+command.
+.pa
+
+ 7.3 Group 2 Commands for All Device Types.   The Group 2 commands (operation 
+codes 40 H  through 5F H ) are all reserved for future standardization.
+
+ 7.4 Group 3 Commands for All Device Types.   The Group 3 commands (operation 
+codes 60 H  through 7F H ) are all reserved for future standardization.
+
+ 7.5 Group 4 Commands for All Device Types.   The Group 4 commands (operation 
+codes 80 H  through 9F H ) are all reserved for future standardization.
+
+ 7.6 Group 5 Commands for All Device Types.   The Group 5 commands with 
+operation codes A0 H  through AF H  are vendor unique.  The Group 5 commands with 
+operation codes B0 H  through BF H  are reserved for future standardization.
+
+ 7.7 Group 6 Commands for All Device Types.   The Group 6 commands (operation 
+codes C0 H  through DF H ) are all vendor unique.
+
+ 7.8 Group 7 Commands for All Device Types.   The Group 7 commands (operation 
+codes E0 H  through FF H ) are all vendor unique.
+.pa
+
+                                         
+

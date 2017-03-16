@@ -1,0 +1,47 @@
+CROSSDIR = /net/acae127/home/bammi/atari/cross-gcc
+CROSSLIB = $(CROSSDIR)/lib
+CROSSBIN = $(CROSSDIR)/bin
+CROSSINC = $(CROSSDIR)/include
+XFLAGS = -Wstrict-prototypes
+#this has to be gnu make
+MAKE=make
+CC=cgcc
+AR=car
+
+ALL = pml16.olb pml.olb
+
+all : $(ALL)
+
+pml16.olb :
+	$(MAKE) -f makefile.pml clean
+	$(MAKE) -f makefile.pml CC="$(CC)" AR="$(AR)" XFLAGS="$(XFLAGS)" s=true
+
+pml.olb :
+	$(MAKE) -f makefile.pml clean
+	$(MAKE) -f makefile.pml CC="$(CC)" AR="$(AR)" XFLAGS="$(XFLAGS)"
+
+pml02016.olb :
+	$(MAKE) -f makefile.pml clean
+	$(MAKE) -f makefile.pml CC="$(CC) -m68020" AR="$(AR)" \
+ XFLAGS="$(XFLAGS)" m=68881 s=true
+
+pml020.olb :
+	$(MAKE) -f makefile.pml clean
+	$(MAKE) -f makefile.pml CC="$(CC) -m68020" AR="$(AR)" \
+ XFLAGS="$(XFLAGS)" m=68881
+
+install : $(ALL)
+	cp pml16.olb pml.olb $(CROSSLIB)
+	cp math.h $(CROSSINC)
+
+install020 : pml02016.olb pml020.olb
+	cp pml16020.olb pml020.olb $(CROSSLIB)
+	cp math.h $(CROSSINC)
+
+clean:
+	$(MAKE) -f makefile.pml clean
+	$(MAKE) -f makefile.pml clean
+
+realclean:
+	$(MAKE) -f makefile.pml realclean
+	$(MAKE) -f makefile.pml realclean

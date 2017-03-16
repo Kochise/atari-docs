@@ -1,0 +1,55 @@
+2. Referenced Standard
+
+This standard is intended for use in conjunction with EIA RS-485-1983, 
+Standard for Electrical Characteristics of Generators and Receivers for use in 
+Balanced Digital Multipoint Systems.1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

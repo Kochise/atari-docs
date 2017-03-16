@@ -1,0 +1,63 @@
+**************************************************************************
+DMA/Disk-Controller
+**************************************************************************
+
+$FFFF8604 [R/-] W FEDCBA9876543210  DMA Datenregister
+$FFFF8604 [-/W] W FEDCBA9876543210  DMA Sektor ZÑhler
+$FFFF8606 [R/-] W _____________210  DMA Status
+                               |||
+                               ||+- 0= Fehler bei DMA - Operation
+                               |+-- 0= SektorzÑhler Register = 0
+                               +--- 0= DATA REQ von FDC/SCSI aktiv
+
+$FFFF8606 [-/W] W ________76543210  DMA Mode
+                          ||||||||
+                          |||||||+- CA 0 (nur fÅr SCSI)
+                          ||||||+-- CA 1
+                          |||||+--- CA 2
+                          ||||+---- 1 = SCSI
+                          ||||      0 = FDC
+                          ||++----- 0, reserviert
+                          |+------- 1 = DMA mit SCSI
+                          |         0 = DMA mit FDC
+                          +-------- 0 = DMA - Read
+                                    1 = DMA - Write
+
+$FFFF8609 [R/-] B         76543210  Count Hi
+$FFFF8609 [-/W] B         76543210  DMA Base Hi
+$FFFF860B [R/-] B         76543210  Count Mi
+$FFFF860B [-/W] B         76543210  DMA Base Mi
+$FFFF860D [R/-] B         76543210  Count Lo
+$FFFF860D [-/W] B         76543210  DMA Base Lo
+$FFFF860F [R/_] W ________76543210  Floppy Controll-Register
+                          ||||||||
+                          |||||||+- Vorteiler 1
+                          ||||||+-- Mode Select 1
+                          |||||+--- Media Detect 1
+                          ||||+---- wird bei DMA-Zugriffen
+                          ||||      abgefragt
+                          |||+----- Vorteiler 2
+                          ||+------ Mode Select 2
+                          |+------- Media Detect 2
+                          +-------- Disk Changed
+
+$FFFF860F [_/W] W __________54__10  Floppy Controll-Register
+                            ||  ||
+                            ||  |+- Vorteiler 1
+                            ||  +-- Media Detect 1
+                            |+----- Vorteiler 2
+                            +------ Media Detect 2
+
+
+Der Falcon kann im Prinzip DD-, HD- und ED - Laufwerke ansprechen. Leider kennt
+das TOS 4.00 - 4.04 nur DD- und HD- Laufwerke, die durch Software umgeschaltet
+werden. Leider wird von der Mîglichkeit der Hardwaretak- tumschaltung kein
+Gebrauch gemacht. In das Register $FFFF860F mÅssen folgende Werte eingetragen
+werden (Soft- ware-Umschaltung):
+
+* DD - Disketten:  $00
+* HD - Disketten:  $03
+* ED - Disketten:  $30 (wird durch TOS Åberschrieben)
+Hinweis: Wenn in das Register der Wert $33 eingetragen wird, stÅrzt der Rechner
+ab.
+

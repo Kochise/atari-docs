@@ -1,0 +1,330 @@
+3. Glossary and Conventions
+
+3.1. Glossary
+
+  This section contains a glossary of special terms used in this standard.  
+Also see the glossaries for each device type in sections 8.4, 9.4, ..., 17.4.
+
+active I/O process.  An I/O process that is presently in execution (not 
+queued).
+
+AEN.  Asynchronous event notification (see 6.5.5).
+
+AWG.  American Wire Gauge.
+
+byte.  In this standard, this term indicates an 8-bit (octet) construct.
+
+CA.  Contingent Allegiance (see 6.6).
+
+command descriptor block (CDB).  The structure used to communicate commands 
+from an initiator to a target.
+
+command queue.  This term refers to the queue used to store the tagged I/O 
+processes (see 6.8.2).
+
+connect.  The initiator function that selects a target to establish a nexus 
+and to start an I/O process.  The connection that results is an initial 
+connection.
+
+connection.  An initial connection or reconnection.  A connection can only 
+occur between one initiator and one target. 
+
+contact.  The electrically-conductive portion of a connector associated with a 
+single conductor in a cable.
+
+current I/O process.  The I/O process that is presently connected on the SCSI 
+bus.
+
+disconnect.  The action that occurs when an SCSI device releases control of 
+the SCSI bus, allowing it to go to the BUS FREE phase.
+
+ECA.  Extended Contingent Allegiance (see 6.7).
+
+field.  A group of one or more contiguous bits.  Fields containing only one 
+bit are usually referred to as the xx bit instead of the xx field.
+
+host adapter.  A device which connects between a host system and the SCSI bus.  
+The device usually performs the lower layers of the SCSI protocol and normally 
+operates in the initiator role.  This function may be integrated into the host 
+system.
+
+initial connection.  An initial connection is the result of a connect and it 
+exists from the assertion of the BSY signal in a SELECTION phase until the 
+next BUS FREE phase occurs.
+
+
+initiator.  An SCSI device (usually a host system) that requests an I/O 
+process to be performed by another SCSI device (a target).
+
+invalid.  An illegal (reserved) or unsupported bit, field, or code value.
+
+I/O process.  An I/O process consists of one initial connection and zero or 
+more reconnections, all pertaining to a single command or a group of linked 
+commands.  More specifically, the connection(s) pertain to a nexus as defined 
+below in which zero or more command descriptor blocks are transferred.  An I/O 
+process begins with the establishment of a nexus.  An I/O process normally 
+ends with the BUS FREE phase following successful transfer of a COMMAND 
+COMPLETE or a RELEASE RECOVERY message.  An I/O process also ends with the BUS 
+FREE phase following an ABORT, ABORT TAG, BUS DEVICE RESET, or CLEAR QUEUE 
+message or when a hard RESET condition or an unexpected disconnect occurs.
+
+I_T nexus.  A nexus which exists between an initiator and a target.
+
+I_T_L nexus.  A nexus which exists between an initiator, a target, and a 
+logical unit.  This relationship replaces the prior I_T nexus.
+
+I_T_R nexus.  A nexus which exists between an initiator, a target, and a 
+target routine.  This relationship replaces the prior I_T nexus.
+
+I_T_x nexus.  A nexus which is either an I_T_L or I_T_R nexus.
+
+I_T_L_Q nexus.  A nexus between an initiator, a target, a logical unit, and a 
+queue tag following the successful receipt of one of the queue tag messages.  
+This relationship replaces the prior I_T_L nexus.
+
+I_T_x_y nexus.  A nexus which is either an I_T_x or I_T_L_Q.
+
+logical unit.  A unit of data supplied or requested by an initiator.
+
+logical unit.  A physical or virtual peripheral device addressable through a 
+target.
+
+logical unit number.  An encoded three-bit identifier for the logical unit.
+
+LSB.  Least significant bit.
+
+LUN.  Logical unit number.
+
+mandatory.  The referenced item is required to claim compliance with this 
+standard.
+
+mm.  Millimeter.
+
+ms.  Millisecond.
+
+MSB.  Most significant bit.
+
+
+
+
+
+nexus.  A relationship that begins with the establishment of an initial 
+connection and ends with the completion of the I/O process.  The relationship 
+may be restricted to specify a single logical unit or target routine by the 
+successful transfer of an IDENTIFY message.  The relationship may be further 
+restricted by the successful transfer of a queue tag message.
+
+ns.  Nanosecond.
+
+one.  A true signal value or a true condition of a variable.
+
+optional.  The referenced item is not required to claim compliance with this 
+standard.
+
+page.  Several commands use regular parameter structures that are referred to 
+as pages.  These pages are identified with a value known as a page code.
+
+parameter.  A structure containing one or more fields.
+
+peripheral device.  A physical peripheral device that can be attached to an 
+SCSI device, which connects to the SCSI bus.  The peripheral device and the 
+SCSI device (peripheral controller) may be physically packaged together.  
+Often there is a one-to-one mapping between peripheral devices and logical 
+units, but this is not required.  Examples of peripheral devices are: magnetic 
+disks, printers, optical disks, and magnetic tapes.
+
+queue tag.  The value associated with an I/O process that uniquely identifies 
+it from other queued I/O processes on the logical unit for the same initiator.
+
+queued I/O process.  An I/O process that is in the command queue and has not 
+begun execution.
+
+reconnect.  The act of reviving a nexus to continue an I/O process.  A target 
+reconnects to an initiator by using the RESELECTION and MESSAGE IN phases 
+after winning arbitration.  An initiator reconnects to a target by using the 
+SELECTION and MESSAGE OUT phases after winning arbitration (see 6.5.2).
+
+reconnection.  A reconnection is the result of a reconnect and it exists from 
+the assertion of the BSY signal in a SELECTION or RESELECTION phase until the 
+next BUS FREE phase occurs.
+
+reserved.  The term used for bits, fields, and code values that are set aside 
+for future standardization.
+
+SCSI.  Either SCSI-1 or SCSI-2.
+
+SCSI-1.  The Small Computer System Interface (X3.131-1986).
+
+SCSI-2.  The Small Computer System Interface - 2 (X3.131-198X).
+
+SCSI address.  The octal representation of the unique address (0-7) assigned 
+to an SCSI device.  This address would normally be assigned and set in the 
+SCSI device during system installation.
+
+
+
+SCSI ID.  The bit-significant representation of the SCSI address referring to 
+one of the signal lines DB(7-0).
+
+SCSI device.  A host adapter or a target controller that can be attached to 
+the SCSI bus.
+
+signal assertion.  The act of driving a signal to the true state.
+
+signal negation.  The act of driving a signal to the false state or allowing 
+the cable terminators to bias the signal to the false state (by placing the 
+driver in the high impedance condition).
+
+signal release.  The act of allowing the cable terminators to bias the signal 
+to the false state (by placing the driver in the high impedance condition).
+
+status.  One byte of information sent from a target to an initiator upon 
+completion of each command.
+
+target.  An SCSI device that performs an operation requested by an initiator.
+
+target routine.  A target routine is an I/O process directed to a target, and 
+not to a logical unit.
+
+third-party.  When used in reference to COPY commands, third-party means a 
+COPY command issued to one device to perform a copy operation between two 
+other devices.  When used in reference to RESERVE, or RELEASE commands, third-
+party means a reservation made on behalf of another device (e.g., A processor 
+device requests that a direct-access device reserve itself for exclusive use 
+by a sequential-access device).
+
+unexpected disconnect.  A disconnection that occurs as a result of a protocol 
+error (see 5.1.1).
+
+us.  Microsecond.
+
+vendor specific (VS).  Something (e.g., a bit, field, code value, etc.) that 
+is not defined by this standard and may be used differently in various 
+implementations.
+
+xx.  Numbers that are not immediately followed by lower-case "b" or "h" are 
+decimal values.  Large Numbers are not separated by commas or spaces (e.g., 
+12345; not 12,345 or 12 345).
+
+xxb.  Numbers immediately followed by lower-case "b" are binary values.
+
+xxh.  Numbers immediately followed by lower-case "h" are hexadecimal values.
+
+zero.  A false signal value or a false condition of a variable.
+
+
+
+
+
+
+
+3.2. Editorial Conventions
+
+  Certain words and terms used in this standard have a specific meaning beyond 
+the normal English meaning.  These words and terms are defined either in the 
+glossary (see 3.1 and 8.4, 9.4, ..., 17.4) or in the text where they first 
+appear.  Names of signals, phases, messages, commands, statuses, sense keys, 
+additional sense codes, and additional sense code qualifiers are in all 
+uppercase (e.g., REQUEST SENSE).  Lower case is used for words having the 
+normal English meaning.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

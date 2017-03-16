@@ -1,0 +1,115 @@
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>sys/dev/zs/z8530var.h</title>
+<base href="http://fxr.watson.org/fxr/">
+</head>
+
+<body bgcolor=white>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/zs/z8530var.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<h1 align=center>
+  FreeBSD/Linux Kernel Cross Reference
+<!--  <a href="http:blurb.html">
+    Cross Reference</a>--><br>
+  <a href="source/">sys</a>/<a href="source/dev/">dev</a>/<a href="source/dev/zs/">zs</a>/<a href="source/dev/zs/z8530var.h">z8530var.h</a>
+</h1>
+
+<div align=center>
+  
+  <b>Version:</b>
+   ~ <b>[</b>&nbsp;<b><i>HEAD</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=RELENG52">RELENG52</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=RELENG51">RELENG51</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=RELENG50">RELENG50</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=RELENG49">RELENG49</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=RELENG4">RELENG4</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=RELENG3">RELENG3</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=linux-2.4.22">linux-2.4.22</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=linux-2.6.0">linux-2.6.0</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=linux-2.6.1">linux-2.6.1</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=DFBSD">DFBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=NETBSD">NETBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=OPENBSD">OPENBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=DARWIN7">DARWIN7</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=OPENDARWIN">OPENDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=TRUSTEDBSD-MAC">TRUSTEDBSD-MAC</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=TRUSTEDBSD-CAP">TRUSTEDBSD-CAP</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=TRUSTEDBSD-SEBSD">TRUSTEDBSD-SEBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=TRUSTEDBSD-SEDARWIN">TRUSTEDBSD-SEDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=netperf-socket">netperf-socket</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=rwatson-netperf">rwatson-netperf</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/zs/z8530var.h?v=TRUSTEDBSD-SEDARWIN73">TRUSTEDBSD-SEDARWIN73</a>&nbsp;<b>]</b> ~
+  <br>
+</div>
+<hr>
+<pre>  <a name=L1 href="source/dev/zs/z8530var.h#L1">1</a> <b><i>/*-</i></b>
+  <a name=L2 href="source/dev/zs/z8530var.h#L2">2</a> <b><i> * Copyright (c) 2003 Jake Burkholder.</i></b>
+  <a name=L3 href="source/dev/zs/z8530var.h#L3">3</a> <b><i> * All rights reserved.</i></b>
+  <a name=L4 href="source/dev/zs/z8530var.h#L4">4</a> <b><i> *</i></b>
+  <a name=L5 href="source/dev/zs/z8530var.h#L5">5</a> <b><i> * Redistribution and use in source and binary forms, with or without</i></b>
+  <a name=L6 href="source/dev/zs/z8530var.h#L6">6</a> <b><i> * modification, are permitted provided that the following conditions</i></b>
+  <a name=L7 href="source/dev/zs/z8530var.h#L7">7</a> <b><i> * are met:</i></b>
+  <a name=L8 href="source/dev/zs/z8530var.h#L8">8</a> <b><i> * 1. Redistributions of source code must retain the above copyright</i></b>
+  <a name=L9 href="source/dev/zs/z8530var.h#L9">9</a> <b><i> *    notice, this list of conditions and the following disclaimer.</i></b>
+ <a name=L10 href="source/dev/zs/z8530var.h#L10">10</a> <b><i> * 2. Redistributions in binary form must reproduce the above copyright</i></b>
+ <a name=L11 href="source/dev/zs/z8530var.h#L11">11</a> <b><i> *    notice, this list of conditions and the following disclaimer in the</i></b>
+ <a name=L12 href="source/dev/zs/z8530var.h#L12">12</a> <b><i> *    documentation and/or other materials provided with the distribution.</i></b>
+ <a name=L13 href="source/dev/zs/z8530var.h#L13">13</a> <b><i> *</i></b>
+ <a name=L14 href="source/dev/zs/z8530var.h#L14">14</a> <b><i> * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND</i></b>
+ <a name=L15 href="source/dev/zs/z8530var.h#L15">15</a> <b><i> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</i></b>
+ <a name=L16 href="source/dev/zs/z8530var.h#L16">16</a> <b><i> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</i></b>
+ <a name=L17 href="source/dev/zs/z8530var.h#L17">17</a> <b><i> * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE</i></b>
+ <a name=L18 href="source/dev/zs/z8530var.h#L18">18</a> <b><i> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</i></b>
+ <a name=L19 href="source/dev/zs/z8530var.h#L19">19</a> <b><i> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</i></b>
+ <a name=L20 href="source/dev/zs/z8530var.h#L20">20</a> <b><i> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</i></b>
+ <a name=L21 href="source/dev/zs/z8530var.h#L21">21</a> <b><i> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</i></b>
+ <a name=L22 href="source/dev/zs/z8530var.h#L22">22</a> <b><i> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</i></b>
+ <a name=L23 href="source/dev/zs/z8530var.h#L23">23</a> <b><i> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</i></b>
+ <a name=L24 href="source/dev/zs/z8530var.h#L24">24</a> <b><i> * SUCH DAMAGE.</i></b>
+ <a name=L25 href="source/dev/zs/z8530var.h#L25">25</a> <b><i> *</i></b>
+ <a name=L26 href="source/dev/zs/z8530var.h#L26">26</a> <b><i> * $FreeBSD: src/sys/dev/zs/z8530var.h,v 1.2 2004/06/16 09:47:02 phk Exp $</i></b>
+ <a name=L27 href="source/dev/zs/z8530var.h#L27">27</a> <b><i> */</i></b>
+ <a name=L28 href="source/dev/zs/z8530var.h#L28">28</a> 
+ <a name=L29 href="source/dev/zs/z8530var.h#L29">29</a> #ifndef <a href="ident?i=_DEV_ZS_ZSVAR_H_">_DEV_ZS_ZSVAR_H_</a>
+ <a name=L30 href="source/dev/zs/z8530var.h#L30">30</a> #define <a href="ident?i=_DEV_ZS_ZSVAR_H_">_DEV_ZS_ZSVAR_H_</a>
+ <a name=L31 href="source/dev/zs/z8530var.h#L31">31</a> 
+ <a name=L32 href="source/dev/zs/z8530var.h#L32">32</a> struct <a href="ident?i=zs_softc">zs_softc</a> {
+ <a name=L33 href="source/dev/zs/z8530var.h#L33">33</a>         <a href="ident?i=device_t">device_t</a>                sc_dev;
+ <a name=L34 href="source/dev/zs/z8530var.h#L34">34</a>         <a href="ident?i=bus_space_tag_t">bus_space_tag_t</a>         sc_bt;
+ <a name=L35 href="source/dev/zs/z8530var.h#L35">35</a>         <a href="ident?i=bus_space_handle_t">bus_space_handle_t</a>      sc_bh;
+ <a name=L36 href="source/dev/zs/z8530var.h#L36">36</a>         struct <a href="ident?i=zstty_softc">zstty_softc</a>      *sc_child[<a href="ident?i=ZS_NCHAN">ZS_NCHAN</a>];
+ <a name=L37 href="source/dev/zs/z8530var.h#L37">37</a>         void                    *sc_softih;
+ <a name=L38 href="source/dev/zs/z8530var.h#L38">38</a> };
+ <a name=L39 href="source/dev/zs/z8530var.h#L39">39</a> 
+ <a name=L40 href="source/dev/zs/z8530var.h#L40">40</a> struct <a href="ident?i=zstty_softc">zstty_softc</a> {
+ <a name=L41 href="source/dev/zs/z8530var.h#L41">41</a>         <a href="ident?i=device_t">device_t</a>                sc_dev;
+ <a name=L42 href="source/dev/zs/z8530var.h#L42">42</a>         struct <a href="ident?i=zs_softc">zs_softc</a>         *sc_parent;
+ <a name=L43 href="source/dev/zs/z8530var.h#L43">43</a>         <a href="ident?i=bus_space_tag_t">bus_space_tag_t</a>         sc_bt;
+ <a name=L44 href="source/dev/zs/z8530var.h#L44">44</a>         <a href="ident?i=bus_space_handle_t">bus_space_handle_t</a>      sc_csr;
+ <a name=L45 href="source/dev/zs/z8530var.h#L45">45</a>         <a href="ident?i=bus_space_handle_t">bus_space_handle_t</a>      sc_data;
+ <a name=L46 href="source/dev/zs/z8530var.h#L46">46</a>         struct <a href="ident?i=cdev">cdev</a> *sc_si;
+ <a name=L47 href="source/dev/zs/z8530var.h#L47">47</a>         struct <a href="ident?i=tty">tty</a>              *sc_tty;
+ <a name=L48 href="source/dev/zs/z8530var.h#L48">48</a>         int                     sc_icnt;
+ <a name=L49 href="source/dev/zs/z8530var.h#L49">49</a>         <a href="ident?i=uint8_t">uint8_t</a>                 *sc_iput;
+ <a name=L50 href="source/dev/zs/z8530var.h#L50">50</a>         <a href="ident?i=uint8_t">uint8_t</a>                 *sc_iget;
+ <a name=L51 href="source/dev/zs/z8530var.h#L51">51</a>         int                     sc_ocnt;
+ <a name=L52 href="source/dev/zs/z8530var.h#L52">52</a>         <a href="ident?i=uint8_t">uint8_t</a>                 *sc_oget;
+ <a name=L53 href="source/dev/zs/z8530var.h#L53">53</a>         int                     sc_brg_clk;
+ <a name=L54 href="source/dev/zs/z8530var.h#L54">54</a>         int                     sc_alt_break_state;
+ <a name=L55 href="source/dev/zs/z8530var.h#L55">55</a>         struct <a href="ident?i=mtx">mtx</a>              sc_mtx;
+ <a name=L56 href="source/dev/zs/z8530var.h#L56">56</a>         <a href="ident?i=uint8_t">uint8_t</a>                 <a href="ident?i=sc_console">sc_console</a>;
+ <a name=L57 href="source/dev/zs/z8530var.h#L57">57</a>         <a href="ident?i=uint8_t">uint8_t</a>                 sc_tx_busy;
+ <a name=L58 href="source/dev/zs/z8530var.h#L58">58</a>         <a href="ident?i=uint8_t">uint8_t</a>                 sc_tx_done;
+ <a name=L59 href="source/dev/zs/z8530var.h#L59">59</a>         <a href="ident?i=uint8_t">uint8_t</a>                 sc_preg_held;
+ <a name=L60 href="source/dev/zs/z8530var.h#L60">60</a>         <a href="ident?i=uint8_t">uint8_t</a>                 sc_creg[16];
+ <a name=L61 href="source/dev/zs/z8530var.h#L61">61</a>         <a href="ident?i=uint8_t">uint8_t</a>                 sc_preg[16];
+ <a name=L62 href="source/dev/zs/z8530var.h#L62">62</a>         <a href="ident?i=uint8_t">uint8_t</a>                 sc_ibuf[<a href="ident?i=CBLOCK">CBLOCK</a>];
+ <a name=L63 href="source/dev/zs/z8530var.h#L63">63</a>         <a href="ident?i=uint8_t">uint8_t</a>                 sc_obuf[<a href="ident?i=CBLOCK">CBLOCK</a>];
+ <a name=L64 href="source/dev/zs/z8530var.h#L64">64</a> };
+ <a name=L65 href="source/dev/zs/z8530var.h#L65">65</a> 
+ <a name=L66 href="source/dev/zs/z8530var.h#L66">66</a> int <a href="ident?i=zs_attach">zs_attach</a>(<a href="ident?i=device_t">device_t</a> <a href="ident?i=dev">dev</a>);
+ <a name=L67 href="source/dev/zs/z8530var.h#L67">67</a> int <a href="ident?i=zs_probe">zs_probe</a>(<a href="ident?i=device_t">device_t</a> <a href="ident?i=dev">dev</a>);
+ <a name=L68 href="source/dev/zs/z8530var.h#L68">68</a> void <a href="ident?i=zs_intr">zs_intr</a>(void *<a href="ident?i=v">v</a>);
+ <a name=L69 href="source/dev/zs/z8530var.h#L69">69</a> 
+ <a name=L70 href="source/dev/zs/z8530var.h#L70">70</a> int <a href="ident?i=zstty_attach">zstty_attach</a>(<a href="ident?i=device_t">device_t</a> <a href="ident?i=dev">dev</a>);
+ <a name=L71 href="source/dev/zs/z8530var.h#L71">71</a> int <a href="ident?i=zstty_probe">zstty_probe</a>(<a href="ident?i=device_t">device_t</a> <a href="ident?i=dev">dev</a>);
+ <a name=L72 href="source/dev/zs/z8530var.h#L72">72</a> 
+ <a name=L73 href="source/dev/zs/z8530var.h#L73">73</a> int <a href="ident?i=zstty_console">zstty_console</a>(<a href="ident?i=device_t">device_t</a> <a href="ident?i=dev">dev</a>, char *<a href="ident?i=mode">mode</a>, int <a href="ident?i=len">len</a>);
+ <a name=L74 href="source/dev/zs/z8530var.h#L74">74</a> 
+ <a name=L75 href="source/dev/zs/z8530var.h#L75">75</a> void <a href="ident?i=zstty_set_speed">zstty_set_speed</a>(struct <a href="ident?i=zstty_softc">zstty_softc</a> *<a href="ident?i=sc">sc</a>, int ospeed);
+ <a name=L76 href="source/dev/zs/z8530var.h#L76">76</a> 
+ <a name=L77 href="source/dev/zs/z8530var.h#L77">77</a> #endif
+ <a name=L78 href="source/dev/zs/z8530var.h#L78">78</a> </pre><hr>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/zs/z8530var.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<hr>
+This page was automatically generated by the 
+<a href="http:blurb.html">LXR engine</a>.
+<br>
+Visit the <a href="http://lxr.linux.no/">LXR main site</a> for more
+information.
+</html>

@@ -1,0 +1,110 @@
+14. Status 
+
+A status byte shall be sent from the target to the initiator during the STATUS 
+phase at the termination of each command as specified in Tables 14-1 and 14-2 
+unless the command is cleared by an ABORT message, by a BUS DEVICE RESET 
+message, or by a "hard" RESET condition.
+
+                                  Table 14-1
+                                 Status Byte 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |Reserved|  Vendor Unique  |        Status Byte Code           |   V    |
+==============================================================================
+
+
+                                  Table 14-2
+                         Status Byte Code Bit Values
+ 
+==============================================================================
+     Bits of Status Byte
+-----------------------------
+7   6   5   4   3   2   1   0    Status(es) Represented
+------------------------------------------------------------------------------
+R   V   V   0   0   0   0   V    GOOD
+R   V   V   0   0   0   1   V    CHECK CONDITION
+R   V   V   0   0   1   0   V    CONDITION MET/GOOD
+R   V   V   0   0   1   1   V    Reserved
+
+R   V   V   0   1   0   0   V    BUSY
+R   V   V   0   1   0   1   V    Reserved
+R   V   V   0   1   1   0   V    Reserved
+R   V   V   0   1   1   1   V    Reserved
+
+R   V   V   1   0   0   0   V    INTERMEDIATE/GOOD
+R   V   V   1   0   0   1   V    Reserved
+R   V   V   1   0   1   0   V    INTERMEDIATE/CONDITION MET/GOOD
+R   V   V   1   0   1   1   V    Reserved
+
+R   V   V   1   1   0   0   V    RESERVATION CONFLICT
+R   V   V   1   1   0   1   V    Reserved
+R   V   V   1   1   1   0   V    Reserved
+R   V   V   1   1   1   1   V    Reserved
+==============================================================================
+
+Key: R - Reserved bit
+     V - Vendor unique bit
+
+
+
+
+
+
+  A description of the status byte codes is given below:
+
+GOOD.  This status indicates that the target has successfully completed the 
+command.
+
+CHECK CONDITION.  Any error, exception, or abnormal condition that causes 
+sense data to be set, shall cause a CHECK CONDITION status.  The REQUEST SENSE 
+command should be issued following a CHECK CONDITION status, to determine the 
+nature of the condition.
+
+CONDITION MET.  The SEARCH DATA commands shall return this status whenever a 
+search condition is satisfied.  This status does not break a chain of linked 
+commands.  The logical block address of the logical block that satisfies the 
+search may be determined with a REQUEST SENSE command.
+
+BUSY.  The target is busy.  This status shall be returned whenever a target is 
+unable to accept a command from an initiator.  The normal initiator recovery 
+action is to issue the command again at a later time.
+
+INTERMEDIATE.  This status shall be returned for every command in a series of 
+linked commands (except the last command), unless an error, exception, or 
+abnormal condition causes a CHECK CONDITION status or a RESERVATION CONFLICT 
+status to be set.  If this status is not returned, the chain of linked 
+commands is broken; no further commands in the series are executed.
+
+RESERVATION CONFLICT.  This status shall be returned whenever an SCSI device 
+attempts to access a logical unit or an extent within a logical unit that is 
+reserved for that type of access to another SCSI device.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,10 @@
+CC = cgcc
+
+all:
+	make -f makefile.pml CC=cgcc LD=cgcc
+#
+#	Clean up the directory.
+#
+
+clean:
+	rm -f *.ttp *.BAK *.bak *.tmp nohup.out *.o

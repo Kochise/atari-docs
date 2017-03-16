@@ -1,0 +1,3 @@
+Clock timing spec 2 and 3 on page 7-3 of the MC68901UM/AD should have a
+Max of 485 and not 250.
+

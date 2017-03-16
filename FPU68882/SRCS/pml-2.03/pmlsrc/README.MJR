@@ -1,0 +1,46 @@
+
+
+So, here is my mathlib for the tos-gcc-lib. Support has been tested for
+systems without coprocessor, systems with an 68020/30 and a 68881/2.
+
+Machines with a memory mapped 68881 compatible to Atari's standard (Mega
+ST + SFP004,  ST/Mega ST + Lischka/Weide coprocessor board, the VME_ST
+with a 68881, some 68000 based hardware accelerators with a
+SFP-compatible FPU, and (hopefully) the Mega STe. Testing this setup has
+become a problem for me since my SFP004 died last summer when i was
+developing a PD line-f-handler for this board supporting  ALL versions of
+TOS, even those which misuse the line-f trap. So. for the present lib,
+as well as for the last version of my 881-lib supplied with patch 73,
+only a "plausability test" of the assembler code could be made. This
+sounds worse than it is since most of the routines to handle the fpu
+protocol have been developed, optimized and tested for gcc 1.34 in 1988.
+Really new is only the sfp part of frexp.cpp, especially the fscaleb
+statement. I hope I didn't overlook a coding error of this one.
+
+Some of the non-fpu routines have been slightly changed as well:
+overflow conditions will now consistently return a signed IEEE infinity,
+and NAN conditions will return consistently +Infinity and set _errno to
+EDOM. The degree of consistence has not been tested; i hope not to have
+overseen something. However, the stability of the modules during
+exception conditions has been tested.
+
+In the coprocessor libs, error handling can be disabled/enabled during
+the compilation of the lib for the rare situations where fastest
+performance is more desirable than error handling.
+
+The lib has been developed based on the gnulib level 73 and recently
+adapted to level 74 of gnulib.
+
+During the tests, the pml test suite, the envtest suite and gnuplot 3.0 
+(32 bit int only) have been used.
+
+installation: replace the modules in gnulib and pml by the modules in 
+the archive.
+
+comments, bug reports, fixes, flames... to
+
+ritzert@dfg.dbp.de
+
+enjoy,
+
+M.Ritzert, 27. Januar 1992

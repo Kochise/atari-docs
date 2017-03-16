@@ -1,0 +1,40 @@
+BIOS_OBJS=startup.o keytbl.o sounds.o prtblk.o blkdev.o prt.o memtest.o
+
+BIOS_SRCS=\
+	bios.h \
+	biosdefs.h \
+	blkdev.h \
+	bpb.h \
+	header.h \
+	ide.h \
+	linea.h \
+	pbdef.h \
+	tosvars.h \
+	startup.S \
+	keytbl.c \
+	sounds.c \
+	prtblk.c \
+	blkdev.c \
+	prt.S \
+	memtest.S \
+	dma.inc \
+	floppy.inc \
+	ikbdclock.inc \
+	linea.inc \
+	mmu030.inc \
+	nvram.inc \
+	romcrc.inc \
+	scrdmp.inc \
+	intpriv.inc \
+	${empty}
+
+
+EXTRA_DIST:=\
+	GNUmakefile \
+	Makefile \
+	SRCFILES \
+	optimize.mak \
+	biosext.S \
+	${empty}
+
+SRCS:=${BIOS_SRCS}

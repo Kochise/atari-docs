@@ -1,0 +1,246 @@
+INFORMATIONS NON OFFICIELLES SUR LE FALCON030
+
+BUS D'EXTENSION
+  CONNECTEUR 30 BROCHES        CONNECTEUR 50 BROCHES
+  BROCHE        SIGNAL         BROCHE        SIGNAL
+   1            D14             1            GND
+   2            D13             2            GND
+   3            D12             3            BGK
+   4            D11             4            AS
+   5            D10             5            LDS
+   6            D9              6            UDS
+   7            D8              7            R/W
+   8            D7              8            DTACK
+   9            D6              9            FC2
+  10            D5             10            FC1
+  11            D4             11            FC0
+  12            D3             12            BMODE
+  13            D2             13            N/C
+  14            D1             14            IACK
+  15            D0             15            BG
+  16            D15            16            BR
+  17            GND            17            RESET
+  18            GND            18            HALT
+  19            GND            19            BERR
+  20            CPU-BGO        20            IPL0
+  21            EINT1          21            IPL1
+  22            CPU-BGI        22            IPL2
+  23            500KHZ         23            CPUCLK
+  24            N/C            24            VCC
+  25            MFP-IEI        25            VCC
+  26            MFP-INT        26            A23
+  27            EINT3          27            A22
+  28            VCC            28            A21
+  29            VCC            29            A20
+  30            VCC            30            A19
+                               31            A18
+                               32            A17
+                               33            A16
+                               34            A15
+                               35            A14
+                               36            A13
+                               37            A12
+                               38            A11
+                               39            A10
+                               40            A9
+                               41            A8
+                               42            A7
+                               43            A6
+                               44            A5
+                               45            A4
+                               46            A3
+                               47            A2
+                               48            A1
+                               49            N/C
+                               50            N/C
+
+BUS RAM : PAS D'INFORMATIONS
+  CONNECTEUR 30 BROCHES         CONNECTEUR 50 BROCHES
+  BROCHE        SIGNAL          BROCHE        SIGNAL
+
+SORTIE VIDEO
+  CONNECTEUR 19 BROCHES
+  BROCHE        SIGNAL
+   1            ROUGE
+   2            VERT
+   3            BLEU
+   4            MONO/OVERLAY
+   5            GND
+   6            MASSE ROUGE
+   7            MASSE VERT
+   8            MASSE BLEU
+   9            SORTIE AUDIO MONO
+  10            GND
+  11            GND
+  12            VIDEO COMPOSITE/SYNCHRONISATION COMPOSITE
+  13            SYNCHRONISATION HORIZONTALE
+  14            SYNCHRONISATION VERTICALE
+  15            ENTREE SYNCHRO EXTERNE
+  16            ACTIVATION SYNCHRO EXTERNE
+  17            VCC (+12V)
+  18            M1
+  19            M0
+
+  SIGNIFICATION DE M0 ET M1
+  M1 M0    TYPE DE MONITEUR
+   0  0    MONOCHROME ST (BROCHE 4=SORTIE MONOCHROME)
+   0  1    COULEUR ST (RGB)
+   1  0    VGA
+   1  1    TELEVISION
+
+  EN NTC (65536 COULEURS, BROCHE 4=NOT(BIT 5) DU MOT DU PIXEL AFFICHE)
+
+
+
+
+
+
+SORTIE DSP
+  CONNECTEUR 26 BROCHES
+  BROCHE        SIGNAL
+   1            GP0            GPIO BIT 0
+   2            GP1            GPIO BIT 1
+   3            GP2            GPIO BIT 2
+   4            P-DATA         SORTIE DONNEE
+   5            P-CLK          SORTIE HORLOGE SERIE
+   6            P-SYNC         SORTIE SYNCHRONISATION
+   7            N/C
+   8            GND
+   9            VCC(+12V)
+  10            GND
+  11            SC0            CONTROLE SERIE 0
+  12            SC1            CONTROLE SERIE 1
+  13            SC2            CONTROLE SERIE 2
+  14            GND
+  15            SRD            RECEPTION DONNEE SSI
+  16            GND
+  17            VCC(+12V)
+  18            GND
+  19            R-DATA         ENTREE DONNEE
+  20            R-CLK          ENTREE HORLOGE SERIE
+  21            R-SYNC         ENTREE SYNCHRONISATION
+  22            EXT-INT        INTERRUPTION EXTERNE (SUR LE PORT IO3 DU MFP)
+  23            STD            EMISSION DONNEE SSI
+  24            SCK            HORLOGE SERIE SSI
+  25            GND
+  26            EXT-CLK        ENTREE HORLOGE EXTERNE <=32MHZ (MATRICE)
+
+PRISE SCSI II
+  CONNECTEUR 50 BROCHES
+  BROCHE        SIGNAL
+   1            GND
+   2            GND
+   3            GND
+   4            GND
+   5            GND
+   6            GND
+   7            GND
+   8            GND
+   9            GND
+  10            GND
+  11            VCC
+  12            N/C
+  13            N/C
+  14            N/C
+  15            GND
+  16            GND
+  17            GND
+  18            GND
+  19            GND
+  20            GND
+  21            GND
+  22            GND
+  23            GND
+  24            GND
+  25            GND
+  26            SCSI 0
+  27            SCSI 1
+  28            SCSI 2
+  29            SCSI 3
+  30            SCSI 4
+  31            SCSI 5
+  32            SCSI 6
+  33            SCSI 7
+  34            EVEN
+  35            GND
+  36            GND
+  37            N/C
+  38            VCC
+  39            N/C
+  40            GND
+  41            ATN
+  42            GND
+  43            BUSY
+  44            ACKNOWLEDGE
+  45            RESET
+  46            MSG
+  47            SELECT
+  48            C/D
+  49            REQUEST
+  50            E/S
+
+
+
+
+
+
+
+
+
+
+
+
+
+PRISE SERIE : PORT B DU Z85C30
+  CONNECTEUR 9 BROCHES
+  BROCHE        SIGNAL
+   1            DCD            DATA CARRIER DETECT
+   2            RXD            RECEIVED DATA
+   3            TXD            TRANSMITTED DATA
+   4            DTR            DATA TERMINAL READY
+   5            GND
+   6            DSR            DATA SET READY
+   7            RTS            READY TO SEND
+   8            CTS            CLEAR TO SEND
+   9            RI             INDICATEUR D'APPEL      GPIP6 DU MFP
+
+PRISE LAN : PORT A DU Z85C30 (SELECTION PAR IOA7 DU YAMAHA (PSG) SUR MSTE)
+  CONNECTEUR 8 BROCHES
+  BROCHE        SIGNAL
+   1                           HANDSHAKE OUTPUT
+   2                           HANDSHAKE INPUT/INTERNAL CLOCK
+   3                           TRANSMIT DATA -
+   4                           GND
+   5                           RECEIVE DATA -
+   6                           TRANSMIT DATA +
+   7                           GENERAL PURPOSE INPUT
+   8                           RECEIVE DATA +
+
+PRISE PARALLELE
+  CONNECTEUR 25 BROCHES
+  BROCHE        SIGNAL
+   1            STROBE
+   2            DONNEE 0
+   3            DONNEE 1
+   4            DONNEE 2
+   5            DONNEE 3
+   6            DONNEE 4
+   7            DONNEE 5
+   8            DONNEE 6
+   9            DONNEE 7
+  10            ACKNOWLEDGE     GPIP1 DU MFP
+  11            BUSY
+  12            N/C
+  13            N/C
+  14            N/C
+  15            N/C
+  16            N/C
+  17            SELECT          IOA3 DY YAMAHA (PSG)
+  18            GND
+  19            GND
+  20            GND
+  21            GND
+  22            GND
+  23            GND
+  24            GND
+  25            GND

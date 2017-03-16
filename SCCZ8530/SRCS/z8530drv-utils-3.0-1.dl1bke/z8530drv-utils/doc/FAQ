@@ -1,0 +1,134 @@
+Here are some answers to frequently asked questions regarding z8530drv...
+
+vy 73,
+Joerg Reuter	ampr-net: dl1bke@db0pra.ampr.org
+		AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU
+		Internet: jreuter@lykos.oche.de
+
+
+*  I have a question...
+
+   Read the documentation included in this package, read this FAQ. If
+   your problems cannot be solved, feel free to ask me. If you find
+   something wrong, _tell me_, please don't complain to others. Please 
+   report bugs, I'll fix them as soon as possible.
+
+
+*  I tried to compile version 3.0 of this driver with Linux kernel 1.3.x or
+   prior and it failed.
+
+   Try Linux kernel version 2.0.0 or higher. Note that some things may
+   change in 2.1.x and the driver may or may not compile...
+
+
+*  I tried the utilities included in your package with the driver included
+   in the Linux 2.0.0 (or prior) kernel source. They don't work.
+
+   Due to the misdesign of the I/O address range I had to change one
+   important structure. Since this broke the old utilities anyway, I
+   fixed some other things as well. Every new version new utilities.
+   SIGH. Always use the utilities with the driver of the same version.
+
+
+*  Sccinit complains about a missing /etc/z8530drv.rc but it's there...
+
+   No, sccinit complains about /etc/z8530drv.conf missing. Just rename
+   /etc/z8530drv.rc to /etc/z8530drv.conf.
+
+
+*  Sccinit complains about "slip", "rxbuffers" and/or "txbuffers" 
+   unsupported now...
+
+   Ignore it or remove the entries in /etc/z8530drv.conf
+
+
+*  Sccstat shows that I've got NoSpace errors. What's that?
+
+   This happens if the kernel runs out of network buffers. It is
+   very unlikely that z8530drv or the kernel AX.25 is responsible
+   for this, your machine is probably under very heavy network
+   load.
+
+*  Sccstat shows TxErrors. What exactly does this mean?
+
+   The timer 'maxkeyup' expired. If you are using IP in datagram
+   mode you should increase TCP IRTT (see 'man route') and perhaps
+   'maxkeyup', too.
+
+
+*  Maxkeyup behaves funny, the first time the PTT stays up for
+   'maxkeyup' seconds and the driver resumes transmission after
+   'mintime' correctly, the second time it goes down after few
+   seconds, starts transmission again immediately and keys down
+   after three seconds again.
+
+   Avoid the driver running into transmission timeouts, if possible
+   (see last question). This phenomena is a bit complicated to
+   explain, basicly the hardware watchdog for RTS on your MODEM
+   interferes with the software watchdog. It is not for the short 
+   drop of the PTT, though. But: something is wrong with the timing
+   parameters of the network or link layer if you see this behaviour.
+
+
+*  The driver does not find the SCC ports.
+
+   Check the command and data register addresses.
+
+
+*  The register addresses are correct, it still does not find the ports.
+
+   You are using a PE1PET card, right? This, and some other concepts,
+   "forget" to delay the IORDY signal, thus the driver must insert
+   some wait states itself. #define SCC_DELAY in scc.c. This is not
+   defined by default, I am not willing to do the dirty work for
+   lazy hardware designers.
+
+
+*  Help, the driver finds my card, but it won't generate interrupts.
+
+   Are you sure you specified the right IRQ? Have you tried to #define
+   SCC_DELAY?
+
+
+*  On transmission the PTT remains keyed for maxkeyup seconds,
+   sccstat shows exactly one tx interrupt. Receive is okay.
+
+   Check the "clock" entry in /etc/z8530drv.conf. You probably 
+   specified the wrong clock source. Try "DPLL" for a start. 
+   If this doesn't help, #define SCC_DELAY in scc.c.
+
+
+*  The PTT only occasionally remains keyed for maxkeyup seconds, 
+   everything else seems to be okay, apart from some transmission 
+   underruns
+
+   This appears to be a bug of the Z8530. It sometimes doesn't
+   generate the ABORT interrupt when an underrun occurs. 
+
+
+*  Other stations sometimes have problems to decode my frames. Under
+   DOS everything is okay. Sccstat shows nothing special.
+
+   Increase txdelay and tailtime by 1 (10 msec). This has technical
+   reasons. Linux has a timer granulity of 10 msec (at least for
+   i386 architectures), thus setting "tailtime" to 10 msec means 
+   the timer routine gets called with the next timer tick,
+   happens most likely before the 10 millisecods have expired.
+
+
+*  Axattach complains about "TIOCSETD: Invalid argument"
+
+   Sorry, the support for the KISS TNC emulation is gone. You don't
+   need it for kernel AX.25 anyway. Just set up your interface with
+   ifconfig scc0 44.128.20.107 hw ax25 dl0xxx
+
+
+*  Huh? I insmod'ed the driver, sccinit set it up without complaints,
+   sccstat shows statistics, but accessing /dev/scc0 gives a ENODEV
+   error.
+
+   As I said, there is no KISS TNC emulation anymore. If you really
+   do not want to benefit from Linux kernel AX.25 ;-) and still want
+   to run xNOS, you can use kissbridge to link an AX.25 network device 
+   to a pseudo TTY. Note that you'll have to compile kernel AX.25
+   to use it. Or you can try version 2.4 of z8530drv.

@@ -1,0 +1,22 @@
+' Exemple d'utilisation d'un module ex‚cutable du YM-Tracker
+'                        GFA BASIC
+'
+module%=MALLOC(12000)!        R‚servation de 12000 octets (adresse:module)
+demarrer%=module%+&H2C!       Adresse pour commencer ou continuer la musique
+finir%=module%+&H2E!          Adresse pour arreter la musique
+recommencer%=module%+&H30!    Adresse pour red‚marrer du d‚but
+'
+BLOAD "a:\programs\facile.tos",module%
+'
+PRINT "Press a key to begin the song ..."
+a$=INPUT$(1)!                 Attente d'une touche au clavier
+'
+CALL demarrer%!               D‚marrer la musique
+'
+PRINT "Press a key to stop and exit ..."
+a$=INPUT$(1)!                 Attente d'une touche au clavier
+'
+CALL finir%!                  Arreter la musique
+'
+module%=MFREE(module%)!       lib‚rer la m‚moire
+END

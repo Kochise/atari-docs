@@ -1,0 +1,330 @@
+Appendix C
+
+SCSI System Operation
+
+This appendix is included to provide an explanation of the relationship of the 
+various pieces of an SCSI system.  This appendix also provides additional 
+information about the use of SCSI in a multi-tasking system.  Such systems 
+typically use a host adapter printed-circuit board to interface from the host 
+memory to the SCSI bus.  Although other architectures are possible (including 
+native or imbedded SCSI), the host adapter logic still exists as part of the 
+system.  The term "initiator" is used throughout this standard to encompass 
+all such architectures.  The term "host adapter" is used within this appendix 
+to refer to the logic that interfaces from the host memory to the SCSI bus.
+
+C1. Host Memory / Host Adapter / SCSI Controller Relationship
+
+The SCSI architecture utilizes the concept of host memory blocks for command, 
+data, and status interchange between the host system and the SCSI controller.  
+In the middle of this exchange is the SCSI host adapter, which acts as the 
+SCSI peripheral's gateway into host memory.  The host adapter is an important 
+portion of the overall intelligence of SCSI.  Along with providing an 
+information path from the SCSI bus to the host bus, the host adapter is 
+intimately involved in assuring data integrity and proper performance of the 
+I/O subsystem. 
+
+  In order to fully understand SCSI operation, the concepts of I/O memory 
+blocks and logical threads must be detailed.  Figure C1 presents a block 
+diagram of a single host/single peripheral SCSI I/O subsystem.  The host 
+memory contains three I/O blocks:  command, data, and status.  The SCSI 
+controller needs to read the command block and write to the status block in 
+order to perform the task specified by the host (in the command block).  
+Likewise, the controller needs to both read and write the data block.  As was 
+previously mentioned, the SCSI controller "reaches into host memory" via the 
+SCSI host adapter.  The host adapter must know the addresses of the command, 
+data, and status blocks in order for it to "reach" into the right spot in 
+memory.  In other words, the host adapter must be given a pointer to the start 
+of each block by the host.  As the SCSI controller takes information from the 
+command block, the memory pointer for the command block advances to the 
+next byte.  The same is true for the data and status pointers.
+
+  SCSI architecture provides for two sets of three pointers within the host 
+adapter.  The first set is known as the current (or active) pointer values.  
+These are the pointers to the next command, data, or status byte to be 
+transferred between the host memory and the SCSI controller.  There is only 
+one set of current pointers in the host adapter.  The current pointers are 
+shared amoung all devices and are used by the current device connected to the 
+host adapter.  The second set is known as the saved pointer values.  There is 
+one set of saved pointers for each supported logical thread.  For command and 
+status, these pointers always point to the start of the memory command block 
+and memory status block.  The saved data pointer points to the start of the 
+data block at the beginning of the SCSI command.  It remains at this value 
+until the controller sends a SAVE DATA POINTER message to the host adapter 
+which in turn saves the value of the current data pointer.  The controller may 
+retrieve the saved value by sending a RESTORE POINTERS message.  This moves 
+the saved value of each pointer into the current pointer registers.  Whenever 
+an SCSI device disconnects from the bus, only the saved pointer values are 
+retained.  The current pointer values are set from the saved values upon the 
+next reconnection.  The current and saved pointers provide an efficient means 
+of error retry and recovery during large data exchanges on the SCSI bus.
+
+C2. SCSI READ Command Example
+
+One method to understanding the host/host adapter/SCSI peripheral relationship 
+is via an example.  Let us consider the case of a multiple sector READ command 
+that will cross a cylinder boundary on a direct-access device such as a disk.
+
+  The first activity in the I/O operation is for the system to create a 
+command descriptor block in memory and determine where the data and status are 
+to be written in host memory.  The host then sends a command to the host 
+adapter that includes the starting address (pointer) for each of the command, 
+data, and status blocks and the SCSI address of the peripheral to perform the 
+operation.  In this example, there is only one SCSI controller and physical 
+disk, but its address is required in order for the host adapter to select it.
+
+  Upon receiving the command, the host adapter arbitrates for the SCSI bus and 
+wins (due to the lack of competing devices) and proceeds to select the target 
+SCSI device with the ATN signal asserted.  The ATTENTION condition indicates 
+to the SCSI target that the initiator (the host adapter) has a message to send 
+to the target.
+
+  After the SELECTION phase is completed, the disk controller responds to the 
+initiator's ATTENTION condition by receiving a message from the initiator.  
+This message, generated by the host adapter, indicates the desired logical 
+unit number in the target and whether the initiator can support bus 
+disconnect.  In this example, the initiator supports disconnect.
+
+  Input/output activity from this point will be controlled entirely by the 
+target.  The host adapter is simply an "arm" of the target used to reach into 
+host memory.  Utilizing this arm, the target reads in the command descriptor 
+block (CDB).
+
+  After decoding the instruction, the controller determines that a disk seek 
+is required to get the starting data block.  Since the SCSI bus will not be 
+utilized until data has been read from the disk, the target controller 
+disconnects from the bus.  The disconnect process includes the transmission of 
+a SAVE DATA POINTER message and DISCONNECT message from the target to the host 
+adapter.  The host adapter responds to the SAVE DATA POINTER message by saving 
+the current data pointer, which is still set to the start of the data block.  
+After transmission of the DISCONNECT message the target will release BSY, 
+freeing the bus.
+
+  Although the initiator host adapter and target disk controller are 
+disconnected, they are logically connected or, "threaded", together.  Both 
+devices know they have a command to finish and will return to that job at a 
+later point in time.  The principle of logical threads allows many I/O 
+commands to execute in the system simultaneously, utilizing a single physical 
+bus.  The thread is actually not between the host adapter and the disk 
+controller, but runs all the way from the host memory I/O block to the 
+peripheral device performing the operation. (See Figure C2 for a pictorial 
+presentation of this concept.)
+
+  Once the target has started filling its data buffers, it can transmit data 
+to the initiator, but first it must reestablish the physical path.  The 
+reselection process involves the target arbitrating for the bus and 
+reselecting the host adapter.  After the physical reconnection is made, the 
+target sends an IDENTIFY message to the host adapter to indicate which target 
+logical unit is reconnecting.  This information provides reconnection, to the 
+correct thread into host memory.  After reconnection, the roles of the 
+initiator and target are just as they were prior to disconnect.  The target 
+transfers data into host memory via the host adapter.  The data transfer 
+continues until the disk reaches the end of its cylinder and the disk 
+controller determines that a second physical seek is required to complete the 
+READ command.  The target again performs a SAVE DATA POINTER message and a 
+DISCONNECT message.  However, this time the current data pointer is not at the 
+beginning of the memory data block.  The saved value at disconnect reflects 
+the change.
+
+  After seek completion and transfer of data into its buffer, the controller 
+reconnects to the host adapter and completes the data transfer as requested by 
+the READ command.  At this point, the controller sends ending status into host 
+memory via the host adapter.  The final action of the target is to send to the 
+host adapter a COMMAND COMPLETE message and disconnect from the SCSI bus.  The 
+target has completed its operation and considers the logical thread broken.
+
+  Upon receipt of the COMMAND COMPLETE message, the host adapter signals the 
+host that the I/O command is complete.  This signal can be an interrupt or the 
+setting of a flag read by the host in a polled I/O environment.  This action 
+by the host adapter breaks the thread between the host adapter and the I/O 
+memory blocks of the host.  The host reviews the status of the operation in 
+the status block and proceeds to utilize the data transferred into the data 
+block.
+
+C3. I/O Channel Concept
+
+The I/O channel concept fully utilizes the high performance capability of 
+SCSI.  The I/O channel is basically an intelligent SCSI host adapter that can 
+maintain multiple simultaneous threads between host memory I/O blocks and 
+different SCSI devices. 
+
+  The I/O channel utilizes a single direct memory access (DMA) path into host 
+memory supporting the DMA operations of numerous SCSI peripherals.  Since the 
+SCSI bus is a single physical bus and most host computers have a single 
+physical backplane bus, multiple DMA channels into memory are not necessary.  
+In many implementations of a multiple DMA channel architecture, when a channel 
+is accessing memory, all other channels are idle.  In such implementations, a 
+single channel supporting multiple threads can supply the same performance as 
+separate DMA peripherals.  An obvious advantage to the host is lower system 
+cost as well as the saving in backplane card slots.
+
+  In the READ command example discussed in Section C2, the I/O channel is the 
+SCSI host adapter.  The host gives the I/O channel a command by providing it 
+with pointers to the I/O memory blocks and the SCSI peripheral address.  This 
+establishes a thread between the host adapter and the host I/O memory blocks.  
+The I/O channel then opens a subchannel that is assigned the task of managing 
+the physical link and logical thread between the host adapter and the target 
+controller.  All physical connections and reconnections to the host adapter 
+are managed by this subchannel.  The number of active or open subchannels an 
+I/O channel can support is totally dependent upon its design.  The SCSI 
+definition could, in theory, support an I/O channel with up to 56 subchannels 
+(14,336 subchannels, if the EXTENDED IDENTIFY message is implemented).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                Figure C1. Snapshot Prior to Initial Selection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  Figure C2. Snapshot Prior to Data Transfer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

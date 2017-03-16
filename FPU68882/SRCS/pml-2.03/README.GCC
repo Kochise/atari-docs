@@ -1,0 +1,39 @@
+Before you begin, please check that you have atleast gcc V1.31. None of this
+will work with any prior version of gcc (this warning applies to
+both gcc-tos and gcc-minixst).
+
+To install:
+		- cd to pmlsrc, and compile and install pml.olb & pml16.olb
+		  using Makefile.tos.
+		- cd to pmltests and make tests using Makefile.tos
+		- run pmltests
+		- cd to envtests and make tests using Makefile.tos
+		- run envtests
+
+	-Gcc-minix users:
+		- cd to pmlsrc, and compile and install libpml.a and libpml32.a
+		  using Makefile.minix
+		- cd to pmltests and make tests using Makefile.minix
+		- run pmltests
+		- cd to envtests and make tests using Makefile.minix
+		- run envtests
+
+	to run a pml test enter:
+		TEST -v -s < TEST.dat
+		where TEST is one of c2c cc2c c2d d2d or dd2d
+		(gcc V1.35 or better should pass all test, if not
+		 most probably you have a out of date library).
+
+	to run a env test enter:
+		TEST < TEST.in > foo
+		diff foo TEST.out
+		where TEST is one of testldexp, testmodf, testfrexp
+		(note that in the test for frexp, the first value will
+		 be different, the reason is that both answers are correct.)
+
+Please direct your comments and suggestions to:
+--
+bang:   uunet!cadence!bammi			jwahar r. bammi
+domain: bammi@cadence.com
+GEnie:	J.Bammi
+CIS:    71515,155

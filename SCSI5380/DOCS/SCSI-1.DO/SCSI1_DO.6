@@ -1,0 +1,1640 @@
+From coffin@ROCKY2.ROCKEFELLER.EDU Thu Mar 22 08:44:30 1990
+Flags: 000000000000
+Return-Path: <coffin@ROCKY2.ROCKEFELLER.EDU>
+Received: from ROCKY2.ROCKEFELLER.EDU by rascal.ics.utexas.edu. (4.0/SMI-4.0)
+	id AA28538; Thu, 22 Mar 90 08:44:16 CST
+Received: by ROCKY2.ROCKEFELLER.EDU (5.61/1.34)
+	id AA15152; Thu, 22 Mar 90 09:42:14 -0500
+Message-Id: <9003221442.AA15152@ROCKY2.ROCKEFELLER.EDU>
+To: werner@rascal.ics.utexas.edu
+Subject: scsiDocs Part6 of 7
+Date: Thu, 22 Mar 90 09:41:34 -0500
+From: coffin@ROCKY2.ROCKEFELLER.EDU
+
+
+
+
+.fo Section 10                           #
+ 10. Group 0 Command Descriptions for Printer Devices 
+
+The Group 0 commands for printer devices shall be as shown in Table 10-1.
+
+                                   Table 10-1 
+                      Group 0 Commands for Printer Devices 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00 H        O     TEST UNIT READY                    7.1.1
+   01 H        V
+   02 H        V
+   03 H        M     REQUEST SENSE                      7.1.2
+   04 H        O     FORMAT                             10.1
+   05 H        V
+   06 H        V
+   07 H        V
+   08 H        V
+   09 H        V
+   0A H        M     PRINT                              10.2
+   0B H        O     SLEW AND PRINT                     10.3
+   0C H        V
+   0D H        V
+   0E H        V
+   0F H        V
+   10 H        O     FLUSH BUFFER                       10.4
+   11 H        V
+   12 H        E     INQUIRY                            7.1.3
+   13 H        V
+   14 H        O     RECOVER BUFFERED DATA              10.5
+   15 H        O     MODE SELECT                        10.6
+   16 H        O     RESERVE UNIT                       10.7.1
+   17 H        O     RELEASE UNIT                       10.7.2
+   18 H        O     COPY                               7.1.4
+   19 H        V
+   1A H        O     MODE SENSE                         10.8
+   1B H        O     STOP PRINT                         10.9
+   1C H        O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1D H        O     SEND DIAGNOSTIC                    7.1.6
+   1E H        R
+   1F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+.pa
+
+ 10.1 FORMAT Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  04 H 
+
+                                   Table 10-2 
+                                 FORMAT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |         Reserved         | Format Type     |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The FORMAT command (Table 10-2) provides a means for the initiator to 
+specify forms or fonts to printers that support programmable forms or fonts.  
+The format information sent is vendor unique since it is peripheral-device 
+specific.
+
+  The format type field specifies the type of format information to be 
+transferred from the initiator to the target.  This field is defined as 
+follows:
+
+   DB(1)  DB(0)    Format Type
+   -----  -----    -------------
+     0      0      Set Form
+     0      1      Set Font
+     1      0      Vendor Unique
+     1      1      Reserved
+
+
+  The transfer length specifies the length in bytes of format information that 
+shall be sent during the DATA OUT phase.  A transfer length of zero indicates 
+that no format information shall be sent.  This condition shall not be 
+considered as an error.
+.pa
+
+ 10.2 PRINT Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Mandatory
+             Operation Code:  0A H 
+
+                                   Table 10-3 
+                                 PRINT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The PRINT command (Table 10-3) transfers the specified number of bytes from 
+the initiator to the target to be printed.  The data sent is application 
+dependent.
+
+  The transfer length specifies the length in bytes of data that shall be sent 
+during the DATA OUT phase.  A transfer length of zero indicates that no data 
+shall be sent.  This condition shall not be considered as an error.
+.pa
+
+ 10.3 SLEW AND PRINT Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  0B H 
+
+                                   Table 10-4 
+                             SLEW AND PRINT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Channel|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Slew Value                                  |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SLEW AND PRINT command (Table 10-4) transfers the specified number of 
+bytes from the initiator to the target to be printed.  The data sent is 
+application dependent.  This command is provided for printers that do not 
+support forms control information imbedded within the print data.
+
+  The transfer length specifies the length in bytes of data that shall be sent 
+during the DATA OUT phase.  A transfer length of zero indicates that no data 
+shall be sent.  This condition shall not be considered as an error.
+
+  If the channel bit is zero, the slew value specifies the number of lines the 
+form shall be advanced before printing.  A value of 255 indicates that the 
+form shall be advanced to the first line of the next form before printing.  If 
+the channel bit is one, the slew value specifies the forms control channel 
+number to which the form shall be advanced prior to printing the data.
+
+  If the channel bit is one, and the channel option is not implemented, the 
+command shall be terminated with a CHECK CONDITION status and the sense key 
+shall be set to ILLEGAL REQUEST.
+.pa
+
+ 10.4 FLUSH BUFFER Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  10 H 
+
+                                   Table 10-5 
+                              FLUSH BUFFER Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The FLUSH BUFFER command (Table 10-5) provides a means for an initiator to 
+ensure that the data have been successfully printed prior to releasing the 
+peripheral device.  This is useful for applications that wish to handle any 
+error or exception conditions (e.g., end-of-medium) prior to termination of 
+the application.
+
+  When all buffered data are actually printed the command shall be terminated 
+with a GOOD status.  If it is not possible to finish printing all of the 
+buffered data (due to an error or exception condition on the peripheral 
+device), then this command shall be terminated with a CHECK CONDITION status 
+and the appropriate sense key.
+.pa
+
+ 10.5 RECOVER BUFFERED DATA Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  14 H 
+
+                                   Table 10-6 
+                         RECOVER BUFFERED DATA Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RECOVER BUFFERED DATA command (Table 10-6) returns to the initiator the 
+data that has been sent to the target, but not yet printed.
+
+  This command is normally used only to recover from error or exception 
+conditions that make it impossible to print the buffered data.  The order in 
+which the data is transferred from the target to the initiator is the same as 
+it was when the data was previously transferred using the PRINT command or 
+SLEW AND PRINT command.  Data that is transferred by this command is deleted 
+>From the target data buffer.  One or more RECOVER BUFFERED DATA commands may 
+be used to return the unprinted buffered data.
+
+  If an attempt is made to recover more data than is contained in the buffer, 
+the command shall be terminated with a CHECK CONDITION status and the sense 
+key shall be set to NO SENSE.  In addition, the EOM, the valid, and the ILI 
+bits in extended sense shall be set to one.  The information bytes shall be 
+set to the difference (residue) between the transfer length and the actual 
+number of bytes returned. 
+
+  The transfer length specifies the maximum length in bytes of data that shall 
+be transferred during the DATA IN phase.  A transfer length of zero indicates 
+that no data shall be transferred.  This condition shall not be considered as 
+an error.
+.pa
+
+ 10.6 MODE SELECT Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  15 H 
+
+                                   Table 10-7 
+                              MODE SELECT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SELECT command (Table 10-7) provides a means for the initiator to 
+specify medium, logical unit, or peripheral device parameters to the target.
+
+  The parameter list length specifies the length in bytes of the MODE SELECT 
+parameter list that shall be transferred during the DATA OUT phase.  A 
+parameter list length of zero indicates that no data shall be transferred.  
+This condition shall not be considered as an error.  The MODE SELECT parameter 
+list (Table 10-8) contains a four-byte header, followed by the vendor unique 
+parameters, if any.
+
+                                   Table 10-8 
+                           MODE SELECT Parameter List 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |Reserved|      Buffered Mode       |             Reserved              |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0  _  n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+
+  A buffered mode of zero indicates that the target shall not report a GOOD 
+status on PRINT commands or SLEW AND PRINT commands until the data are 
+actually printed.  A buffered mode of one indicates that the target may report 
+a GOOD status on PRINT commands or SLEW AND PRINT commands as soon as the data 
+have been transferred to the SCSI device buffer.  The data from one or more 
+commands may be buffered prior to printing.  Buffered modes of 2 H  through 7 H  
+are reserved.
+
+ 10.7 RESERVE UNIT and RELEASE UNIT Commands 
+
+     Peripheral Device Type:  Printer
+        Operation Code Type:  Optional
+             Operation Code:  16 H  and 17 H , respectively
+
+                                   Table 10-9 
+                     RESERVE UNIT and RELEASE UNIT Commands 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | 3rdPty | Third Party Device ID    |Reserved|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RESERVE UNIT and RELEASE UNIT commands both use the command descriptor 
+block shown in Table 10-9.
+
+   10.7.1 RESERVE UNIT Command.   The RESERVE UNIT command (Table 10-9, 
+operation code 16 H ) shall reserve the specified logical unit for the exclusive 
+use by the requesting initiator or, if third-party reservation option is 
+implemented, to another specified SCSI device.
+
+  The reservation shall remain in effect until superceded by another RESERVE 
+UNIT command from the initiator that made the reservation or until released by 
+a RELEASE UNIT command from the same initiator, or a BUS DEVICE RESET message 
+>From any initiator, or a "hard" RESET condition.  The occurrence of the last 
+two conditions is indicated by a sense key of UNIT ATTENTION on the next 
+command following the condition.  It is not an error to issue this command to 
+a logical unit that is currently reserved to the requesting initiator.
+
+  If the logical unit is previously reserved by another initiator, then the 
+target shall either:
+
+  (1)  return a RESERVATION CONFLICT status
+
+
+  (2)  queue the reservation request and disconnect until all previously 
+queued reservations have been released.  When the logical unit is available, 
+the target shall reconnect to perform the reservation
+
+  If, after honoring the reservation, any other initiator then subsequently 
+attempts to perform any command on the reserved logical unit other than a 
+RESERVE UNIT command, which may be queued, or a RELEASE UNIT command, which 
+shall be ignored, then the command shall be rejected with a RESERVATION 
+CONFLICT status. 
+
+  The third-party reservation option for the RESERVE UNIT command allows an 
+initiator to reserve a logical unit for another SCSI device.  This option is 
+intended for use in multiple-initiator systems that use the COPY command.  Any 
+target that implements the third-party reservation option shall also implement 
+the third-party release option (see 10.7.2).
+
+  If the third-party (3rdPty) bit is zero, then the third-party reservation 
+option is not requested.  If the 3rdPty bit is one and the third-party 
+reservation option is implemented, then the RESERVE UNIT command shall reserve 
+the specified logical unit for the SCSI device specified in the third-party 
+device ID field.  The target shall preserve the reservation until superceded 
+by another RESERVE UNIT command from the initiator that made the reservation 
+or until released by the same initiator, by a BUS DEVICE RESET message from 
+any initiator, or by a "hard" RESET condition.  The target shall ignore (i.e., 
+return GOOD status) any attempt made by any other initiator to release the 
+reservation.
+
+  If the 3rdPty bit is one and the third-party reservation option is not 
+implemented, then the target shall reject the RESERVE UNIT command with a 
+CHECK CONDITION status and a sense key of ILLEGAL REQUEST. 
+
+  An initiator that holds a current reservation may modify that reservation 
+(e.g., switch third-parties) by issuing another RESERVE UNIT command to the 
+same logical unit.  The superceding RESERVE UNIT command shall release the 
+previous reservation state only when the new reservation is granted.  A 
+superceding reservation takes priority over any previously queued reservation 
+request.
+
+   10.7.2 RELEASE UNIT Command.   The RELEASE UNIT command (Table 10-9, 
+operation code 17 H ) shall release the logical unit if it is currently reserved 
+by the requesting initiator. 
+
+  It is not an error to attempt to release a logical unit that is not 
+currently reserved to the requesting initiator.  However, it shall not be 
+released if it is reserved by another initiator.
+
+  The third-party release option for the RELEASE UNIT command allows an 
+initiator to release a logical unit that was previously reserved using the 
+third-party reservation option (see 10.7.1).  This option shall be implemented 
+if the third-party reservation option is implemented.  This option is intended 
+for use in multiple-initiator systems that use the COPY command.
+
+  If the third-party (3rdPty) bit is zero, then the third-party release option 
+is not requested.  If the 3rdPty bit is one and the target implements the 
+third-party release option, then the target shall release the specified 
+logical unit, but only if the reservation was made using the third-party 
+
+reservation option by the initiator that is requesting the release and for the 
+same SCSI device as specified in the third-party device ID field.
+
+  If the 3rdPty bit is one and the target does not implement the third-party 
+release option, then the target shall terminate the command with a CHECK 
+CONDITION status and the sense key shall be set to ILLEGAL REQUEST.
+
+ 10.8 MODE SENSE Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  1A H 
+
+                                  Table 10-10 
+                               MODE SENSE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SENSE command (Table 10-10) provides a means for a target to report 
+its medium, logical unit, or peripheral device parameters to the initiator.  
+It is a complementary command to the MODE SELECT command.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for returned MODE SENSE data.  An allocation length of zero 
+indicates that no MODE SENSE data shall be transferred.  This condition shall 
+not be considered as an error.   Any other value indicates the maximum number 
+of bytes that shall be transferred.  The target shall terminate the DATA IN 
+phase when allocation length bytes have been transferred or when all available 
+MODE SENSE data have been transferred to the initiator, whichever is less.
+
+  The MODE SENSE data (Table 10-11) contains a four-byte header, followed the 
+vendor unique parameters, if any.
+.pa
+
+                                  Table 10-11 
+                                MODE SENSE Data 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Sense Data Length                           |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |Reserved|      Buffered Mode       |             Reserved              |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0  _  n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  The sense data length specifies the length in bytes of the following MODE 
+SENSE data that is available to be transferred during the DATA IN phase.  The 
+sense data length does not include itself.
+
+  A buffered mode of zero indicates that the target does not report a GOOD 
+status on PRINT commands or SLEW AND PRINT commands until the data are 
+actually printed.  A buffered mode of one indicates that the target may report 
+a GOOD status on PRINT commands or SLEW AND PRINT commands as soon as the data 
+have been transferred to the SCSI device buffer.  The data from one or more 
+commands may be buffered prior to printing.  Buffered modes of 2 H  through 7 H  
+are reserved.
+.pa
+
+ 10.9 STOP PRINT Command 
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  1B H 
+
+                                  Table 10-12 
+                               STOP PRINT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Retain |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Vendor Unique                               |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The STOP PRINT command (Table 10-12) is used to halt printing on buffered 
+devices in an orderly fashion.
+
+  A retain bit of zero requests that the target data buffer be discarded; 
+otherwise, the unprinted data is retained.  The unprinted data may be 
+recovered by use of the RECOVER BUFFERED DATA command, if supported.  A 
+subsequent PRINT command or SLEW AND PRINT command shall cause the remaining 
+unprinted and unrecovered data to be printed followed by the data transferred 
+by the subsequent command.  The point at which printing is suspended by this 
+command is peripheral-device specific and is not defined by this standard.
+.pa
+
+                                                  
+.fo Section 11                           #
+ 11. Group 0 Command Descriptions for Processor Devices 
+
+The Group 0 commands for processor devices shall be as shown in Table 11-1.
+
+                                   Table 11-1 
+                     Group 0 Commands for Processor Devices 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00 H        O     TEST UNIT READY                    7.1.1
+   01 H        V
+   02 H        V
+   03 H        M     REQUEST SENSE                      7.1.2
+   04 H        V
+   05 H        V
+   06 H        V
+   07 H        V
+   08 H        O     RECEIVE                            11.1
+   09 H        V
+   0A H        M     SEND                               11.2
+   0B H        V
+   0C H        V
+   0D H        V
+   0E H        V
+   0F H        V
+   10 H        V
+   11 H        V
+   12 H        E     INQUIRY                            7.1.3
+   13 H        V
+   14 H        V
+   15 H        V
+   16 H        V
+   17 H        V
+   18 H        O     COPY                               7.1.4
+   19 H        R
+   1A H        R
+   1B H        R
+   1C H        O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1D H        O     SEND DIAGNOSTIC                    7.1.6
+   1E H        R
+   1F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+.pa
+
+ 11.1 RECEIVE Command 
+
+     Peripheral Device Type:  Processor Devices
+        Operation Code Type:  Optional
+             Operation Code:  08 H 
+
+                                   Table 11-2 
+                                RECEIVE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Allocation Length (MSB)                     |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length (LSB)                     |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RECEIVE command (Table 11-2) transfers data from the target to the 
+initiator.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for the returned data.  An allocation length of zero indicates that 
+no data shall be transferred.  This condition shall not be considered as an 
+error.   Any other value indicates the maximum number of bytes that shall be 
+transferred.  The target shall terminate the DATA IN phase when allocation 
+length bytes have been transferred or when all available data have been 
+transferred to the initiator, whichever is less.
+.pa
+
+ 11.2 SEND Command 
+
+     Peripheral Device Type:  Processor Devices
+        Operation Code Type:  Mandatory
+             Operation Code:  0A H 
+
+                                   Table 11-3 
+                                  SEND Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SEND command (Table 11-3) transfers data from the initiator to the 
+target.
+
+  The transfer length specifies the length in bytes of data that shall be sent 
+during the DATA OUT phase.  A transfer length of zero indicates that no data 
+shall be sent.  This condition shall not be considered as an error.
+.pa
+
+                                                                          
+.fo Section 12                           #
+ 12. Command Descriptions for Write-Once Read-Multiple Devices 
+
+ 12.1 Group 0 Commands for Write-Once Read-Multiple Devices.   The Group 0 
+commands for write-once read-multiple devices shall be as shown in Table 12-1.
+
+                                   Table 12-1 
+             Group 0 Commands for Write-Once Read-Multiple Devices 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00 H        O     TEST UNIT READY                    7.1.1
+   01 H        O     REZERO UNIT                        8.1.1
+   02 H        V
+   03 H        M     REQUEST SENSE                      7.1.2
+   04 H        R
+   05 H        V
+   06 H        V
+   07 H        O     REASSIGN BLOCKS                    8.1.3
+   08 H        O     READ                               12.1.1
+   09 H        V
+   0A H        O     WRITE                              12.1.2
+   0B H        O     SEEK                               8.1.6
+   0C H        V
+   0D H        V
+   0E H        V
+   0F H        V
+   10 H        V
+   11 H        V
+   12 H        E     INQUIRY                            7.1.3
+   13 H        V
+   14 H        V
+   15 H        O     MODE SELECT                        12.1.3
+   16 H        O     RESERVE                            8.1.8
+   17 H        O     RELEASE                            8.1.9
+   18 H        O     COPY                               7.1.4
+   19 H        V
+   1A H        O     MODE SENSE                         12.1.4
+   1B H        O     START/STOP UNIT                    8.1.11
+   1C H        O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1D H        O     SEND DIAGNOSTIC                    7.1.6
+   1E H        O     PREVENT/ALLOW MEDIUM REMOVAL       8.1.12
+   1F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+.pa
+
+ 12.1.1 READ Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  08 H 
+
+                                   Table 12-2 
+                                  READ Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The READ command (Table 12-2) requests that the target transfer data to the 
+initiator.
+
+  The logical block address specifies the logical block at which the read 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data to be transferred.  A Transfer Length of zero indicates that 256 logical 
+blocks shall be transferred.  Any other value indicates the number of logical 
+blocks that shall be transferred.
+
+  This command shall be terminated with a status of RESERVATION CONFLICT if 
+any reservation access conflict (see 8.1.8) exists and no data shall be 
+transferred.
+
+  If any of the following conditions occur, this command shall be terminated 
+with a CHECK CONDITION status, and if extended sense is implemented, the sense 
+key shall be set as indicated in the following table.  This table does not 
+provide an exhaustive enumeration of all conditions that may cause the CHECK 
+CONDITION status.
+.pa
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note 1)
+
+Target reset or medium change since the
+last command from this initiator                  UNIT ATTENTION
+
+Unrecoverable read error                          MEDIUM ERROR
+
+Overrun or other error that might 
+be resolved by repeating the command              ABORTED COMMAND
+
+Attempt to read a blank or previously
+unwritten block                                   BLANK CHECK (see note 2)
+
+NOTES:
+ (1) The extended sense information bytes shall be set to the logical block 
+address of the first invalid address.
+
+(2) The extended sense information bytes shall be set to the logical block 
+address of the first blank block encountered.  The data read up to that block 
+shall be transferred. 
+
+ 12.1.2 WRITE Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple
+        Operation Code Type:  Optional
+             Operation Code:  0A H 
+
+                                   Table 12-3 
+                                 WRITE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The WRITE command (Table 12-3) requests that the target write the data 
+transferred from the initiator to the medium.
+
+  The logical block address specifies the logical block at which the write 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+
+data that shall be written.  A transfer length of zero indicates that 256 
+logical blocks shall be written.  Any other value indicates the number of 
+logical blocks that shall be written.
+
+  This command shall be terminated with a status of RESERVATION CONFLICT if 
+any reservation access conflict (see 8.1.8) exists and no data shall be 
+written.
+
+  If any of the following conditions occur, this command shall be terminated 
+with a CHECK CONDITION status, and if extended sense is implemented, the sense 
+key shall be set as indicated in the following table.  This table does not 
+provide an exhaustive enumeration of all conditions that may cause the CHECK 
+CONDITION status.
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note 1)
+
+Target reset or medium change since the
+last command from this initiator                  UNIT ATTENTION
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+Attempt to write a previously
+written block and blank checking is
+enabled (see 12.1.3)                              BLANK CHECK (see note 2)
+
+NOTES:
+  (1) The extended sense information bytes shall be set to the logical Block 
+Address of the first invalid address.
+
+  (2) The extended sense information bytes shall be set to the logical block 
+address of the first non-blank block encountered.
+.pa
+
+ 12.1.3 MODE SELECT Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  15 H 
+
+                                   Table 12-4 
+                              MODE SELECT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SELECT command (Table 12-4) provides a means for the initiator to 
+specify medium, logical unit, or peripheral device parameters to the target.
+
+  The parameter list length specifies the length in bytes of the MODE SELECT 
+parameter list that shall be transferred from the initiator to the target.  A 
+parameter list length  of zero indicates that no data shall be transferred. 
+This condition shall not be considered as an error.
+
+  The MODE SELECT parameter list (Table 12-5) contains a four-byte header, 
+followed by zero or more eight-byte block descriptors, followed by the vendor 
+unique parameters, if any.
+.pa
+
+                                   Table 12-5 
+                           MODE SELECT Parameter List 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                           |  EBC   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Block Descriptor Length                     |
+==============================================================================
+     |                        Block Descriptor(s)                            |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Blocks                            |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Block Length (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Block Length (LSB)                          |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0  _  n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  An enable blank check (EBC) bit of zero disables blank checking of the 
+medium during write operations.  An EBC bit of one enables blank checking.  
+If a non-blank block is found during a write operation, the command shall be 
+terminated with a CHECK CONDITION status and the sense key shall be set to 
+BLANK CHECK.  For read-only direct-access devices, the EBC bit is reserved.
+
+  The block descriptor length specifies the length in bytes of all the block 
+descriptors.  It is equal to the number of block descriptors times eight and 
+does not include the vendor unique parameters, if any.  A block descriptor 
+length of zero indicates that no block descriptors shall be included in the 
+parameter list.  This condition shall not be considered as an error.
+
+  Each block descriptor specifies the medium characteristics for all or part 
+of a logical unit.  Each block descriptor contains a number of blocks and a 
+block length.  The number of blocks field specifies the number of logical 
+blocks to be formatted with the block length specified in the block 
+descriptor.  The block length field specifies the length in bytes of the 
+
+logical block to be formatted.
+
+ 12.1.4 MODE SENSE Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  1A H 
+
+                                   Table 12-6 
+                               MODE SENSE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SENSE command (Table 12-6) provides a means for a target to report 
+its medium, logical unit, or peripheral device parameters to the initiator.  
+It is a complementary command to the MODE SELECT command for support of medium 
+that may contain multiple block lengths.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for returned MODE SENSE Data.  An allocation length of zero 
+indicates that no MODE SENSE data shall be transferred.  This condition shall 
+not be considered as an error.  Any other value indicates the maximum number 
+of bytes that shall be transferred.  The target shall terminate the DATA IN 
+phase when allocation length bytes have been transferred or when all available 
+MODE SENSE data have been transferred to the initiator, whichever is less.
+
+  The MODE SENSE data (Table 12-7) contains a four-byte header, followed by 
+zero or more eight-byte block descriptors, followed by the vendor unique 
+parameters, if any.
+.pa
+
+                                   Table 12-7 
+                                MODE SENSE Data 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Sense Data Length                           |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Medium Type                                 |
+-----|-----------------------------------------------------------------------|
+ 2   |  WP    |                  Reserved                           |  EBC   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Block Descriptor Length                     |
+==============================================================================
+     |                        Block Descriptor(s)                            |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Blocks                            |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Block Length (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Block Length (LSB)                          |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0  _  n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  The sense data length specifies the length in bytes of the following MODE 
+SENSE data that is available to be transferred during the DATA IN phase.  The 
+sense data length does not include itself.
+
+  Code values for the medium type field shall be assigned as follows:
+
+   00 H         Default (only one medium type supported)
+   01 H   _  7F H   Reserved
+   80 H   _  FF H   Vendor unique
+
+  An enable blank check (EBC) bit of zero indicates that blank checking of the 
+medium during write operations is disabled.  An EBC bit of one indicates that 
+blank checking during write operations is enabled.  For read-only direct-
+access devices, the EBC bit is reserved.
+
+  A write protected (WP) bit of zero indicates that the medium is write 
+enabled.  A WP bit of one indicates that the medium is write protected.  For 
+
+read-only direct-access devices, the WP bit is reserved.
+
+  The block descriptor length specifies the length in bytes of all the block 
+descriptors.  It is equal to the number of block descriptors times eight and 
+does not include the vendor unique parameters, if any.  A block descriptor 
+length of zero indicates that no block descriptors shall be included in the 
+parameter list.  This condition shall not be considered as an error.
+
+  Each block descriptor specifies the medium characteristics for all or part 
+of a logical unit.  Each block descriptor contains a number of blocks and a 
+block length.
+
+  The number of blocks field indicates the number of logical blocks that have 
+the block length specified in the block descriptor.  The block length field 
+indicates the length in bytes of each logical block.
+.pa ??
+
+ 12.2 Group 1 Commands for Write-Once Read-Multiple Devices.   The Group 1 
+commands for write-once read-multiple devices shall be as shown in Table 12-8.
+
+                                   Table 12-8 
+             Group 1 Commands for Write-Once Read-Multiple Devices 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   20 H        V
+   21 H        V
+   22 H        V
+   23 H        V
+   24 H        V
+   25 H        E     READ CAPACITY                      8.2.1
+   26 H        V
+   27 H        V
+   28 H        M     READ                               12.2.1
+   29 H        V
+   2A H        M     WRITE                              12.2.2
+   2B H        O     SEEK                               8.2.4
+   2C H        V
+   2D H        V
+   2E H        O     WRITE AND VERIFY                   12.2.3
+   2F H        O     VERIFY                             12.2.4
+   30 H        O     SEARCH DATA HIGH                   8.2.7.1
+   31 H        O     SEARCH DATA EQUAL                  8.2.7.2
+   32 H        O     SEARCH DATA LOW                    8.2.7.3
+   33 H        O     SET LIMITS                         8.2.8
+   34 H        R
+   35 H        R
+   36 H        R
+   37 H        R
+   38 H        R
+   39 H        O     COMPARE                            7.2.1
+   3A H        O     COPY AND VERIFY                    7.2.2
+   3B H        R
+   3C H        R
+   3D H        R
+   3E H        R
+   3F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+.pa
+
+ 12.2.1 READ Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple and
+                              Read-Only Direct Access
+        Operation Code Type:  Mandatory
+             Operation Code:  28 H 
+
+                                   Table 12-9 
+                                  READ Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved              | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The READ command (Table 12-9) requests that the target transfer data to the 
+initiator from the medium.
+
+  The logical block address specifies the logical block at which the read 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data that shall be transferred.  A transfer length of zero indicates that no 
+data shall be transferred.  This condition shall not be considered as an 
+error.  Any other value indicates the number of logical blocks that shall be 
+transferred.
+
+  This command shall be terminated with a status of RESERVATION CONFLICT if 
+any reservation access conflict (see 8.1.8) exists and no data shall be 
+transferred.
+
+  If any of the following conditions occur, this command shall be terminated 
+with a CHECK CONDITION status and, if extended sense is implemented, the sense 
+key shall be set as indicated in the following table.  This table does not 
+provide an exhaustive enumeration of all conditions that may cause the CHECK 
+CONDITION status.
+
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note 1)
+
+Target reset or medium change since the
+last command from this initiator                  UNIT ATTENTION
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+Attempt to read a blank or previously
+unwritten block                                   BLANK CHECK (see note 2)
+
+NOTES:
+  (1) The extended sense information bytes shall be set to the logical block 
+address of the first invalid address.
+
+  (2) The extended sense information bytes shall be set to the logical block 
+address of the first blank block encountered.  The data read up to that block 
+shall be transferred. 
+
+ 12.2.2 WRITE Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple
+        Operation Code Type:  Mandatory
+             Operation Code:  2A H 
+
+                                  Table 12-10 
+                                 WRITE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved              | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+
+  The WRITE command (Table 12-10) requests that the target write the data 
+transferred from the initiator to the medium.
+
+  The logical block address specifies the logical block at which the write 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data that shall be transferred.  A transfer length of zero indicates that no 
+data shall be transferred.  This condition shall not be considered as an 
+error and no data shall be written.  Any other value indicates the number of 
+logical blocks that shall be transferred.
+
+  This command shall be terminated with a status of RESERVATION CONFLICT if 
+any reservation access conflict (see 8.1.8) exists and no data shall be 
+written.
+
+  If any of the following conditions occur, this command shall be terminated 
+with a CHECK CONDITION status and, if extended sense is implemented, the sense 
+key shall be set as indicated in the following table.  This table does not 
+provide an exhaustive enumeration of all conditions that may cause the CHECK 
+CONDITION status.
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST (see note 1)
+
+Target reset or medium change since the
+last command from this initiator                  UNIT ATTENTION
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+Attempt to write a previously
+written block and blank checking is
+enabled (see 12.1.3)                              BLANK CHECK (see note 2)
+
+NOTES:
+  (1) The extended sense information bytes shall be set to the logical block 
+address of the first invalid address.
+
+  (2) The extended sense information bytes shall be set to the logical block 
+address of the first non-blank block encountered.
+.pa
+
+ 12.2.3 WRITE AND VERIFY Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple
+        Operation Code Type:  Optional
+             Operation Code:  2E H 
+
+                                  Table 12-11 
+                            WRITE AND VERIFY Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |         Reserved         | BytChk | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The WRITE AND VERIFY command (Table 12-11) requests that the target write 
+the data transferred from the initiator to the medium and then verify that the 
+data is correctly written.
+
+  A byte check (BytChk) bit of zero causes the verification to be simply a 
+medium verification (CRC, ECC, etc).  A BytChk bit of one causes a byte-by-
+byte compare of data written to the peripheral device and the data transferred 
+>From the initiator.  If the compare is unsuccessful, the command shall be 
+terminated with a CHECK CONDITION status and the sense key shall be set to 
+MISCOMPARE.
+
+  The logical block address specifies the logical block at which the write 
+operation shall begin.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data that shall be transferred.  A transfer length of zero indicates that no 
+logical blocks shall be transferred.  This condition shall not be considered 
+as an error and no data shall be written.  Any other value indicates the 
+number of logical blocks that shall be transferred.
+.pa
+
+ 12.2.4 VERIFY Command 
+
+     Peripheral Device Type:  Write-Once Read-Multiple and
+                              Read-Only Direct Access
+        Operation Code Type:  Optional
+             Operation Code:  2F H 
+
+                                  Table 12-12 
+                                 VERIFY Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |    Reserved     | BlkVfy | BytChk | RelAdr |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Logical Block Address (MSB)                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Logical Block Address                       |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Logical Block Address (LSB)                 |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Verification Length (MSB)                   |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Verification Length (LSB)                   |
+-----|-----------------------------------------------------------------------|
+ 9   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The VERIFY command (Table 12-12) requests that the target verify the data on 
+the medium.
+
+  A byte check (BytChk) bit of zero causes the verification to be simply a 
+medium verification (CRC, ECC, etc).  A BytChk bit of one causes a byte-by-
+byte compare of the data on the medium and the data transferred from the 
+initiator.  The data shall be transferred as it would be for a WRITE command.  
+If the compare is unsuccessful, the command shall be terminated with a CHECK 
+CONDITION status and the sense key shall be set to MISCOMPARE.
+
+  A blank verify (BlkVfy) bit of one causes a verification that the blocks are 
+blank.
+
+  The logical block address specifies the logical block at which the verify 
+operation shall begin.
+
+  The verification length specifies the number of contiguous logical blocks of 
+data or blanks that shall be verified.  A verification length of zero 
+indicates that no logical blocks shall be verified.  This condition shall not 
+be considered as an error.  Any other value indicates the number of logical 
+blocks that shall be verified.
+
+
+                                                                                      
+.fo Section 13                           #
+ 13. Command Descriptions for Read-Only Direct-Access Devices 
+
+ 13.1 Group 0 Commands for Read-Only Direct-Access Devices.   The Group 0 
+commands for read-only direct-access devices shall be as shown in Table 13-1.
+
+                                   Table 13-1 
+              Group 0 Commands for Read-Only Direct-Access Devices 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00 H        O     TEST UNIT READY                    7.1.1
+   01 H        O     REZERO UNIT                        8.1.1
+   02 H        V
+   03 H        M     REQUEST SENSE                      7.1.2
+   04 H        R
+   05 H        V
+   06 H        V
+   07 H        R
+   08 H        O     READ                               12.1.1
+   09 H        V
+   0A H        R
+   0B H        O     SEEK                               8.1.6
+   0C H        V
+   0D H        V
+   0E H        V
+   0F H        V
+   10 H        V
+   11 H        V
+   12 H        E     INQUIRY                            7.1.3
+   13 H        V
+   14 H        V
+   15 H        O     MODE SELECT                        12.1.3
+   16 H        O     RESERVE                            8.1.8
+   17 H        O     RELEASE                            8.1.9
+   18 H        O     COPY                               7.1.4
+   19 H        V
+   1A H        O     MODE SENSE                         12.1.4
+   1B H        O     START/STOP UNIT                    8.1.11
+   1C H        O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1D H        O     SEND DIAGNOSTIC                    7.1.6
+   1E H        O     PREVENT/ALLOW MEDIUM REMOVAL       8.1.12
+   1F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+.pa
+
+ 13.2 Group 1 Commands for Read-Only Direct-Access Devices.   The Group 1 
+commands for read-only direct-access devices shall be as shown in Table 13-2.
+
+                                   Table 13-2 
+              Group 1 Commands for Read-Only Direct-Access Devices 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   20 H        V
+   21 H        V
+   22 H        V
+   23 H        V
+   24 H        V
+   25 H        E     READ CAPACITY                      8.2.1
+   26 H        V
+   27 H        V
+   28 H        M     READ                               12.2.1
+   29 H        V
+   2A H        R
+   2B H        O     SEEK                               8.2.4
+   2C H        V
+   2D H        V
+   2E H        R
+   2F H        O     VERIFY                             12.2.4
+   30 H        O     SEARCH DATA HIGH                   8.2.7.1
+   31 H        O     SEARCH DATA EQUAL                  8.2.7.2
+   32 H        O     SEARCH DATA LOW                    8.2.7.3
+   33 H        O     SET LIMITS                         8.2.8
+   34 H        R
+   35 H        R
+   36 H        R
+   37 H        R
+   38 H        R
+   39 H        O     COMPARE                            7.2.1
+   3A H        O     COPY AND COMPARE                   7.2.2
+   3B H        R
+   3C H        R
+   3D H        R
+   3E H        R
+   3F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+.pa
+
+  
+.fo Section 14                           #
+ 14. Status  
+
+A status byte shall be sent from the target to the initiator during the STATUS 
+phase at the termination of each command as specified in Tables 14-1 and 14-2 
+unless the command is cleared by an ABORT message, by a BUS DEVICE RESET 
+message, or by a "hard" RESET condition.
+
+                                   Table 14-1 
+                                  Status Byte  
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |Reserved|  Vendor Unique  |        Status Byte Code           |   V    |
+==============================================================================
+
+
+                                   Table 14-2 
+                          Status Byte Code Bit Values 
+ 
+==============================================================================
+     Bits of Status Byte
+-----------------------------
+7   6   5   4   3   2   1   0    Status(es) Represented
+------------------------------------------------------------------------------
+R   V   V   0   0   0   0   V    GOOD
+R   V   V   0   0   0   1   V    CHECK CONDITION
+R   V   V   0   0   1   0   V    CONDITION MET/GOOD
+R   V   V   0   0   1   1   V    Reserved
+
+R   V   V   0   1   0   0   V    BUSY
+R   V   V   0   1   0   1   V    Reserved
+R   V   V   0   1   1   0   V    Reserved
+R   V   V   0   1   1   1   V    Reserved
+
+R   V   V   1   0   0   0   V    INTERMEDIATE/GOOD
+R   V   V   1   0   0   1   V    Reserved
+R   V   V   1   0   1   0   V    INTERMEDIATE/CONDITION MET/GOOD
+R   V   V   1   0   1   1   V    Reserved
+
+R   V   V   1   1   0   0   V    RESERVATION CONFLICT
+R   V   V   1   1   0   1   V    Reserved
+R   V   V   1   1   1   0   V    Reserved
+R   V   V   1   1   1   1   V    Reserved
+==============================================================================
+
+Key: R - Reserved bit
+     V - Vendor unique bit
+.pa
+
+  A description of the status byte codes is given below:
+
+ GOOD.   This status indicates that the target has successfully completed the 
+command.
+
+ CHECK CONDITION.   Any error, exception, or abnormal condition that causes 
+sense data to be set, shall cause a CHECK CONDITION status.  The REQUEST SENSE 
+command should be issued following a CHECK CONDITION status, to determine the 
+nature of the condition.
+
+ CONDITION MET.   The SEARCH DATA commands shall return this status whenever a 
+search condition is satisfied.  This status does not break a chain of linked 
+commands.  The logical block address of the logical block that satisfies the 
+search may be determined with a REQUEST SENSE command.
+
+ BUSY.   The target is busy.  This status shall be returned whenever a target is 
+unable to accept a command from an initiator.  The normal initiator recovery 
+action is to issue the command again at a later time.
+
+ INTERMEDIATE.   This status shall be returned for every command in a series of 
+linked commands (except the last command), unless an error, exception, or 
+abnormal condition causes a CHECK CONDITION status or a RESERVATION CONFLICT 
+status to be set.  If this status is not returned, the chain of linked 
+commands is broken; no further commands in the series are executed.
+
+ RESERVATION CONFLICT.   This status shall be returned whenever an SCSI device 
+attempts to access a logical unit or an extent within a logical unit that is 
+reserved for that type of access to another SCSI device.
+.pa
+
+                                                                                           
+

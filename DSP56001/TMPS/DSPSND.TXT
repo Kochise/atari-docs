@@ -1,0 +1,157 @@
+**************************************************************************
+Multiplexer
+**************************************************************************
+
+$FFFF8930 [R/W] W __D__A9867543210  Parameter der Quellkomponenten
+                    |  |||||||||||
+                    |  |||||||||||  DMA-Ausgabe
+                    |  ||||||||||+- 0: Handshake an
+                    |  ||||||||||   1: Handshake aus
+                    |  ||||||||++-- 00  25.175 MHz
+                    |  ||||||||     01  externer Takt
+                    |  ||||||||     10  32 MHz Takt
+                    |  |||||||+---- 0: Ziel ist DMA-Eingabe
+                    |  |||||||      1: alle anderen Ziele
+                    |  |||||||      DSP-Ausgabe
+                    |  ||||||+----- 0: Handshake an
+                    |  ||||||       1: Handshake aus
+                    |  ||||++------ 00: 25.175 MHz
+                    |  ||||         01: externer Takt
+                    |  ||||         10: 32 MHz
+                    |  |||+-------- 0: Multiplexer abkoppeln
+                    |  |||          1: Verbindung mit MUX
+                    |  |||          externe Eingabe
+                    |  ||+--------- 0: Handshake aus
+                    |  ||           1: Handshake an
+                    |  ++---------- 00: 25.175 MHz
+                    |               01: externer Takt
+                    |               10: 32 MHz
+                    |               A/D-Wandler
+                    +-------------- 0: interner Takt
+                                    1: externer Takt
+
+
+$FFFF8932 [R/W] B _ED__A9876543210  Parameter der Zielkomponenten
+                   ||  |||||||||||
+                   ||  |||||||||||  DMA-Eingabe
+                   ||  ||||||||||+- 0: Handshake an
+                   ||  ||||||||||   1: Handshake aus
+                   ||  ||||||||++-- 00: Quelle = DMA-Ausgabe
+                   ||  ||||||||     01: Quelle = DSP-Ausgabe
+                   ||  ||||||||     10: Quelle = externe Eingabe
+                   ||  ||||||||     11: Quelle = A/D-Wandler
+                   ||  |||||||+---- 0: wenn Quelle = DSP-Ausgabe
+                   ||  |||||||      1: alle anderen Quellen
+                   ||  |||||||      DSP-Eingabe
+                   ||  ||||||+----- 0: Handshake an
+                   ||  ||||||       1: Handshake aus
+                   ||  ||||++------ 00: Quelle = DMA-Ausgabe
+                   ||  ||||         01: Quelle = DSP-Ausgabe
+                   ||  ||||         10: Quelle = externe Eingabe
+                   ||  ||||         11: Quelle = A/D-Wandler
+                   ||  |||+-------- 0: MUX abkoppeln
+                   ||  |||          1: Verbindung mit MUX
+                   ||  |||          externe Ausgabe
+                   ||  ||+--------- 0: Handshake an
+                   ||  ||           1: Handshake aus
+                   ||  ++---------- 00: Quelle = DMA-Ausgabe
+                   ||               01: Quelle = DSP-Ausgabe
+                   ||               10: Quelle = externe Eingabe
+                   ||               11: Quelle = A/D-Wandler
+                   ||               D/A-Wandler
+                   ++-------------- 00: Quelle = DMA-Ausgabe
+                                    01: Quelle = DSP-Ausgabe
+                                    11: Quelle = externe Eingabe
+                                    10: Quelle = A/D-Wandler
+
+$FFFF8934 [R/W] B         ____3210  Vorteiler externer Takt
+                              ||||
+                              ++++- 0: STE-kompatibler Modus
+                                    1-15: Vorteiler
+
+Takt = (externer Takt/256)/(Vorteiler-Wert+1).
+
+
+$FFFF8935 [R/W] B         ____3210  Prescale internal Clock
+                              ||||  (25.175 or 32 MHz)
+                              ++++- look above! According to the
+                              ||||  Documentation you can only use the
+                              ||||  following values for the CODEC(A/D
+                              ||||  and D/A-Converter):0,1,2,3,4,5,7,9,11
+                              0000- switch to STE-compatible mode
+                              0001- CLK50K  49170 Hz
+                              0010- CLK33K  32780 Hz
+                              0011- CLK25K  24585 Hz
+                              0100- CLK20K  19668 Hz
+                              0101- CLK16K  16390 Hz
+                              0110- CLK14K  14049 Hz (invalid for CODEC)
+                              0111- CLK12K  12292 Hz
+                              1000- CLK11K  10927 Hz (invalid for CODEC)
+                              1001- CLK10K   9834 Hz
+                              1010- CLK09K   8940 Hz (invalid for CODEC)
+                              1011- CLK08K   8195 Hz
+                              1100- CLK07K   7565 Hz (invalid for CODEC)
+                              1101- CLK07K   7024 Hz (invalid for CODEC)
+                              1110- CLK06K   6556 Hz (invalid for CODEC)
+                              1111- CLK06K   6146 HZ (invalid for CODEC)
+
+$FFFF8936 [R/W] B         ______10  Track-Record-Control
+                                ||
+                                ++- 00: 1 Spur Aufnehmen
+                                    01: 2 Spuren Aufnehmen
+                                    10: 3 Spuren Aufnehmen
+                                    11: 4 Spuren Aufnehmen
+
+$FFFF8937 [R/W] B         ______10  CODEC-Hardwareadder-Eingang
+                                ||
+                                |+- 1: Eingang vom A/D-Wandler
+                                +-- 1: Eingang vom Multiplexer
+
+NOTE: The CODEC-Hardwareadder-Input connects the D/A-Converter with the
+multiplexer or the A/D-Converter. It is also possible to connect both. In this
+case the 16-bit-Hardwareadder mix the two signals.
+
+$FFFF8938 [R/W] B         ______10  CODEC ADC-Eingang-Register
+                                ||
+                                |+- 0: Rechter Mikrofon-Kanal
+                                |   1: Rechter PSG-Kanal
+                                +-- 0: Linker Mikrofon-Kanal
+                                    1: Linker PSG-Kanal
+$FFFF8939 [R/W] B         76543210  Channel-Input-Amplifier in +1.5 dB
+                          ||||||||  steps (GAIN-register)
+                          ||||||||
+                          ||||++++- 0-15: Gain of right channel (RTGAIN)
+                          ++++----- 0-15: Gain of left channel  (LTGAIN)
+
+
+$FFFF893A [R/W] W ____BA897654____  Ausgabeabschw„chung
+                      ||||||||
+                      ||||++++----- 0-15: Abschw„chung rechter Kanal (RTATTEN)
+                      ++++--------- 0-15: Abschw„chung linker Kanal (LTATTEN)
+
+$FFFF893C [R/W] B         ______10  CODEC-Status Hi
+                                ||
+                                |+- 1: right channel-overflow
+                                +-- 1: left channel-overflow
+
+$FFFF893D [R/W] B         7654____  CODEC-Status Lo
+                          ||||
+                          |||+----- ?
+                          ||+------ ?
+                          |+------- ?
+                          +-------- ?
+
+$FFFF8941 [R/W] B         _____210  GPx-Datenrichtungs-Register
+                               |||
+                               +++- bidirectional Dataportpath of the
+                                    GP0GP2-Pins on the DSP-Connector
+                                    0: Pin ist Eingang (Daten von GPx)
+                                    1: Pin ist Ausgang (Daten zum GPx)
+                                    (default %111)
+
+$FFFF8943 [R/W] B         _____210  GPx-Dataport
+                               |||
+                               +++- Input/Output-Data-Bits of the
+                                    GP0-GP2-Pins on the DSP-Connector.
+                                    This Pins can be used for userdef.
+                                    operations.

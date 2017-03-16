@@ -1,0 +1,770 @@
+17. Communications Devices
+
+
+17.1. Communications Device Model
+
+  A communications device provides a facility to send and receive information 
+over some medium (usually an electrical or fiber-optic cable) using a defined 
+protocol to one or more other systems which support the same protocol.  The 
+media and protocols are often specified in national or international 
+standards, although some are proprietary.  Within this section, the protocol 
+used on the external medium is called the "external protocol".
+
+  The SCSI communications device model assumes that information to control the 
+external protocol is embedded within the data transferred by the SEND and GET 
+MESSAGE commands.  The structure of the data transferred by these commands is 
+not defined by this standard.  Vendor-unique MODE pages may be defined to 
+provide additional control over the external protocol.
+
+  The SCSI communications device is a target with the characteristics of a 
+network access device, typically attached to a local area network (LAN), 
+public telecommunications network, private telecommunications network, or 
+packet switching network, etc., with no theoretical limits.  Such a 
+communications device is often called a network node.  The communications 
+device transmits or receives packets of data as requested by the initiator.  
+The contents and meaning of the data packets is not defined by this standard.  
+The bytes in the data packets may or may not contain addressing, path 
+selection, or path control information identifying separate data streams.  
+Additional information may be provided by the stream selection identifier 
+found in the ten and twelve byte SEND MESSAGE and GET MESSAGE commands.
+
+  In the SCSI communications device, the target accepts and provides the data 
+packets transferred in accordance with commands received from the initiator.  
+There is an assumption that the initiator and the communications device know 
+the rules by which information is exchanged between them, how the information 
+is to be interpreted by the communications device, and when it is allowable to 
+exchange the information.  These rules are not specified by this standard.
+
+  The initiator requests that the communications device accept a packet of 
+data by transmitting a SEND MESSAGE command.  The initiator requests that the 
+communications device return a packet of data by transmitting a GET MESSAGE 
+command.  The communications device also supports commands related to 
+configuration of the network access device and network management of the 
+particular environment.  MODE SENSE and MODE SELECT are examples of these 
+configuration commands.
+
+
+
+
+
+
+
+
+
+
+
+  If a communications device temporarily has no resource available to handle a 
+data packet from the initiator, or has no data packet to provide to the 
+initiator, or has no resources assigned to perform the operation, the device 
+may then choose one of the following responses: 
+  (1)  Terminate the command with CHECK CONDITION status.  The sense key shall 
+be set to NOT READY and the appropriate additional sense code for the 
+condition.
+  (2)  Disconnect until the necessary resource or data packet becomes 
+available, and then reconnect to the initiator and resume the operation.
+  (3)  Terminate the command with BUSY status.
+
+  More than one logical unit  can be implemented by a communications device.   
+logical units can serve as multiple paths to a single network access device, 
+and/or each logical unit can serve as a discrete path to different resources 
+within the device.  A single logical unit may also serve as a path to multiple 
+resources if the communications device can interpret information within the 
+data packet and route the packet to the appropriate resource.  If the logical 
+unit addressed by the initiator does not have an available resource or data 
+packet associated with it, the communications device may choose to treat the 
+logical unit as an invalid logical unit (see section 6.5.3) or respond as 
+described in the previous paragraph.
+
+  If the communications device determines that an error or unusual condition 
+has occurred while performing an operation specified by the contents of a data 
+packet, the information describing the condition is normally returned as a 
+part of a data packet from another network device.  If the communications 
+device determines that an error or unusual condition has occurred while either 
+executing the SCSI command from the initiator, or during a network medium 
+access transaction, the command is terminated with a CHECK CONDITION.  The 
+failures are identified through a REQUEST SENSE command.
+
+  The SCSI communications device is distinguished from a SCSI processor device 
+by the fact that the primary destination of the data packets transferred to 
+the communications device is not the target device itself, but another network 
+node.  A SCSI communications device passes the data on to an ultimate 
+destination outside the target through a network.  In contrast, the SCSI 
+processor device is itself the primary destination of the data packets.  
+Devices requiring protocols and command sets that are totally incompatible 
+with the communications device protocols should be examined carefully to be 
+sure that the incompatibilities are based on functional requirements.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.1.1. Implementation Examples
+
+  Several examples of communications device implementations are provided to 
+clarify the range of utility of this device type.
+
+17.1.1.1. Host to Host Communications 
+
+  In this example of host to host communications only the SEND MESSAGE command 
+is used.
+
+  A communications device (Comm A) is attached to a network (Net A) and 
+another communications device (Comm B)  is attached to a network (Net B).  
+Comm A takes the initiator role and selects a communications device (Comm B), 
+transmitting a packet to Comm B using the SEND MESSAGE command.  After 
+transmitting the packet on the attached network medium (Net B), the action 
+required by the SEND MESSAGE command, Comm B assumes the initiator mode and 
+selects Comm A as a communications device and uses a SEND MESSAGE command to 
+transmit a packet on the network (Net A) attached to Comm A.  Note that the 
+SEND MESSAGE command is sufficient to perform complete transactions between 
+communications devices if Comm A and Comm B act as initiators.  This provides 
+the function of a network bridge or gateway for high bandwidth 
+intercommunication among nearby host processors.
+
+17.1.1.2. Host to Device Communications 
+
+  In this example of host to device communications the SEND MESSAGE and GET 
+MESSAGE commands are used.
+
+  A host system, Host A, takes the initiator role and selects a communications 
+device (Comm A) attached to a network (Net A), transmitting a packet on 
+network Net A to some other network node(s) using the SEND MESSAGE command to 
+Comm A.  Host A then assumes that a result will be obtained by the other 
+network node(s) consistent with rules understood by all involved network 
+devices.  Host A generates a GET MESSAGE command to obtain packets from other 
+network nodes.  If there are no packets that need handling pending at Comm A, 
+Comm A may disconnect until a packet arrives.  Comm A can then complete the 
+transaction,  reconnect to Host A and the requested data packet can be 
+returned to Host A.  Note that Host A need not support target mode and Comm A 
+need not support initiator mode to successfully complete an exchange between 
+the two devices.  The host system (Host A) can be replaced by communications 
+device that is capable of acting as an initiator.
+
+17.1.1.3. Multiple Role Communications 
+
+  In this example of multiple role communications the SEND MESSAGE and GET 
+MESSAGE commands are used.  The device acts as both a host and a 
+communications device depending on its needs and the requests made in the 
+network.
+
+  A communications device (Comm A) is attached to a network (Net A) and 
+another communications device (Comm B)  is attached to a network (Net B).  
+Comm A takes the initiator role and selects a communications device (Comm B).  
+Comm A transmits a packet for network Net B using the SEND MESSAGE command to 
+Comm B.  Comm A then requests data packets from Net B by issuing a GET MESSAGE 
+command to the Comm B device.  Following these actions, Comm B assumes the 
+initiator role and transmits a packet using the SEND MESSAGE command to Comm A 
+for transmission to network node(s) located on Net A.  Comm B then requests 
+data packets from Net A by issuing a GET MESSAGE command to Comm A.
+
+
+17.2. Command Descriptions for Communications Devices
+
+  The commands for communications devices shall be as shown in Table 17-1.
+
+               Table 17-1: Commands for Communications Devices
+
+==============================================================================
+                                Operation
+Command Name                       Code   Type    Section     Page
+------------------------------------------------------------------------------
+CHANGE DEFINITION                  40h      O      7.2.1 
+GET MESSAGE(6)                     08h      M     17.2.1           
+GET MESSAGE(10)                    28h      O     17.2.2           
+GET MESSAGE(12)                    A8h      O     17.2.3           
+INQUIRY                            12h      M      7.2.5         
+LOG SELECT                         4Ch      O      7.2.6  
+LOG SENSE                          4Dh      O      7.2.7  
+MODE SELECT(6)                     15h      O      7.2.8  
+MODE SELECT(10)                    55h      O      7.2.9  
+MODE SENSE(6)                      1Ah      O      7.2.10 
+MODE SENSE(10)                     5Ah      O      7.2.11 
+READ BUFFER                        3Ch      O      7.2.12
+RECEIVE DIAGNOSTIC RESULTS         1Ch      O      7.2.13        
+REQUEST SENSE                      03h      M      7.2.14        
+SEND DIAGNOSTIC                    1Dh      M      7.2.15        
+SEND MESSAGE(6)                    0Ah      M     17.2.4          
+SEND MESSAGE(10)                   2Ah      O     17.2.5          
+SEND MESSAGE(12)                   AAh      O     17.2.6          
+TEST UNIT READY                    00h      M      7.2.16        
+WRITE BUFFER                       3Bh      O      7.2.17
+==============================================================================
+
+  Key  M  =  Command implementation is mandatory.
+       O  =  Command implementation is optional.
+
+  All other operation codes for communications devices are reserved for future 
+standardization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.2.1. GET MESSAGE(6) Command
+
+                      Table 17-2: GET MESSAGE(6) Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (08h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Allocation Length                           |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The GET MESSAGE(6) command (Table 17-2) transfers data from the target to 
+the initiator.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.2.2. GET MESSAGE(10) Command
+
+                     Table 17-3: GET MESSAGE(10) Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (28h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Stream Selection                         ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   | (MSB)                                                                 |
+-----|---                        Allocation Length                        ---|
+ 8   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The GET MESSAGE(10) command (Table 17-3) transfers data from the target to 
+the initiator.
+
+  The stream selection field specifies a further level of addressing for the 
+data, so that it can be accessed by the target from the appropriate data 
+stream.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.2.3. GET MESSAGE(12) Command
+
+                     Table 17-4: GET MESSAGE(12) Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (A8h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Stream Selection                         ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 7   |                                                                       |
+-----|---                        Allocation Length                        ---|
+ 8   |                                                                       |
+-----|---                                                                 ---|
+ 9   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 10  |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 11  |                           Control                                     |
+==============================================================================
+
+
+  The GET MESSAGE(12) command (Table 17-4) transfers data from the target to 
+the initiator.
+
+  The stream selection field specifies a further level of addressing for the 
+data, so that it can be accessed by the target from the appropriate data 
+stream.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.2.4. SEND MESSAGE(6) Command
+
+                     Table 17-5: SEND MESSAGE(6) Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (0Ah)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+  The SEND MESSAGE(6) command (Table 17-5) transfers data from the initiator 
+to the target.
+
+  The transfer length specifies the length in bytes of data that shall be sent 
+during the DATA OUT phase.  A transfer length of zero indicates that no data 
+shall be sent.  This condition shall not be considered as an error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.2.5. SEND MESSAGE(10) Command
+
+                     Table 17-6: SEND MESSAGE(10) Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (2Ah)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Stream Selection                         ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   | (MSB)                                                                 |
+-----|---                        Transfer Length                          ---|
+ 8   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The SEND MESSAGE(10) command (Table 17-6) transfers data from the initiator 
+to the target.
+
+  The stream selection field specifies a further level of addressing for the 
+data, so that it can be directed by the target to the appropriate data stream.
+
+  Please refer to the SEND MESSAGE(6) command for a description of the fields 
+in this command.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.2.6. SEND MESSAGE(12) Command
+
+                     Table 17-7: SEND MESSAGE(12) Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (AAh)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Stream Selection                         ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 7   |                                                                       |
+-----|---                        Transfer Length                          ---|
+ 8   |                                                                       |
+-----|---                                                                 ---|
+ 9   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 10  |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 11  |                           Control                                     |
+==============================================================================
+
+
+  The SEND MESSAGE(12) command (Table 17-7) transfers data from the initiator 
+to the target.
+
+  The stream selection field specifies a further level of addressing for the 
+data, so that it can be directed by the target to the appropriate data stream.
+
+  Please refer to the SEND MESSAGE(6) command for a description of the fields 
+in this command.
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.3. Parameters for Communication Devices
+
+17.3.1. Diagnostic Parameters
+
+  This section defines the descriptors and pages for diagnostic parameters 
+used with communication devices. 
+
+  The diagnostic page codes for communication devices are defined in Table 17-
+8.
+
+                      Table 17-8: Diagnostic Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+   00h        Supported Log Pages                                   7.3.1.1
+01h-3Fh       Reserved (for all device type pages)                 
+40h-7Fh       Reserved
+80h-FFh       Vendor-specific pages
+==============================================================================
+
+
+17.3.2. Log Parameters
+
+  This section defines the descriptors and pages for log parameters used with 
+communication devices. 
+
+  The log page codes for communication devices are defined in Table 17-9.
+
+                          Table 17-9: Log Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+01h        Buffer Over-Run/Under-Run Page                        7.3.2.1
+02h        Error Counter Page (Write) Page                       7.3.2.2
+03h        Error Counter Page (Read) Page                        7.3.2.2
+04h        Error Counter Page (Read Reverse) Page                7.3.2.2
+05h        Error Counter Page (Verify) Page                      7.3.2.2
+07h        Last n Error Events Page                              7.3.2.3
+06h        Non-Medium Error Page                                 7.3.2.4 
+00h        Supported Log Pages                                   7.3.2.5
+08h - 2Fh     Reserved                              
+30h - 3Eh     Vendor-specific pages
+3Fh        Reserved                              
+==============================================================================
+
+
+
+
+
+
+
+
+
+17.3.3. Mode Parameters
+
+  This section defines the descriptors and pages for mode parameters used with 
+communication devices. 
+
+  The mode parameter list, including the mode parameter header and mode block 
+descriptor are defined in 7.3.3.
+
+  The medium-type code field is contained in the mode parameter header (see 
+Table 7-61 and 7-62).  This field is reserved for communications devices.
+
+  The device specific parameter field is contained in the mode parameter 
+header (see Table 7-61 and 7-62).  This field is reserved for communications 
+devices.
+
+  The density code field is contained in the mode parameter block descriptor 
+(see Table 7-63).  This field is reserved for communications devices.
+
+  The mode page codes for communication devices are shown in Table 17-10.
+
+                         Table 17-10: Mode Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+   0Ah        Control Mode Page                                     7.3.3.1
+   02h        Disconnect-Reconnect Page                             7.3.3.2
+   09h        Peripheral Device Page                                7.3.3.3
+   01h        Reserved
+03h - 08h     Reserved                                              
+0Bh - 1Fh     Reserved
+   Fh         Returns all pages (valid only for the MODE SENSE command)
+   00h        Vendor specific (does not require page format)        
+20h - 3Eh     Vendor specific 
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+17.4. Glossary for Communications Devices
+
+communications device.  An SCSI device whose principal function is to 
+communicate with one or more other systems, usually over distances that exceed 
+the maximum cable length defined for SCSI.
+
+external medium.  The medium used by the communications device to send or 
+receive information to or from one or more communications devices.  The other 
+communications devices may or may not use an SCSI interface.
+
+external protocol.  The protocol(s) used by the communications device to 
+transfer information over the external medium.  The external protocol(s) are 
+not defined by this standard.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     (This page is intentionally blank.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

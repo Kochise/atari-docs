@@ -1,0 +1,55 @@
+Appendix G
+
+Future Standardization
+
+This appendix is included to provide insight into some possible future 
+extensions to SCSI that are being considered by X3T9.2.  Although X3T9.2 has 
+addressed some of these extensions, many details remain to be resolved.  
+Further work by X3T9.2 may result in changes or additions to these extensions.  
+Please contact the Chairman of X3T9.2 for the current status of this activity.
+
+  Six new commands are being considered, three for targets that support 
+caching, one to provide a means to read the medium defect data, and two to 
+provide a standardized method for writing and reading the target's data buffer 
+(principally intended to support start-of-day tests that insure data path 
+integrity).  The tentative operation codes are as follows:
+
+==============================================================================
+Operation
+  Code      Type   Command Name             Device Types
+------------------------------------------------------------------------------
+   34H       O     PRE-FETCH                \  Direct Access, Write-Once
+   35H       O     FLUSH CACHE               > Read-Multiple, and
+   36H       O     LOCK/UNLOCK CACHE        /  Read-Only Direct Access
+   37H       O     READ DEFECT DATA         Direct Access
+   3BH       O     WRITE BUFFER             All
+   3CH       O     READ BUFFER              All
+------------------------------------------------------------------------------
+
+
+  New parameters are being considered in several of the existing commands:
+
+  (1) Cache control bits are being considered for bits 3 and 4 of byte 1 in 
+several group 1 commands, including READ, WRITE, WRITE AND VERIFY, and VERIFY.
+
+  (2) Byte 1 of the Defect List in the FORMAT UNIT command may be used to 
+provide additional defect management control.
+
+  (3) Bits 0 _ 3 of byte 3 of the Inquiry Data in the INQUIRY command may be 
+used to identify that the device supports certain additions to the standard.  
+One such addition that is being considered is optional fields within the 
+Inquiry Data to identify the manufacturer and the product model information.
+
+  (4) Extensions to the MODE SELECT and MODE SENSE commands are being 
+considered to provide a standard means to control certain target parameters.  
+Bits 0 _ 5 of byte 2 of the MODE SENSE command are being considered for use in 
+controlling which target parameters are returned by this command.
+
+
+
+
+
+
+
+
+

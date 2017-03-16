@@ -1,0 +1,48 @@
+### HardWare Informations ###################################################
+
+Address     Size Status Name         Purpose
+$FFFF9200.w WORD READ   JoyButtons   States of the JoyPads Standard Buttons
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE LOW <          x x x x x x x x x x x x | | | |
+                                                                        | | | |
+                        PadA FIREA/FIREB/FIREC/OPTION ------------------' | | |
+                        PadA PAUSE ---------------------------------------' | |
+                        PadB FIREA/FIREB/FIREC/OPTION ----------------------' |
+                        PadB PAUSE -------------------------------------------'
+
+-----------------------------------------------------------------------------
+
+$FFFF9202.w WORD READ   JoyMatrix    States of the JoyPads Extended Buttons
+
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE LOW <          | | | | | | | | x x x x x x x x
+                                                | | | | | | | |
+                        PadA RIGHT/N1/N2/N3 ----' | | | | | | |
+                        PadA LEFT/N4/N5/N6 -------' | | | | | |
+                        PadA LOW/N7/N8/N9 ----------' | | | | |
+                        PadA HI/N*/N0/N# -------------' | | | |
+                                                        | | | |
+                        PadB RIGHT/N1/N2/N3 ------------' | | |
+                        PadB LEFT/N4/N5/N6 ---------------' | |
+                        PadB LOW/N7/N8/N9 ------------------' |
+                        PadB HI/N*/N0/N# ---------------------'
+
+$FFFF9202.w WORD WRITE  JoyMask      Mask of the JoyMatrix
+
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE LOW <          x x x x x x x x | | | | | | | |
+                                                                | | | | | | | |
+                        PadA OPTION/N3/N6/N9/N# ----------------' | | | | | | |
+                        PadA FIREC/N2/N5/N8/N0 -------------------' | | | | | |
+                        PadA FIREB/N1/N4/N7/N* ---------------------' | | | | |
+                        PadA FIREA/PAUSE/DIRECTION -------------------' | | | |
+                                                                        | | | |
+                        PadB OPTION/N3/N6/N9/N# ------------------------' | | |
+                        PadB FIREC/N2/N5/N8/N0 ---------------------------' | |
+                        PadB FIREB/N1/N4/N7/N* -----------------------------' |
+                        PadB FIREA/PAUSE/DIRECTION ---------------------------'
+
+How to Look for a Button ? For example : PabB OPTION is Held Down...
+1st Step : bclr.b #3,$FFFF9203.w -> PadB OPTION/N3/N6/N9/N#
+2nd Step : btst.b #1,$FFFF9201.w -> PadB FIREA/FIREB/FIREC/OPTION 
+3rd Step : If the Bit is 0, then OPTION is Held Down, else NOT !

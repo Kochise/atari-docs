@@ -1,0 +1,110 @@
+Appendix E
+
+Conformance
+
+This appendix contains recommendations on conformance statements to this 
+standard.
+
+E1.  Alternatives
+
+This standard contains various alternatives that are mutually exclusive within 
+a system.
+
+  (1)  Single-ended or differential drivers.
+  (2)  Termination power supplied by the cable or not.
+  (3)  Parity implemented or not.
+  (4)  "Hard" RESET or "soft" RESET.
+  (5)  Reservation queuing implemented or not.
+
+E2.  Levels of Conformance
+
+  By specifying which alternatives (listed above) are implemented, an 
+environment is created enabling different features to be implemented.  These 
+features are divided into three nested minimum levels as shown in Table E1.
+
+                                   Table E1
+                            Levels of Conformance
+
+==============================================================================
+Level        Initiator                           Target
+------------------------------------------------------------------------------
+  0     Accept COMMAND COMPLETE        Implement the mandatory commands   
+        message.                       of section 7.                      
+                                                                          
+        Accept GOOD and CHECK          Implement the mandatory commands   
+        CONDITION status codes.        of the supported device type(s).   
+                                                                          
+                                       Implement the COMMAND COMPLETE     
+                                       message.                           
+                                                                          
+                                       If messages other than COMMAND     
+                                       COMPLETE are implemented, then     
+                                       implement MESSAGE REJECT message   
+                                       also.                              
+                                                                          
+                                       Implement GOOD and CHECK CONDITION 
+                                       statuses.                          
+------------------------------------------------------------------------------
+  1     Same as above plus             Same as above.
+        ARBITRATION phase.
+------------------------------------------------------------------------------
+  2     Same as above plus             Same as above plus implement the
+        accept DISCONNECT,             MESSAGE REJECT and IDENTIFY messages
+        MESSAGE REJECT,                and implement all extended commands
+        IDENTIFY, and SAVE             in section 7 and for the supported
+        DATA POINTER messages          device type(s).
+==============================================================================
+E3.  Options
+
+E3.1  Optional Commands.  This standard specifies a number of additional 
+commands that can be implemented in each level.  Some of these commands, if 
+implemented, require the implementation of other optional commands, messages, 
+or both.  In this case, these additional commands, messages, or both shall 
+also be implemented.
+
+E3.2  Optional Messages.  This standard specifies a number of additional 
+optional messages that may be implemented at any level.
+
+E3.3  Other options.  Within some commands, additional features, called 
+"options", are described.  These options need not necessarily be implemented.
+
+E4.  Statement of Conformance
+
+Any statement of conformance to this standard should declare which of the 
+alternates listed in section E1 and which of the three conformance levels are 
+implemented.  In addition, it should indicate which of the options listed in 
+section E3 are implemented, if any.  In the case of optional messages, the 
+conformance statement should state whether the message is generated, accepted, 
+or both.
+
+  If the synchronous data transfer option is implemented, any statement of 
+conformance should so indicate and state both the maximum REQ/ACK offset and 
+the minimum transfer period implemented.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

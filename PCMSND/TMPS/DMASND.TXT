@@ -1,0 +1,45 @@
+**************************************************************************
+Frame Adressen
+**************************************************************************
+
+$FFFF8903 [R/W] B        76543210  Frame Startadresse Hi
+$FFFF8905 [R/W] B        76543210  Frame Startadresse Mi
+$FFFF8907 [R/W] B        76543210  Frame Startadresse Lo
+$FFFF8909 [R/W] B        76543210  Frame Adressenz„hler Hi
+$FFFF890B [R/W] B        76543210  Frame Adressenz„hler Mi
+$FFFF890D [R/W] B        76543210  Frame Adressenz„hler Lo
+$FFFF890F [R/W] B        76543210  Frame Endadresse Hi
+$FFFF8911 [R/W] B        76543210  Frame Endadresse Mi
+$FFFF8913 [R/W] B        76543210  Frame Endadresse Lo
+
+HOW to access the play/record-frame:
+You have to set bit 7 of $8901.w to select play- or record-shadow-register, then
+access the frame-begin/end-regi- sters! The play- and record-shadowregister are
+two seperate registers; they appear only at the same addresses!
+
+
+$FFFF8920 [R/W] B         __54__10  Track-Play-Control
+                            ||  ||
+                            ||  00- 1 Spur abspielen
+                            ||  01- 2 Spuren abspielen
+                            ||  10- 3 Spuren abspielen
+                            ||  11- 4 Spuren abspielen
+                            00----- setze DA-Wandler auf Spur 1
+                            01----- setze DA-Wandler auf Spur 2
+                            10----- setze DA-Wandler auf Spur 3
+                            11----- setze DA-Wandler auf Spur 4
+
+$FFFF8921 [R/W] B         76____10  Sound-Mode-Control
+                          ||    ||
+                          ||    00-  6258 Hz (STE-Kompatibel)
+                          ||    01- 12517 HZ
+                          ||    10- 25033 HZ
+                          ||    11- 50066 HZ
+                          00-------  8-Bit Stereo (STE-kompatibel)
+                          01------- 16-Bit Stereo (Falcon Sound)
+                          10-------  8-Bit Mono (STE-kompatibel)
+
+Nice to know: The samplerate 6258 Hz was repleaced by a nute condition. You can
+ use it to deactivate the
+DMA-Transfer.
+

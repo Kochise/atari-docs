@@ -1,0 +1,32 @@
+name:         AY-3-8910
+function:     SOUND GENERATOR (PROGRAMMABLE)
+package:      DIP,40
+manufacturer: GENERAL INSRUMENT
+added-by:     JASON GOHLKE
+
+               +--()--+
+     VSS (GND) | 1  40| VCC (+5v)
+            NC | 2  39| TEST 1
+<- ANALOG CH B | 3  38| ANALOG CH C ->
+<- ANALOG CH A | 4  37| DA0 <->
+            NC | 5  36| DA1 <->
+      <-> IOB7 | 6  35| DA2 <->
+      <-> IOB6 | 7  34| DA3 <->
+      <-> IOB5 | 8  33| DA4 <->
+      <-> IOB4 | 9  32| DA5 <->
+      <-> IOB3 |10  31| DA6 <->
+      <-> IOB2 |11  30| DA7 <->
+      <-> IOB1 |12  29| BC1 <-
+      <-> IOB0 |13  28| BC2 <-
+      <-> IOA7 |14  27| BDIR <-
+      <-> IOA6 |15  26| TEST2
+      <-> IOA5 |16  25| A8 <-
+      <-> IOA4 |17  24| /A9 <-
+      <-> IOA3 |18  23| /RESET <-
+      <-> IOA2 |19  22| CLOCK <-
+      <-> IOA1 |20  21| IOA0 <->
+               +------+
+
+This pinout came from the Chipdir:
+http://www.chipdir.org/
+

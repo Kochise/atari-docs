@@ -1,0 +1,113 @@
+**************************************************************************
+Generelle Informationen und Programmiertechnik
+**************************************************************************
+
+Daten mit Handshake zum DSP senden
+
+1.  Warten, bis der DSP Empfangsbereit ist ($FFFFA202 Bit 1 wird 1)
+2.  Die Daten nach $FFFFA204 - $FFFFA207 schreiben
+3.  weitere Daten Senden: Gehe zu 1.
+
+Beispiel: (Diese Routine entspricht dem DSP-XBIOS)
+
+    LEA      BUFFER(PC) ,A0      ; Puffer mit DSP-Worten
+    MOVE.W   #DSP_WORDS, D0      ; sendet max. 65535 DSP-Words
+LOOP:
+    BTST     #0, $FFFFA202.W     ; ist DSP Empfangsbereit?
+    BEQ.S    LOOP                ; nein, dann warten
+4 bytes:
+    MOVE.L  (A0)+, $FFFFA204.W   ; Sendet 4 Bytes, das hîchste Byte wird vom
+                                 ; DSP ignoriert
+3 bytes:
+    MOVE.B   (A0)+, $FFFFA205.W  ; Sendet
+    MOVE.B   (A0)+, $FFFFA206.W  ; 3 Bytes
+    MOVE.B   (A0)+, $FFFFA207.W  ; (1 DSP-Word hat 24 Bit)
+2 bytes:
+    MOVE.W   (A0)+,D1            ; Sendet 2 Bytes
+    EXT.L     D1                 ; Erweiterung zu 4 Bytes
+    MOVE.W    D1, $FFFFA204.W    ; Sendet 4 Bytes
+1 byte:
+    MOVE.B   #0, $FFFFA205.W     ; Sendet
+    MOVE.B   #0, $FFFFA206.W     ; 1 Byte
+    MOVE.B   (A0)+, $FFFFA207.W
+    DBRA     D0, LOOP
+
+
+Daten vom DSP mit Handshake empfangen:
+
+1. Warten, bis DSP sendebereit ist ($FFFFA202 Bit 0 wird 1)
+2. Daten von $FFFFA204 - $FFFFA207 lesen
+3. wenn weitere Daten Åbertragen werden sollen: weiter mit 1.
+
+Beispiel: (Diese Routine entspricht dem DSP-XBIOS)
+
+    LEA      BUFFER(PC),A0      ; Puffer mit DSP-Words
+    MOVE.W   #DSP_WORDS,D0      ; öbertrage max. 65535 DSP-Words
+LOOP:
+    BTST     #1,$FFFFA202.W     ; kann DSP senden?
+    BEQ.S    LOOP
+4 bytes:
+    MOVE.L   $FFFFA204.W,(A0)+  ; öbertrage 4 Bytes, das hîchste Byte ist 0x00
+3 bytes:
+    MOVE.B   $FFFFA205.W,(A0)+  ; öbertrage
+    MOVE.B   $FFFFA206.W,(A0)+  ; 3 Bytes
+    MOVE.B   $FFFFA207.W,(A0)+  ; (1 DSP-Word hat 24 Bit)
+2 bytes:
+    MOVE.B   $FFFFA206.W,(A0)+  ; öbertrage
+    MOVE.W   $FFFFA207.W,(A0)+  ; 2 Bytes
+1 byte:
+    MOVE.B   $FFFFA206.W,D1     ; dummy-read
+    MOVE.B   $FFFFA207.W,(A0)+  ; Transfer 1 byte
+    DBRA     D0,LOOP
+
+NOTE: it is possible to skip the 1. step. This mode increases the
+transfering-rate, but the DSP-program must be able to read the data immediately,
+otherwhise the data will be overwritten by the next one. It is important that
+the DSP is ready to transfer, there for execute the 1. step before transfering
+data! (1. step > 2. step > 2. step > 2. step ......until end)
+
+Daten im Interrupt zum DSP senden oder vom DSP lesen
+
+1. Interrupt installieren
+   1. 1. Interrupt-Programmadresse in den DSP-Interrupt-Vektor schreiben ($003C,
+   Vektor 15)
+   1.2. In das Register $FFFFA203 (IVR) den Wert $FF schreiben
+   1.3. Bit 0/1 im Register $FFFFA200 (ICR) zum Senden/Empfangen setzen
+Nun ist der DSP-IRQ installiert und eingeschaltet.
+2. Die Interrupt-Routine
+   2.1. Daten von/nach $FFFFA204 - $FFFFA207 lesen/schreiben
+   2.2. Interrupt-Routine mit RTE beenden
+3. Es gibt 2 Mîglichkeiten, den Interrupt zu beenden
+   3.1. Das Hauptprogramm lîscht Bit 0/1 im ICR
+   3.2. Das Interruptprogramm lîscht Bit 0/1 im ICR
+
+Anmerkung: Es gibt nur eine Exeption-Nummer zum Schreiben oder Lesen von Daten.
+Es ist jedoch mîglich, die Daten simultan zu schreiben oder zu lesen. In diesem
+Fall mÅssen die Bits 0 oder 1 im ICR abgefragt werden, um die Transferrichtung
+der Daten zu ermitteln.
+
+DSP-Installations-Routine
+
+Zum RÅcksetzen und Initialisieren des DSP mÅssen folgende Schritte ausgefÅhrt
+werden:
+
+- Bit 4 im PSG auf 1 setzen, nach 1/200s wieder auf 0 setzen
+- der DSP erwartet nun 512 DSP-Worte, die das Bootprogramm enthalten
+- nach der öbertragung startet der DSP das Bootprogramm
+
+Beispiel: (Diese Routine entspricht dem DSP-XBIOS)
+
+INIT_DSP:
+   MOVE.B  #14, $FFFF8800  ; Port A des PSG auswÑhlen
+   MOVE.B  #$FFFF8800, D0
+   OR.B    #$10, D0  ; Reset-Beginn
+   MOVE.B  D0, $FFFF8802
+   AND.B   #$EF, D0  ; Reset-Ende
+   MOVE.B  D0, $FFFF8802
+   LEA     Buffer(PC), A0  ; Puffer mit DSP-Worten
+   MOVE.W  #512-1, D0   ; öbertrage 512 DSP-Worte
+LOOP:
+   MOVE.B  (A0)+, $FFFFA205   ; öbertrage
+   MOVE.B  (A0)+, $FFFFA206   ; 3 Bytes
+   MOVE.B  (A0)+, $FFFFA207   ; (1 DSP-Wort hat 24 Bits)
+   DBRA    D0, LOOP

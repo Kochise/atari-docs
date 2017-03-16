@@ -1,0 +1,17 @@
+Begin3
+Title:          Z8530 kernel driver utilities
+Version:        3.0.dl1bke
+Entered-date:   30OCT96
+Description:    Utilities for the generic Z8530 AX.25 device driver
+Keywords:       ham, amateur, AX.25, KISS, HDLC, SCC, Z8530
+Author:         jreuter@lykos.oche.de (Joerg Reuter)
+Maintained-by:  
+Primary-site:   ftp.ucsd.edu /hamradio/packet/tcpip/incoming
+		z8530drv-utils-3.0-1.tar.gz
+Alternate-site: db0bm.automation.fh-aachen.de /pub/incoming/z8530drv/
+		insl1.etec.uni-karlsruhe.de   /pub/hamradio/linux/
+Original-site:  
+Platforms:      Linux kernel 2.1.6 or above needed, with AX.25 and
+		the Z8530 driver compiled.
+Copying-policy: GPL
+End

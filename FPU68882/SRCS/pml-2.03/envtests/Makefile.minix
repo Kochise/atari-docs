@@ -1,0 +1,17 @@
+CC = mgcc
+CFLAGS = -O
+ALL = testfrexp testldexp testmodf
+
+all : $(ALL)
+
+testfrexp :		testfrexp.c
+			$(CC) $(CFLAGS) -o testfrexp testfrexp.c
+
+testldexp :		testldexp.c
+			$(CC) $(CFLAGS) -o testldexp testldexp.c
+
+testmodf :		testmodf.c
+			$(CC) $(CFLAGS) -o testmodf testmodf.c
+
+clean:
+	rm -f *.o $(ALL)

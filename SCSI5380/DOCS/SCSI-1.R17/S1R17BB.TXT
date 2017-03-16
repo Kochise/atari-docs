@@ -1,0 +1,110 @@
+Appendix B
+
+Typical Bus Phase Sequence
+
+This appendix is included to provide an example of the SCSI bus phase sequence 
+for a typical READ command (Tables B1 and B2).  In this example, the target 
+does not disconnect from the SCSI bus prior to completing the command.
+
+                                   Table B1
+                     Typical READ Command Phase Sequence
+
+==============================================================================
+                                   Signals
+               ---------------------------------------------------------------
+               B  S  A  M  C  I  R  A  R    D    D
+               S  E  T  S  /  /  E  C  S    B    B
+Bus Phase      Y  L  N  G  D  O  Q  K  T  (7-0) (P)    Comment
+------------------------------------------------------------------------------
+BUS FREE       -  -  -  -  -  -  -  -  -    -    -     SCSI bus is available. 
+
+ARBITRATION    1  -  -  -  -  -  -  -  -    ID   X     Initiator tries to get 
+     "            1                                    the SCSI bus.
+
+SELECTION      1  1  1  -  -  -  -  0  -  ID I,T V     Initiator has SCSI bus 
+     "         -  1                       ID I,T V     and selects a target.
+     "         1  1                       ID I,T V     ATN is on. 
+     "         1  -                         X    X
+
+MESSAGE OUT    1  -  1  1  1  0  0  0  -    X    X     Target has control of
+     "               1           1  0       X    X     the bus and gets the 
+     "               1           1  0       X    X     IDENTIFY message from
+     "               1           1  1    Message V     the initiator. 
+     "               1           0  1       X    X
+     "               0           0  0       X    X
+
+COMMAND        1  -  0  0  1  0  0  0  -    X    X     Target gets a command 
+     "                           1  0       X    X     from the initiator. 
+     "                           1  1    Command V     (This phase is repeated 
+     "                           0  1       X    X     for each byte.)
+     "                           0  0       X    X
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                   Table B2
+               Typical READ Command Phase Sequence (Continued)
+
+==============================================================================
+                                   Signals
+               ---------------------------------------------------------------
+               B  S  A  M  C  I  R  A  R    D    D
+               S  E  T  S  /  /  E  C  S    B    B
+Bus Phase      Y  L  N  G  D  O  Q  K  T  (7-0) (P)    Comment
+------------------------------------------------------------------------------
+DATA IN        1  -  0  0  0  1  0  0  -    X    X     Target sends data to 
+     "                           1  0  Read Data V     the initiator.  (This
+     "                           1  1       X    X     phase is repeated for
+     "                           0  1       X    X     each byte.)
+     "                           0  0       X    X
+
+STATUS         1  -  0  0  1  1  0  0  -    X    X     Target sends status to 
+     "                           1  0    Status  V     the initiator. 
+     "                           1  1       X    X
+     "                           0  1       X    X
+     "                           0  0       X    X
+
+MESSAGE IN     1  -  0  1  1  1  0  0  -    X    X     Target sends a COMMAND 
+     "                           1  0    Message V     COMPLETE message to the
+     "                           1  1       X    X     initiator. 
+     "                           0  1       X    X
+     "                           0  0       X    X
+
+
+BUS FREE       -  -  -  -  -  -  -  -  -    -    -     SCSI bus is available. 
+==============================================================================
+
+Key:  -       =  Signal driver is passive.
+      0       =  Signal is false.
+      1       =  Signal is true.
+      "Blank" =  Signal state is the same as the previous line.
+      ID      =  SCSI ID for arbitration.
+      ID I,T  =  SCSI ID of initiator and target.
+      V       =  Parity is valid.
+      X       =  The signal is not guaranteed to be in a known state.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+##############Zilog 8530 SCC (MSTe/TT/F030)                        ###########
+-------+-----+-----------------------------------------------------+----------
+$FF8C81|byte |Channel A - Control Register                         |R/W  (SCC)
+$FF8C83|byte |Channel A - Data Register                            |R/W  (SCC)
+$FF8C85|byte |Channel B - Control Register                         |R/W  (SCC)
+$FF8C87|byte |Channel B - Data Register                            |R/W  (SCC)
+-------+-----+-----------------------------------------------------+----------

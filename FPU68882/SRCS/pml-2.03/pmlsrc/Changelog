@@ -1,0 +1,329 @@
+pmluser.h:: ++jrb
+	added defn of HUGE
+	added protos for ldexp etc
+
+pml.h:: ++jrb
+	added protos for ldexp etc.
+
+poly.c:: ++jrb
+	removed tail recursion from poly evaluation
+
+floor.c:: ++jrb
+	replaced with more trivial alg from pete housel
+	note: depends on modf being with call by value parameters
+
+dabs.c:: ++jrb
+	take advantage of knowing IEEE layout
+
+sqrt.c:: ++jrb
+	fixed bug for sqrt(0.0) (was assigning value to wrong var)
+
+sin.c, cos.c, exp.c:: ++jrb
+	removed redundant var `rtnval'
+
+sqrt.c:: ++jrb
+	faster/smaller coding from Michal Jaegermann.
+
+log.c:: ++jrb
+	new coding from Michal Jaegermann
+
+log10.c:: ++jrb
+	compile to null if __GCC_HACK__, see log.c
+
+exp.c:: ++jrb
+	improved coding from Michal Jaegermann
+
+atan2.c:: ++jrb
+	improved coding from Michal Jaegermann. conforms to C convention
+	for args. handles boundary (0.0, 0.0) case.
+
+atan.c:: ++jrb
+	improved coding from Michal Jaegermann. See comments at the top of
+	the file.
+
+pmluser.h:: ++jrb
+	get rid of the old minix std.h
+
+clog.c:: ++jrb
+	reverse args to atan2
+
+dd2d.dat:: ++jrb
+	reverse args to atan2 tests
+
+sign.c, atan2.c:: ers
+	rename sign
+mod.c, cos.c, sin.c:: ers
+	rename mod to fmod
+
+pow.c:: ers
+	recode
+
+everywhere:: ++jrb
+	get rid of keyword auto, this give the compiler a better oppurtunity
+	to do its thing with register assignments
+
+pmluser.h, pml.h:: ++jrb
+	adjust protos. add proto for poly to pml.h
+
+dabs.c:: ++jrb
+	add alias fabs for dabs when gcc
+
+max.c, min.c:: ++jrb
+	retain the function versions in the library, even when #defined
+	in pmluser.h, by undef'ing
+
+everywhere:: ++jrb
+	get rid of extern declarations, our protos take care of them, even
+	in the non ansi case.
+
+pow.c:: ++jrb
+	fix syntax err.
+
+all over:: ++jrb
+	rename pmluser.h to math.h
+
+---------------------------- Patchlevel 11 ------------------------------
+
+sqrt.c: ++jrb
+	add hypot
+
+math.h:: ++jrb
+	add proto for hypot
+---------------------------- Patchlevel 12 ------------------------------
+
+math.h:: ++jrb
+    make the exception structure more "unix like". use the same values
+for exception types (this only helps portability).
+
+atan2.c:: ++jrb
+    use the second arg in the exception struct now that we have it.
+
+sign.c:: ++jrb
+    was copy the wrong sign when second arg was 0. reported by michael ritzert.
+
+dabs.c:: ++jrb
+    make the asm code conditional on (m68k && GNUC), not just GNUC
+
+---------------------------- Patchlevel 13/14 ------------------------------
+dabs.c:: andreas
+    use dept of clean tricks
+
+all files::  ++ mjr
+	revised makefile
+	removed NO_DBUG stuff
+	included 68020/68881 support (#define __M68881__)
+	included support for 68881 boards in the Mega ST (#define sfp004)
+	added optional ERROR_CHECK at lib compile time
+	completly rewrote some functions
+	in NaN conditions consistently __infinitydf is returned
+
+copysign:: ++mjr
+	bug fix: copysign(x,0) now returns +x instead of -x
+	fast assembler version supplied.
+	affects result of atan2.
+
+math-68881.h:: ++mjr
+	removed any error checking code (use the library versions if
+	error checking is required)
+
+frexp:: ++mjr
+	y = frexp(0,ip) now corectly returns 0 both in y and *ip
+
+	sfp004 - version written but not tested due to lack of hardware
+	my sfp004 board died, so only a "plausibility test" could be made.
+	most probable sources of bugs: 
+	the fscale instruction has been inserted to the old function body 
+	after the dead of the board.
+	The test if the 1st arg is 0, too.
+
+all "d2d-functions" + cabs::	++mjr
+	bug fix: saved d0-d1 before calling fprintf to issue an error message.
+
+doprnt.c:: ++mjr
+	NAN and INFINITY conditions are caught by analysing only the most
+	significant long word (uniqe).
+	this also serves as a workaround to the conversion bug of 
+	gcc-as 
+	(DBL_MAX is converted to 0x7ff00000 0x00000002
+		    instead of   0x7fefffff 0xfffffffe
+	) which sometimes causes doprnt to crash.
+
+makefile: (pml) ++mjr
+	use implicit rules most of the time
+	list of suffixes tried during the checking of the rules
+	stripped down to something useful
+
+	one single makefile for all possible machine setups,
+	bot for gnu_xxx.olb and pml_xxx.olb
+	the system setup is specified on the command line of make.
+	default: 68000 without coprocessor, int size 32 bit
+
+	USAGE
+	    make m=value e=true s=true 
+		where m=value is either
+		    m=m68881
+			to support systems with an 68020/68030+68881/68882
+			(the 'TT-version' of the lib)
+	
+			lib name: pml020.olb
+		or
+		    m=sfp004
+			to support 68000 based systems with a memory mapped
+			68881
+			such as the MEGA ST with Atari's sfp004 board
+			or compatibles like Weide's board
+			or (hopefully) the coprocessor of the MEGA STE
+	
+			lib name: pmlsfp.olb
+	
+		default (m omitted)
+		    make the pml for systems without coprocessor
+	
+		    lib name: pml.olb
+	
+		e=true
+		    compiles with error checking code
+		    meaningful only in combination with m68020/m68881/sfp004
+	
+		    lib name: not affected
+	
+		s=true
+		    sets -D__MSHORT__
+	
+		    lib name: pml16.olb, pml16020.olb, pml16sfp.olb
+	
+	make checks the following environment variables for the 
+	executables if they are defined, the make variables CC,.. 
+	need not be defined any more
+	
+		CC=c:\gcc.140\exec\cc.ttp
+		LD=c:\gcc.140\exec\cc.ttp
+		AR=c:\gcc.140\exec\ar.ttp
+		AS=c:\gcc.140\exec\as.ttp
+		CC1=c:\gcc.140\exec\cc1.ttp
+		CPP=c:\gcc.140\exec\cpp.ttp
+		PATH=c:\bin,c:\gcc.140\exec,c:\gcc.140\util,d:\,e:\tex,k:\konvekt
+	
+	M.Ritzert, ritzert@dfg.dbp.de
+	4.Januar 1992
+
+_fixdfsi.cpp:
+_fixunsdfsi.cpp:
+	optional error checking added. 
+	All three situations (no fpu, sfp004, TT) supported.
+
+_normsf.cpp:
+_divdf3.cpp:
+_divsf3.cpp:
+	returns signed infinity in case of an exception.
+	if option ERROR_CHECK is enabled:
+	_errno is set to ERANGE.
+	The EDOM situation 0/0 is not tested explicitly.
+	All three situations (no fpu, sfp004, TT) supported.
+
+_normdf.cpp:
+	if option ERROR_CHECK is enabled:
+	_errno is set to ERANGE.
+	message is printed.
+	value of ERANGE corrected to 62 (was 34 = EPATH)
+
+ldexp.cpp:
+	value of ERANGE corrected to 62 (was 34 = EPATH)
+	optional ERROR_CHECK inserted.
+	underflow is no longer considered an error condition to
+	stay consistent with pml.
+	if ERROR_CHECK is enabled, a message is printed on overflow.	
+
+_addsubd.cpp:
+_addsubs.cpp:
+_muldf3.cpp:
+_mulsf3.cpp:	++mjr:
+	sfp004 code and software floating point code merged into one file.
+
+log.c, log10.c:: ++jrb
+	restore michal jaegermann's log hacks.
+
+sign.c:: ++jrb
+	merge back previous fix for second arg 0
+
+Makefile.tos:: ++jrb
+	use mjr's new makefile -- "makefile.pml". see makefile.mjr
+on usage. Makefile.tos just invokes make -f makefile.pml with
+the correct parameters.
+
+---------------------------- Patchlevel 15 ------------------------------
+
+Makefile.tos:: Michal
+	use macros to make it easier to to adjust.
+
+atan2.c: mjr++
+ccos.c:
+cdiv.c:
+cmult.c:
+csin.c:
+	new assembler routines for both the sfp004 and the 881/882
+
+cadd.c: mjr++
+csubt.c:
+	fixed nasty arg passing bug in the sfp code.
+
+---------------------------- Patchlevel 16 ------------------------------
+
+log.c:: ++jrb
+	make adjustments for GCC_HACK and gcc 2.0
+
+cexp.c clog.c csqrt.c mod.c sinh.c :: Michael
+	fixes to save FP reggies.
+
+math.h:: ++jrb
+	dont proto clog() for g++, it clashes with clog stream.
+
+---------------------------- Patchlevel 17 ------------------------------
+
+log.c, log10.c:: andreas
+         __GCC_HACK__ doesn't work with gcc -O2!!
+	(assignment to index will be moved to end of function)
+
+---------------------------- Patchlevel 18 ------------------------------
+
+ident.c:: ++jrb
+	new file with ident string.
+
+Makefile.??:: ++jrb
+	add target for ident.o
+
+---------------------------- Patchlevel 19 ------------------------------
+
+sqrt.c:: Michal Jaegermann
+	major hacks. see the comments at the top.
+
+---------------------------- Patchlevel 20 ------------------------------
+atan2.c:: Howard Chu
+	There is a simple typo in atan2.c which I encountered while trying to
+	build some -m68020 -m68881 libraries for the Falcon...
+
+---------------------------- Patchlevel 21 ------------------------------
+
+ccos.c, csin.c:: Stefan Steyer (dc4i@br0.hrz.th-darmstadt.de)
+	Corrections for building library with spf and ERROR_CHECK.
+
+---------------------------- Patchlevel 22 ------------------------------
+
+ccos.c, ccsin.c:: Stefan Steyer (dc4i@br0.hrz.th-darmstadt.de)
+	Corrected bug introduced in the last patch. thanks to
+	Christian_Felsch@hh.maus.de for pointing it out.
+
+makefile.pml:: ++jrb
+	Make lib with NO_INLINE_MATH to back up 68881 code where math-68881.h
+	is not used (ie the inline definitions therein are not used).
+
+math.h:: ++jrb
+	sync up with changes to math.h in main lib to support
+	NO_INLINE_MATH
+
+mod.c:: michal -- thanks michal
+	fmod() from PML, when coprocessor not present, is defined in a
+        manner which is formally  correct, but it is loosing
+	precision. fix provided.
+
+---------------------------- Patchlevel 23 ------------------------------

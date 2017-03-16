@@ -1,0 +1,206 @@
+; /// SSAVCALL 3.02 - ATARI Falcon030 Vectors - ATARI Falcon030 - KOSS 2000 //
+
+; Author   : Kochise
+; Date     : 07/29/07/2000
+; Type     : HARDWARE Informations
+; Language : None
+; Sequence : None
+; Purpose  : ATARI Falcon030 CPU Vectors
+
+; Machina  : ATARI Falcon030
+; O.S.     : SSAVCALL 3
+
+; ### HardWare Informations ###################################################
+; Address     Size Status Name         Purpose
+;
+;                                      --- CPU RESET Vectors ---
+;
+;         0.w LONG READ   Initial SSP  When Turning ON the Computer, the SSP
+;                                      is Loaded with this Value
+;                                      On ATARI Falcon030 : $602E0404
+;
+;         4.w LONG READ   Initial PC   When Turning ON the Computer, the CPU
+;                                      Start at the Address contained there
+;                                      On ATARI Falcon030 : $00E00030
+;         
+;                                      --- CPU EXCEPTION Vectors ---
+;
+;         8.w LONG R/W    Bus Error    
+;
+;        $C.w LONG R/W    Address Error
+;
+;       $10.w LONG R/W    Illegal Instruction
+;
+;       $14.w LONG R/W    Zero Divide
+;
+;       $18.w LONG R/W    CHK, CHK2 Instruction
+;
+;       $1C.w LONG R/W    cpTRAPcc, TRAPcc, TRAPV
+;
+;       $20.w LONG R/W    Privilege Violation
+;
+;       $24.w LONG R/W    Trace
+;
+;       $28.w LONG R/W    Line 1010 Emulator (LineA)
+;
+;       $2C.w LONG R/W    Line 1111 Emulator (LineF)
+;
+;       $30.w LONG R/W    (Unassigned, Reserved)
+;
+;       $34.w LONG R/W    Coprocessor Protocol Violation (68030)
+;
+;       $38.w LONG R/W    Format Error (68010)
+;
+;       $3C.w LONG R/W    Uninitialized Interrupt Vector
+;
+;       $40.w LONG R/W    (Unassigned, Reserved)
+;
+;       $44.w LONG R/W    (Unassigned, Reserved)
+;
+;       $48.w LONG R/W    (Unassigned, Reserved)
+;
+;       $4C.w LONG R/W    (Unassigned, Reserved)
+;
+;       $50.w LONG R/W    (Unassigned, Reserved)
+;
+;       $54.w LONG R/W    (Unassigned, Reserved)
+;
+;       $58.w LONG R/W    (Unassigned, Reserved)
+;
+;       $5C.w LONG R/W    (Unassigned, Reserved)
+;
+;       $60.w LONG R/W    Spurious Interrupt (Bus error during interrupt)
+;
+;                                      --- Auto-Vector Interrupts ---
+;
+;       $64.w LONG R/W    Level 1 Int Autovector
+;
+;       $68.w LONG R/W    Level 2 Int Autovector (HBL)
+;
+;       $6C.w LONG R/W    Level 3 Int Autovector
+;
+;       $70.w LONG R/W    Level 4 Int Autovector (VBL)
+;
+;       $74.w LONG R/W    Level 5 Int Autovector
+;
+;       $78.w LONG R/W    Level 6 Int Autovector (MFP)
+;
+;       $7C.w LONG R/W    Level 7 Int Autovector
+;
+;                                      --- TRAP Instruction Vectors ---
+;
+;       $80.w LONG R/W    TRAP #0
+;
+;       $84.w LONG R/W    TRAP #1
+;
+;       $88.w LONG R/W    TRAP #2
+;
+;       $8C.w LONG R/W    TRAP #3
+;
+;       $90.w LONG R/W    TRAP #4
+;
+;       $94.w LONG R/W    TRAP #5
+;
+;       $98.w LONG R/W    TRAP #6
+;
+;       $9C.w LONG R/W    TRAP #7
+;
+;       $A0.w LONG R/W    TRAP #8
+;
+;       $A4.w LONG R/W    TRAP #9
+;
+;       $A8.w LONG R/W    TRAP #10
+;
+;       $AC.w LONG R/W    TRAP #11
+;
+;       $B0.w LONG R/W    TRAP #12
+;
+;       $B4.w LONG R/W    TRAP #13
+;
+;       $B8.w LONG R/W    TRAP #14
+;
+;       $BC.w LONG R/W    TRAP #15
+;
+;                                      --- Math Coprocessor Vectors (68881/68882/Internal) ---
+;
+;       $C0.w LONG R/W    FFCP Branch or Set on Unordered Condition
+;
+;       $C4.w LONG R/W    FFCP Inexact Result
+;
+;       $C8.w LONG R/W    FFCP Divide by Zero
+;
+;       $CC.w LONG R/W    FFCP Underflow
+;
+;       $D0.w LONG R/W    FFCP Operand Error
+;
+;       $D4.w LONG R/W    FFCP Overflow
+;
+;       $D8.w LONG R/W    FFCP Signaling NAN
+;
+;       $DC.w LONG R/W    (Unassigned, Reserved)
+;
+;                                      --- PMMU Coprocessor Vectors (68851/Internal) ---
+;
+;       $E0.w LONG R/W    MMU Configuration Error
+;
+;       $E4.w LONG R/W    MC68851, not used by MC68030
+;
+;       $E8.w LONG R/W    MC68851, not used by MC68030
+;
+;                                      --- Miscellaneous Vectors ---
+;
+;       $EC.w LONG R/W    (Unassigned, Reserved)
+;
+;       $F0
+;
+;       $F4
+;
+;       $F8
+;
+;       $FC
+;
+;                                      --- User Assigned Interrupt Vectors ---
+;
+;      $100.w LONG R/W    ST-MFP-0 - Centronics Busy
+;
+;      $104.w LONG R/W    ST-MFP-1 - Centronics Acknowledge
+;
+;      $108.w LONG R/W    ST-MFP-2 - MIDI Interrupt
+;
+;      $10C.w LONG R/W    ST-MFP-3 - DSP Interrupt
+;
+;      $110.w LONG R/W    ST-MFP-4 - Timer D (USART timer)
+;
+;      $114.w LONG R/W    ST-MFP-5 - Timer C (200hz Clock)
+;
+;      $118.w LONG R/W    ST-MFP-6 - IKBD/MIDI (ACIA)
+;
+;      $11C.w LONG R/W    ST-MFP-7 - IDE/SCSI/FDD Interrupt
+;
+;      $120.w LONG R/W    ST-MFP-8 - Timer B (HBL)
+;
+;      $124.w LONG R/W    ST-MFP-9 - Send Error
+;
+;      $128.w LONG R/W    ST-MFP-10 - Send buffer empty
+;
+;      $12C.w LONG R/W    ST-MFP-11 - Receive error
+;
+;      $130.w LONG R/W    ST-MFP-12 - Receive buffer full
+;
+;      $134.w LONG R/W    ST-MFP-13 - Timer A (DMA Sound)
+;
+;      $138.w LONG R/W    ST-MFP-14 - RS-232 Ring detect
+;
+;      $13C.w LONG R/W    ST-MFP-15 - GPI7 - DMA Sound Interrupt
+;
+;      $140.w LONG R/W    TT-MFP-0 (not in Falcon030)
+;        :
+;      $17C.w LONG R/W    TT-MFP-15 (not in Falcon030)
+;
+;      $180.w LONG R/W    SCC Interrupt
+;
+;      $1BC.w LONG R/W    SCC Interrupt
+;
+;      $1C0.w LONG R/W    User Defined, Unused (see SYSVECTS.SS)
+;        :
+;      $3FC.w LONG R/W    User Defined, Unused (see SYSVECTS.SS)

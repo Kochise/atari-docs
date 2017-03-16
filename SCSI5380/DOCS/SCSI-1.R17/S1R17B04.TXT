@@ -1,0 +1,990 @@
+4. Physical Characteristics
+
+This section contains the physical definition of the SCSI.  The connectors, 
+cables, signals, terminators, and bus timing needed to implement SCSI are 
+covered.
+
+4.1 Physical Description.  SCSI devices are daisy-chained together using a 
+common cable.  Both ends of the cable are terminated.  All signals are common 
+between all SCSI devices.  Two driver/receiver alternatives are available:
+
+  (1) Single-ended drivers and receivers, which allow a maximum cable length 
+of six meters (primarily for connection within a cabinet)
+
+  (2) Differential drivers and receivers, which allow a maximum cable length 
+of 25 meters (primarily for connection outside of a cabinet)
+
+4.2 Cable Requirements.  An ideal impedance match with cable terminators 
+implies a cable characteristic impedance of 132 ohms (singled-ended option) or 
+122 ohms (differential option). In general, cables with this high of a 
+characteristic impedance are not available; however, impedances that are 
+somewhat lower are satisfactory.  A characteristic impedance of 100 ohms + 10% 
+is recommended for unshielded flat or twisted pair ribbon cable.  A 
+characteristic impedance greater than 90 ohms is preferred for shielded 
+cables; however, most available cables have a somewhat lower characteristic 
+impedance.  To minimize discontinuities and signal reflections, cables of 
+different impedances should not be used in the same bus.  Implementations may 
+require trade-offs in shielding effectiveness, cable length, the number of 
+loads, transfer rates, and cost to achieve satisfactory system operation.
+
+  A minimum conductor size of 28 AWG shall be employed to minimize noise 
+effects and ensure proper distribution of optional terminator power.
+  4.2.1 Single-Ended Cable.  A 50-conductor flat cable or 25-signal twisted-
+pair cable shall be used.  The maximum cable length shall be 6.0 meters.
+
+  A stub length of no more than 0.1 meters is allowed off the mainline 
+interconnection within any connected equipment.
+
+  SCSI bus termination may be internal to the SCSI devices that are at the 
+ends of the cable.
+
+  4.2.2 Differential Cable.  A 50-conductor cable or 25-signal twisted-pair 
+cable shall be used.  The maximum cable length shall be 25 meters.
+
+  A stub length of no more than 0.2 meters is allowed off the mainline 
+interconnection within any connected equipment.
+
+  SCSI bus termination may be internal to the SCSI devices that are at the 
+ends of the cable.
+
+4.3 Connector Requirements.  Nonshielded connectors are specified.  The 
+nonshielded connectors are typically used for in-cabinet applications.  
+Appendix D defines recommended shielded connectors and their pin assignments.  
+These connectors are typically used for external applications where 
+electromagnetic compatibility (EMC) and electrostatic discharge (ESD) 
+protection may be required.  Either type of connector may be used with the 
+single-ended or differential drivers.
+
+  The nonshielded SCSI device connector (Figure 4-1) shall be a 50-conductor 
+connector consisting of two rows of 25 male pins with adjacent pins 2.54 mm 
+(0.1 in) apart.  A shroud and header body should be used.  The nonmating 
+portion of the connector is shown for reference only.
+
+  The nonshielded cable connector (Figure 4-2) shall be a 50-conductor 
+connector consisting of two rows of 25 female contacts with adjacent contacts 
+2.54 mm (0.1 in) apart.  It is recommended that keyed connectors be used.
+
+  The unshielded connector pin assignments shall be as shown in Table 4-1 for 
+single-ended drivers and as shown in Table 4-2 for differential drivers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                Figure 4-1a. Nonshielded SCSI Device Connector
+==============================================================================
+Dimensions    Millimeters    Inches
+------------------------------------------------------------------------------
+   D1          2.54          0.100 
+   D2*        82.80          3.260 
+   D3          2.54          0.100 
+   D4          4.83          0.190 
+   D5*         8.51          0.335 
+   D6*        72.64          2.860 
+   D7*        78.74          3.100 
+   D8*        13.94          0.549 
+   D9          4.19          0.165 
+   D10         6.09          0.240 
+   D11         6.60          0.260 
+==============================================================================
+NOTES:
+  (1) Fifty Contacts on 2.54-mm (0.100-inch) spacing = 60.96 mm (2.40 inch).
+  (2) Tolerances + 0.127 mm (0.005 inch) noncumulative.
+  (3) Dimensions listed with asterisks (*) are shown for reference only.
+
+
+                Figure 4-1b. Nonshielded SCSI Device Connector
+
+
+
+
+
+
+(Editors note:  Figures 4-1a and 4-1b are to be combined into a single figure 
+during the final editing.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   Figure 4-2a. Nonshielded Cable Connector
+==============================================================================
+Dimensions    Millimeters    Inches
+------------------------------------------------------------------------------
+   C1          2.5400        0.100
+   C2         60.9600        2.400
+   C3          2.5400        0.100
+   C4          8.3570        0.329
+   C5          3.3025        0.130
+   C6         68.0720        2.680
+   C7          6.0960        0.240
+   C8*         8.1530        0.321
+   C9*        13.4870        0.531
+   C10*        3.8100        0.150
+   C11*        1.2700        0.050
+   C12*        6.0960        0.240
+   C13        32.3850        1.275
+   C14         3.3020        0.130
+   C15         7.4930        0.295
+   C16         2.6670        0.105 
+   C17         1.6250        0.064
+==============================================================================
+NOTES:
+  (1) Fifty contacts on 1.27-mm (0.05-inch)* staggered spacing = 62.23 mm 
+(2.450 inch)*.
+  (2) Tolerances + 0.127 mm (0.005 inch) noncumulative.
+  (3) Dimensions listed with asterisks (*) are shown for reference only.
+
+                   Figure 4-2b. Nonshielded Cable Connector
+
+
+
+
+
+
+(Editors note:  Figures 4-2a and 4-2b are to be combined into a single figure 
+during the final editing.)
+
+(Pages 17-19 and 19.1-19.4 are deleted.  The information previously contained 
+on these pages has been moved to Appendix D.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 4-1
+                         Single-Ended Pin Assignments
+
+==============================================================================
+                            Signal      Pin Number
+------------------------------------------------------------------------------
+                            -DB(0)           2
+                            -DB(1)           4
+                            -DB(2)           6
+                            -DB(3)           8
+                            -DB(4)          10
+                            -DB(5)          12
+                            -DB(6)          14
+                            -DB(7)          16
+                            -DB(P)          18
+                            GROUND          20
+                            GROUND          22
+                            GROUND          24
+                            TERMPWR         26
+                            GROUND          28
+                            GROUND          30
+                            -ATN            32
+                            GROUND          34
+                            -BSY            36
+                            -ACK            38
+                            -RST            40
+                            -MSG            42
+                            -SEL            44
+                            -C/D            46
+                            -REQ            48
+                            -I/O            50
+==============================================================================
+NOTES:
+  (1) All odd pins except pin 25 shall be connected to ground.  Pin 25 should 
+be left open.  Some products designed prior to the generation of this standard 
+connected this pin to ground.
+  (2) The minus sign next to the signals indicates active low.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 4-2
+                         Differential Pin Assignments
+
+==============================================================================
+              Signal Name        Pin Number         Signal Name
+------------------------------------------------------------------------------
+              SHIELD GROUND      1         2        GROUND 
+              +DB(0)             3         4        -DB(0) 
+              +DB(1)             5         6        -DB(1) 
+              +DB(2)             7         8        -DB(2) 
+              +DB(3)             9        10        -DB(3) 
+              +DB(4)            11        12        -DB(4) 
+              +DB(5)            13        14        -DB(5) 
+              +DB(6)            15        16        -DB(6) 
+              +DB(7)            17        18        -DB(7) 
+              +DB(P)            19        20        -DB(P) 
+              DIFFSENS          21        22        GROUND 
+              GROUND            23        24        GROUND 
+              TERMPWR           25        26        TERMPWR
+              GROUND            27        28        GROUND 
+              +ATN              29        30        -ATN 
+              GROUND            31        32        GROUND 
+              +BSY              33        34        -BSY 
+              +ACK              35        36        -ACK 
+              +RST              37        38        -RST 
+              +MSG              39        40        -MSG 
+              +SEL              41        42        -SEL 
+              +C/D              43        44        -C/D 
+              +REQ              45        46        -REQ 
+              +I/O              47        48        -I/O 
+              GROUND            49        50        GROUND 
+==============================================================================
+NOTE:
+  (1) SHIELD GROUND is optional on some cables.  (Implementors note:  Some 
+shielded flat ribbon cables use pin 1 as a connection to the shield.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4.4 Electrical Description
+
+NOTE:  For these measurements, SCSI bus termination is assumed to be external 
+to the SCSI device.  An SCSI device may have the provision for allowing 
+optional internal termination.
+
+  4.4.1 Single-Ended Alternative.  All assigned signals shall be terminated 
+with 220 ohms to +5 volts (nominal) and 330 ohms to ground at each end of the 
+cable.  (See Figure 4-5.)  All signals shall use open-collector or three-state 
+drivers.
+
+     4.4.1.1 Output Characteristics.  Each signal driven by an SCSI device 
+shall have the following output characteristics when measured at the SCSI 
+device's connector:
+
+  Signal assertion = 0.0 volts dc to 0.4 volts dc 
+  Minimum driver output capability = 48 milliamps (sinking) at 0.5 volts dc
+  Signal negation = 2.5 volts dc to 5.25 volts dc
+
+     4.4.1.2 Input Characteristics.  Each signal received by an SCSI device 
+shall have the following input characteristics when measured at the SCSI 
+device's connector:
+
+  Signal true = 0.0 volts dc to 0.8 volts dc
+  Maximum total input load = -0.4 milliamps at 0.4 volts dc
+  Signal false = 2.0 volts dc to 5.25 volts dc
+  Minimum input hysteresis = 0.2 volts dc
+
+  4.4.2 Differential Alternative.  All signals consist of two lines denoted 
++SIGNAL and -SIGNAL.  A signal is true when +SIGNAL is more positive than 
+-SIGNAL, and a signal is false when -SIGNAL is more positive than +SIGNAL.  
+All assigned signals shall be terminated at each end of the cable as shown in 
+Figure 4-6.
+
+NOTE:  As an option, the DIFFSENS signal of the connector is reserved for an 
+active high enable for the differential drivers.  If a single-ended device or 
+terminator is inadvertently connected, this signal is grounded, disabling the 
+drivers.  (See Figure 4-7.)
+
+     4.4.2.1 Output Characteristics.  Each signal driven by an SCSI device 
+shall have the following output characteristics when measured at the SCSI 
+device's connector:
+
+   VOL (Low-level output voltage) = 2.0 V maximum at IOL (Low-level output 
+                                      current) = 55 milliamps.
+   VOH (High-level output voltage) = 3.0 V minimum at IOH (High-level output 
+                                       current) = -55 milliamps.
+   VOD (Differential voltage) = 1.0 V minimum with common-mode voltage ranges 
+                                  from -7 volts dc to +12 volts dc.
+
+  VOL and VOH shall be as measured between the output terminal and the SCSI 
+device's logic ground reference.
+
+  The output characteristics shall additionally conform to EIA RS-485-1983.
+
+     4.4.2.2 Input Characteristics.  Each signal received by an SCSI device 
+shall have the following input characteristics when measured at the SCSI 
+device's connector:
+
+  II (Input current on either input) = + 2.0 milliamps maximum.
+
+NOTE:  These characteristics include both receivers and passive drivers.
+
+  This requirement shall be met with the input voltage varying between 
+-7 volts dc and +12 volts dc, with power on or off, and with the hysteresis 
+equaling 35 millivolts, minimum.
+
+  The input characteristics shall additionally conform to EIA RS-485-1983.
+
+  4.4.3 Terminator Power (Optional).  Single-ended SCSI devices providing 
+terminator power (TERMPWR) shall have the following characteristics:
+
+  VTerm =  4.0 volts dc to 5.25 volts dc
+           800 milliamps minimum source drive capability
+           1.0 milliamp maximum sink capability (except for the purposes of 
+             providing power to an internal terminator) with 1.0 amp 
+             recommended current limiting (e.g., a fuse).
+
+  Differential SCSI devices providing terminator power (TERMPWR) shall have 
+the following characteristics:
+
+  VTerm =  4.0 volts dc to 5.25 volts dc
+           600 milliamps minimum source drive capability
+           1.0 milliamp maximum sink capability (except for the purposes of 
+             providing power to an internal terminator) with 1.0 amp 
+             recommended current limiting (e.g., a fuse).
+
+  The use of keyed connectors is recommended in SCSI devices that provide 
+terminator power to prevent accidental grounding or misconnection of 
+terminator power.
+
+  SCSI devices that supply terminator power shall do so through a diode or 
+similar semiconductor that prevents the backflow of power to the SCSI device.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               Figure 4-5. Termination for Single-Ended Devices
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               Figure 4-6. Termination for Differential Devices
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Figure 4-7. Differential Driver Protection Circuit (Optional)
+4.5 SCSI Bus.  Communication on the SCSI bus is allowed between only two SCSI 
+devices at any given time.  There is a maximum of eight SCSI devices.  Each 
+SCSI device has an SCSI ID bit assigned as shown in Figure 4-8.
+
+  When two SCSI devices communicate on the SCSI bus, one acts as an initiator 
+and the other acts as a target.  The initiator originates an operation and the 
+target performs the operation.  An SCSI device usually has a fixed role as an 
+initiator or target, but some devices may be able to assume either role.
+
+  An initiator may address up to eight peripheral devices that are connected 
+to a target.  An option allows the addressing of up to 2,048 peripheral 
+devices per target using extended messages.  Three sample system 
+configurations are shown in Figure 4-9.
+
+
+
+     DB(7) DB(6) DB(5) DB(4) DB(3) DB(2) DB(1) DB(0)  <-- DATA BUS
+     |     |     |     |     |     |     |     |
+     |     |     |     |     |     |     |     SCSI ID = 0
+     |     |     |     |     |     |     | 
+     |     |     |     |     |     |     SCSI ID = 1
+     |     |     |     |     |     |
+     |     |     |     |     |     SCSI ID = 2
+     |     |     |     |     |
+     |     |     |     |     SCSI ID = 3
+     |     |     |     |
+     |     |     |     SCSI ID = 4
+     |     |     |
+     |     |     SCSI ID = 5
+     |     |
+     |     SCSI ID = 6
+     |
+     SCSI ID = 7
+
+
+                           Figure 4-8. SCSI ID Bits
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    Figure 4-9. Sample SCSI Configurations
+  Up to eight SCSI devices can be supported on the SCSI bus.  They can be any 
+combination of initiators and targets.
+
+  Certain SCSI bus functions are assigned to the initiator and certain SCSI 
+bus functions are assigned to the target.  The initiator may arbitrate for the 
+SCSI bus and select a particular target.  The target may request the transfer 
+of COMMAND, DATA, STATUS, or other information on the DATA BUS, and in some 
+cases it may arbitrate for the SCSI bus and reselect an initiator for the 
+purpose of continuing an operation.
+
+  Information transfers on the DATA BUS are asynchronous and follow a defined 
+REQ/ACK handshake protocol.  One byte of information may be transferred with 
+each handshake.  An option is defined for synchronous data transfer.
+
+4.6 SCSI Bus Signals.  There are a total of eighteen signals.  Nine are used 
+for control and nine are used for data.  (Data signals include the parity 
+signal option).  These signals are described as follows:
+
+BSY (BUSY).  An "OR-tied" signal that indicates that the bus is being used.
+
+SEL (SELECT).  A signal used by an initiator to select a target or by a target 
+to reselect an initiator.
+
+C/D  (CONTROL/DATA).  A signal driven by a target that indicates whether 
+CONTROL or DATA information is on the DATA BUS.  True indicates CONTROL.
+
+I/O (INPUT/OUTPUT).  A signal driven by a target that controls the direction 
+of data movement on the DATA BUS with respect to an initiator. True indicates 
+input to the initiator.  This signal is also used to distinguish between 
+SELECTION and RESELECTION phases.
+
+MSG (MESSAGE).  A signal driven by a target during the MESSAGE phase.
+
+REQ (REQUEST).  A signal driven by a target to indicate a request for a 
+REQ/ACK data transfer handshake.
+
+ACK (ACKNOWLEDGE).  A signal driven by an initiator to indicate an 
+acknowledgment for a REQ/ACK data transfer handshake.
+
+ATN (ATTENTION).  A signal driven by an initiator to indicate the ATTENTION 
+condition.
+
+RST (RESET).  An "OR-tied" signal that indicates the RESET condition.
+
+DB(7-0,P) (DATA BUS).  Eight data-bit signals, plus a parity-bit signal that 
+form a DATA BUS.   DB(7) is the most significant bit and has the highest 
+priority during the ARBITRATION phase.  Bit number, significance, and priority 
+decrease downward to DB(0).  A data bit is defined as one when the signal 
+value is true and is defined as zero when the signal value is false.
+
+  Data parity DB(P) is odd.  The use of parity is a system option (i.e., a 
+system is configured so that all SCSI devices on a bus generate parity and 
+have parity detection enabled, or all SCSI devices have parity detection 
+disabled or not implemented).  Parity is not valid during the ARBITRATION 
+phase.
+
+  4.6.1 Signal Values.  Signals may assume true or false values.  There are 
+two methods of driving these signals.  In both cases, the signal shall be 
+actively driven true, or asserted. In the case of OR-tied drivers, the driver 
+does not drive the signal to the false state, rather the bias circuitry of the 
+bus terminators pulls the signal false whenever it is released by the drivers 
+at every SCSI device.  If any driver is asserted, then the signal is true.  In 
+the case of non-OR-tied drivers, the signal may be actively driven false, or 
+negated.  In this standard, wherever the term negated is used, it means that 
+the signal may be actively driven false, or may be simply released (in which 
+case the bias circuitry pulls it false), at the option of the implementor.  
+The advantage to actively drive signals false is that the transition from true 
+to false occurs more quickly, and noise margins may be somewhat improved; this 
+may permit somewhat faster data transfer. 
+
+  4.6.2 OR-Tied Signals.  The BSY and RST signals shall be OR-tied only.  In 
+the ordinary operation of the bus, these signals are simultaneously driven 
+true by several drivers.  No signals other than BSY, RST, and DB(P) are 
+simultaneously driven by two or more drivers, and any signal other than BSY 
+and RST may employ OR-tied or non-OR-tied drivers.  DB(P) shall not be driven 
+false during the ARBITRATION phase.  There is no operational problem in mixing 
+OR-tied and non-OR-tied drivers on signals other than BSY and RST.
+
+  4.6.3 Signal Sources.  Table 4-3 indicates which type of SCSI device is 
+allowed to source each signal.  No attempt is made to show if the source is 
+driving asserted, driving negated, or is passive.  All SCSI device drivers 
+that are not active sources shall be in the passive state.  Note that the RST 
+signal may be sourced by any SCSI device at any time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  Table 4-3
+                                Signal Sources
+
+==============================================================================
+                                             Signals
+                    ----------------------------------------------------------
+                                          C/D, I/O,
+Bus Phase           BSY       SEL         MSG, REQ     ACK/ATN       DB(7-0,P)
+------------------------------------------------------------------------------
+BUS FREE            None      None        None         None          None
+ARBITRATION         All       Winner      None         None          SCSI ID
+SELECTION           I&T       Initiator   None         Initiator     Initiator
+RESELECTION         I&T       Target      Target       Initiator     Target
+COMMAND             Target    None        Target       Initiator     Initiator
+DATA IN             Target    None        Target       Initiator     Target
+DATA OUT            Target    None        Target       Initiator     Initiator
+STATUS              Target    None        Target       Initiator     Target
+MESSAGE IN          Target    None        Target       Initiator     Target
+MESSAGE OUT         Target    None        Target       Initiator     Initiator
+==============================================================================
+
+All:          The signal shall be driven by all SCSI  devices that are 
+              actively arbitrating.
+
+SCSI ID:      A unique data bit (the SCSI ID) shall be driven by each SCSI 
+              device that is actively arbitrating; the other seven data bits 
+              shall be released (i.e., not driven) by this SCSI device.  The 
+              parity bit (DB(P)) may be undriven or driven to the true state, 
+              but shall never be driven to the false state during this phase.
+
+I&T:          The signal shall be driven by the initiator, target, or both, as 
+              specified in the SELECTION phase and RESELECTION phase.
+
+Initiator:    If this signal is driven, it shall be driven only by the active 
+              initiator.
+
+None:         The signal shall be released; that is, not be driven by any SCSI 
+              device.  The bias circuitry of the bus terminators pulls the 
+              signal to the false state.
+
+Winner:       The signal shall be driven by the one SCSI device that wins 
+              arbitration.
+
+Target:       If the signal is driven, it shall be driven only by the active 
+              target.
+
+
+
+
+
+
+
+
+
+
+4.7 SCSI Bus Timing.  Unless otherwise indicated, the delay-time measurements 
+for each SCSI device, shown in 4.7.1 through 4.7.14, shall be calculated from 
+signal conditions existing at that SCSI device's own SCSI bus connection.  
+Thus, these measurements (except cable skew delay) can be made without 
+considering delays in the cable.
+
+  4.7.1 Arbitration Delay (2.2 microseconds).  The minimum time an SCSI device 
+shall wait from asserting BSY for arbitration until the DATA BUS can be 
+examined to see if arbitration has been won.  There is no maximum time.
+
+  4.7.2 Assertion Period (90 nanoseconds).  The minimum time that a target 
+shall assert REQ while using synchronous data transfers.  Also, the minimum 
+time that an initiator shall assert ACK while using synchronous data 
+transfers.
+
+  4.7.3 Bus Clear Delay (800 nanoseconds).  The maximum time for an SCSI 
+device to stop driving all bus signals after:
+
+  (1) The BUS FREE phase is detected (BSY and SEL both false for a bus settle 
+delay)
+  (2) SEL is received from another SCSI device during the ARBITRATION phase
+  (3) The transition of RST to true.
+
+NOTE:  For the first condition above, the maximum time for an SCSI device to 
+clear the bus is 1200 nanoseconds from BSY and SEL first becoming both false.  
+If an SCSI device requires more than a bus settle delay to detect BUS FREE 
+phase, it shall clear the bus within a bus clear delay minus the excess time.
+
+  4.7.4 Bus Free Delay (800 nanoseconds).  The minimum time that an SCSI 
+device shall wait from its detection of the BUS FREE phase (BSY and SEL both 
+false for a bus settle delay) until its assertion of BSY when going to the 
+ARBITRATION phase.
+
+  4.7.5 Bus Set Delay (1.8 microseconds).  The maximum time for an SCSI device 
+to assert BSY and its SCSI ID bit on the DATA BUS after it detects BUS FREE 
+phase (BSY and SEL both false for a bus settle delay) for the purpose of 
+entering the ARBITRATION phase.
+
+  4.7.6 Bus Settle Delay (400 nanoseconds).  The time to wait for the bus to 
+settle after changing certain control signals as called out in the protocol 
+definitions.
+
+  4.7.7 Cable Skew Delay (10 nanoseconds).  The maximum difference in 
+propagation time allowed between any two SCSI bus signals when measured 
+between any two SCSI devices.
+
+  4.7.8 Data Release Delay (400 nanoseconds).  The maximum time for an 
+initiator to release the DATA BUS signals following the transition of the I/O 
+signal from false to true.
+
+  4.7.9 Deskew Delay (45 nanoseconds).  The minimum time required for deskew 
+of certain signals.
+
+  4.7.10 Hold Time (45 nanoseconds).  The minimum time added between the 
+assertion of REQ or ACK and the changing of the data lines to provide hold 
+time in the initiator or target, respectively, while using synchronous data 
+transfers.
+
+  4.7.11 Negation Period (90 nanoseconds).  The minimum time that a target 
+shall negate REQ while using synchronous data transfers.  Also, the minimum 
+time that an initiator shall negate ACK while using synchronous data 
+transfers.
+
+  4.7.12 Reset Hold Time (25 microseconds).  The minimum time for which RST is 
+asserted.  There is no maximum time.
+
+  4.7.13 Selection Abort Time (200 microseconds).  The maximum time that a 
+target (or initiator) shall take from its most recent detection of being 
+selected (or reselected) until asserting a BSY response.  This timeout is 
+required to ensure that a target (or initiator) does not assert BSY after a 
+SELECTION (or RESELECTION) phase has been aborted.  This is not the selection 
+timeout period; see Sections 5.1.3.5 and 5.1.4.2 for a complete description.
+
+  4.7.14 Selection Timeout Delay (250 milliseconds, recommended).  The minimum 
+time that an initiator (or target) should wait for a BSY response during the 
+SELECTION (or RESELECTION) phase before starting the timeout procedure.  Note 
+that this is only a recommended time period.  The specifications for the 
+peripheral devices shall be consulted for the actual timing requirements.
+
+  4.7.15 Transfer Period (set during a MESSAGE phase).  The Transfer Period 
+specifies the minimum time allowed between the leading edges of successive REQ 
+pulses and of successive ACK pulses while using synchronous data transfers.  
+(See Sections 5.1.5.2 and 5.5.5.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+; /// SSAVCALL 3.02 - ATARI Configuration - ATARI Falcon030 - KOSS 2000 ///////
+
+; Author   : Kochise
+; Date     : 07/29/07/2000
+; Type     : HARDWARE Informations
+; Language : None
+; Sequence : None
+; Purpose  : ATARI Falcon030 Memory Configuration Register
+
+; Machina  : ATARI Falcon030
+; O.S.     : SSAVCALL 3
+
+; ### HardWare Informations ###################################################
+; Address     Size Status Name         Purpose
+; $FFFF8006.w WORD R/W    Falcon030 Processor Control /
+;
+;                         BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+;                           Falcon030 StdConfig : x x x x 0 1 1 0 0 1 1 0 0 1 0 1 
+;                                                 | | | | | | | | x | | x | | x |
+;                                                 | | | | | | | |   | |   | |   |
+;                         MonitorTYPE ------------+-' | | | | | |   | |   | |   |
+;                             MonoChrom Monitor : 0 0 | | | | | |   | |   | |   |
+;                             RGB Color Monitor : 0 1 | | | | | |   | |   | |   |
+;                             VGA Color Monitor : 1 0 | | | | | |   | |   | |   |
+;                             TV Color PAL/NTSC : 1 1 | | | | | |   | |   | |   |
+;                         MemoryCardSIZE -------------+-' | | | |   | |   | |   |
+;                                              1 Mb : 0 0 | | | |   | |   | |   |
+;                                              4 Mb : 0 1 | | | |   | |   | |   |
+;                                             16 Mb : 1 0 | | | |   | |   | |   |
+;                                          Reserved : 1 1 | | | |   | |   | |   |
+;                                                         | | | |   | |   | |   |
+;                         ROM Wait Status ----------------+-' | |   | |   | |   |
+;                                              Reserved : 0 0 | |   | |   | |   |
+;                                      2 Wait (Default) : 0 1 | |   | |   | |   |
+;                                      1 Wait           : 1 0 | |   | |   | |   |
+;                                      0 Wait           : 1 1 | |   | |   | |   |
+;                         VIDEL BusSIZE ----------------------' |   | |   | |   |
+;                                         16 Bits           : 0 |   | |   | |   |
+;                                         32 Bits (Default) : 1 |   | |   | |   |
+;                         RAM Wait Status ----------------------'   | |   | |   |
+;                                            1 Wait (Default) : 0   | |   | |   |
+;                                            0 Wait             1   | |   | |   |
+;                                                                   | |   | |   |
+;                         RESET Method -----------------------------' |   | |   |
+;                                                       ColdRESET : 0 |   | |   |
+;                                                Check 'memvalid' : 1 |   | |   |
+;                         Falcon030 BUS Mode -------------------------'   | |   |
+;                                                 STE Emulation BUS : 0   | |   |
+;                                              Falcon030 Normal BUS : 1   | |   |
+;                                                                         | |   |
+;                         BLiTTER Mode -----------------------------------' |   |
+;                                                                   OFF : 0 |   |
+;                                                                    ON : 1 |   |
+;                         BLiTTER Speed ------------------------------------'   |
+;                                                                   8 MHz : 0   |
+;                                                                  16 MHz : 1   |
+;                         CPU (68030) Speed ------------------------------------'
+;                                                                       8 MHz : 0
+;                                                                      16 MHz : 1
+;
+; $FFFF9200.w BYTE R/W    Switches
+;
+;                         BitField            BIT 7 6 5 4 3 2 1 0
+;                                                 | | | x x x x x
+;                                                 | | |
+;                         DMA Sound --------------' | |
+;                         Floppy Disk DriveTYPE ----+-'
+;                                    DD           : 0 0
+;                                 HD/DD (Default) : 0 1
+;                              ED/HD/DD           : 1 0
+;                                        Reserved : 1 1
+;
+B         765_____  Switches
+                          |||
+                          |++------ Diskettenlaufwerk - Typ
+                          |         00 = DD
+                          |         01 = DD/HD (default)
+                          |         10 = DD/HD/ED
+                          |         11 = reserviert
+                          +-------- Sound DMA vorhanden

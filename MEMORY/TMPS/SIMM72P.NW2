@@ -1,0 +1,102 @@
+In article <D8Ks3p.4Ln@hkpu01.hkp.hk> benoni@encws8 (Benoni C. K. Lee) writes:
+
+>   Benoni C. K. Lee (benoni@encws8) wrote:
+>   : I had read from the GIICM.ZIP about the pin definitions of the
+>   : 30 pin SIMM ram.
+>   : But how about the pins definitions of the 72 pins ones?
+
+>   Please help! The news server I read do not got the replies and
+>   can not see the discussions just past.
+
+>   Could anybody please repost and mail the definitions to me :
+>   benoni@encserver.en.polyu.edu.hk
+
+>   I really your help.
+
+>   Thank you in advance,
+>   Benoni Lee.
+
+From a previous response:
+
+Here it goes (from the MICRON 1994 DRAM DATA BOOK, p3-197):
+
+Pin-#   Signal
+1       Vss
+2       DQ1
+3       DQ19
+4       DQ2
+5       DQ20
+6       DQ3
+7       DQ21
+8       DQ4
+9       DQ22
+10      Vcc
+11      NC
+12      A0
+13      A1
+14      A2
+15      A3
+16      A4
+17      A5
+18      A6
+19      A10
+20      DQ5
+21      DQ23
+22      DQ6
+23      DQ24
+24      DQ7
+25      DQ25
+26      DQ8
+27      DQ26
+28      A7
+29      NC
+30      Vcc
+31      A8
+32      A9
+33      /RAS3
+34      /RAS2
+35      DQ27
+36      DQ9
+37      DQ18
+38      DQ36
+39      Vss
+40      /CAS0
+41      /CAS2
+42      /CAS3
+43      /CAS1
+44      /RAS0
+45      /RAS1
+46      NC
+47      /WE
+48      NC
+49      DQ10
+50      DQ28
+51      DQ11
+52      DQ29
+53      DQ12
+54      DQ30
+55      DQ13
+56      DQ31
+57      DQ14
+58      DQ32
+59      Vcc
+60      DQ33
+61      DQ15
+62      DQ34
+63      DQ16
+64      DQ25
+65      DQ17
+66      NC
+67      PRD1
+68      PRD2
+69      PRD3
+70      PRD4
+71      NC
+72      Vss
+
+The PRD pins are either open or shorted to Vss (GND) and code the module´s 
+size and access time. BUT: every manufacturer seems to have his own code!
+
+Hope that helps.
+Stefan
+

@@ -1,0 +1,126 @@
+**** INPUT ********************************************************************
+
+                  ,------------------------------------------------------------------------,
+                  | > WRITE <                        SJM                                   |
+                  | PAD A    PAD A    PAD A    PAD A     PAD B    PAD B    PAD B    PAD B  |
+                  | BIT 7  | BIT 6  | BIT 5  | BIT 4  || BIT 3  | BIT 2  | BIT 1  | BIT 0  |
+,-----------------+--------+--------+--------+--------++--------+--------+--------+--------+-----------------,
+| > READ <  BIT 2 |        |        |        | PAUSE  ||        |        |        | PAUSE  | BIT 0  > READ < |
+|  GJFSS          +--------+--------+--------+--------++--------+--------+--------+--------+          GJFSS  |
+|           BIT 3 | OPTION | Fire C | Fire B | Fire A || OPTION | Fire C | Fire B | Fire A | BIT 1           |
++-----------------+--------+--------+--------+--------++--------+--------+--------+--------+-----------------+
+| > READ <  BIT 7 |   N3   |   N2   |   N1   | RIGHT  ||   N3   |   N2   |   N1   | RIGHT  | BIT 3  > READ < |
+|                 +--------+--------+--------+--------++--------+--------+--------+--------+                 |
+|           BIT 6 |   N6   |   N5   |   N4   |  LEFT  ||   N6   |   N5   |   N4   |  LEFT  | BIT 2           |
+|  GJDNS          +--------+--------+--------+--------++--------+--------+--------+--------+          GJDNS  |
+|           BIT 5 |   N9   |   N8   |   N7   |  LOW   ||   N9   |   N8   |   N7   |  LOW   | BIT 1           |
+|                 +--------+--------+--------+--------++--------+--------+--------+--------+                 |
+|           BIT 4 |   N#   |   N0   |   N*   |  HIGH  ||   N#   |   N0   |   N*   |  HIGH  | BIT 0           |
+'-----------------'--------'--------'--------'--------''--------'--------'--------'--------'-----------------'
+
+How to Look for a Button ? For example : PabB OPTION is Held Down...
+
+1st Step : Clear BIT 3 of SetJoypadMask -> Selection of Column 'PadB OPTION/N3/N6/N9/N#'
+2nd Step : Test  BIT 1 of GetFirSpeStat -> Selection of Row    'PadB FIREA/FIREB/FIREC/OPTION'
+3rd Step : IF BIT 1 of GetFirSpeStat is LOW/0
+             THEN OPTION is Held Down
+             ELSE NOT !
+           ENDIF
+           
+**** OUTPUT *******************************************************************
+
+
+
+
+
+JOYPAD_A_ADDR_TABLE -> JOYPAD_A_ADDR_DIRECTION -> Routine Invoked on DIRECTION Event
+                       JOYPAD_A_ADDR_FIRE      -> Routine Invoked on FIRE Event
+                       JOYPAD_A_ADDR_SPECIAL   -> Routine Invoked on SPECIAL Event
+                       JOYPAD_A_ADDR_PAUSE     -> Routine Invoked on PAUSE Event
+                       JOYPAD_A_ADDR_OPTION    -> Routine Invoked on OPTION Event
+                       JOYPAD_A_ADDR_RESET     -> Routine Invoked on RESET Event
+                       JOYPAD_A_ADDR_MUSIC     -> Routine Invoked on MUSIC Event
+                       JOYPAD_A_ADDR_NUMERIC   -> Routine Invoked on NUMERIC Event
+
+JOYPAD_B_ADDR_TABLE -> JOYPAD_B_ADDR_DIRECTION -> Routine Invoked on DIRECTION Event
+                       JOYPAD_B_ADDR_FIRE      -> Routine Invoked on FIRE Event
+                       JOYPAD_B_ADDR_SPECIAL   -> Routine Invoked on SPECIAL Event
+                       JOYPAD_B_ADDR_PAUSE     -> Routine Invoked on PAUSE Event
+                       JOYPAD_B_ADDR_OPTION    -> Routine Invoked on OPTION Event
+                       JOYPAD_B_ADDR_RESET     -> Routine Invoked on RESET Event
+                       JOYPAD_B_ADDR_MUSIC     -> Routine Invoked on MUSIC Event
+                       JOYPAD_B_ADDR_NUMERIC   -> Routine Invoked on NUMERIC Event
+
+When a Routine is Invoked, U gad in :
+
+  D0.w : Parameter of the Routine (see just below)
+  D1.w : Status  0 - Same Status
+                -1 - Released / Status changed to NULL
+              else - Previous Parameter / Different Status
+  D2.w : JoyPAD  1 - PadA
+                 0 - PadB
+
+For the DIRECTION Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           0 0 0 0 0 0 0 0 0 0 0 0 | | | |
+                                                                        | | | |
+                        PadX RIGHT -------------------------------------' | | |
+                        PadX LEFT ----------------------------------------' | |
+                        PadX LOW -------------------------------------------' |
+                        PadX HI ----------------------------------------------'
+
+For the FIRE Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           0 0 0 0 0 0 0 0 0 0 0 0 0 | | |
+                                                                          | | |
+                        PadX FIREC ---------------------------------------' | |
+                        PadX FIREB -----------------------------------------' |
+                        PadX FIREA -------------------------------------------'
+
+For the SPECIAL Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           0 0 0 0 0 0 0 0 0 0 0 0 0 0 | |
+                                                                            | |
+                        PadX OPTION ----------------------------------------' |
+                        PadX PAUSE -------------------------------------------'
+
+For the PAUSE Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
+                                                                              |
+                        PadX PAUSE -------------------------------------------'
+
+For the OPTION Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
+                                                                              |
+                        PadX OPTION ------------------------------------------'
+
+For the RESET Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           | | | | | | | | | | | | | | | |
+                                                | | | | | | | | | | | | | | | |
+                        PadX RESET -------------+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-'
+
+For the MUSIC Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           | | | | | | | | | | | | | | | |
+                                                | | | | | | | | | | | | | | | |
+                        PadX MUSIC -------------+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-'
+
+For the NUMERIC Event, in D0.w :
+                        BitField            BIT F E D C B A 9 8 7 6 5 4 3 2 1 0
+                        > ACTIVE HI <           0 0 0 0 | | | | | | | | | | | |
+                                                        | | | | | | | | | | | |
+                        PadX N# ------------------------' | | | | | | | | | | |
+                        PadX N0 --------------------------' | | | | | | | | | |
+                        PadX N* ----------------------------' | | | | | | | | |
+                        PadX N9 ------------------------------' | | | | | | | |
+                        PadX N8 --------------------------------' | | | | | | |
+                        PadX N7 ----------------------------------' | | | | | |
+                        PadX N6 ------------------------------------' | | | | |
+                        PadX N5 --------------------------------------' | | | |
+                        PadX N4 ----------------------------------------' | | |
+                        PadX N3 ------------------------------------------' | |
+                        PadX N2 --------------------------------------------' |
+                        PadX N1 ----------------------------------------------'

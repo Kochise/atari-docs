@@ -1,0 +1,27 @@
+
+ Ce debugger et son source sont places dans le Domaine Public.
+
+ Vous etes libre de distribuer et modifier ce source dans le	 
+ but de l'ameliorer ou de l'adapter a d'autres machines telles que	 
+ l'Hades ou le Milan A LA CONDITION EXPRESSE de ne pas en tirer un	 
+ profit pecunier et de TOUJOURS distribuer le source avec l'executable .
+ 
+ La version executable initiale est prevue pour Falcon030 muni d'un
+ ecran VGA. La gestion du RVB est incluse dans ce source, ainsi que	 
+ le changement de frequence de balayage 50/60 hz(non disponible en VGA).
+ 
+ Une fenetre d'aide decrivant les fonctions du debugger peut etre
+ obtenue par appui sur la touche <Help>.
+                                          
+ This debugger and the associated source are Public Domain.
+ 
+ You can freely distribute and modify this source in order to                                    
+ increase its possibilities or adapt it to others computers such
+ Hades or Milan YET you can not sell it and MUST ALWAYS distribute
+ the source file with the executable file.
+ 
+ Initial executable version is for Falcon030 with a VGA screen. 
+ Source file includes RGB routines and overscan key (of course not
+ on VGA screen).
+ 
+ You can access to an Help window by pressing <Help> key.

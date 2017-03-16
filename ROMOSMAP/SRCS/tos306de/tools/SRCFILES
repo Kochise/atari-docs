@@ -1,0 +1,8 @@
+SRCS = cmprom.c newglue.c findrsc.c mkbininc.c mkrom.c
+
+
+EXTRA_DIST = \
+	GNUmakefile \
+	Makefile \
+	SRCFILES \
+	$(empty)

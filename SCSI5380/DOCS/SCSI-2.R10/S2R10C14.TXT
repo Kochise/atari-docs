@@ -1,0 +1,1265 @@
+14. Scanner Devices
+
+
+14.1. Model for Scanner Devices
+
+  Scanner devices generate a digital representation of two or three 
+dimensional objects (e.g., a page of text, a photograph, or a piece of art). 
+This is accomplished by sensing the amount of light reflected from the object 
+and generating the digital data.  The digital data can then be sent across the 
+SCSI bus to an initiator for further processing.
+
+  There are two types of scanners in use; in one type, the operations and 
+functions of the scanner are fixed; in the other type, the operations and 
+functions are programmable and need to be set up prior to being used for 
+scanning objects.
+
+  The scanner device generates the data and transfers it in accordance with 
+the commands received from the initiator.  The contents of the data is vendor 
+specific, therefore the initiator and the scanner must know how to use the 
+contents of the data.
+
+  Scanners generate a digital image of an object in a two dimensional plane.  
+The x-axis dimension is along the cross-scan direction which is perpendicular 
+to the direction in which a scan occurs.  The y-axis dimension is along the 
+scan direction and is parallel to the direction in which a scan occurs.  The 
+coordinates are measured from the upper left hand corner of the two 
+dimensional plane.  The x-axis measurement increases in a positive manner 
+going from left to right.  The left side of the the two dimensional plane 
+(i.e., where x equals zero) is called the base element line.  The y-axis 
+measurement increases in a positive manner going from top to bottom.  The top 
+side of the two dimensional plane (i.e. where y equals zero) is called the 
+base line.  The scanning range encompasses the area in which the scanner can 
+operate.  It is the area from the scan line and base line to the maximum x and 
+y position.  These conventions are adopted to aid in understanding the fields 
+within the command descriptor blocks and parameters used for scanner devices.  
+As such this is a conceptual model and may not accurately reflect the physical 
+device.
+
+  The displacements used for positioning windows is independent of the 
+resolution with which a window is scanned.  The measurement of displacements 
+is controlled by the scan measurement mode parameters.
+
+  In the event of a scanner automatic creation of sub-windows within a defined 
+window (i.e., the auto bit in the DEFINE WINDOW parameters is one), one of the 
+following responses is appropriate:
+  1)  the initiator may issue a GET WINDOW PARAMETERS command prior to any 
+READ commands
+  2)  if the initiator issues a READ command before issuing a GET WINDOW 
+PARAMETERS command, the target shall return CHECK CONDITION status.  The ILI 
+and valid bits in the sense data shall be set to one.  The initiator should 
+then issue a GET WINDOW PARAMETERS command.  This feature is useful when the 
+scanner has the ability to distinguish between image and text data and to 
+define windows accordingly.
+
+
+  It may occur that a scanner device temporarily does not have resources 
+available to manage a data transfer from the initiator or does not have data 
+available to transfer to the initiator.  One of the following responses is 
+appropriate in such a case: 
+  1) A CHECK CONDITION status is returned and the sense key is set to NOT 
+READY with the appropriate additional sense code.  This is response is 
+applicable to a TEST UNIT READY command.
+  2) The target disconnects until the resource or data is available, and then 
+re-connects to resume the operation.
+  3) A BUSY status is returned.
+
+  If the scanner device determines that an error or exception condition has 
+occurred while executing the SCSI command from the initiator, a CHECK 
+CONDITION status is returned.  A REQUEST SENSE command can then be used to 
+determine additional information regarding the error or exception condition.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+14.2. Commands for Scanner Devices
+
+  The commands for scanner devices shall be as shown in Table 14-1.
+
+                   Table 14-1: Commands for Scanner Devices
+
+==============================================================================
+                                Operation
+Command Name                       Code   Type    Section     Page
+------------------------------------------------------------------------------
+CHANGE DEFINITION                  40h      O      7.2.1 
+COMPARE                            39h      O      7.2.2
+COPY                               18h      O      7.2.3
+COPY AND VERIFY                    3Ah      O      7.2.4
+GET DATA BUFFER STATUS             34h      O     14.2.1
+GET WINDOW                         25h      O     14.2.2
+INQUIRY                            12h      M      7.2.5
+LOG SELECT                         4Ch      O      7.2.6
+LOG SENSE                          4Dh      O      7.2.7
+MODE SELECT(6)                     15h      O      7.2.8
+MODE SELECT(10)                    55h      O      7.2.9
+MODE SENSE(6)                      1Ah      O      7.2.10
+MODE SENSE(10)                     5Ah      O      7.2.11
+OBJECT POSITION                    31h      O     14.2.3
+READ                               28h      M     14.2.4
+READ BUFFER                        3Ch      O      7.2.12
+RECEIVE DIAGNOSTIC RESULTS         1Ch      O      7.2.13
+RELEASE UNIT                       17h      M      9.2.9
+REQUEST SENSE                      03h      M      7.2.14
+RESERVE UNIT                       16h      M      9.2.10
+SCAN                               1Bh      O     14.2.5
+SET WINDOW                         24h      M     14.2.6
+SEND                               2Ah      O     14.2.7
+SEND DIAGNOSTIC                    1Dh      M      7.2.15
+TEST UNIT READY                    00h      M      7.2.16
+WRITE BUFFER                       3Bh      O      7.2.17
+==============================================================================
+
+
+  Key: M  =  Command implementation is mandatory.
+       O  =  Command implementation is optional.
+
+  All other operation codes for scanner devices are  reserved for future 
+standardization.
+
+
+
+
+
+
+
+
+
+
+
+14.2.1. GET DATA BUFFER STATUS Command
+
+                  Table 14-2: GET DATA BUFFER STATUS Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (34h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |            Reserved               |  Wait  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   | (MSB)                                                                 |
+-----|---                        Allocation Length                        ---|
+ 8   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The GET DATA BUFFER STATUS command (Table 14-2) provides a means for the 
+initiator to get information about the data buffer.  Information is returned 
+only for window identifiers for which a SCAN command has been received (see 
+14.1.9).
+
+  A wait bit of zero indicates that the target shall respond immediately.  A 
+wait bit of one indicates that the target shall wait for image data to be 
+available before returning scan status data.  
+
+  The data buffer status data format is defined in Table 14-3.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    Table 14-3: Data Buffer Status Format
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 1   |                           Data Buffer Status Length                   |
+-----|---                                                                 ---|
+ 2   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                           |  Block |
+==============================================================================
+     |                           Data Buffer Status Descriptor(s)            |
+==============================================================================
+ 0   |                           Window Identifier                           |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Available Data Buffer                       |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 6   |                           Filled Data Buffer                          |
+-----|---                                                                 ---|
+ 7   |                                                                 (LSB) |
+==============================================================================
+
+
+  The data buffer status length indicates the length in bytes of the following 
+scan status data that is available to be transferred during the DATA IN phase. 
+The data buffer status length does not include itself.  The data buffer status 
+data transferred to the initiator includes zero or more data buffer status 
+descriptors.  Each descriptor returns information for the window specified by 
+the window identifier.
+
+  The block bit specifies the buffering capabilities of the scanner.  A block 
+bit of one indicates that the data buffer is full and all image data must be 
+transferred to the initiator before the scan operation resumes.  A block bit 
+of zero indicates that data buffer is not full and scan operations can 
+continue with the available data buffer space.
+
+  The available data buffer field indicates in bytes, the amount of buffer 
+available for transfers from the initiator.  This field is valid only in 
+scanners with the ability to accept data from an initiator for processing.  
+
+  The filled data buffer field indicates the amount of image data in bytes 
+available for transfer to the initiator.
+
+
+14.2.2. GET WINDOW Command
+
+                        Table 14-4: GET WINDOW Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (25h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |              Reserved             | Single |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Window Identifier                           |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 7   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 8   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The GET WINDOW command (Table 14-4) provides a means for the initiator to 
+get information about previously defined windows.
+
+  A single bit of one specifies that a single window descriptor be returned 
+for the specified window identifier.  A single bit of zero specifies that 
+window descriptors be returned for all window identifiers that were defined by 
+a SET WINDOWS command or by the target if the automatic bit was set to one. 
+
+  The get window data shall consist of a header followed by one or more window 
+descriptors (see Tables 14-5, 14-6, and 14-7).  Each window descriptor 
+specifies the location, size and scanning method used for a window.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       Table 14-5: Get Window Data Header
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   | (MSB)                                                                 |
+-----|---                        Window Data Length                       ---|
+ 1   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                        Window Descriptor Length                 ---|
+ 7   |                                                                 (LSB) |
+==============================================================================
+
+
+  The window data length specifies the length in bytes of the following data 
+that is available to be transferred.  The window data length does not include 
+itself.  If the allocation length is not sufficient to return all the get 
+window data the window data length shall not be adjusted to reflect the 
+truncation data. 
+
+  The window descriptor length specifies the length in bytes of a single 
+window descriptor.  Each descriptor shall be of equal length.  The first 
+forty-eight bytes are defined in this standard and the remaining bytes in each 
+descriptor are vendor specific.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   Table 14-6: Window Descriptor Bytes (1-23)
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Window Identifier                           |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                           |  Auto  |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                        X-Axis Resolution                        ---|
+ 3   |                                                                 (LSB) |
+-----|-+---------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Y-Axis Resolution                        ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+- - -|- - -                      X-Axis Upper Left                      - - -|
+ 9   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 10  | (MSB)                                                                 |
+- - -|- - -                      Y-Axis Upper Left                      - - -|
+ 13  |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 14  | (MSB)                                                                 |
+- - -|- - -                      Window Width                           - - -|
+ 17  |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 18  | (MSB)                                                                 |
+- - -|- - -                      Window Length                          - - -|
+ 21  |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 22  |                           Brightness                                  |
+-----|-----------------------------------------------------------------------|
+ 23  |                           Threshold                                   |
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                Table 14-7: Window Descriptor Bytes (24 - 39)
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 24  |                           Contrast                                    |
+-----|-----------------------------------------------------------------------|
+ 25  |                           Image Composition                           |
+-----|-----------------------------------------------------------------------|
+ 26  |                           Bits Per Pixel                              |
+-----|-----------------------------------------------------------------------|
+ 27  | (MSB)                                                                 |
+-----|-+-                        Halftone Pattern                         ---|
+ 28  |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 29  |  RIF   |                  Reserved         |      Padding Type        |
+-----|-----------------------------------------------------------------------|
+ 30  | (MSB)                                                                 |
+-----|---                        Bit Ordering                             ---|
+ 31  |                                                                 (LSB) |
+-----|-+---------------------------------------------------------------------|
+ 32  |                           Compression Type                            |
+-----|-----------------------------------------------------------------------|
+ 33  |                           Compression Argument                        |
+-----|-----------------------------------------------------------------------|
+34 to|                                                                       |
+- - -|- - -                      Reserved                               - - -|
+ 39  |                                                                       |
+-----|-----------------------------------------------------------------------|
+40 to|                                                                       |
+- - -|- - -              Vendor Specific Parameter Byte(s)              - - -|
+  n  |                                                                       |
+==============================================================================
+
+
+  The window identifier specifies the window defined by the window descriptor. 
+A window is referenced by the window identifier during data transfers and 
+parameter updates.
+
+  When used with the SET WINDOW command, an automatic (auto) bit of one 
+indicates that the target is allowed to create sub-windows within the window 
+specified.  An auto bit of zero indicates that target is not allowed to create 
+sub-windows.
+
+  When used with the GET WINDOW command, an auto bit of zero indicates that 
+the window was defined directly by the SET WINDOW command.  A value of one 
+indicates that the window was defined by the target.  This is a sub-window 
+within a window defined by a SET WINDOW command.
+
+  The window identifiers assigned by the target shall be unique and not 
+currently in use.  The parameters for the sub-windows may be retrieved using 
+the GET WINDOW command.
+
+
+  The x-axis resolution field specifies the resolution in the scan line 
+direction.  The unit of measure is picture elements (pixels) per inch.  A 
+value of zero specifies the default resolution.  
+
+  The y-axis resolution field specifies the resolution in the base line 
+direction.  The unit of measure is scan lines per inch.  A value of zero 
+specifies the default resolution.  
+
+  The x-axis upper left field specifies the x-axis coordinate of the upper 
+left corner of the window.  This coordinate is measured from the scan line 
+using the target's current measurement unit divisor (see 14.3.3.1).
+
+  The y-axis upper left field specifies the y-axis coordinate of the upper 
+left corner of the window.  This coordinate is measured from the base line 
+using target's current measurement unit divisor (see 14.3.3.1).
+
+  The window width field specifies the width of window in the scan line 
+direction.  The window width is measured using the target's current 
+measurement unit divisor (see 14.3.3.1).
+
+  The window length field specifies the length of the window in the base line 
+direction.  The window length is measured using the target's current 
+measurement unit divisor (see 14.3.3.1).
+
+  The brightness field specifies the level of brightness used to scan the 
+object.  A value of zero specifies the default brightness or automatic 
+brightness control if it is supported.  Any other value indicates a relative 
+brightness setting with 255 being the highest setting, one being the lowest 
+setting, and 128 being the nominal setting.
+
+  The threshold field specifies the threshold at which scan data is converted 
+to binary data.  A value of zero specifies the the default threshold or 
+automatic threshold control if it is supported.  Any other value indicates 
+relative threshold setting with 255 being the highest setting, one being the 
+lowest setting, and 128 being the nominal setting.
+
+  The contrast field specifies the level of contrast used to scan the object.  
+A value of zero specifies the default contrast or automatic contrast control 
+if it is supported.  Any other value indicates a relative contrast setting 
+with 255 being the highest setting, one being the lowest setting, and 128 
+being the nominal setting.
+
+  The halftone field specifies the level of halftone at which the scan data is 
+converted to binary data.  The values in this field are vendor specific.  The 
+halftone field is used in conjunction with the image composition field.
+
+  The image composition field specifies the type of scan operation requested.  
+The image composition is defined as shown in Table 14-8.
+
+
+
+
+
+
+
+                     Table 14-8: Image Composition Codes
+
+==============================================================================
+  Code        Description
+------------------------------------------------------------------------------
+   00h        Bi-level black & white
+   01h        Dithered/halftone black & white
+   02h        Multi-level black & white (gray scale)
+   03h        Bi-level RGB Color
+   04h        Dithered/halftone RGB Color
+   05h        Multi-level RGB Color
+06h - FFh     Reserved
+==============================================================================
+
+
+  The bits per pixel field specifies the number of bits used to represent the 
+intensity of a single color.
+
+  A reverse image format (RIF) bit of zero indicates that white pixels are to 
+be indicated by zeros and black pixels are to be indicated by ones.  A RIF bit 
+of one indicates that white pixels are to be indicated by ones and black 
+pixels are to be indicated by zeros.  The RIF bit is applicable only for 
+images represented by one bit per pixel.  
+
+  The padding type field specifies how the target shall pad the image data 
+transmitted to the initiator if it is not an integral number of bytes.  The 
+padding type is defined in Table 14-9.
+
+                          Table 14-9: Padding Types
+
+==============================================================================
+  Code        Description
+------------------------------------------------------------------------------
+   00h        No padding
+   01h        Pad with 0's to byte boundary
+   02h        Pad with 1's to byte boundary
+   03h        Truncate to byte boundary
+04h - 07h     Reserved
+==============================================================================
+
+
+  The bit ordering field specifies the order in which data is transferred to 
+the host from the window.  The bit ordering specifies the direction of pixels 
+in a scan line, the direction of scan lines within a window and the image data 
+packing within a byte.  The values in this field are vendor specific.  
+
+  The compression type and compression argument fields specify the compression 
+technique to be applied to the image data (see Table 14-10).
+
+
+
+
+
+
+
+                 Table 14-10: Compression Types and Arguments
+
+==============================================================================
+Compression   Description                            Compression             
+  Code                                                Argument               
+------------------------------------------------------------------------------
+   00h        No compression                          Reserved
+   01h        CCITT Group III, 1 dimensional          Reserved
+   02h        CCITT Group III, 2 dimensional          K factor
+   03h        CCITT Group IV, 2 dimensional           Reserved
+04h - 0Fh     Reserved                                Reserved
+   10h        Optical Character Recognition (OCR)     Vendor Specific
+11h - 7Fh     Reserved                                Reserved
+80h - FFh     Vendor Specific                         Vendor Specific
+==============================================================================
+
+
+
+14.2.3. OBJECT POSITION Command
+
+                     Table 14-11: OBJECT POSITION Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (31h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |    Reserved     |      Position Function   |
+-----|-----------------------------------------------------------------------|
+ 2   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 3   |                           Count                                       |
+-----|---                                                                 ---|
+ 4   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 8   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The OBJECT POSITION command (Table 14-11) provides positioning functions.  
+Absolute as well as relative positioning is provided.   A target shall return 
+CHECK CONDITION status and set the sense key to ILLEGAL REQUEST if a 
+positioning function is requested that is not supported.
+
+  The position function field specifies the requested function (see Table 14-
+12).
+
+  The count field is used with the position function to specify the 
+displacement of the object.
+
+                        Table 14-12: Position Function
+
+                   =======================================
+                   Position Function  Description
+                   -----------------  --------------------
+                         000b         Unload Object
+                         001b         Load Object
+                         010b         Absolute Positioning
+                         011b         Relative Positioning
+                         100b         Rotate Object
+                         101b         Reserved
+                         110b         Reserved
+                         111b         Reserved
+                   =======================================
+
+Unload Object.  This position function specifies that the object shall be 
+positioned for removal.  If upon receipt of this command there is no object 
+loaded, the target shall return a GOOD status.  This condition shall not be 
+considered as an error.  If the target is unable to unload the object (i.e., 
+paper jam or misfeed condition), the target shall return CHECK CONDITION 
+status and set the sense key sense to MEDIUM ERROR.
+
+Load object.  This position function specifies that the object is to be loaded 
+and positioned to the base line.  If upon receipt of this command there is a 
+object already loaded, the target shall returns GOOD status.  This condition 
+shall not be considered as an error.  If an object is not loaded and the 
+target is unable to load an object, the target shall return CHECK CONDITION 
+status and set the EOM bit to one and the sense key to MEDIUM ERROR.
+
+Absolute Positioning.  This position function specifies that the object is to 
+be positioned at a y-axis displacement from the base line.  The y-axis 
+displacement is determined using the count field and the target's current 
+measurement unit divisor (see 14.3.3.1).  A count field of zero positions the 
+object at the base line.  
+
+  Any other value in the count field shall cause the target to position the 
+object that number of units in the scan line direction.  If there is no object 
+loaded or if the specified y-axis displacement is not achieved the target 
+shall return CHECK CONDITION status and set the EOM bit to one and the sense 
+key to MEDIUM ERROR.
+
+Relative Positioning.  This position function specifies that the object is to 
+be positioned at a y-axis displacement relative to the current position.  The 
+y-axis displacement is determined using the count field and the target's 
+current measurement unit divisor (see 14.3.3.1).  A count field of zero causes 
+no change in position of the object.  
+
+
+
+
+
+  A positive value in the count field shall cause the target to position the 
+object that number of units in the scan line direction.  If the scan range is 
+exceeded the target shall return CHECK CONDITION status.  The EOM bit is set 
+to one,  the ILI bit is set to one, and sense key is set to MEDIUM ERROR.  The 
+valid bit is set to one and the information bytes are set to the difference 
+(residue) between the requested count and the actual number of units moved.  
+
+  A negative value (e.g., twos complement notation) in the count field shall 
+cause the target to position the object that number of units toward the base 
+line.  If there is no object loaded or if the specified y-axis displacement is 
+not achieved the target shall return CHECK CONDITION status and set the EOM 
+bit to one and the sense key to MEDIUM ERROR.  If the base line is encountered 
+the target shall position the object at the base line and return CHECK 
+CONDITION status.  The ILI bit is set to one and the sense key is set to 
+MEDIUM ERROR.  The valid bit is set to one and the information bytes are set 
+to the difference (residue) between the requested count and the actual number 
+of units moved.
+
+Rotate object.  This position function specifies that the object is to be 
+rotated in a counter-clockwise direction in units of one one-thousandth of a 
+degree.  The count field specifies the number of units that the object is to 
+be moved.
+
+14.2.4. READ Command
+
+                           Table 14-13: READ Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (28h)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved                       |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Data Type Code                              |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Data Type Qualifier                      ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 7   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 8   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The READ command (Table 14-13) requests that the target transfer data to the 
+initiator.
+
+  The transfer data type distinguishes between the different types of data 
+which may be transferred between the initiator and the target.  The types of 
+transfers are specified in Table 14-14.
+
+                         Table 14-14: Data Type Codes
+
+        ==========================================================
+          Code           Description
+        ----------------------------------------------------------
+           00h           Image 
+           01h           Vendor Specific
+           02h           Halftone Mask 
+           03h           Gamma Function
+        04h - 7Fh        Reserved
+        80h - FFh        Vendor Specific
+        ==========================================================
+
+
+  The data type qualifier field provides a means to differentiate data 
+transfers of the same data type code.  The values used in this field are 
+vendor specific. 
+
+  The transfer length specifies the number of blocks the target shall transfer 
+to the initiator during the DATA IN phase.  The block size is the current 
+block size in the mode parameters block descriptor (see 7.3.3).  A transfer 
+length of zero, is not considered an error and no data shall be transferred.  
+
+  If the target transfers less than transfer length blocks a CHECK CONDITION 
+status shall be returned.   The ILI bit is set to one, the valid bit is set to 
+one, and the information bytes are set to the difference (residue) between the 
+requested transfer length and the actual number of blocks transferred. 
+
+  This command shall be terminated with a status of RESERVATION CONFLICT if 
+any reservation access conflict (see 9.2.10) exists and no data shall be 
+transferred.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+14.2.5. SCAN Command
+
+                           Table 14-15: SCAN Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (1Bh)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Control                                     |
+==============================================================================
+
+
+  The SCAN command (Table 14-15) requests the target begin a scan operation.
+
+  The transfer length specifies the length in bytes of the window identifier 
+list that shall be sent during the DATA OUT phase.  A transfer length of zero 
+indicates that no data shall be transferred.  This condition shall not be 
+considered as an error.
+
+  The window identifier list consists of zero or more window identifiers each 
+of which specifies a window to be scanned. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+14.2.6. SEND Command
+
+                           Table 14-16: SEND Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (2Ah)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |             Reserved                       |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Data Type Code                              |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Data Type Qualifier                      ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 7   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 8   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The SEND command (Table 14-16) transfers data from the initiator to the 
+target.
+
+  The data type code and data type qualifier are defined in the READ command 
+(see 14.2.5). 
+
+  The transfer length specifies the number of blocks the target shall transfer 
+from the initiator during the DATA OUT phase.  The block size is the current 
+block size in the mode parameters block descriptor (see 7.3.3).  A transfer 
+length of zero, is not considered an error and no data shall be transferred.  
+
+  This command shall be terminated with a status of RESERVATION CONFLICT if 
+any reservation access conflict (see 9.2.10) exists and no data shall be 
+transferred.
+
+
+
+
+
+
+
+
+
+
+
+14.2.7. SET WINDOW Command
+
+                        Table 14-17: SET WINDOW Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code (24H)                        |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                                                                 ---|
+ 7   |                           Transfer Length                             |
+-----|---                                                                 ---|
+ 8   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 9   |                           Control                                     |
+==============================================================================
+
+
+  The SET WINDOW command (Table 14-17) provides a means for the initiator to 
+specify one or more windows within the scanning range of the device.
+
+  The transfer length specifies the length in bytes of the data that shall be 
+sent during the DATA OUT phase.  A transfer length of zero indicates that no 
+window parameters data shall be transferred.  This condition shall not be 
+considered as an error.
+
+  The window parameters data shall consist of a header followed by one or more 
+window descriptors (see Tables 14-18, 14-6, and 14-7).  Each window descriptor 
+specifies the location, size and scanning method used for a window.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       Table 14-18: Set Window Data Header
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 6   | (MSB)                                                                 |
+-----|---                        Window Descriptor Length                 ---|
+ 7   |                                                                 (LSB) |
+==============================================================================
+
+
+  The window descriptor length specifies the length in bytes of a single 
+window descriptor.  Each descriptor shall be of equal length.  The first 
+forty-eight bytes are defined in this standard and the remaining bytes in each 
+descriptor are vendor specific.
+
+  See Tables 14-6 and 14-7 for the definition of a window descriptor.
+
+14.3. Parameters for Scanner Devices
+
+14.3.1. Diagnostic Parameters
+
+  This section defines the descriptors and pages for diagnostic parameters 
+used with scanner devices. 
+
+  The diagnostic page codes for scanner devices are defined in Table 14-19.
+
+                      Table 14-19: Diagnostic Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+   00h        Supported Diagnostic Pages                            7.3.1.1
+01h - 7Fh     Reserved 
+80h - FFh     Vendor-specific pages
+==============================================================================
+
+
+
+
+
+
+14.3.2. Log Parameters
+
+  This section defines the descriptors and pages for log parameters used with 
+scanner devices. 
+
+  The log page codes for scanner devices are defined in Table 14-20.
+
+                          Table 14-20: Log Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+   01h        Buffer Over-Run/Under-Run Page                        7.3.2.1
+   03h        Error Counter Page (Read) Page                        7.3.2.2
+   07h        Last n Error Events Page                              7.3.2.3
+   06h        Non-Medium Error Page                                 7.3.2.4
+   00h        Supported Log Pages                                   7.3.2.5
+08h - 2Fh     Reserved                              
+   3Fh        Reserved                              
+30h - 3Eh     Vendor-specific pages
+==============================================================================
+
+
+14.3.3. Mode Parameters
+
+  This section defines the descriptors and pages for mode parameters used with 
+scanner devices. 
+
+  The mode parameter list, including the mode parameter header and mode block 
+descriptor is defined in 7.3.3.
+
+  The medium-type code field is contained in the mode parameter header (see 
+Tables 7-61 and 7-62).  This field is reserved for scanners devices.
+
+  The device specific parameter field is contained in the mode parameter 
+header (see Tables 7-61 and 7-62).  This field is reserved for scanners 
+devices.
+
+  The density code field is contained in the mode parameter block descriptor 
+(see Table 7-63).  This field is reserved for scanners devices.
+
+  The mode page codes for scanner devices are defined in Table 14-21.
+
+
+
+
+
+
+
+
+
+
+
+
+
+                         Table 14-21: Mode Page Codes
+
+==============================================================================
+  Page Code   Description                                           Section
+------------------------------------------------------------------------------
+   0Ah        Control Mode Page                                     7.3.3.1
+   02h        Disconnect-Reconnect Page                             7.3.3.2
+   03h        Measurement Units Page                               14.3.3.1
+   09h        Peripheral Device Page                                7.3.3.3
+   01h        Reserved
+03h - 08h     Reserved                                              
+0Bh - 1Fh     Reserved
+   3Fh        Returns all pages (valid only for the MODE SENSE command)
+20h - 3Eh     Vendor-specific pages (page format required)
+   00h        Vendor Specific (does not require page format)       
+==============================================================================
+
+14.3.3.1. Measurement Units Page
+
+                      Table 14-22: Measurement Units Page
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    |
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |   PS   |Reserved|         Page Code (03h)                             |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Parameter Length (06h)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Basic Measurement Unit                      |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   | (MSB)                                                                 |
+-----|---                        Measurement Unit Divisor                 ---|
+ 5   |                                                                 (LSB) |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Reserved                                    |
+==============================================================================
+
+
+  The measurement units page (Table 14-22) specifies the units of measurement 
+used for calculating the displacement of window and for positioning an object.
+  The measurement units are independent of the horizontal and vertical scan 
+resolutions.  
+
+
+  The parameters savable (PS) bit is only used with the MODE SENSE command.  
+This bit is reserved for the MODE SELECT command.  A PS bit of one indicates 
+that the target is capable of saving the page in a non-volatile vendor-
+specific location.
+
+
+  The basic measurement unit field is defined in Table 14-23.  Targets shall 
+use inches as the default basic measurement unit.
+
+                     Table 14-23: Basic Measurement Units
+
+==============================================================================
+ Code         Description
+---------     ----------------------------------------------------------------
+   00h        Inch
+   01h        Millimeter
+   02h        Point
+03h - FFh     Reserved
+==============================================================================
+
+
+  The measurement unit divisor specifies the number of units needed to equal 
+one basic measurement unit.  Targets shall use 1200 as the default measurement 
+unit divisor.  If a value of zero is specified the target shall return CHECK 
+CONDITION status and set the sense key to ILLEGAL REQUEST.
+
+  IMPLEMENTORS NOTE:  A target which does not implement this page or only 
+  supports default values uses one twelve-hundredths (1/1200) of an inch as 
+  the unit of measure.
+
+
+14.4. Glossary for Scanner Devices
+
+base element line.  A x-axis displacement equal to zero.
+
+base line.  A y-axis displacement equal to zero.
+
+beginning-of-medium. A x-axis and y-axis of zero displacement.  Alternatively 
+this is being positioned at the intersection of the base and scan lines.
+
+end-of-medium.  The maximum x-axis and y-axis displacement.
+
+image.  The digital result of a scan.
+
+object.  The original or item being scanned.
+
+pixel.  Picture-element, is the smallest photo sight in the array.
+
+platen.  The surface in which the target is positioned.
+
+scan.  An operation that generates a digital image from the reflected light of 
+an object.
+
+scan line.  A y-axis displacement from the base line.
+
+scanning range.  The total area that a scanner can generate an image from.  
+For two dimensional objects this may correspond to the largest object that can 
+be scanned.
+
+window.  All or part of the scanning range of a scanner.  A window defines the 
+part of the object scanned.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

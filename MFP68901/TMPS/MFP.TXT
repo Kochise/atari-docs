@@ -1,0 +1,38 @@
+**************************************************************************
+Multi-Function-Peripheral MC 68901
+**************************************************************************
+
+$FFFFFA01 [R/W] B         76543210  GPIP-Data
+                          ||||||||
+                          |||||||+- Centronics BUSY
+                          ||||||+-- Centronics ACK
+                          |||||+--- MIDI-Interrupt
+                          ||||+---- DSP-Interrupt
+                          |||+----- Keybord-/MIDI-Interrupt
+                          ||+------ Harddisk-/Floppy-Interrupt
+                          |+------- Ring Indicator
+                          +-------- SND-Interrupt
+
+$FFFFFA03 [R/W] B         76543210  Active-Edge
+$FFFFFA05 [R/W] B         76543210  Data-Direction
+$FFFFFA07 [R/W] B         76543210  Interrupt-Enable A
+$FFFFFA09 [R/W] B         76543210  Interrupt-Enable B
+$FFFFFA0B [R/W] B         76543210  Interrupt-Pending A
+$FFFFFA0D [R/W] B         76543210  Interrupt-Pending B
+$FFFFFA0F [R/W] B         76543210  Interrupt-In-Service A
+$FFFFFA11 [R/W] B         76543210  Interrupt-In-Service B
+$FFFFFA13 [R/W] B         76543210  Interrupt-Mask A
+$FFFFFA15 [R/W] B         76543210  Interrupt-Mask B
+$FFFFFA17 [R/W] B         76543210  Interrupt-Vektor
+$FFFFFA19 [R/W] B         76543210  Timer-A-Control
+$FFFFFA1B [R/W] B         76543210  Timer-B-Control
+$FFFFFA1D [R/W] B         76543210  Timer-C+D-Control
+$FFFFFA1F [R/W] B         76543210  Timer-A-Data
+$FFFFFA21 [R/W] B         76543210  Timer-B-Data
+$FFFFFA23 [R/W] B         76543210  Timer-C-Data
+$FFFFFA25 [R/W] B         76543210  Timer-D-Data
+$FFFFFA27 [R/W] B         76543210  Synchronous-Character
+$FFFFFA29 [R/W] B         76543210  USART-Control
+$FFFFFA2B [R/W] B         76543210  Receiver-Status
+$FFFFFA2D [R/W] B         76543210  Transmitter-Status
+$FFFFFA2F [R/W] B         76543210  USART-Data

@@ -1,0 +1,8 @@
+OPTIMIZE_SRCS = optimize.c xomain.c
+OPTIMIZE_OBJS = $(OPTIMIZE_SRCS:.c=.o)
+FIXNOPS_SRCS = fixnops.c
+FIXNOPS_OBJS = $(FIXNOPS_SRCS:.c=.o)
+
+SRCS = $(OPTIMIZE_SRCS) $(FIXNOPS_SRCS)
+
+EXTRA_DIST = GNUmakefile Makefile SRCFILES optimize.mak optimize.lnk

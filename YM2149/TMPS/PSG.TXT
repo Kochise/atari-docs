@@ -1,0 +1,25 @@
+**************************************************************************
+PSG-Soundchip  AY-3-8910
+**************************************************************************
+
+$FFFF8800 [R/-] B         76543210  Read Data
+$FFFF8800 [-/W] B         76543210  Register Selection
+$FFFF8802 [R/W] B         76543210  Write Data
+
+Hinweis: Die PSG-Register sind jetzt auf 2 Adressen festgelegt. Ein Zugriff auf
+die Schattenregister ($8804.w - $8900.w) erzeugt einen Busfehler.
+
+Belegung PSG - Port A:
+76543_10
+||||||||
+|||||||+---  Floppy Side Select
+||||||+---- Drive 0 Select
+|||||+----- nicht belegt
+||||+------ Centronics SELECT IN
+|||+------- DSP Reset
+||+-------- Centronics STROBE
+|+--------- Lautsprecher ein/aus
++---------- IDE - Reset
+
+Belegung PSG - Port B: Centronics Data0 ... Data7
+

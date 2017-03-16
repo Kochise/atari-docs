@@ -1,0 +1,290 @@
+<!doctype html public "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>sys/dev/uart/uart_dev_z8530.h</title>
+<base href="http://fxr.watson.org/fxr/">
+</head>
+
+<body bgcolor=white>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/uart/uart_dev_z8530.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<h1 align=center>
+  FreeBSD/Linux Kernel Cross Reference
+<!--  <a href="http:blurb.html">
+    Cross Reference</a>--><br>
+  <a href="source/">sys</a>/<a href="source/dev/">dev</a>/<a href="source/dev/uart/">uart</a>/<a href="source/dev/uart/uart_dev_z8530.h">uart_dev_z8530.h</a>
+</h1>
+
+<div align=center>
+  
+  <b>Version:</b>
+   ~ <b>[</b>&nbsp;<b><i>HEAD</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=RELENG52">RELENG52</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=RELENG51">RELENG51</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=RELENG50">RELENG50</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=RELENG49">RELENG49</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=RELENG4">RELENG4</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=RELENG3">RELENG3</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=linux-2.4.22">linux-2.4.22</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=linux-2.6.0">linux-2.6.0</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=linux-2.6.1">linux-2.6.1</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=DFBSD">DFBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=NETBSD">NETBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=OPENBSD">OPENBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=DARWIN7">DARWIN7</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=OPENDARWIN">OPENDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=TRUSTEDBSD-MAC">TRUSTEDBSD-MAC</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=TRUSTEDBSD-CAP">TRUSTEDBSD-CAP</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=TRUSTEDBSD-SEBSD">TRUSTEDBSD-SEBSD</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=TRUSTEDBSD-SEDARWIN">TRUSTEDBSD-SEDARWIN</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=netperf-socket">netperf-socket</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=rwatson-netperf">rwatson-netperf</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="source/dev/uart/uart_dev_z8530.h?v=TRUSTEDBSD-SEDARWIN73">TRUSTEDBSD-SEDARWIN73</a>&nbsp;<b>]</b> ~
+  <br>
+</div>
+<hr>
+<pre>  <a name=L1 href="source/dev/uart/uart_dev_z8530.h#L1">1</a> <b><i>/*</i></b>
+  <a name=L2 href="source/dev/uart/uart_dev_z8530.h#L2">2</a> <b><i> * Copyright (c) 2003 Marcel Moolenaar</i></b>
+  <a name=L3 href="source/dev/uart/uart_dev_z8530.h#L3">3</a> <b><i> * All rights reserved.</i></b>
+  <a name=L4 href="source/dev/uart/uart_dev_z8530.h#L4">4</a> <b><i> *</i></b>
+  <a name=L5 href="source/dev/uart/uart_dev_z8530.h#L5">5</a> <b><i> * Redistribution and use in source and binary forms, with or without</i></b>
+  <a name=L6 href="source/dev/uart/uart_dev_z8530.h#L6">6</a> <b><i> * modification, are permitted provided that the following conditions</i></b>
+  <a name=L7 href="source/dev/uart/uart_dev_z8530.h#L7">7</a> <b><i> * are met:</i></b>
+  <a name=L8 href="source/dev/uart/uart_dev_z8530.h#L8">8</a> <b><i> *</i></b>
+  <a name=L9 href="source/dev/uart/uart_dev_z8530.h#L9">9</a> <b><i> * 1. Redistributions of source code must retain the above copyright</i></b>
+ <a name=L10 href="source/dev/uart/uart_dev_z8530.h#L10">10</a> <b><i> *    notice, this list of conditions and the following disclaimer.</i></b>
+ <a name=L11 href="source/dev/uart/uart_dev_z8530.h#L11">11</a> <b><i> * 2. Redistributions in binary form must reproduce the above copyright</i></b>
+ <a name=L12 href="source/dev/uart/uart_dev_z8530.h#L12">12</a> <b><i> *    notice, this list of conditions and the following disclaimer in the</i></b>
+ <a name=L13 href="source/dev/uart/uart_dev_z8530.h#L13">13</a> <b><i> *    documentation and/or other materials provided with the distribution.</i></b>
+ <a name=L14 href="source/dev/uart/uart_dev_z8530.h#L14">14</a> <b><i> *</i></b>
+ <a name=L15 href="source/dev/uart/uart_dev_z8530.h#L15">15</a> <b><i> * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR</i></b>
+ <a name=L16 href="source/dev/uart/uart_dev_z8530.h#L16">16</a> <b><i> * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES</i></b>
+ <a name=L17 href="source/dev/uart/uart_dev_z8530.h#L17">17</a> <b><i> * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.</i></b>
+ <a name=L18 href="source/dev/uart/uart_dev_z8530.h#L18">18</a> <b><i> * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,</i></b>
+ <a name=L19 href="source/dev/uart/uart_dev_z8530.h#L19">19</a> <b><i> * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT</i></b>
+ <a name=L20 href="source/dev/uart/uart_dev_z8530.h#L20">20</a> <b><i> * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,</i></b>
+ <a name=L21 href="source/dev/uart/uart_dev_z8530.h#L21">21</a> <b><i> * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY</i></b>
+ <a name=L22 href="source/dev/uart/uart_dev_z8530.h#L22">22</a> <b><i> * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</i></b>
+ <a name=L23 href="source/dev/uart/uart_dev_z8530.h#L23">23</a> <b><i> * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF</i></b>
+ <a name=L24 href="source/dev/uart/uart_dev_z8530.h#L24">24</a> <b><i> * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</i></b>
+ <a name=L25 href="source/dev/uart/uart_dev_z8530.h#L25">25</a> <b><i> *</i></b>
+ <a name=L26 href="source/dev/uart/uart_dev_z8530.h#L26">26</a> <b><i> * $FreeBSD: src/sys/dev/uart/uart_dev_z8530.h,v 1.1 2003/09/06 23:13:47 marcel Exp $</i></b>
+ <a name=L27 href="source/dev/uart/uart_dev_z8530.h#L27">27</a> <b><i> */</i></b>
+ <a name=L28 href="source/dev/uart/uart_dev_z8530.h#L28">28</a> 
+ <a name=L29 href="source/dev/uart/uart_dev_z8530.h#L29">29</a> #ifndef <a href="ident?i=_DEV_UART_DEV_Z8530_H_">_DEV_UART_DEV_Z8530_H_</a>
+ <a name=L30 href="source/dev/uart/uart_dev_z8530.h#L30">30</a> #define <a href="ident?i=_DEV_UART_DEV_Z8530_H_">_DEV_UART_DEV_Z8530_H_</a>
+ <a name=L31 href="source/dev/uart/uart_dev_z8530.h#L31">31</a> 
+ <a name=L32 href="source/dev/uart/uart_dev_z8530.h#L32">32</a> <b><i>/*</i></b>
+ <a name=L33 href="source/dev/uart/uart_dev_z8530.h#L33">33</a> <b><i> * Channel B control:   0</i></b>
+ <a name=L34 href="source/dev/uart/uart_dev_z8530.h#L34">34</a> <b><i> * Channel B data:      1</i></b>
+ <a name=L35 href="source/dev/uart/uart_dev_z8530.h#L35">35</a> <b><i> * Channel A control:   2</i></b>
+ <a name=L36 href="source/dev/uart/uart_dev_z8530.h#L36">36</a> <b><i> * Channel A data:      3</i></b>
+ <a name=L37 href="source/dev/uart/uart_dev_z8530.h#L37">37</a> <b><i> *</i></b>
+ <a name=L38 href="source/dev/uart/uart_dev_z8530.h#L38">38</a> <b><i> * We expect a seperate subregion for each channel.</i></b>
+ <a name=L39 href="source/dev/uart/uart_dev_z8530.h#L39">39</a> <b><i> */</i></b>
+ <a name=L40 href="source/dev/uart/uart_dev_z8530.h#L40">40</a> #define <a href="ident?i=REG_CTRL">REG_CTRL</a>        0
+ <a name=L41 href="source/dev/uart/uart_dev_z8530.h#L41">41</a> #define <a href="ident?i=REG_DATA">REG_DATA</a>        1
+ <a name=L42 href="source/dev/uart/uart_dev_z8530.h#L42">42</a> 
+ <a name=L43 href="source/dev/uart/uart_dev_z8530.h#L43">43</a> <b><i>/* Write registers. */</i></b>
+ <a name=L44 href="source/dev/uart/uart_dev_z8530.h#L44">44</a> #define <a href="ident?i=WR_CR">WR_CR</a>           0       <b><i>/* Command Register. */</i></b>
+ <a name=L45 href="source/dev/uart/uart_dev_z8530.h#L45">45</a> #define <a href="ident?i=WR_IDT">WR_IDT</a>          1       <b><i>/* Interrupt and Data Transfer Mode. */</i></b>
+ <a name=L46 href="source/dev/uart/uart_dev_z8530.h#L46">46</a> #define <a href="ident?i=WR_IV">WR_IV</a>           2       <b><i>/* Interrupt Vector (shared). */</i></b>
+ <a name=L47 href="source/dev/uart/uart_dev_z8530.h#L47">47</a> #define <a href="ident?i=WR_RPC">WR_RPC</a>          3       <b><i>/* Receive Parameters and Control. */</i></b>
+ <a name=L48 href="source/dev/uart/uart_dev_z8530.h#L48">48</a> #define <a href="ident?i=WR_MPM">WR_MPM</a>          4       <b><i>/* Miscellaneous Parameters and Modes. */</i></b>
+ <a name=L49 href="source/dev/uart/uart_dev_z8530.h#L49">49</a> #define <a href="ident?i=WR_TPC">WR_TPC</a>          5       <b><i>/* Transmit Parameters and Control. */</i></b>
+ <a name=L50 href="source/dev/uart/uart_dev_z8530.h#L50">50</a> #define <a href="ident?i=WR_SCAF">WR_SCAF</a>         6       <b><i>/* Sync Character or (SDLC) Address Field. */</i></b>
+ <a name=L51 href="source/dev/uart/uart_dev_z8530.h#L51">51</a> #define <a href="ident?i=WR_SCF">WR_SCF</a>          7       <b><i>/* Sync Character or (SDCL) Flag. */</i></b>
+ <a name=L52 href="source/dev/uart/uart_dev_z8530.h#L52">52</a> #define <a href="ident?i=WR_EFC">WR_EFC</a>          7       <b><i>/* Extended Feature and FIFO Control. */</i></b>
+ <a name=L53 href="source/dev/uart/uart_dev_z8530.h#L53">53</a> #define <a href="ident?i=WR_TB">WR_TB</a>           8       <b><i>/* Transmit Buffer. */</i></b>
+ <a name=L54 href="source/dev/uart/uart_dev_z8530.h#L54">54</a> #define <a href="ident?i=WR_MIC">WR_MIC</a>          9       <b><i>/* Master Interrupt Control (shared). */</i></b>
+ <a name=L55 href="source/dev/uart/uart_dev_z8530.h#L55">55</a> #define <a href="ident?i=WR_MCB1">WR_MCB1</a>         10      <b><i>/* Miscellaneous Control Bits (part 1 :-). */</i></b>
+ <a name=L56 href="source/dev/uart/uart_dev_z8530.h#L56">56</a> #define <a href="ident?i=WR_CMC">WR_CMC</a>          11      <b><i>/* Clock Mode Control. */</i></b>
+ <a name=L57 href="source/dev/uart/uart_dev_z8530.h#L57">57</a> #define <a href="ident?i=WR_TCL">WR_TCL</a>          12      <b><i>/* BRG Time Constant Low. */</i></b>
+ <a name=L58 href="source/dev/uart/uart_dev_z8530.h#L58">58</a> #define <a href="ident?i=WR_TCH">WR_TCH</a>          13      <b><i>/* BRG Time Constant High. */</i></b>
+ <a name=L59 href="source/dev/uart/uart_dev_z8530.h#L59">59</a> #define <a href="ident?i=WR_MCB2">WR_MCB2</a>         14      <b><i>/* Miscellaneous Control Bits (part 2 :-). */</i></b>
+ <a name=L60 href="source/dev/uart/uart_dev_z8530.h#L60">60</a> #define <a href="ident?i=WR_IC">WR_IC</a>           15      <b><i>/* Interrupt Control. */</i></b>
+ <a name=L61 href="source/dev/uart/uart_dev_z8530.h#L61">61</a> 
+ <a name=L62 href="source/dev/uart/uart_dev_z8530.h#L62">62</a> <b><i>/* Read registers. */</i></b>
+ <a name=L63 href="source/dev/uart/uart_dev_z8530.h#L63">63</a> #define <a href="ident?i=RR_BES">RR_BES</a>          0       <b><i>/* Buffer and External Status. */</i></b>
+ <a name=L64 href="source/dev/uart/uart_dev_z8530.h#L64">64</a> #define <a href="ident?i=RR_SRC">RR_SRC</a>          1       <b><i>/* Special Receive Condition. */</i></b>
+ <a name=L65 href="source/dev/uart/uart_dev_z8530.h#L65">65</a> #define <a href="ident?i=RR_IV">RR_IV</a>           2       <b><i>/* Interrupt Vector. */</i></b>
+ <a name=L66 href="source/dev/uart/uart_dev_z8530.h#L66">66</a> #define <a href="ident?i=RR_IP">RR_IP</a>           3       <b><i>/* Interrupt Pending (ch A only). */</i></b>
+ <a name=L67 href="source/dev/uart/uart_dev_z8530.h#L67">67</a> #define <a href="ident?i=RR_MPM">RR_MPM</a>          4       <b><i>/* Miscellaneous Parameters and Modes. */</i></b>
+ <a name=L68 href="source/dev/uart/uart_dev_z8530.h#L68">68</a> #define <a href="ident?i=RR_TPC">RR_TPC</a>          5       <b><i>/* Transmit Parameters and Control. */</i></b>
+ <a name=L69 href="source/dev/uart/uart_dev_z8530.h#L69">69</a> #define <a href="ident?i=RR_BCL">RR_BCL</a>          6       <b><i>/* Byte Count Low. */</i></b>
+ <a name=L70 href="source/dev/uart/uart_dev_z8530.h#L70">70</a> #define <a href="ident?i=RR_BCH">RR_BCH</a>          7       <b><i>/* Byte Count High. */</i></b>
+ <a name=L71 href="source/dev/uart/uart_dev_z8530.h#L71">71</a> #define <a href="ident?i=RR_RB">RR_RB</a>           8       <b><i>/* Receive Buffer. */</i></b>
+ <a name=L72 href="source/dev/uart/uart_dev_z8530.h#L72">72</a> #define <a href="ident?i=RR_RPC">RR_RPC</a>          9       <b><i>/* Receive Parameters and Contro. */</i></b>
+ <a name=L73 href="source/dev/uart/uart_dev_z8530.h#L73">73</a> #define <a href="ident?i=RR_MSB">RR_MSB</a>          10      <b><i>/* Miscellaneous Status Bits. */</i></b>
+ <a name=L74 href="source/dev/uart/uart_dev_z8530.h#L74">74</a> #define <a href="ident?i=RR_MCB1">RR_MCB1</a>         11      <b><i>/* Miscellaneous Control Bits (part 1). */</i></b>
+ <a name=L75 href="source/dev/uart/uart_dev_z8530.h#L75">75</a> #define <a href="ident?i=RR_TCL">RR_TCL</a>          12      <b><i>/* BRG Time Constant Low. */</i></b>
+ <a name=L76 href="source/dev/uart/uart_dev_z8530.h#L76">76</a> #define <a href="ident?i=RR_TCH">RR_TCH</a>          13      <b><i>/* BRG Time Constant High. */</i></b>
+ <a name=L77 href="source/dev/uart/uart_dev_z8530.h#L77">77</a> #define <a href="ident?i=RR_EFC">RR_EFC</a>          14      <b><i>/* Extended Feature and FIFO Control. */</i></b>
+ <a name=L78 href="source/dev/uart/uart_dev_z8530.h#L78">78</a> #define <a href="ident?i=RR_IC">RR_IC</a>           15      <b><i>/* Interrupt Control. */</i></b>
+ <a name=L79 href="source/dev/uart/uart_dev_z8530.h#L79">79</a> 
+ <a name=L80 href="source/dev/uart/uart_dev_z8530.h#L80">80</a> <b><i>/* Buffer and External Status (RR0). */</i></b>
+ <a name=L81 href="source/dev/uart/uart_dev_z8530.h#L81">81</a> #define <a href="ident?i=BES_BRK">BES_BRK</a>         0x80    <b><i>/* Break (Abort). */</i></b>
+ <a name=L82 href="source/dev/uart/uart_dev_z8530.h#L82">82</a> #define <a href="ident?i=BES_TXU">BES_TXU</a>         0x40    <b><i>/* Tx Underrun (EOM). */</i></b>
+ <a name=L83 href="source/dev/uart/uart_dev_z8530.h#L83">83</a> #define <a href="ident?i=BES_CTS">BES_CTS</a>         0x20    <b><i>/* CTS. */</i></b>
+ <a name=L84 href="source/dev/uart/uart_dev_z8530.h#L84">84</a> #define <a href="ident?i=BES_SYNC">BES_SYNC</a>        0x10    <b><i>/* Sync. */</i></b>
+ <a name=L85 href="source/dev/uart/uart_dev_z8530.h#L85">85</a> #define <a href="ident?i=BES_DCD">BES_DCD</a>         0x08    <b><i>/* DCD. */</i></b>
+ <a name=L86 href="source/dev/uart/uart_dev_z8530.h#L86">86</a> #define <a href="ident?i=BES_TXE">BES_TXE</a>         0x04    <b><i>/* Tx Empty. */</i></b>
+ <a name=L87 href="source/dev/uart/uart_dev_z8530.h#L87">87</a> #define <a href="ident?i=BES_ZC">BES_ZC</a>          0x02    <b><i>/* Zero Count. */</i></b>
+ <a name=L88 href="source/dev/uart/uart_dev_z8530.h#L88">88</a> #define <a href="ident?i=BES_RXA">BES_RXA</a>         0x01    <b><i>/* Rx Available. */</i></b>
+ <a name=L89 href="source/dev/uart/uart_dev_z8530.h#L89">89</a> 
+ <a name=L90 href="source/dev/uart/uart_dev_z8530.h#L90">90</a> <b><i>/* Clock Mode Control (WR11). */</i></b>
+ <a name=L91 href="source/dev/uart/uart_dev_z8530.h#L91">91</a> #define <a href="ident?i=CMC_XTAL">CMC_XTAL</a>        0x80    <b><i>/* -RTxC connects to quartz crystal. */</i></b>
+ <a name=L92 href="source/dev/uart/uart_dev_z8530.h#L92">92</a> #define <a href="ident?i=CMC_RC_DPLL">CMC_RC_DPLL</a>     0x60    <b><i>/* Rx Clock from DPLL. */</i></b>
+ <a name=L93 href="source/dev/uart/uart_dev_z8530.h#L93">93</a> #define <a href="ident?i=CMC_RC_BRG">CMC_RC_BRG</a>      0x40    <b><i>/* Rx Clock from BRG. */</i></b>
+ <a name=L94 href="source/dev/uart/uart_dev_z8530.h#L94">94</a> #define <a href="ident?i=CMC_RC_TRXC">CMC_RC_TRXC</a>     0x20    <b><i>/* Rx Clock from -TRxC. */</i></b>
+ <a name=L95 href="source/dev/uart/uart_dev_z8530.h#L95">95</a> #define <a href="ident?i=CMC_RC_RTXC">CMC_RC_RTXC</a>     0x00    <b><i>/* Rx Clock from -RTxC. */</i></b>
+ <a name=L96 href="source/dev/uart/uart_dev_z8530.h#L96">96</a> #define <a href="ident?i=CMC_TC_DPLL">CMC_TC_DPLL</a>     0x18    <b><i>/* Tx Clock from DPLL */</i></b>
+ <a name=L97 href="source/dev/uart/uart_dev_z8530.h#L97">97</a> #define <a href="ident?i=CMC_TC_BRG">CMC_TC_BRG</a>      0x10    <b><i>/* Tx Clock from BRG */</i></b>
+ <a name=L98 href="source/dev/uart/uart_dev_z8530.h#L98">98</a> #define <a href="ident?i=CMC_TC_TRXC">CMC_TC_TRXC</a>     0x08    <b><i>/* Tx Clock from -TRxC. */</i></b>
+ <a name=L99 href="source/dev/uart/uart_dev_z8530.h#L99">99</a> #define <a href="ident?i=CMC_TC_RTXC">CMC_TC_RTXC</a>     0x00    <b><i>/* Tx Clock from -RTxC. */</i></b>
+<a name=L100 href="source/dev/uart/uart_dev_z8530.h#L100">100</a> #define <a href="ident?i=CMC_TRXC_OUT">CMC_TRXC_OUT</a>    0x04    <b><i>/* -TRxC is output. */</i></b>
+<a name=L101 href="source/dev/uart/uart_dev_z8530.h#L101">101</a> #define <a href="ident?i=CMC_TRXC_DPLL">CMC_TRXC_DPLL</a>   0x03    <b><i>/* -TRxC from DPLL */</i></b>
+<a name=L102 href="source/dev/uart/uart_dev_z8530.h#L102">102</a> #define <a href="ident?i=CMC_TRXC_BRG">CMC_TRXC_BRG</a>    0x02    <b><i>/* -TRxC from BRG */</i></b>
+<a name=L103 href="source/dev/uart/uart_dev_z8530.h#L103">103</a> #define <a href="ident?i=CMC_TRXC_XMIT">CMC_TRXC_XMIT</a>   0x01    <b><i>/* -TRxC from Tx clock. */</i></b>
+<a name=L104 href="source/dev/uart/uart_dev_z8530.h#L104">104</a> #define <a href="ident?i=CMC_TRXC_XTAL">CMC_TRXC_XTAL</a>   0x00    <b><i>/* -TRxC from XTAL. */</i></b>
+<a name=L105 href="source/dev/uart/uart_dev_z8530.h#L105">105</a> 
+<a name=L106 href="source/dev/uart/uart_dev_z8530.h#L106">106</a> <b><i>/* Command Register (WR0). */</i></b>
+<a name=L107 href="source/dev/uart/uart_dev_z8530.h#L107">107</a> #define <a href="ident?i=CR_RSTTXU">CR_RSTTXU</a>       0xc0    <b><i>/* Reset Tx. Underrun/EOM. */</i></b>
+<a name=L108 href="source/dev/uart/uart_dev_z8530.h#L108">108</a> #define <a href="ident?i=CR_RSTTXCRC">CR_RSTTXCRC</a>     0x80    <b><i>/* Reset Tx. CRC. */</i></b>
+<a name=L109 href="source/dev/uart/uart_dev_z8530.h#L109">109</a> #define <a href="ident?i=CR_RSTRXCRC">CR_RSTRXCRC</a>     0x40    <b><i>/* Reset Rx. CRC. */</i></b>
+<a name=L110 href="source/dev/uart/uart_dev_z8530.h#L110">110</a> #define <a href="ident?i=CR_RSTIUS">CR_RSTIUS</a>       0x38    <b><i>/* Reset Int. Under Service. */</i></b>
+<a name=L111 href="source/dev/uart/uart_dev_z8530.h#L111">111</a> #define <a href="ident?i=CR_RSTERR">CR_RSTERR</a>       0x30    <b><i>/* Error Reset. */</i></b>
+<a name=L112 href="source/dev/uart/uart_dev_z8530.h#L112">112</a> #define <a href="ident?i=CR_RSTTXI">CR_RSTTXI</a>       0x28    <b><i>/* Reset Tx. Int. */</i></b>
+<a name=L113 href="source/dev/uart/uart_dev_z8530.h#L113">113</a> #define <a href="ident?i=CR_ENARXI">CR_ENARXI</a>       0x20    <b><i>/* Enable Rx. Int. */</i></b>
+<a name=L114 href="source/dev/uart/uart_dev_z8530.h#L114">114</a> #define <a href="ident?i=CR_ABORT">CR_ABORT</a>        0x18    <b><i>/* Send Abort. */</i></b>
+<a name=L115 href="source/dev/uart/uart_dev_z8530.h#L115">115</a> #define <a href="ident?i=CR_RSTXSI">CR_RSTXSI</a>       0x10    <b><i>/* Reset Ext/Status Int. */</i></b>
+<a name=L116 href="source/dev/uart/uart_dev_z8530.h#L116">116</a> 
+<a name=L117 href="source/dev/uart/uart_dev_z8530.h#L117">117</a> <b><i>/* Extended Feature and FIFO Control (WR7 prime). */</i></b>
+<a name=L118 href="source/dev/uart/uart_dev_z8530.h#L118">118</a> #define <a href="ident?i=EFC_ERE">EFC_ERE</a>         0x40    <b><i>/* Extended Read Enable. */</i></b>
+<a name=L119 href="source/dev/uart/uart_dev_z8530.h#L119">119</a> #define <a href="ident?i=EFC_FE">EFC_FE</a>          0x20    <b><i>/* Transmit FIFO Empty. */</i></b>
+<a name=L120 href="source/dev/uart/uart_dev_z8530.h#L120">120</a> #define <a href="ident?i=EFC_RQT">EFC_RQT</a>         0x10    <b><i>/* Request Timing. */</i></b>
+<a name=L121 href="source/dev/uart/uart_dev_z8530.h#L121">121</a> #define <a href="ident?i=EFC_FHF">EFC_FHF</a>         0x08    <b><i>/* Receive FIFO Half Full. */</i></b>
+<a name=L122 href="source/dev/uart/uart_dev_z8530.h#L122">122</a> #define <a href="ident?i=EFC_RTS">EFC_RTS</a>         0x04    <b><i>/* Auto RTS Deactivation. */</i></b>
+<a name=L123 href="source/dev/uart/uart_dev_z8530.h#L123">123</a> #define <a href="ident?i=EFC_EOM">EFC_EOM</a>         0x02    <b><i>/* Auto EOM Reset. */</i></b>
+<a name=L124 href="source/dev/uart/uart_dev_z8530.h#L124">124</a> #define <a href="ident?i=EFC_FLAG">EFC_FLAG</a>        0x01    <b><i>/* Auto SDLC Flag on Tx. */</i></b>
+<a name=L125 href="source/dev/uart/uart_dev_z8530.h#L125">125</a> 
+<a name=L126 href="source/dev/uart/uart_dev_z8530.h#L126">126</a> <b><i>/* Interrupt Control (WR15). */</i></b>
+<a name=L127 href="source/dev/uart/uart_dev_z8530.h#L127">127</a> #define <a href="ident?i=IC_BRK">IC_BRK</a>          0x80    <b><i>/* Break (Abort) IE. */</i></b>
+<a name=L128 href="source/dev/uart/uart_dev_z8530.h#L128">128</a> #define <a href="ident?i=IC_TXU">IC_TXU</a>          0x40    <b><i>/* Tx Underrun IE. */</i></b>
+<a name=L129 href="source/dev/uart/uart_dev_z8530.h#L129">129</a> #define <a href="ident?i=IC_CTS">IC_CTS</a>          0x20    <b><i>/* CTS IE. */</i></b>
+<a name=L130 href="source/dev/uart/uart_dev_z8530.h#L130">130</a> #define <a href="ident?i=IC_SYNC">IC_SYNC</a>         0x10    <b><i>/* Sync IE. */</i></b>
+<a name=L131 href="source/dev/uart/uart_dev_z8530.h#L131">131</a> #define <a href="ident?i=IC_DCD">IC_DCD</a>          0x08    <b><i>/* DCD IE. */</i></b>
+<a name=L132 href="source/dev/uart/uart_dev_z8530.h#L132">132</a> #define <a href="ident?i=IC_FIFO">IC_FIFO</a>         0x04    <b><i>/* SDLC FIFO Enable. */</i></b>
+<a name=L133 href="source/dev/uart/uart_dev_z8530.h#L133">133</a> #define <a href="ident?i=IC_ZC">IC_ZC</a>           0x02    <b><i>/* Zero Count IE. */</i></b>
+<a name=L134 href="source/dev/uart/uart_dev_z8530.h#L134">134</a> #define <a href="ident?i=IC_EF">IC_EF</a>           0x01    <b><i>/* Extended Feature Enable. */</i></b>
+<a name=L135 href="source/dev/uart/uart_dev_z8530.h#L135">135</a> 
+<a name=L136 href="source/dev/uart/uart_dev_z8530.h#L136">136</a> <b><i>/* Interrupt and Data Transfer Mode (WR1). */</i></b>
+<a name=L137 href="source/dev/uart/uart_dev_z8530.h#L137">137</a> #define <a href="ident?i=IDT_WRE">IDT_WRE</a>         0x80    <b><i>/* Wait/DMA Request Enable. */</i></b>
+<a name=L138 href="source/dev/uart/uart_dev_z8530.h#L138">138</a> #define <a href="ident?i=IDT_REQ">IDT_REQ</a>         0x40    <b><i>/* DMA Request. */</i></b>
+<a name=L139 href="source/dev/uart/uart_dev_z8530.h#L139">139</a> #define <a href="ident?i=IDT_WRR">IDT_WRR</a>         0x20    <b><i>/* Wait/DMA Reuest on Receive. */</i></b>
+<a name=L140 href="source/dev/uart/uart_dev_z8530.h#L140">140</a> #define <a href="ident?i=IDT_RISC">IDT_RISC</a>        0x18    <b><i>/* Rx Int. on Special Condition Only. */</i></b>
+<a name=L141 href="source/dev/uart/uart_dev_z8530.h#L141">141</a> #define <a href="ident?i=IDT_RIA">IDT_RIA</a>         0x10    <b><i>/* Rx Int. on All Characters. */</i></b>
+<a name=L142 href="source/dev/uart/uart_dev_z8530.h#L142">142</a> #define <a href="ident?i=IDT_RIF">IDT_RIF</a>         0x08    <b><i>/* Rx Int. on First Character. */</i></b>
+<a name=L143 href="source/dev/uart/uart_dev_z8530.h#L143">143</a> #define <a href="ident?i=IDT_PSC">IDT_PSC</a>         0x04    <b><i>/* Parity is Special Condition. */</i></b>
+<a name=L144 href="source/dev/uart/uart_dev_z8530.h#L144">144</a> #define <a href="ident?i=IDT_TIE">IDT_TIE</a>         0x02    <b><i>/* Tx Int. Enable. */</i></b>
+<a name=L145 href="source/dev/uart/uart_dev_z8530.h#L145">145</a> #define <a href="ident?i=IDT_XIE">IDT_XIE</a>         0x01    <b><i>/* Ext. Int. Enable. */</i></b>
+<a name=L146 href="source/dev/uart/uart_dev_z8530.h#L146">146</a> 
+<a name=L147 href="source/dev/uart/uart_dev_z8530.h#L147">147</a> <b><i>/* Interrupt Pending (RR3). */</i></b>
+<a name=L148 href="source/dev/uart/uart_dev_z8530.h#L148">148</a> #define <a href="ident?i=IP_RIA">IP_RIA</a>          0x20    <b><i>/* Rx. Int. ch. A. */</i></b>
+<a name=L149 href="source/dev/uart/uart_dev_z8530.h#L149">149</a> #define <a href="ident?i=IP_TIA">IP_TIA</a>          0x10    <b><i>/* Tx. Int. ch. A. */</i></b> 
+<a name=L150 href="source/dev/uart/uart_dev_z8530.h#L150">150</a> #define <a href="ident?i=IP_SIA">IP_SIA</a>          0x08    <b><i>/* Ext/Status Int. ch. A. */</i></b>
+<a name=L151 href="source/dev/uart/uart_dev_z8530.h#L151">151</a> #define <a href="ident?i=IP_RIB">IP_RIB</a>          0x04    <b><i>/* Rx. Int. ch. B. */</i></b>
+<a name=L152 href="source/dev/uart/uart_dev_z8530.h#L152">152</a> #define <a href="ident?i=IP_TIB">IP_TIB</a>          0x02    <b><i>/* Tx. Int. ch. B. */</i></b>
+<a name=L153 href="source/dev/uart/uart_dev_z8530.h#L153">153</a> #define <a href="ident?i=IP_SIB">IP_SIB</a>          0x01    <b><i>/* Ext/Status Int. ch. B. */</i></b>
+<a name=L154 href="source/dev/uart/uart_dev_z8530.h#L154">154</a> 
+<a name=L155 href="source/dev/uart/uart_dev_z8530.h#L155">155</a> <b><i>/* Interrupt Vector Status Low (RR2). */</i></b>
+<a name=L156 href="source/dev/uart/uart_dev_z8530.h#L156">156</a> #define <a href="ident?i=IV_SCA">IV_SCA</a>          0x0e    <b><i>/* Special Condition ch. A. */</i></b>
+<a name=L157 href="source/dev/uart/uart_dev_z8530.h#L157">157</a> #define <a href="ident?i=IV_RAA">IV_RAA</a>          0x0c    <b><i>/* Receive Available ch. A. */</i></b>
+<a name=L158 href="source/dev/uart/uart_dev_z8530.h#L158">158</a> #define <a href="ident?i=IV_XSA">IV_XSA</a>          0x0a    <b><i>/* External/Status Change ch. A. */</i></b>
+<a name=L159 href="source/dev/uart/uart_dev_z8530.h#L159">159</a> #define <a href="ident?i=IV_TEA">IV_TEA</a>          0x08    <b><i>/* Transmitter Empty ch. A. */</i></b>
+<a name=L160 href="source/dev/uart/uart_dev_z8530.h#L160">160</a> #define <a href="ident?i=IV_SCB">IV_SCB</a>          0x06    <b><i>/* Special Condition ch. B. */</i></b>
+<a name=L161 href="source/dev/uart/uart_dev_z8530.h#L161">161</a> #define <a href="ident?i=IV_RAB">IV_RAB</a>          0x04    <b><i>/* Receive Available ch. B. */</i></b>
+<a name=L162 href="source/dev/uart/uart_dev_z8530.h#L162">162</a> #define <a href="ident?i=IV_XSB">IV_XSB</a>          0x02    <b><i>/* External/Status Change ch. B. */</i></b>
+<a name=L163 href="source/dev/uart/uart_dev_z8530.h#L163">163</a> #define <a href="ident?i=IV_TEB">IV_TEB</a>          0x00    <b><i>/* Transmitter Empty ch. B. */</i></b>
+<a name=L164 href="source/dev/uart/uart_dev_z8530.h#L164">164</a> 
+<a name=L165 href="source/dev/uart/uart_dev_z8530.h#L165">165</a> <b><i>/* Miscellaneous Control Bits part 1 (WR10). */</i></b>
+<a name=L166 href="source/dev/uart/uart_dev_z8530.h#L166">166</a> #define <a href="ident?i=MCB1_CRC1">MCB1_CRC1</a>       0x80    <b><i>/* CRC presets to 1. */</i></b>
+<a name=L167 href="source/dev/uart/uart_dev_z8530.h#L167">167</a> #define <a href="ident?i=MCB1_FM0">MCB1_FM0</a>        0x60    <b><i>/* FM0 Encoding. */</i></b>
+<a name=L168 href="source/dev/uart/uart_dev_z8530.h#L168">168</a> #define <a href="ident?i=MCB1_FM1">MCB1_FM1</a>        0x40    <b><i>/* FM1 Encoding. */</i></b>
+<a name=L169 href="source/dev/uart/uart_dev_z8530.h#L169">169</a> #define <a href="ident?i=MCB1_NRZI">MCB1_NRZI</a>       0x20    <b><i>/* NRZI Encoding. */</i></b>
+<a name=L170 href="source/dev/uart/uart_dev_z8530.h#L170">170</a> #define <a href="ident?i=MCB1_NRZ">MCB1_NRZ</a>        0x00    <b><i>/* NRZ Encoding. */</i></b>
+<a name=L171 href="source/dev/uart/uart_dev_z8530.h#L171">171</a> #define <a href="ident?i=MCB1_AOP">MCB1_AOP</a>        0x10    <b><i>/* Active On Poll. */</i></b>
+<a name=L172 href="source/dev/uart/uart_dev_z8530.h#L172">172</a> #define <a href="ident?i=MCB1_MI">MCB1_MI</a>         0x08    <b><i>/* Mark Idle. */</i></b>
+<a name=L173 href="source/dev/uart/uart_dev_z8530.h#L173">173</a> #define <a href="ident?i=MCB1_AOU">MCB1_AOU</a>        0x04    <b><i>/* Abort On Underrun. */</i></b>
+<a name=L174 href="source/dev/uart/uart_dev_z8530.h#L174">174</a> #define <a href="ident?i=MCB1_LM">MCB1_LM</a>         0x02    <b><i>/* Loop Mode. */</i></b>
+<a name=L175 href="source/dev/uart/uart_dev_z8530.h#L175">175</a> #define <a href="ident?i=MCB1_SIX">MCB1_SIX</a>        0x01    <b><i>/* 6 or 12 bit SYNC. */</i></b>
+<a name=L176 href="source/dev/uart/uart_dev_z8530.h#L176">176</a> 
+<a name=L177 href="source/dev/uart/uart_dev_z8530.h#L177">177</a> <b><i>/* Miscellaneous Control Bits part 2 (WR14). */</i></b>
+<a name=L178 href="source/dev/uart/uart_dev_z8530.h#L178">178</a> #define <a href="ident?i=MCB2_NRZI">MCB2_NRZI</a>       0xe0    <b><i>/* DPLL - NRZI mode. */</i></b>
+<a name=L179 href="source/dev/uart/uart_dev_z8530.h#L179">179</a> #define <a href="ident?i=MCB2_FM">MCB2_FM</a>         0xc0    <b><i>/* DPLL - FM mode. */</i></b>
+<a name=L180 href="source/dev/uart/uart_dev_z8530.h#L180">180</a> #define <a href="ident?i=MCB2_RTXC">MCB2_RTXC</a>       0xa0    <b><i>/* DPLL - Clock from -RTxC. */</i></b>
+<a name=L181 href="source/dev/uart/uart_dev_z8530.h#L181">181</a> #define <a href="ident?i=MCB2_BRG">MCB2_BRG</a>        0x80    <b><i>/* DPLL - Clock from BRG. */</i></b>
+<a name=L182 href="source/dev/uart/uart_dev_z8530.h#L182">182</a> #define <a href="ident?i=MCB2_OFF">MCB2_OFF</a>        0x60    <b><i>/* DPLL - Disable. */</i></b>
+<a name=L183 href="source/dev/uart/uart_dev_z8530.h#L183">183</a> #define <a href="ident?i=MCB2_RMC">MCB2_RMC</a>        0x40    <b><i>/* DPLL - Reset Missing Clock. */</i></b>
+<a name=L184 href="source/dev/uart/uart_dev_z8530.h#L184">184</a> #define <a href="ident?i=MCB2_ESM">MCB2_ESM</a>        0x20    <b><i>/* DPLL - Enter Search Mode. */</i></b>
+<a name=L185 href="source/dev/uart/uart_dev_z8530.h#L185">185</a> #define <a href="ident?i=MCB2_LL">MCB2_LL</a>         0x10    <b><i>/* Local Loopback. */</i></b>
+<a name=L186 href="source/dev/uart/uart_dev_z8530.h#L186">186</a> #define <a href="ident?i=MCB2_AE">MCB2_AE</a>         0x08    <b><i>/* Auto Echo. */</i></b>
+<a name=L187 href="source/dev/uart/uart_dev_z8530.h#L187">187</a> #define <a href="ident?i=MCB2_REQ">MCB2_REQ</a>        0x04    <b><i>/* Request Function. */</i></b>
+<a name=L188 href="source/dev/uart/uart_dev_z8530.h#L188">188</a> #define <a href="ident?i=MCB2_PCLK">MCB2_PCLK</a>       0x02    <b><i>/* BRG source is PCLK. */</i></b>
+<a name=L189 href="source/dev/uart/uart_dev_z8530.h#L189">189</a> #define <a href="ident?i=MCB2_BRGE">MCB2_BRGE</a>       0x01    <b><i>/* BRG enable. */</i></b>
+<a name=L190 href="source/dev/uart/uart_dev_z8530.h#L190">190</a> 
+<a name=L191 href="source/dev/uart/uart_dev_z8530.h#L191">191</a> <b><i>/* Master Interrupt Control (WR9). */</i></b>
+<a name=L192 href="source/dev/uart/uart_dev_z8530.h#L192">192</a> #define <a href="ident?i=MIC_FHR">MIC_FHR</a>         0xc0    <b><i>/* Force Hardware Reset. */</i></b>
+<a name=L193 href="source/dev/uart/uart_dev_z8530.h#L193">193</a> #define <a href="ident?i=MIC_CRA">MIC_CRA</a>         0x80    <b><i>/* Channel Reset A. */</i></b>
+<a name=L194 href="source/dev/uart/uart_dev_z8530.h#L194">194</a> #define <a href="ident?i=MIC_CRB">MIC_CRB</a>         0x40    <b><i>/* Channel Reset B. */</i></b>
+<a name=L195 href="source/dev/uart/uart_dev_z8530.h#L195">195</a> #define <a href="ident?i=MIC_SIE">MIC_SIE</a>         0x20    <b><i>/* Software INTACK Enable. */</i></b>
+<a name=L196 href="source/dev/uart/uart_dev_z8530.h#L196">196</a> #define <a href="ident?i=MIC_SH">MIC_SH</a>          0x10    <b><i>/* Status High. */</i></b>
+<a name=L197 href="source/dev/uart/uart_dev_z8530.h#L197">197</a> #define <a href="ident?i=MIC_MIE">MIC_MIE</a>         0x08    <b><i>/* Master Interrupt Enable. */</i></b>
+<a name=L198 href="source/dev/uart/uart_dev_z8530.h#L198">198</a> #define <a href="ident?i=MIC_DLC">MIC_DLC</a>         0x04    <b><i>/* Disable Lower Chain. */</i></b>
+<a name=L199 href="source/dev/uart/uart_dev_z8530.h#L199">199</a> #define <a href="ident?i=MIC_NV">MIC_NV</a>          0x02    <b><i>/* No Vector. */</i></b>
+<a name=L200 href="source/dev/uart/uart_dev_z8530.h#L200">200</a> #define <a href="ident?i=MIC_VIS">MIC_VIS</a>         0x01    <b><i>/* Vector Includes Status. */</i></b>
+<a name=L201 href="source/dev/uart/uart_dev_z8530.h#L201">201</a> 
+<a name=L202 href="source/dev/uart/uart_dev_z8530.h#L202">202</a> <b><i>/* Transmit/Receive Miscellaneous Parameters and Modes (WR4). */</i></b>
+<a name=L203 href="source/dev/uart/uart_dev_z8530.h#L203">203</a> #define <a href="ident?i=MPM_CM64">MPM_CM64</a>        0xc0    <b><i>/* X64 Clock Mode. */</i></b>
+<a name=L204 href="source/dev/uart/uart_dev_z8530.h#L204">204</a> #define <a href="ident?i=MPM_CM32">MPM_CM32</a>        0x80    <b><i>/* X32 Clock Mode. */</i></b>
+<a name=L205 href="source/dev/uart/uart_dev_z8530.h#L205">205</a> #define <a href="ident?i=MPM_CM16">MPM_CM16</a>        0x40    <b><i>/* X16 Clock Mode. */</i></b>
+<a name=L206 href="source/dev/uart/uart_dev_z8530.h#L206">206</a> #define <a href="ident?i=MPM_CM1">MPM_CM1</a>         0x00    <b><i>/* X1 Clock Mode. */</i></b>
+<a name=L207 href="source/dev/uart/uart_dev_z8530.h#L207">207</a> #define <a href="ident?i=MPM_EXT">MPM_EXT</a>         0x30    <b><i>/* External Sync Mode. */</i></b>
+<a name=L208 href="source/dev/uart/uart_dev_z8530.h#L208">208</a> #define <a href="ident?i=MPM_SDLC">MPM_SDLC</a>        0x20    <b><i>/* SDLC mode. */</i></b>
+<a name=L209 href="source/dev/uart/uart_dev_z8530.h#L209">209</a> #define <a href="ident?i=MPM_BI">MPM_BI</a>          0x10    <b><i>/* 16-bit Sync (bi-sync). */</i></b>
+<a name=L210 href="source/dev/uart/uart_dev_z8530.h#L210">210</a> #define <a href="ident?i=MPM_MONO">MPM_MONO</a>        0x00    <b><i>/* 8-bit Sync (mono-sync). */</i></b>
+<a name=L211 href="source/dev/uart/uart_dev_z8530.h#L211">211</a> #define <a href="ident?i=MPM_SB2">MPM_SB2</a>         0x0c    <b><i>/* Async mode: 2 stopbits. */</i></b>
+<a name=L212 href="source/dev/uart/uart_dev_z8530.h#L212">212</a> #define <a href="ident?i=MPM_SB15">MPM_SB15</a>        0x08    <b><i>/* Async mode: 1.5 stopbits. */</i></b>
+<a name=L213 href="source/dev/uart/uart_dev_z8530.h#L213">213</a> #define <a href="ident?i=MPM_SB1">MPM_SB1</a>         0x04    <b><i>/* Async mode: 1 stopbit. */</i></b>
+<a name=L214 href="source/dev/uart/uart_dev_z8530.h#L214">214</a> #define <a href="ident?i=MPM_SYNC">MPM_SYNC</a>        0x00    <b><i>/* Sync Mode Enable. */</i></b>
+<a name=L215 href="source/dev/uart/uart_dev_z8530.h#L215">215</a> #define <a href="ident?i=MPM_EVEN">MPM_EVEN</a>        0x02    <b><i>/* Async mode: even parity. */</i></b>
+<a name=L216 href="source/dev/uart/uart_dev_z8530.h#L216">216</a> #define <a href="ident?i=MPM_PE">MPM_PE</a>          0x01    <b><i>/* Async mode: parity enable. */</i></b>
+<a name=L217 href="source/dev/uart/uart_dev_z8530.h#L217">217</a> 
+<a name=L218 href="source/dev/uart/uart_dev_z8530.h#L218">218</a> <b><i>/* Receive Parameters and Control (WR3). */</i></b>
+<a name=L219 href="source/dev/uart/uart_dev_z8530.h#L219">219</a> #define <a href="ident?i=RPC_RB8">RPC_RB8</a>         0xc0    <b><i>/* 8 databits. */</i></b>
+<a name=L220 href="source/dev/uart/uart_dev_z8530.h#L220">220</a> #define <a href="ident?i=RPC_RB6">RPC_RB6</a>         0x80    <b><i>/* 6 databits. */</i></b>
+<a name=L221 href="source/dev/uart/uart_dev_z8530.h#L221">221</a> #define <a href="ident?i=RPC_RB7">RPC_RB7</a>         0x40    <b><i>/* 7 databits. */</i></b>
+<a name=L222 href="source/dev/uart/uart_dev_z8530.h#L222">222</a> #define <a href="ident?i=RPC_RB5">RPC_RB5</a>         0x00    <b><i>/* 5 databits. */</i></b>
+<a name=L223 href="source/dev/uart/uart_dev_z8530.h#L223">223</a> #define <a href="ident?i=RPC_AE">RPC_AE</a>          0x20    <b><i>/* Auto Enable. */</i></b>
+<a name=L224 href="source/dev/uart/uart_dev_z8530.h#L224">224</a> #define <a href="ident?i=RPC_EHM">RPC_EHM</a>         0x10    <b><i>/* Enter Hunt Mode. */</i></b>
+<a name=L225 href="source/dev/uart/uart_dev_z8530.h#L225">225</a> #define <a href="ident?i=RPC_CRC">RPC_CRC</a>         0x08    <b><i>/* CRC Enable. */</i></b>
+<a name=L226 href="source/dev/uart/uart_dev_z8530.h#L226">226</a> #define <a href="ident?i=RPC_ASM">RPC_ASM</a>         0x04    <b><i>/* Address Search Mode. */</i></b>
+<a name=L227 href="source/dev/uart/uart_dev_z8530.h#L227">227</a> #define <a href="ident?i=RPC_LI">RPC_LI</a>          0x02    <b><i>/* SYNC Character Load Inhibit */</i></b>
+<a name=L228 href="source/dev/uart/uart_dev_z8530.h#L228">228</a> #define <a href="ident?i=RPC_RXE">RPC_RXE</a>         0x01    <b><i>/* Receiver Enable */</i></b>
+<a name=L229 href="source/dev/uart/uart_dev_z8530.h#L229">229</a> 
+<a name=L230 href="source/dev/uart/uart_dev_z8530.h#L230">230</a> <b><i>/* Special Receive Condition (RR1). */</i></b>
+<a name=L231 href="source/dev/uart/uart_dev_z8530.h#L231">231</a> #define <a href="ident?i=SRC_EOF">SRC_EOF</a>         0x80    <b><i>/* End Of Frame. */</i></b>
+<a name=L232 href="source/dev/uart/uart_dev_z8530.h#L232">232</a> #define <a href="ident?i=SRC_FE">SRC_FE</a>          0x40    <b><i>/* Framing Error. */</i></b>
+<a name=L233 href="source/dev/uart/uart_dev_z8530.h#L233">233</a> #define <a href="ident?i=SRC_OVR">SRC_OVR</a>         0x20    <b><i>/* Rx. Overrun. */</i></b>
+<a name=L234 href="source/dev/uart/uart_dev_z8530.h#L234">234</a> #define <a href="ident?i=SRC_PE">SRC_PE</a>          0x10    <b><i>/* Parity Error. */</i></b>
+<a name=L235 href="source/dev/uart/uart_dev_z8530.h#L235">235</a> #define <a href="ident?i=SRC_RC0">SRC_RC0</a>         0x08    <b><i>/* Residue Code 0. */</i></b>
+<a name=L236 href="source/dev/uart/uart_dev_z8530.h#L236">236</a> #define <a href="ident?i=SRC_RC1">SRC_RC1</a>         0x04    <b><i>/* Residue Code 1. */</i></b>
+<a name=L237 href="source/dev/uart/uart_dev_z8530.h#L237">237</a> #define <a href="ident?i=SRC_RC2">SRC_RC2</a>         0x02    <b><i>/* Residue Code 2. */</i></b>
+<a name=L238 href="source/dev/uart/uart_dev_z8530.h#L238">238</a> #define <a href="ident?i=SRC_AS">SRC_AS</a>          0x01    <b><i>/* All Sent. */</i></b>
+<a name=L239 href="source/dev/uart/uart_dev_z8530.h#L239">239</a> 
+<a name=L240 href="source/dev/uart/uart_dev_z8530.h#L240">240</a> <b><i>/* Transmit Parameter and Control (WR5). */</i></b>
+<a name=L241 href="source/dev/uart/uart_dev_z8530.h#L241">241</a> #define <a href="ident?i=TPC_DTR">TPC_DTR</a>         0x80    <b><i>/* DTR. */</i></b>
+<a name=L242 href="source/dev/uart/uart_dev_z8530.h#L242">242</a> #define <a href="ident?i=TPC_TB8">TPC_TB8</a>         0x60    <b><i>/* 8 databits. */</i></b>
+<a name=L243 href="source/dev/uart/uart_dev_z8530.h#L243">243</a> #define <a href="ident?i=TPC_TB6">TPC_TB6</a>         0x40    <b><i>/* 6 databits. */</i></b>
+<a name=L244 href="source/dev/uart/uart_dev_z8530.h#L244">244</a> #define <a href="ident?i=TPC_TB7">TPC_TB7</a>         0x20    <b><i>/* 7 databits. */</i></b>
+<a name=L245 href="source/dev/uart/uart_dev_z8530.h#L245">245</a> #define <a href="ident?i=TPC_TB5">TPC_TB5</a>         0x00    <b><i>/* 5 or fewer databits. */</i></b>
+<a name=L246 href="source/dev/uart/uart_dev_z8530.h#L246">246</a> #define <a href="ident?i=TPC_BRK">TPC_BRK</a>         0x10    <b><i>/* Send break. */</i></b>
+<a name=L247 href="source/dev/uart/uart_dev_z8530.h#L247">247</a> #define <a href="ident?i=TPC_TXE">TPC_TXE</a>         0x08    <b><i>/* Transmitter Enable. */</i></b>
+<a name=L248 href="source/dev/uart/uart_dev_z8530.h#L248">248</a> #define <a href="ident?i=TPC_CRC16">TPC_CRC16</a>       0x04    <b><i>/* CRC16. */</i></b>
+<a name=L249 href="source/dev/uart/uart_dev_z8530.h#L249">249</a> #define <a href="ident?i=TPC_RTS">TPC_RTS</a>         0x02    <b><i>/* RTS. */</i></b>
+<a name=L250 href="source/dev/uart/uart_dev_z8530.h#L250">250</a> #define <a href="ident?i=TPC_CRC">TPC_CRC</a>         0x01    <b><i>/* CRC Enable. */</i></b>
+<a name=L251 href="source/dev/uart/uart_dev_z8530.h#L251">251</a> 
+<a name=L252 href="source/dev/uart/uart_dev_z8530.h#L252">252</a> #endif <b><i>/* _DEV_UART_DEV_Z8530_H_ */</i></b>
+<a name=L253 href="source/dev/uart/uart_dev_z8530.h#L253">253</a> </pre><hr>
+<div align=center>
+   ~ <b>[</b>&nbsp;<b><i>source navigation</i></b>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="diff/dev/uart/uart_dev_z8530.h">diff markup</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="ident">identifier search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="search">freetext search</a>&nbsp;<b>]</b> ~ <b>[</b>&nbsp;<a href="find">file search</a>&nbsp;<b>]</b> ~
+</div>
+
+<hr>
+This page was automatically generated by the 
+<a href="http:blurb.html">LXR engine</a>.
+<br>
+Visit the <a href="http://lxr.linux.no/">LXR main site</a> for more
+information.
+</html>

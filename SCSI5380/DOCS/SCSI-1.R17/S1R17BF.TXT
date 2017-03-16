@@ -1,0 +1,110 @@
+Appendix F
+
+Additional Medium Type and Density Code Standards
+
+In sections 8 and 9 of this standard, the MODE SELECT and MODE SENSE commands 
+define medium type codes and density codes for certain flexible disks and 
+magnetic tapes.  ANSI standards or X3 draft documents are referenced for code 
+values if a standard or draft document exists for that code value.  In many 
+cases, other standards also exist for a code value.  Tables F1 and F2 in this 
+appendix provide references to those standards for these code values.
+
+DISCLAIMER:  It is not the purpose of this appendix to indicate that these 
+standards are exactly equivalent to each other.  However, these standards may 
+be applicable.  Please refer to sections 8 and 9 for additional information 
+concerning the medium type or density code.
+
+
+                                 Table F1
+                       Direct-access Medium Type Codes
+
+==============================================================================
+Code Value                       Medium Type
+----------  ------------------------------------------------------------------
+ 00H-02H    See section 8.
+                   
+            Flexible Disk Reference Standard(s)
+            ------------------------------------------------------------------
+   05H      X3.73-1980,  ECMA-54,  ISO 5654/1-1984, ISO 5654/2-1982
+   06H      X3B8-140,    ECMA-59
+   09H      X3B8/78-139
+   0AH      X3.121-1984, ECMA-69,  ISO 7065/1-1985, ISO 7065/2-1985
+   0DH      X3.82-1980,  ECMA-66,  ISO 6596/1-1985, ISO 6596/2-1985
+   12H      X3.125-1984, ECMA-70,  ISO 7487/1-1985, ISO 7487/2-1985,
+                                   ISO 7487/3-1985
+   16H      X3.126-198X, ECMA-78,  DIS 8378/1,      DIS 8378/2,     DIS 8378/3
+   1AH      X3B8/85-199, ECMA-99,  DIS 8630/1,      DIS 8630/2
+   1EH      X3.137-198X, ECMA-100, DIS 8860/1,      DIS 8860/2
+
+            Direct-access Magnetic Tape Standard(s)
+            ------------------------------------------------------------------
+   40H      X3B5/85-138 (Note 1),  ECMA TC19/83/39
+   44H      X3B5/85-138 (Note 1),  ECMA TC19/83/39
+
+80H _ FFH   Vendor unique
+All others  Reserved
+==============================================================================
+NOTE:
+  (1)  The referenced standard is for unrecorded miniature cartridge media.  
+The usage referred to here is for serial GCR recording using a format known as 
+QIC-100.  Since X3B5 issues a new document number for each revision of their 
+working draft document, please contact the Chairman of X3B5 for the latest 
+document number.
+
+
+
+                                 Table F2
+                       Sequential-access Density Codes
+
+==============================================================================
+Code Value                             Density
+----------  ------------------------------------------------------------------
+   00H      See section 9.
+
+            Magnetic Tape Reference Standard(s)
+            ------------------------------------------------------------------
+   01H      X3.22-1983,                 ECMA-62
+   02H      X3.39-1973                  ECMA-62
+   03H      X3.54-1976,                 ECMA-62
+   04H      Old format known as QIC-11
+   05H      X3.136-198X,                ECMA-98
+   06H      X3B5/85-98 (Note 1)
+   07H      X3.116-198X,                ECMA-79
+   08H      X3B5/85-77 (Note 1)
+   09H      X3B5/85-76 (Note 1)
+   0AH
+   0BH      X3.55, X3.56-198X,          ECMA-46, ISO 4057-1979
+
+80H _ FFH   Vendor unique
+All others  Reserved
+==============================================================================
+NOTES:
+  (1)  Working Draft.  X3B5 assigns a new document number to each revision of 
+their documents.  Please contact the Chairman of X3B5 for the latest document 
+number.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

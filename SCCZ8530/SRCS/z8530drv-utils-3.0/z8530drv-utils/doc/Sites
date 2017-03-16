@@ -1,0 +1,21 @@
+You will find the driver on:
+
+Internet:
+=========
+
+db0bm.automation.fh-aachen.de:/incoming/dl1bke/z8530drv-2.4.dl1bke.tar.gz
+
+ftp.ucsd.edu:/hamradio/packet/tcpip/incoming/z8530drv-2.4.dl1bke.tar.gz
+(If you can't find it there, try .../tcpip/linux/z8530drv-2.4.dl1bke.tar.gz)
+and various mirrors (e.g. nic.switch.ch)
+
+
+AX.25 BBS
+=========
+
+UNIX @ DB0ACH.#NRW.DEU.EU, subject: Z8530D24.Pxx/Pyy
+
+(AX.25 call: DB0ACH-8)
+
+and various BBS that received the file through AUTO7P or 7PSERV
+with the filename Z8530D24.TGZ

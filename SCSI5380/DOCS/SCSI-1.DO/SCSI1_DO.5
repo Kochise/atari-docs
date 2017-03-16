@@ -1,0 +1,1234 @@
+From coffin@ROCKY2.ROCKEFELLER.EDU Thu Mar 22 08:33:14 1990
+Flags: 000000000001
+Return-Path: <coffin@ROCKY2.ROCKEFELLER.EDU>
+Received: from ROCKY2.ROCKEFELLER.EDU by rascal.ics.utexas.edu. (4.0/SMI-4.0)
+	id AA28499; Thu, 22 Mar 90 08:33:01 CST
+Received: by ROCKY2.ROCKEFELLER.EDU (5.61/1.34)
+	id AA15033; Thu, 22 Mar 90 09:32:24 -0500
+Message-Id: <9003221432.AA15033@ROCKY2.ROCKEFELLER.EDU>
+To: werner@rascal.ics.utexas.edu
+Subject: scsiDocs Part5 of 7
+Date: Thu, 22 Mar 90 09:32:05 -0500
+From: coffin@ROCKY2.ROCKEFELLER.EDU
+
+
+
+.fo Section 9                            #
+ 9. Group 0 Command Descriptions for Sequential-Access Devices 
+
+The Group 0 commands for sequential-access devices shall be as shown in 
+Table 9-1.
+
+                                   Table 9-1 
+                 Group 0 Commands for Sequential-Access Devices 
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00 H        O     TEST UNIT READY                    7.1.1 
+   01 H        M     REWIND                             9.1
+   02 H        V
+   03 H        M     REQUEST SENSE                      7.1.2
+   04 H        R
+   05 H        E     READ BLOCK LIMITS                  9.2
+   06 H        V
+   07 H        V
+   08 H        M     READ                               9.3
+   09 H        V
+   0A H        M     WRITE                              9.4
+   0B H        O     TRACK SELECT                       9.5
+   0C H        V
+   0D H        V
+   0E H        V
+   0F H        O     READ REVERSE                       9.6
+   10 H        M     WRITE FILEMARKS                    9.7
+   11 H        O     SPACE                              9.8
+   12 H        E     INQUIRY                            7.1.3
+   13 H        O     VERIFY                             9.9
+   14 H        O     RECOVER BUFFERED DATA              9.10
+   15 H        O     MODE SELECT                        9.11
+   16 H        O     RESERVE UNIT                       9.12.1
+   17 H        O     RELEASE UNIT                       9.12.2
+   18 H        O     COPY                               7.1.4
+   19 H        O     ERASE                              9.13
+   1A H        O     MODE SENSE                         9.14
+   1B H        O     LOAD/UNLOAD                        9.15
+   1C H        O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1D H        O     SEND DIAGNOSTIC                    7.1.6
+   1E H        O     PREVENT/ALLOW MEDIUM REMOVAL       9.16
+   1F H        R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+.pa
+
+ 9.1 REWIND Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Mandatory
+             Operation Code:  01 H 
+
+                                   Table 9-2 
+                                 REWIND Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Immed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The REWIND command (Table 9-2) requests that the target rewind the logical 
+unit to the beginning-of-medium or load-point.
+
+  An immediate (Immed) bit of one indicates that status shall be returned as 
+soon as the operation is initiated.  An Immed bit of zero indicates that 
+status shall be returned after the operation is completed.
+.pa
+
+ 9.2 READ BLOCK LIMITS Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Extended
+             Operation Code:  05 H 
+
+                                   Table 9-3 
+                           READ BLOCK LIMITS Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The READ BLOCK LIMITS command (Table 9-3) requests that the target's 
+capability for block length limits be returned for the logical unit.  The READ 
+BLOCK LIMITS data shown in Table 9-4 shall be sent during the DATA IN phase of 
+the command.
+
+                                   Table 9-4 
+                             READ BLOCK LIMITS Data 
+
+==============================================================================
+Byte |                        Description                                    |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Maximum Block Length (MSB)                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Maximum Block Length                        |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Maximum Block Length (LSB)                  |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Minimum Block Length (MSB)                  |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Minimum Block Length (LSB)                  |
+==============================================================================
+
+  If the maximum block length equals the minimum block length, only fixed-
+length blocks of the length indicated are supported.  Otherwise, variable-
+length blocks are supported.  For variable-length blocks, if the maximum block 
+length equals zero, no upper limit is specified.
+.pa
+
+ 9.3 READ Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Mandatory
+             Operation Code:  08 H 
+
+                                   Table 9-5 
+                                  READ Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The READ command (Table 9-5) transfers one or more block(s) to the initiator 
+beginning with the next block on the logical unit.  The fixed bit specifies 
+both the meaning of the transfer length field and whether fixed-length or 
+variable-length block(s) are to be transferred.
+
+  If the fixed bit is zero, a single block shall be transferred with the 
+transfer length specifying the maximum number of bytes the initiator has 
+allocated for the returned data.  If the actual block length is different from 
+the specified transfer length, a CHECK CONDITION status shall be sent to the 
+initiator and the incorrect length indicator (ILI) bit and valid bit in 
+extended sense shall be set to one.  The information bytes in extended sense 
+shall be set to the difference (residue) between the requested transfer length 
+and the actual block length.  Targets that do not support negative residues 
+shall set the ILI bit to one and the residue to zero when the actual block 
+length is larger than the transfer length.  In any case, no more than transfer 
+length bytes shall be transferred to the initiator and the medium shall be 
+positioned after the block (end-of-medium side).
+
+  If the fixed bit is one, the transfer length specifies the number of blocks 
+to be transferred to the initiator.  This form of the READ command is valid 
+only if the logical unit is currently operating in fixed block mode.  A 
+logical unit is in fixed block mode when either of the following conditions 
+are true:
+
+  (1) The logical unit reports the same value for minimum block length and 
+maximum block length in response to the READ BLOCK LIMITS command.  In this 
+case, the current block length is the value returned.
+
+  (2) The logical unit unit has been instructed to use fixed-length blocks 
+with the MODE SELECT command.  In this case, the current block length is the 
+
+block length defined in the MODE SELECT command.
+
+  Otherwise, the logical unit is in variable block mode.  The target may 
+implement fixed block mode, variable block mode, or both modes.  If the fixed 
+bit does not match the current mode, or the mode indicated by the fixed bit is 
+not implemented, the target shall reject the command by returning a CHECK 
+CONDITION status and by setting the sense key to ILLEGAL REQUEST.
+
+  A successful READ command with the fixed bit equal to one shall transfer the 
+current block length times the transfer length bytes of data to the initiator.  
+Upon termination of the READ command, the medium shall be positioned after the 
+last block transferred (end-of-medium side).
+
+  If the fixed bit is one and if a block is read that is larger or smaller 
+than the current block length, a CHECK CONDITION status shall be returned to 
+the initiator.  The ILI bit and the valid bit in extended sense shall be set 
+to one.  The information bytes shall be set to the difference (residue) 
+between the requested transfer length and the actual number of blocks read 
+(not including the incorrect length block).  Upon termination, the medium 
+shall be positioned after the incorrect length block (end-of-medium side). 
+
+  If a logical unit reads a filemark during a READ command, it shall send a 
+CHECK CONDITION status to the initiator and shall set the filemark bit in 
+extended sense.  Upon termination, the medium shall be positioned after the 
+filemark (end-of-medium side).  If the fixed bit is one, the target shall set 
+the valid bit to one and the information bytes shall be set to the difference 
+(residue) between the requested transfer length and the actual number of 
+blocks read (not including the filemark).
+
+  If a logical unit encounters the physical end-of-medium during a READ 
+command, the target shall return a CHECK CONDITION status to the initiator and 
+shall set the end-of-medium (EOM) bit to one in extended sense.  The sense key 
+shall be set to MEDIUM ERROR.  If the fixed bit is one, the target shall set 
+the valid bit to one and the information bytes to the difference (residue) 
+between the requested transfer length and the actual number of blocks 
+successfully read.  The medium position following this condition is not 
+defined. 
+
+  When the transfer length is zero, no data shall be transferred and the 
+current position on the logical unit shall not be changed.  This condition 
+shall not be considered as an error. 
+.pa
+
+ 9.4 WRITE Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Mandatory
+             Operation Code:  0A H 
+
+                                   Table 9-6 
+                                 WRITE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The WRITE command (Table 9-6) transfers one or more block(s) from the 
+initiator to the current position on the logical unit.  The fixed bit 
+specifies both the meaning of the transfer length field and whether fixed-
+length or variable-length block(s) are to be transferred.
+
+  If the fixed bit is zero, a single block shall be transferred from the 
+initiator and shall be written to the logical unit beginning at the current 
+medium position.  The transfer length specifies the length of the block to be 
+written (in bytes).  The requested block length shall be within the minimum 
+and maximum block length range (returned by the READ BLOCK LIMITS command, 
+Section 9.2).  If this condition is not met, a CHECK CONDITION status  shall 
+be returned and the sense key shall be set to ILLEGAL REQUEST and no data 
+shall be written.  Upon successful termination, the medium shall be positioned 
+after the block written by this command (end-of-medium side).
+
+  If the fixed bit is one, the transfer length field specifies the number of 
+block(s) to be transferred to the logical unit beginning at the current medium 
+position.  This form of the WRITE command is valid only if the logical unit is 
+currently operating in fixed block mode (see 9.3).  Upon termination, the 
+medium shall be positioned after the block(s) written by this command (end-of-
+medium side)
+
+  The target may implement fixed block mode, variable block mode, or both 
+modes.  If the fixed bit does not match the current mode, or the mode 
+indicated by the fixed bit is not implemented, the target shall reject the 
+command by returning a CHECK CONDITION status and by setting the sense key to 
+ILLEGAL REQUEST.
+
+  If the early warning end-of-medium condition is encountered while writing, 
+an attempt to finish writing any buffered data may be made.  The command shall 
+
+terminate with a CHECK CONDITION status and the EOM bit in extended sense 
+shall be set to one.  If any data remains in the target's buffer, then the 
+sense key shall be set to VOLUME OVERFLOW.  If the fixed bit is one and the 
+logical unit is not buffered (buffered mode of the MODE SENSE command is 
+zero), then the valid bit in extended sense shall be set to one and the 
+information bytes shall be set to the difference (residue) between the 
+requested transfer length and the actual number of blocks written to the 
+medium.  If the fixed bit is one and the logical unit is buffered (buffered 
+mode of the MODE SENSE command is one), then the valid bit shall be set to one 
+and the information bytes shall be set to the total number of blocks not 
+written (the number of blocks not transferred from the initiator plus the 
+number of blocks remaining in the target's buffer).  Note that in this case it 
+is possible for the value in the information bytes to exceed the transfer 
+length.
+
+  When the transfer length is zero, no data shall be transferred and the 
+current position on the logical unit shall not be changed.  This condition 
+shall not be considered as an error.
+
+ 9.5 TRACK SELECT Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  0B H 
+
+                                   Table 9-7 
+                              TRACK SELECT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Track Value                                 |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The TRACK SELECT command (Table 9-7) requests that the track specified in 
+the track value field be selected.
+.pa
+
+ 9.6 READ REVERSE Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  0F H 
+
+                                   Table 9-8 
+                              READ REVERSE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The READ REVERSE command (Table 9-8) functions identically to the READ 
+command except that medium motion is in the reverse direction.  Thus, the 
+block(s) and bytes within the block(s) are transferred in the reverse order 
+and the medium position upon termination is before the last block read 
+(beginning-of-medium side).  This command shall terminate with a CHECK 
+CONDITION status and the EOM bit in extended sense shall be set to one if 
+beginning-of-medium or load-point is encountered.  The sense key shall be set 
+to NO SENSE.  If the fixed bit is one, then the valid bit shall be set to one 
+and the information bytes shall contain the difference (residue) of the 
+requested transfer length and the actual number of blocks transferred before 
+beginning-of-medium or load-point was encountered.
+
+  Filemark handling is the same as in the READ command except that the medium 
+position upon command termination shall be before the filemark (beginning-of-
+medium side).
+
+  If the transfer length is zero, no data shall be transferred and the current 
+position on the logical unit shall not be changed.  This condition shall not 
+be considered as an error.
+
+  The target may implement fixed block mode, variable block mode, or both 
+modes.  If the fixed bit does not match the current mode, or the mode 
+indicated by the fixed bit is not implemented, the target shall reject the 
+command by returning a CHECK CONDITION status and by setting the sense key to 
+ILLEGAL REQUEST.
+.pa
+
+ 9.7 WRITE FILEMARKS Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Mandatory
+             Operation Code:  10 H 
+
+                                   Table 9-9 
+                            WRITE FILEMARKS Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Filemarks (MSB)                   |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Filemarks                         |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Number of Filemarks (LSB)                   |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The WRITE FILEMARKS command (Table 9-9) causes the specified number of 
+filemarks to be written beginning at the current medium position on the 
+logical unit.  A zero in this field indicates that no filemarks are to be 
+written.
+
+  This command is also used to force any buffered data (see buffered mode in 
+the MODE SENSE command, Section 9.14) to be written.  This command shall not 
+return a GOOD status unless all buffered data blocks and the filemarks (if 
+any) are correctly written on the medium.
+
+  If the early warning end-of-medium condition is encountered while writing, 
+an attempt to finish writing any buffered data may be made.  The command shall 
+terminate with a CHECK CONDITION status and the EOM bit in extended sense 
+shall be set to one.  If any filemarks remain to be written, then the sense 
+key shall be set to VOLUME OVERFLOW.  If the logical unit is not buffered 
+(buffered mode of the MODE SENSE command is zero), then the valid bit in 
+extended sense shall be set to one and the information bytes shall be set to 
+the number of unwritten filemarks.  If the logical unit is buffered (buffered 
+mode of the MODE SENSE command is one), then the valid bit shall be set to one 
+and the information bytes shall be set to the total number of blocks not 
+written (the number of unwritten filemarks plus the number of blocks remaining 
+in the target's buffer).  Note that in this case it is possible for the value 
+in the information bytes to exceed the transfer length.
+.pa
+
+ 9.8 SPACE Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  11 H 
+
+                                   Table 9-10 
+                                 SPACE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |         Reserved         |      Code       |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Count (MSB)                                 |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Count                                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Count (LSB)                                 |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SPACE command (Table 9-10) provides a variety of positioning functions 
+that are determined by the code and count.  Both forward (toward end-of-
+medium) and reverse (toward beginning-of-medium) positioning are provided, 
+although some SCSI devices may only support a subset of this command.  Such 
+SCSI devices shall return a CHECK CONDITION status and set the sense key to 
+ILLEGAL REQUEST in response to any attempt to invoke a function that is not 
+supported.
+
+  The code is defined as follows:
+
+DB(1)  DB(0)       Description
+-----  -----   --------------------
+  0      0     Blocks
+  0      1     Filemarks
+  1      0     Sequential Filemarks
+  1      1     Physical End-of-Data
+
+  When spacing over blocks or filemarks, the count field specifies the number 
+of blocks or filemarks to be spaced over.  A positive value N in the count 
+field shall cause forward medium movement over N blocks or filemarks ending on 
+the end-of-medium side of the last block or filemark.  A zero value in the 
+count field shall cause no medium movement.  A negative value -N (2's 
+complement notation) in the count field shall cause reverse medium movement 
+over N blocks or filemarks ending on the beginning-of-medium side of the last 
+block or filemark.
+
+  If a filemark is encountered while spacing over blocks, medium movement 
+shall be stopped.  The medium shall be positioned on the end-of-medium side of 
+the filemark if movement was in the forward direction and on the beginning-of-
+medium side of the filemark if movement was in the reverse direction.  A CHECK 
+
+CONDITION status shall be sent to the initiator and the filemark and valid 
+bits in extended sense shall be set to one.  The information bytes shall be 
+set to the difference (residue) in the requested count and the actual number 
+of blocks spaced over (not including the filemark).
+
+  If the physical end-of-medium is encountered while spacing forward over 
+blocks or filemarks, the target shall return a CHECK CONDITION status to the 
+initiator and shall set the end-of-medium (EOM) bit in extended sense to one.  
+The sense key shall be set to MEDIUM ERROR.  The target shall set the valid 
+bit to one and the information bytes to the difference (residue) between the 
+requested count and the actual number of blocks or filemarks spaced over.
+
+  If beginning-of-medium or load-point is encountered while spacing over 
+blocks or filemarks in the reverse direction, the target shall return a CHECK 
+CONDITION status to the initiator and shall set the end-of-medium (EOM) bit in 
+extended sense to one.  The sense key shall be set to NO SENSE.  The target 
+shall set the valid bit to one and the information bytes to the difference 
+(residue) between the requested count and the actual number of blocks or 
+filemarks spaced over.
+
+  When spacing over sequential filemarks, the count field is interpreted as 
+follows:
+
+  (1) A positive value N shall cause forward medium movement to the first 
+occurrence of N or more consecutive filemarks stopping after the N th  filemark.
+
+  (2) A zero value shall cause no medium movement.
+
+  (3) A negative value -N (2's complement notation) shall cause reverse medium 
+movement to the first occurrence of N or more consecutive filemarks stopping 
+on the beginning-of-medium side of the N th  filemark.
+
+  When spacing to physical end-of-data, the count field is ignored.  Forward 
+medium movement shall occur until the logical unit encounters physical end-of-
+data as defined by the sequential-access device.  Some sequential-access 
+devices  define physical end-of-data as an erased area on the medium; however, 
+other definitions are not precluded.  Targets that implement this function 
+shall leave the medium positioned such that a subsequent WRITE command would 
+append data to the last recorded information on the medium.
+.pa
+
+ 9.9 VERIFY Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  13 H 
+
+                                   Table 9-11 
+                                 VERIFY Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |         Reserved         | BytCmp | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Verification Length (MSB)                   | 
+-----|-----------------------------------------------------------------------|
+ 3   |                           Verification Length                         |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Verification Length (LSB)                   | 
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The VERIFY command (Table 9-11) verifies one or more block(s) beginning with 
+the next block on the logical unit.  The fixed bit specifies both the meaning 
+of the verification length field and whether fixed-length or variable-length 
+block(s) are to be verified.
+
+  A byte compare (BytCmp) bit of zero indicates that the verification shall be 
+simply a medium verification (CRC, ECC, etc).  No data shall be transferred 
+between the initiator and target.  A byte compare bit of one indicates that a 
+byte-by-byte compare of the data on the medium, and the data transferred from 
+the initiator shall be performed by the target.  Data shall be transferred 
+>From the initiator to the target as in a WRITE command.
+
+  A fixed bit of zero requests that the next block of the logical unit be 
+verified.  The verification length specifies the number of bytes to verify.  A 
+fixed bit of one requests verification length blocks be verified beginning 
+with the next logical block on the logical unit.  This form of the VERIFY 
+command is only valid if the logical unit is currently in fixed block mode as 
+defined in the READ command.  If the data does not compare (byte compare bit 
+equals one), the command shall terminate with a CHECK CONDITION status and the 
+sense key shall be set to MISCOMPARE.  If the fixed bit is one, the valid bit 
+shall be set to one and the information bytes shall be set to the difference 
+(residue) between the verification length and the actual number of blocks 
+successfully verified.  The medium shall be positioned after the block 
+containing the miscompare (end-of-medium side).
+
+  The target may implement fixed block mode, variable block mode, or both 
+modes.  If the fixed bit does not match the current mode, or the mode 
+indicated by the fixed bit is not implemented, the target shall reject the 
+command by returning a CHECK CONDITION status and by setting the sense key to 
+ILLEGAL REQUEST.
+
+
+  The VERIFY command shall terminate when the verification length has been 
+satisfied, when a filemark is encountered, or when physical end-of-medium is 
+encountered.  The status and sense data for each of these conditions are 
+handled the same as in the READ command.  Upon completion of the VERIFY 
+command, the medium shall be positioned after the last block from which data 
+was verified or after the filemark, if encountered. 
+
+  When the verification length is zero, no data shall be verified and the 
+current position on the logical unit shall not be changed.  This condition 
+shall not be considered as an error.
+
+ 9.10 RECOVER BUFFERED DATA Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  14 H 
+
+                                   Table 9-12 
+                         RECOVER BUFFERED DATA Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Fixed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RECOVER BUFFERED DATA command (Table 9-12) is used to read data that has 
+been transferred to an SCSI device buffer but has not been written on the 
+medium.  It is normally only used to recover from error or exception 
+conditions that make it impossible to write the buffered data on the medium.
+
+  This command functions similarly to the READ command except that the data is 
+transferred from the SCSI device buffer instead of the medium.  The order in 
+which block(s) are transferred is the same as if they would have been 
+transferred to the medium.  One or more RECOVER BUFFERED DATA commands may be 
+used to read the unwritten buffered data.
+
+  The target may implement fixed block mode, variable block mode, or both 
+modes.  If the fixed bit does not match the current mode, or the mode 
+indicated by the fixed bit is not implemented, the target shall reject the 
+command by returning a CHECK CONDITION status and by setting the sense key to 
+ILLEGAL REQUEST.
+
+  If an attempt is made to recover more logical blocks of data than are 
+
+contained in the SCSI device buffer, the command shall be terminated with a 
+CHECK CONDITION status.  The EOM bit in extended sense shall be set to one.  
+If the fixed bit is one, the valid bit shall be set to one and the information 
+bytes shall be set to the difference (residue) between the requested transfer 
+length and the actual number of blocks transferred.
+
+  The transfer length specifies the number of contiguous logical blocks of 
+data to be transferred.  A transfer length of zero indicates that no data 
+shall be transferred.  This condition shall not be considered as an error.
+
+ 9.11 MODE SELECT Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  15 H 
+
+                                   Table 9-13 
+                              MODE SELECT Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SELECT command (Table 9-13) provides a means for the initiator to 
+specify medium, logical unit, or peripheral device parameters to the target.
+
+  The  parameter list length specifies the length in bytes of the MODE SELECT 
+parameter list that shall be transferred during the DATA OUT phase.  A zero 
+parameter list length indicates that no data shall be transferred.  This 
+condition shall not be considered as an error.
+
+  The MODE SELECT parameter list shown in Table 9-14 contains a four-byte 
+header, followed by zero or more eight-byte block descriptors, followed by the 
+vendor unique parameters, if any.
+.pa
+
+                                   Table 9-14 
+                           MODE SELECT Parameter List 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |Reserved|      Buffered Mode       |          Speed                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Block Descriptor Length                     |
+============================================================================== 
+     |                        Block Descriptor(s)                            |
+==============================================================================
+ 0   |                           Density Code                                |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Blocks                            |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Block Length (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Block Length (LSB)                          |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0  _  n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  A buffered mode of zero indicates that the target shall not report a GOOD 
+status on WRITE commands until the data blocks are actually written on the 
+medium.  A buffered mode of one indicates that the target may report a GOOD 
+status on WRITE commands as soon as the data block has been transferred to the 
+SCSI device buffer.  One or more blocks may be buffered prior to writing the 
+block(s) to the medium.  Buffered modes of 2 H  through 7 H  are reserved.
+
+  Code values for the speed field shall be assigned as follows:
+
+   0 H          Default (Use the  peripheral device's default speed).
+   1 H          Use the peripheral device's lowest speed.
+   2 H   _  F H     Use increasing peripheral device speeds.
+
+  The block descriptor length specifies the length in bytes of all the block 
+descriptors.  It is equal to the number of block descriptors times eight and 
+does not include the vendor unique parameters, if any.  A block descriptor 
+length of zero indicates that no block descriptors are included in the 
+
+parameter list.  This condition shall not be considered as an error.
+
+  Each block descriptor specifies the medium characteristics for all or part 
+of a logical unit.  Each block descriptor contains a density code, a number of 
+blocks, and a block length.
+
+  Code values for the density code field are defined in Table 9-14.1.
+
+                                  Table 9-14.1 
+                        Sequential-access Density Codes 
+
+==============================================================================
+Code Value                             Density
+----------  ------------------------------------------------------------------
+   00 H       Default (peripheral device's default or only density)
+       
+                                    Magnetic Tapes
+            Width                  Density                 Reference
+            mm. (Inch)   Tracks  BPMM   (BPI)  Code  Type  Standard      Note
+            ----------   ------  ------------  ----  ----  ------------  ----
+   01 H       12.7 (0.5)      9     32    (800)  NRZI   R    X3.22-1983      3
+   02 H       12.7 (0.5)      9     63  (1 600)  PE     R    X3.39-1973      3
+   03 H       12.7 (0.5)      9    246  (6 250)  GCR    R    X3.54-1976      3
+   04 H        6.3 (0.25)    4/9   315  (8 000)  GCR    C                  2,4
+   05 H        6.3 (0.25)    4/9   315  (8 000)  GCR    C    X3.136-198X     2
+   06 H       12.7 (0.5)      9    126  (3 200)  PE     R    X3B5/85-98    1,3
+   07 H        6.3 (0.25)     4    252  (6 400)  IMFM   C    X3.116-198X     2
+   08 H       3.81 (0.15)     4    315  (8 000)  GCR    CS   X3B5/85-77    1,2
+   09 H       12.7 (0.5)     18                         C    X3B5/85-76    1,3
+   0A H       12.7 (0.5)     22    267  (6 667)  MFM    C                    2
+   0B H        6.3 (0.25)     4     63  (1 600)  PE     C    X3.56-198X      2
+   0C H       12.7 (0.5)     24    500 (12 690)  GCR    C                    2
+   0D H       12.7 (0.5)     24    999 (25 380)  GCR    C                    2
+
+80 H   _  FF H    Vendor unique
+All others  Reserved
+==============================================================================
+Key:
+               Code                                       Type
+--------------------------------------------       -----------------------
+NRZI  Non Return to Zero, change on ones           R   Reel-to-Reel
+GCR   Group Code Recording                         C   Cartridge
+PE    Phase Encoded                                CS  Cassette
+IMFM  Inverted Modified Frequency Modulation
+
+NOTES:
+  (1)  Working Draft.  X3B5 assigns a new document number to each revision of 
+their documents.  Please contact the Chairman of X3B5 for the latest document 
+number.
+  (2)  Serially Recorded.
+  (3)  Parallel Recorded.
+  (4)  Old format known as QIC-11.
+
+
+  The number of blocks field specifies the number of logical blocks on the 
+medium that meet the density code and block length in the block descriptor.  A 
+
+number of blocks of zero indicates that all of the remaining logical blocks of 
+the logical unit shall have the medium characteristics specified by the block 
+descriptor.
+
+  The block length specifies the length in bytes of each logical block 
+described by the block descriptor.  A block length of zero indicates that the 
+length shall be variable.
+.fo Section 9                          132.1
+.pa
+
+.fo Section 9                          132.2
+ 9.12 RESERVE UNIT and RELEASE UNIT Commands 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  16 H  and 17 H , respectively
+
+                                   Table 9-15 
+                     RESERVE UNIT and RELEASE UNIT Commands 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | 3rdPty | Third Party Device ID    |Reserved|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RESERVE UNIT and RELEASE UNIT commands both use the command descriptor 
+block shown in Table 9-15.
+
+   9.12.1 RESERVE UNIT Command.   The RESERVE UNIT command (Table 9-15, 
+operation code 16 H ) shall reserve the specified logical unit for the exclusive 
+use by the requesting initiator or, if third-party reservation option is 
+implemented, to another specified SCSI device.
+
+  The reservation shall remain in effect until superceded by another RESERVE 
+UNIT command from the initiator that made the reservation or until released by 
+a RELEASE UNIT command from the same initiator, or a BUS DEVICE RESET message 
+>From any initiator, or a "hard" RESET condition.  The occurrence of the last 
+two conditions is indicated by a sense key of UNIT ATTENTION on the next 
+command following the condition.  It is not an error to issue this command to 
+a logical unit that is currently reserved to the requesting initiator.
+
+  If the logical unit is previously reserved by another initiator, then the 
+target shall either:
+
+  (1)  return a RESERVATION CONFLICT status
+
+  (2)  queue the reservation request and disconnect until all previously 
+queued reservations have been released.  When the logical unit is available, 
+the target shall reconnect to perform the reservation
+
+  If, after honoring the reservation, any other initiator then subsequently 
+attempts to perform any command on the reserved logical unit other than a 
+RESERVE UNIT command, which may be queued, or a RELEASE UNIT command, which 
+shall be ignored, then the command shall be rejected with a RESERVATION 
+CONFLICT status. 
+
+.pn 133
+.fo Section 9                            #
+
+  The third-party reservation option for the RESERVE UNIT command allows an 
+initiator to reserve a logical unit for another SCSI device.  This option is 
+intended for use in multiple-initiator systems that use the COPY command.  Any 
+target that implements the third-party reservation option shall also implement 
+the third-party release option (see 9.12.2).
+
+  If the third-party (3rdPty) bit is zero, then the third-party reservation 
+option is not requested.  If the 3rdPty bit is one and the third-party 
+reservation option is implemented, then the RESERVE UNIT command shall reserve 
+the specified logical unit for the SCSI device specified in the third-party 
+device ID field.  The target shall preserve the reservation until superceded 
+by another RESERVE UNIT command from the initiator that made the reservation 
+or until released by the same initiator, by a BUS DEVICE RESET message from 
+any initiator, or by a "hard" RESET condition.  The target shall ignore (i.e., 
+return GOOD status) any attempt made by any other initiator to release the 
+reservation.
+
+  If the 3rdPty bit is one and the third-party reservation option is not 
+implemented, then the target shall reject the RESERVE UNIT command with a 
+CHECK CONDITION status and a sense key of ILLEGAL REQUEST. 
+
+  An initiator that holds a current reservation may modify that reservation 
+(e.g., switch third-parties) by issuing another RESERVE UNIT command to the 
+same logical unit.  The superceding RESERVE UNIT command shall release the 
+previous reservation state only when the new reservation is granted.  A 
+superceding reservation takes priority over any previously queued reservation 
+request.
+
+   9.12.2 RELEASE UNIT Command.   The RELEASE UNIT command (Table 9-15, 
+operation code 17 H ) shall release the logical unit if it is currently reserved 
+by the requesting initiator. 
+
+  It is not an error to attempt to release a logical unit that is not 
+currently reserved to the requesting initiator.  However, it shall not be 
+released if it is reserved by another initiator.
+
+  The third-party release option for the RELEASE UNIT command allows an 
+initiator to release a logical unit that was previously reserved using the 
+third-party reservation option (see 9.12.1).  This option shall be implemented 
+if the third-party reservation option is implemented.  This option is intended 
+for use in multiple-initiator systems that use the COPY command.
+
+  If the third-party (3rdPty) bit is zero, then the third-party release option 
+is not requested.  If the 3rdPty bit is one and the target implements the 
+third-party release option, then the target shall release the specified 
+logical unit, but only if the reservation was made using the third-party 
+reservation option by the initiator that is requesting the release and for the 
+same SCSI device as specified in the third-party device ID field.
+
+  If the 3rdPty bit is one and the target does not implement the third-party 
+release option, then the target shall terminate the command with a CHECK 
+CONDITION status and the sense key shall be set to ILLEGAL REQUEST.
+.pa
+
+ 9.13 ERASE Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  19 H 
+
+                                   Table 9-16 
+                                 ERASE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Long   |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The ERASE command (Table 9-16) causes part or all of the remaining medium to 
+be erased beginning from the current medium position.  As used here, "erased" 
+means either the medium shall be erased or a pattern shall be written on the 
+medium that appears as gap to the target.
+
+  The distance to be erased is controlled by the long bit.  A long bit of one 
+indicates that all remaining medium on the logical unit shall be erased.  A 
+long bit of zero indicates that a peripheral device specified portion of the 
+medium shall be erased.  Normally, short erases are used to create an extended 
+gap for software controlled error recovery or for support of "update in place" 
+functions.  The medium position following an ERASE command with a long bit of 
+one is not defined by this standard.
+
+NOTE:  Some targets may reject ERASE commands with the long bit set to one if 
+the medium is not positioned at the beginning-of-medium.
+.pa
+
+ 9.14 MODE SENSE Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  1A H 
+
+                                   Table 9-17 
+                               MODE SENSE Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SENSE command (Table 9-17) provides a means for a target to report 
+its medium, logical unit, or peripheral device parameters to the initiator.  
+It is a complementary command to the MODE SELECT command (see 9.11) for 
+support of a medium that may contain different densities, such as half-inch 
+tapes.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for returned MODE SENSE data.  An allocation length of zero 
+indicates that no MODE SENSE data shall be transferred.  This condition shall 
+not be considered as an error.  Any other value indicates the maximum number 
+of bytes that shall be transferred.  The target shall terminate the DATA IN 
+phase when allocation length bytes have been transferred or when all available 
+MODE SENSE data have been transferred to the initiator, whichever is less.
+
+  The MODE SENSE data (Table 9-18) contains a four-byte header, followed by 
+zero or more eight-byte block descriptors, followed by the vendor unique 
+parameters, if any.
+.pa
+
+                                   Table 9-18 
+                                MODE SENSE Data 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Sense Data Length                           |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Medium Type                                 |
+-----|-----------------------------------------------------------------------|
+ 2   |   WP   |   Buffered Mode          |         Speed                     |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Block Descriptor Length                     |
+==============================================================================
+     |                        Block Descriptor(s)                            |
+==============================================================================
+ 0   |                           Density Code                                |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Number of Blocks (MSB)                      |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Number of Blocks                            |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Number of Blocks (LSB)                      |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   |                           Block Length (MSB)                          |
+-----|-----------------------------------------------------------------------|
+ 6   |                           Block Length                                |
+-----|-----------------------------------------------------------------------|
+ 7   |                           Block Length (LSB)                          |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0  _  n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  The sense data length specifies the length in bytes of the following mode 
+sense data that is available to be transferred during the DATA IN phase.  The 
+sense data length does not include itself.
+
+  Code values for the medium type field shall be assigned as follows:
+
+   00 H         Default (Only one medium type supported)
+   01 H   _  7F H   Reserved
+   80 H   _  FF H   Vendor unique
+
+  A write protected (WP) bit of zero indicates that the medium is write 
+enabled.  A write protected bit of one indicates that the medium is write 
+protected.
+
+  A buffered mode of zero indicates that the target does not report a GOOD 
+status on WRITE commands until the data blocks are actually written on the 
+medium.  A buffered mode of one indicates that the target may report a GOOD 
+
+status on WRITE commands as soon as the data block has been transferred to the 
+SCSI device buffer.  One or more blocks may be buffered prior to writing the 
+block(s) to the medium.  Buffered modes of 2 H  through 7 H  are reserved.
+
+  Code values for the speed field shall be assigned as follows:
+
+   0 H          Default (only one speed supported)
+   1 H          Lowest peripheral device speed
+   2 H   _  F H     Increasing peripheral device speeds
+
+  The block descriptor length specifies the length in bytes of all the block 
+descriptors.  It is equal to the number of block descriptors times eight and 
+does not include the vendor unique parameters, if any.  A block descriptor 
+length of zero indicates that no block descriptors shall be included in the 
+parameter list.  This condition shall not be considered as an error.
+
+  Each block descriptor specifies the medium characteristics for all or part 
+of a logical unit.  Each block descriptor contains a density code, a number of 
+blocks, and a block length.
+
+  Code values for the density code field are defined in Table 9-14.1.
+
+  The number of blocks field specifies the number of logical blocks on the 
+medium that meet the density code and block length in the block descriptor.  A 
+number of blocks of zero indicates that all of the remaining logical blocks of 
+the logical unit have the medium characteristics specified by the block 
+descriptor.
+
+  The block length specifies the length in bytes of each logical block 
+described by the block descriptor.  A block length of zero indicates that the 
+length is variable.
+.pa
+
+ 9.15 LOAD/UNLOAD Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  1B H 
+
+                                   Table 9-19 
+                              LOAD/UNLOAD Command  
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Immed  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                  | Re-Ten |  Load  |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The LOAD/UNLOAD command (Table 9-19) requests that the target enable or 
+disable the logical unit for further operations.  This command may also be 
+used to request the re-tension function on peripheral devices that support 
+this function.
+
+  A load bit of one indicates that the medium on the logical unit shall be 
+loaded and positioned to the beginning-of-medium or load-point as determined 
+by the peripheral device.  A load bit of zero indicates that the medium on the 
+logical unit shall be positioned for removal from the peripheral device.
+
+  Status shall be returned after the medium is positioned unless the immediate 
+(Immed) bit is one.  If the Immed bit is one, status may be returned as soon 
+as the command has been accepted.
+
+  A re-tension (Re-Ten) bit of one indicates that the medium on the addressed 
+logical unit shall be correctly tensioned before the LOAD/UNLOAD command is 
+completed.  This is an optional function intended for use by those peripheral 
+devices that support the re-tension function.
+.pa
+
+ 9.16 PREVENT/ALLOW MEDIUM REMOVAL Command 
+
+     Peripheral Device Type:  Sequential Access
+        Operation Code Type:  Optional
+             Operation Code:  1E H 
+
+                                   Table 9-20 
+                      PREVENT/ALLOW MEDIUM REMOVAL Command 
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                           | Prevent|
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The PREVENT/ALLOW MEDIUM REMOVAL command (Table 9-20) requests that the 
+target enable or disable the removal of the medium in the logical unit.
+
+  A prevent bit of one shall inhibit mechanisms that normally allow removal of 
+the medium.  A prevent bit of zero shall allow removal of the medium.
+
+  This prevention of medium removal condition shall terminate upon receipt of 
+a PREVENT/ALLOW MEDIUM REMOVAL command with the prevent bit set to zero, or by 
+the receipt of a BUS DEVICE RESET message from any initiator or by a "hard" 
+RESET condition.
+.pa
+
+                                                                                                             
+

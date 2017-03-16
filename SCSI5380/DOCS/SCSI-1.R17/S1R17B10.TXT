@@ -1,0 +1,660 @@
+10. Group 0 Command Descriptions for Printer Devices
+
+The Group 0 commands for printer devices shall be as shown in Table 10-1.
+
+                                  Table 10-1
+                     Group 0 Commands for Printer Devices
+
+==============================================================================
+Operation
+  Code      Type   Command Name                       Section
+------------------------------------------------------------------------------
+   00H       O     TEST UNIT READY                    7.1.1
+   01H       V
+   02H       V
+   03H       M     REQUEST SENSE                      7.1.2
+   04H       O     FORMAT                             10.1
+   05H       V
+   06H       V
+   07H       V
+   08H       V
+   09H       V
+   0AH       M     PRINT                              10.2
+   0BH       O     SLEW AND PRINT                     10.3
+   0CH       V
+   0DH       V
+   0EH       V
+   0FH       V
+   10H       O     FLUSH BUFFER                       10.4
+   11H       V
+   12H       E     INQUIRY                            7.1.3
+   13H       V
+   14H       O     RECOVER BUFFERED DATA              10.5
+   15H       O     MODE SELECT                        10.6
+   16H       O     RESERVE UNIT                       10.7.1
+   17H       O     RELEASE UNIT                       10.7.2
+   18H       O     COPY                               7.1.4
+   19H       V
+   1AH       O     MODE SENSE                         10.8
+   1BH       O     STOP PRINT                         10.9
+   1CH       O     RECEIVE DIAGNOSTIC RESULTS         7.1.5
+   1DH       O     SEND DIAGNOSTIC                    7.1.6
+   1EH       R
+   1FH       R
+==============================================================================
+
+Key: M  =  Command implementation is mandatory.
+     E  =  Command implementation is required for SCSI devices that support 
+           device-independent self-configuring software.
+     O  =  Command implementation is optional.
+     R  =  Operation code is reserved for future standardization.
+     V  =  Operation code is available for vendor unique commands.
+
+
+
+
+10.1 FORMAT Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  04H
+
+                                  Table 10-2
+                                FORMAT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |         Reserved         | Format Type     |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The FORMAT command (Table 10-2) provides a means for the initiator to 
+specify forms or fonts to printers that support programmable forms or fonts.  
+The format information sent is vendor unique since it is peripheral-device 
+specific.
+
+  The format type field specifies the type of format information to be 
+transferred from the initiator to the target.  This field is defined as 
+follows:
+
+   DB(1)  DB(0)    Format Type
+   -----  -----    -------------
+     0      0      Set Form
+     0      1      Set Font
+     1      0      Vendor Unique
+     1      1      Reserved
+
+
+  The transfer length specifies the length in bytes of format information that 
+shall be sent during the DATA OUT phase.  A transfer length of zero indicates 
+that no format information shall be sent.  This condition shall not be 
+considered as an error.
+
+
+
+
+
+
+
+
+10.2 PRINT Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Mandatory
+             Operation Code:  0AH
+
+                                  Table 10-3
+                                PRINT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The PRINT command (Table 10-3) transfers the specified number of bytes from 
+the initiator to the target to be printed.  The data sent is application 
+dependent.
+
+  The transfer length specifies the length in bytes of data that shall be sent 
+during the DATA OUT phase.  A transfer length of zero indicates that no data 
+shall be sent.  This condition shall not be considered as an error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10.3 SLEW AND PRINT Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  0BH
+
+                                  Table 10-4
+                            SLEW AND PRINT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Channel|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Slew Value                                  |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The SLEW AND PRINT command (Table 10-4) transfers the specified number of 
+bytes from the initiator to the target to be printed.  The data sent is 
+application dependent.  This command is provided for printers that do not 
+support forms control information imbedded within the print data.
+
+  The transfer length specifies the length in bytes of data that shall be sent 
+during the DATA OUT phase.  A transfer length of zero indicates that no data 
+shall be sent.  This condition shall not be considered as an error.
+
+  If the channel bit is zero, the slew value specifies the number of lines the 
+form shall be advanced before printing.  A value of 255 indicates that the 
+form shall be advanced to the first line of the next form before printing.  If 
+the channel bit is one, the slew value specifies the forms control channel 
+number to which the form shall be advanced prior to printing the data.
+
+  If the channel bit is one, and the channel option is not implemented, the 
+command shall be terminated with a CHECK CONDITION status and the sense key 
+shall be set to ILLEGAL REQUEST.
+
+
+
+
+
+
+
+
+
+
+
+10.4 FLUSH BUFFER Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  10H
+
+                                  Table 10-5
+                             FLUSH BUFFER Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The FLUSH BUFFER command (Table 10-5) provides a means for an initiator to 
+ensure that the data have been successfully printed prior to releasing the 
+peripheral device.  This is useful for applications that wish to handle any 
+error or exception conditions (e.g., end-of-medium) prior to termination of 
+the application.
+
+  When all buffered data are actually printed the command shall be terminated 
+with a GOOD status.  If it is not possible to finish printing all of the 
+buffered data (due to an error or exception condition on the peripheral 
+device), then this command shall be terminated with a CHECK CONDITION status 
+and the appropriate sense key.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10.5 RECOVER BUFFERED DATA Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  14H
+
+                                  Table 10-6
+                        RECOVER BUFFERED DATA Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Transfer Length (MSB)                       |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Transfer Length                             |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Transfer Length (LSB)                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RECOVER BUFFERED DATA command (Table 10-6) returns to the initiator the 
+data that has been sent to the target, but not yet printed.
+
+  This command is normally used only to recover from error or exception 
+conditions that make it impossible to print the buffered data.  The order in 
+which the data is transferred from the target to the initiator is the same as 
+it was when the data was previously transferred using the PRINT command or 
+SLEW AND PRINT command.  Data that is transferred by this command is deleted 
+from the target data buffer.  One or more RECOVER BUFFERED DATA commands may 
+be used to return the unprinted buffered data.
+
+  If an attempt is made to recover more data than is contained in the buffer, 
+the command shall be terminated with a CHECK CONDITION status and the sense 
+key shall be set to NO SENSE.  In addition, the EOM, the valid, and the ILI 
+bits in extended sense shall be set to one.  The information bytes shall be 
+set to the difference (residue) between the transfer length and the actual 
+number of bytes returned. 
+
+  The transfer length specifies the maximum length in bytes of data that shall 
+be transferred during the DATA IN phase.  A transfer length of zero indicates 
+that no data shall be transferred.  This condition shall not be considered as 
+an error.
+
+
+
+
+
+
+
+10.6 MODE SELECT Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  15H
+
+                                  Table 10-7
+                             MODE SELECT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Parameter List Length                       |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SELECT command (Table 10-7) provides a means for the initiator to 
+specify medium, logical unit, or peripheral device parameters to the target.
+
+  The parameter list length specifies the length in bytes of the MODE SELECT 
+parameter list that shall be transferred during the DATA OUT phase.  A 
+parameter list length of zero indicates that no data shall be transferred.  
+This condition shall not be considered as an error.  The MODE SELECT parameter 
+list (Table 10-8) contains a four-byte header, followed by the vendor unique 
+parameters, if any.
+
+                                  Table 10-8
+                          MODE SELECT Parameter List
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |Reserved|      Buffered Mode       |             Reserved              |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0 _ n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  A buffered mode of zero indicates that the target shall not report a GOOD 
+status on PRINT commands or SLEW AND PRINT commands until the data are 
+actually printed.  A buffered mode of one indicates that the target may report 
+a GOOD status on PRINT commands or SLEW AND PRINT commands as soon as the data 
+have been transferred to the SCSI device buffer.  The data from one or more 
+commands may be buffered prior to printing.  Buffered modes of 2H through 7H 
+are reserved.
+
+10.7 RESERVE UNIT and RELEASE UNIT Commands
+
+     Peripheral Device Type:  Printer
+        Operation Code Type:  Optional
+             Operation Code:  16H and 17H, respectively
+
+                                  Table 10-9
+                    RESERVE UNIT and RELEASE UNIT Commands
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              |
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      | 3rdPty | Third Party Device ID    |Reserved|
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The RESERVE UNIT and RELEASE UNIT commands both use the command descriptor 
+block shown in Table 10-9.
+
+  10.7.1 RESERVE UNIT Command.  The RESERVE UNIT command (Table 10-9, 
+operation code 16H) shall reserve the specified logical unit for the exclusive 
+use by the requesting initiator or, if third-party reservation option is 
+implemented, to another specified SCSI device.
+
+  The reservation shall remain in effect until superceded by another RESERVE 
+UNIT command from the initiator that made the reservation or until released by 
+a RELEASE UNIT command from the same initiator, or a BUS DEVICE RESET message 
+from any initiator, or a "hard" RESET condition.  The occurrence of the last 
+two conditions is indicated by a sense key of UNIT ATTENTION on the next 
+command following the condition.  It is not an error to issue this command to 
+a logical unit that is currently reserved to the requesting initiator.
+
+  If the logical unit is previously reserved by another initiator, then the 
+target shall either:
+
+  (1)  return a RESERVATION CONFLICT status
+
+  (2)  queue the reservation request and disconnect until all previously 
+queued reservations have been released.  When the logical unit is available, 
+the target shall reconnect to perform the reservation
+
+  If, after honoring the reservation, any other initiator then subsequently 
+attempts to perform any command on the reserved logical unit other than a 
+RESERVE UNIT command, which may be queued, or a RELEASE UNIT command, which 
+shall be ignored, then the command shall be rejected with a RESERVATION 
+CONFLICT status. 
+
+  The third-party reservation option for the RESERVE UNIT command allows an 
+initiator to reserve a logical unit for another SCSI device.  This option is 
+intended for use in multiple-initiator systems that use the COPY command.  Any 
+target that implements the third-party reservation option shall also implement 
+the third-party release option (see 10.7.2).
+
+  If the third-party (3rdPty) bit is zero, then the third-party reservation 
+option is not requested.  If the 3rdPty bit is one and the third-party 
+reservation option is implemented, then the RESERVE UNIT command shall reserve 
+the specified logical unit for the SCSI device specified in the third-party 
+device ID field.  The target shall preserve the reservation until superceded 
+by another RESERVE UNIT command from the initiator that made the reservation 
+or until released by the same initiator, by a BUS DEVICE RESET message from 
+any initiator, or by a "hard" RESET condition.  The target shall ignore (i.e., 
+return GOOD status) any attempt made by any other initiator to release the 
+reservation.
+
+  If the 3rdPty bit is one and the third-party reservation option is not 
+implemented, then the target shall reject the RESERVE UNIT command with a 
+CHECK CONDITION status and a sense key of ILLEGAL REQUEST. 
+
+  An initiator that holds a current reservation may modify that reservation 
+(e.g., switch third-parties) by issuing another RESERVE UNIT command to the 
+same logical unit.  The superceding RESERVE UNIT command shall release the 
+previous reservation state only when the new reservation is granted.  A 
+superceding reservation takes priority over any previously queued reservation 
+request.
+
+  10.7.2 RELEASE UNIT Command.  The RELEASE UNIT command (Table 10-9, 
+operation code 17H) shall release the logical unit if it is currently reserved 
+by the requesting initiator. 
+
+  It is not an error to attempt to release a logical unit that is not 
+currently reserved to the requesting initiator.  However, it shall not be 
+released if it is reserved by another initiator.
+
+  The third-party release option for the RELEASE UNIT command allows an 
+initiator to release a logical unit that was previously reserved using the 
+third-party reservation option (see 10.7.1).  This option shall be implemented 
+if the third-party reservation option is implemented.  This option is intended 
+for use in multiple-initiator systems that use the COPY command.
+
+  If the third-party (3rdPty) bit is zero, then the third-party release option 
+is not requested.  If the 3rdPty bit is one and the target implements the 
+third-party release option, then the target shall release the specified 
+logical unit, but only if the reservation was made using the third-party 
+reservation option by the initiator that is requesting the release and for the 
+same SCSI device as specified in the third-party device ID field.
+
+  If the 3rdPty bit is one and the target does not implement the third-party 
+release option, then the target shall terminate the command with a CHECK 
+CONDITION status and the sense key shall be set to ILLEGAL REQUEST.
+
+10.8 MODE SENSE Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  1AH
+
+                                 Table 10-10
+                              MODE SENSE Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved                  |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Allocation Length                           |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The MODE SENSE command (Table 10-10) provides a means for a target to report 
+its medium, logical unit, or peripheral device parameters to the initiator.  
+It is a complementary command to the MODE SELECT command.
+
+  The allocation length specifies the number of bytes that the initiator has 
+allocated for returned MODE SENSE data.  An allocation length of zero 
+indicates that no MODE SENSE data shall be transferred.  This condition shall 
+not be considered as an error.   Any other value indicates the maximum number 
+of bytes that shall be transferred.  The target shall terminate the DATA IN 
+phase when allocation length bytes have been transferred or when all available 
+MODE SENSE data have been transferred to the initiator, whichever is less.
+
+  The MODE SENSE data (Table 10-11) contains a four-byte header, followed the 
+vendor unique parameters, if any.
+
+
+
+
+
+                                 Table 10-11
+                               MODE SENSE Data
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Sense Data Length                           |
+-----|-----------------------------------------------------------------------|
+ 1   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 2   |Reserved|      Buffered Mode       |             Reserved              |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+==============================================================================
+     |                        Vendor Unique Parameter(s)                     |
+==============================================================================
+0 _ n|                           Vendor Unique                               |
+     |                           Parameter Byte(s)                           |
+==============================================================================
+
+  The sense data length specifies the length in bytes of the following MODE 
+SENSE data that is available to be transferred during the DATA IN phase.  The 
+sense data length does not include itself.
+
+  A buffered mode of zero indicates that the target does not report a GOOD 
+status on PRINT commands or SLEW AND PRINT commands until the data are 
+actually printed.  A buffered mode of one indicates that the target may report 
+a GOOD status on PRINT commands or SLEW AND PRINT commands as soon as the data 
+have been transferred to the SCSI device buffer.  The data from one or more 
+commands may be buffered prior to printing.  Buffered modes of 2H through 7H 
+are reserved.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10.9 STOP PRINT Command
+
+     Peripheral Device Type:  Printer 
+        Operation Code Type:  Optional
+             Operation Code:  1BH
+
+                                 Table 10-12
+                              STOP PRINT Command
+
+==============================================================================
+  Bit|   7    |   6    |   5    |   4    |   3    |   2    |   1    |   0    | 
+Byte |        |        |        |        |        |        |        |        |
+==============================================================================
+ 0   |                           Operation Code                              | 
+-----|-----------------------------------------------------------------------|
+ 1   | Logical Unit Number      |                  Reserved         | Retain |
+-----|-----------------------------------------------------------------------|
+ 2   |                           Vendor Unique                               |
+-----|-----------------------------------------------------------------------|
+ 3   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 4   |                           Reserved                                    |
+-----|-----------------------------------------------------------------------|
+ 5   | Vendor Unique   |         Reserved                  |  Flag  |  Link  |
+==============================================================================
+
+  The STOP PRINT command (Table 10-12) is used to halt printing on buffered 
+devices in an orderly fashion.
+
+  A retain bit of zero requests that the target data buffer be discarded; 
+otherwise, the unprinted data is retained.  The unprinted data may be 
+recovered by use of the RECOVER BUFFERED DATA command, if supported.  A 
+subsequent PRINT command or SLEW AND PRINT command shall cause the remaining 
+unprinted and unrecovered data to be printed followed by the data transferred 
+by the subsequent command.  The point at which printing is suspended by this 
+command is peripheral-device specific and is not defined by this standard.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

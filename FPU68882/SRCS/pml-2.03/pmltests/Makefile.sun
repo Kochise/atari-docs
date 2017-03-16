@@ -1,0 +1,28 @@
+CC = gcc
+CFLAGS =	-DNO_DBUG -O -I../pmlsrc
+LIBS =		../pmlsrc/libpml.a -v
+
+all :		d2d dd2d c2d c2c cc2c
+
+d2d :		d2d.o
+		$(CC) -o d2d d2d.o $(LIBS)
+
+dd2d :		dd2d.o
+		$(CC) -o dd2d dd2d.o $(LIBS)
+		
+c2d :		c2d.o
+		$(CC) -o c2d c2d.o $(LIBS)
+
+c2c :		c2c.o
+		$(CC) -o c2c c2c.o $(LIBS)
+		
+cc2c :		cc2c.o
+		$(CC) -o cc2c cc2c.o $(LIBS)
+		
+
+#
+#	Clean up the directory.
+#
+
+clean:
+	rm -f c2c c2d cc2c d2d dd2d *.BAK *.bak *.tmp nohup.out *.o

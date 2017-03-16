@@ -1,0 +1,137 @@
+                            Music Analyzer
+
+                          Release 5 (August 1995)
+
+
+Music Analyzer is a little (well, it was little some time ago) program for the
+Atari Falcon. It takes the incoming data from the AD-Converter and uses the DSP
+to analyze it. This means that it calculates a 14-band frequency spectrum for
+both channels. On the screen you can also see two vu-meters, two oscilloscopes
+and a small left vs. right scope.
+
+The program should run on all VGA monitors and RGB monitors and TVs, but on
+a VGA monitor it looks much better! (no interlace)
+
+The average screen update frequency is about a little more than 20 Hz. The
+speed depends a lot of the input level. The screen update frequency is about
+25 Hz when there's no input signal at all. But then there's not much to see
+either :-)
+
+In the directory SOURCE you'll find all the (assembler and pascal) sources
+necessary to compile the program. (The program itself is written in full
+assembly, the little pascal programs are for calculating log tables etc.)
+Also included is a small routine written in C which I used to calculate the
+FIR-filter coefficients.
+
+The assembler I use is the assembler in the Turbo C package. For the pascal
+programs I use Pure Pascal. (Don't think I'm that rich that I can afford
+these programs (I'm only a poor physics student), but my father does some
+programming too...)
+
+Some people asked me if I couldn't make a GEM version of Music Analyzer. But
+I think that this will have the same effect as changing the Falcon clock
+frequency from 16 to about 2 MHz. (And even 16 MHz is far too slow for REALLY
+nice programs). But if you want to try yourself to make a GEM version, you
+can; all source codes are included :-)
+
+Running the program under MultiTOS gives no problems (as far as I know),
+it even doesn't run any slower. But you won't be able to switch task.
+NVDI and Screenblaster don't give any problems either.
+
+Some history:
+
+Release 1 is the version from 19/7/94 that appeared only in the public domain
+serie by 'Stichting ST' in the Netherlands. It was a very limited version
+(no mouse control, etc), but maybe therefore also the fastest version :-)
+
+Release 2 is the version from 17/1/95 that had mouse control and didn't have
+to be started in TT-medium anymore.
+
+Release 3 is the version from 19/2/95 that had the left vs. right scope added.
+
+Release 4 had no spectacular features added, but it handled video a little
+better (the previous versions had some problems with four color modes). It
+also had some small (but maybe nasty) bugs removed.
+
+This release (release 5) has some major and a lot of small changes:
+- New filter coefficients. When I tested the old coefficients using inverse
+  FFT I found out that they hardly worked (I wonder why it still looked this
+  good). The new coefficients were calculated with a routine by Frank Vitaljic
+  (see FIRCOEF.C) which makes the spectrum analyzer look a lot better!
+  The bandpass filter coefficients were calculated by substracting two low-pass
+  filters with different numbers of coefficients so the Gauss curve in the
+  frequency domain is steeper on the left side than on the right. This because
+  of the log division of the frequencies in the spectrum analyzer (no equal
+  frequency distances).
+- The DSP program doesn't use a single sample buffer (per channel) anymore.
+  It now uses 4 continuous buffers per channel for different frequencies. The
+  original sample data (32780 Hz) is brought down to a sample frequency of
+  8195 Hz using a low-pass filter. Then down to 2048 Hz and finally to a sample
+  frequency of 512 Hz. This makes it possible to calculate the lower bands of
+  the spectrum analyzer as accurate as the higher ones without using enormous
+  numbers of filter coefficients.
+- The color palette has been resorted. You won't notice that if you run the
+  program, but this way only 1 (one) of the 4 bitplanes has to be changed when
+  the scopes are drawn, which increases the speed.
+- I changed the boring grey background into a 'grey shaded' surface.
+- Grey shaded volume buttons.
+- Redrawn help dialog.
+- In TV/RGB mode the spectrum analyzer bars are in one color only to stop them
+  from flickering (because of the interlaced video).
+- Added overflow indicators. I intended to use the Falcon hardware overflow
+  detection, but then found out that this can only be used to check for
+  clipping at the same moment (that means: not if clipping has occured since
+  last checking). To avoid not noticing any clipping I'd have to check for
+  overflow 32780 times per second (by CPU).
+  Instead the DSP program just checks for every sample data point if it is at
+  the upper or lower border (using 16 bit data, so the chance that the data is
+  really one of these values is very small).
+- You can now set the left vs. right scope in two modes. In the first mode
+  (default) the program just draws the data points as single dots. In mode 2
+  the data points are connected with (dotted) lines. One problem with this mode
+  is that not all data points can be drawn because this would make the program
+  much too slow. Another problem is that the high frequencies have to be
+  filtered out because else the corners in the lines would be too sharp.
+
+Here's a new FILE_ID.DIZ:
+
+Music Analyzer (release 5, August 95)
+for the Atari Falcon. Music Analyzer is
+a small (not very usefull) program that
+takes the incoming sound from the ADC and
+uses the DSP to convert it into graphics,
+which means: two scopes, a 2*14-band
+spectrum analyzer and a left vs. right
+scope. With mouse control (no GEM). All
+source codes are included. Written by
+Roel van de Kraats (kraats@fys.ruu.nl)
+
+
+Well, there's not much more to say. I think this is gonna be the final version,
+because I don't know what I should add to the program without changing it into
+a totally different kind of program. (Maybe you have a suggestion?)
+You can use the sources for your own programs if you like (else I wouldn't give
+them to you) and you may copy the program and give it to all Falcon owners you
+know. Don't forget to give them the sources too!
+
+Oh, and I'm not responsible for any dammage to your computer, stereo-set or
+other primary necessities by using this program  :-)
+
+For some more information start the program NOW and press HELP.
+
+That's all,
+
+       ____       ___       ____
+       |   \     |   |     |         |
+    bFbÿ  |___/ bAbÿ   | bLbÿ |   bCbÿ |__   bObÿ   |  bNbÿ
+       |   |     |   |     |         |
+       !   |     !___!     !____     !____
+           '
+
+For any questions, suggestions or (small) complaints:
+
+Roel van de Kraats
+Beekweg 10
+3881 LH  Putten
+The Netherlands
+e-mail: rkraats@dds.nl or kraats@fys.ruu.nl (more reliable)

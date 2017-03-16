@@ -1,0 +1,220 @@
+12. Write-Once Devices
+
+12.1. Model for Write-Once Devices
+
+  The model for the write-once device is a variation on the optical memory 
+model.  Most of the aspects of a write-once device are similar to optical 
+memory devices.  The differences are summarized below.
+
+12.1.1. Logical Blocks
+
+  Data may be written to a logical block only once.  A subsequent write to a 
+logical block already written may or may not be corrupted, depending on the 
+implementation.  Write-once physical media is non-volatile.
+
+  The "updating" of blocks (see 15.1) is discouraged.  SCSI write-once devices 
+are intended to be "archival" in nature.  Data at a logical block address is 
+not expected to change once written.  The "update" commands are not defined 
+for this device type.  Devices are not precluded from implementing the 
+"update" function by this standard, though devices that require the update 
+function should use the optical memory device type.
+
+  Devices may be able to determine the state of a logical block prior to 
+access.  These devices can determine whether a block is blank or written. This 
+is useful in detecting previously written blocks, preventing a destructive 
+overwrite.  This is also useful in finding blank areas for later writing.  The 
+MEDIUM SCAN command can be used to find blank and written areas prior to WRITE 
+and READ access.
+
+12.1.2. Initialization
+
+  The FORMAT UNIT command is not defined for write-once devices.  Write-once 
+media is shipped pre-formatted by the manufacturer and is ready for use when 
+mounted.
+
+12.1.3. Physical Medium Defects
+
+  The raw defect rate is typically higher for optical medium than for magnetic 
+medium.  Data is usually recovered through the use of sophisticated error 
+correction algorithms.  The level of error correction used for data recovery 
+is often can be selected.  However, many write-once devices have a minimum 
+level that is always used and cannot be de-selected through the error recovery 
+mode parameter.  Control of the error correction algorithms and level of 
+correction is vendor specific.
+
+  Defect management on write-once devices is usually vendor specific.  However 
+there are standards for some types of write-once media that specify defect 
+management techniques.  These standards, where they exist, may supersede the 
+implementation requirements pertaining to error and defect reporting in this 
+standard.
+
+
+
+
+
+
+12.1.4. Error Reporting
+
+  If any of the following conditions occur during the execution of a command 
+the target shall return CHECK CONDITION status.  The appropriate sense key and 
+additional sense code should be set.  The following table illustrates some 
+error conditions and the applicable sense keys.  The table does not provide an 
+exhaustive enumeration of all conditions that may cause the CHECK CONDITION 
+status.
+
+Condition                                         Sense Key
+----------------------------------------------    ----------------------------
+Invalid logical block address                     ILLEGAL REQUEST
+
+Unsupported option requested                      ILLEGAL REQUEST
+
+Target reset or medium change since
+last command from this initiator                  UNIT ATTENTION
+
+Self diagnostic failed                            HARDWARE ERROR
+
+Unrecovered read error                            MEDIUM ERROR
+                                                  HARDWARE ERROR
+
+Recovered read error                              RECOVERED ERROR
+
+Overrun or other error that might
+be resolved by repeating the command              ABORTED COMMAND
+
+Attempt to write on write protected medium        DATA PROTECT
+
+Attempt to read a blank or previously
+unwritten block                                   BLANK CHECK
+
+Attempt to write a previously written 
+block and blank checking is enabled               BLANK CHECK
+
+
+  In the case of an invalid logical block address, the sense data information 
+field shall be set to the logical block address of the first invalid address.
+
+  In the case of an attempt to read a blank or previously unwritten block, the 
+sense data information field shall be set to the logical block address of the 
+first blank block encountered.  The data read up to that block shall be 
+transferred.
+
+  In the case of an attempt to write a previously written block and blank 
+checking is enabled, the sense information field shall be set to the logical 
+block address of the first non-blank block encountered.
+
+
+
+
+
+
+
+12.2. Commands for Write-Once Devices
+
+  The commands for write-once devices shall be as shown in Table 12-1.
+
+                Table 12-1: Commands for Write-Once Devices
+
+==============================================================================
+Command Name                       Code    Type    Section 
+------------------------------------------------------------------------------
+CHANGE DEFINITION                  40h       O     7.2.1
+COMPARE                            39h       O     7.2.2
+COPY                               18h       O     7.2.3
+COPY AND VERIFY                    3Ah       O     7.2.4
+INQUIRY                            12h       M     7.2.5
+LOCK UNLOCK CACHE                  36h       O     8.2.2
+LOG SELECT                         4Ch       O     7.2.6
+LOG SENSE                          4Dh       O     7.2.7
+MEDIUM SCAN                        38h       O    15.2.3
+MODE SELECT(6)                     15h       O     7.2.8
+MODE SELECT(10)                    55h       O     7.2.9
+MODE SENSE(6)                      1Ah       O     7.2.10
+MODE SENSE(10)                     5Ah       O     7.2.11
+PRE-FETCH                          34h       O     8.2.3
+PREVENT ALLOW MEDIUM REMOVAL       1Eh       O     8.2.4
+READ(6)                            08h       O     8.2.5
+READ(10)                           28h       M     8.2.6
+READ(12)                           A8h       O    15.2.4
+READ BUFFER                        3Ch       O     7.2.12
+READ CAPACITY                      25h       M     8.2.7
+READ LONG                          3Eh       O     8.2.9
+REASSIGN BLOCKS                    07h       O     8.2.10
+RECEIVE DIAGNOSTIC RESULTS         1Ch       O     7.2.13
+RELEASE                            17h       M     8.2.11
+REQUEST SENSE                      03h       M     7.2.14
+RESERVE                            16h       M     8.2.12
+REZERO UNIT                        01h       O     8.2.13
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Table 12-1 continued
+
+==============================================================================
+Command Name                       Code    Type    Section 
+------------------------------------------------------------------------------
+SEARCH DATA EQUAL(10)              31h       O     8.2.14.1
+SEARCH DATA EQUAL(12)              B1h       O    15.2.8
+SEARCH DATA HIGH(10)               30h       O     8.2.14.2
+SEARCH DATA HIGH(12)               B0h       O    15.2.8
+SEARCH DATA LOW(10)                32h       O     8.2.14.3
+SEARCH DATA LOW(12)                B2h       O    15.2.8
+SEEK(6)                            0Bh       O     8.2.15
+SEEK(10)                           2Bh       O     8.2.15
+SEND DIAGNOSTIC                    1Dh       M     7.2.15
+SET LIMITS(10)                     33h       O     8.2.16
+SET LIMITS(12)                     B3h       O    15.2.9
+START STOP UNIT                    1Bh       O     8.2.17
+SYNCHRONIZE CACHE                  35h       O     8.2.18
+TEST UNIT READY                    00h       M     7.2.16 
+VERIFY(10)                         2Fh       O    15.2.11
+VERIFY(12)                         AFh       O    15.2.12
+WRITE(6)                           0Ah       O     8.2.20
+WRITE(10)                          2Ah       M     8.2.21
+WRITE(12)                          AAh       O    15.2.14
+WRITE AND VERIFY(10)               2Eh       O     8.2.22
+WRITE AND VERIFY(12)               AEh       O    15.2.16
+WRITE BUFFER                       3Bh       O     7.2.17
+WRITE LONG                         3Fh       O     8.2.23
+==============================================================================
+
+    Key: M  =  Command implementation is mandatory.
+         O  =  Command implementation is optional.
+
+  The following command codes are vendor specific:  02h, 05h, 06h, 09h, 0Ch, 
+0Dh, 0Eh, 0Fh, 10h, 11h, 13h, 14h, 19h, 20h, 21h, 22h, 23h, 24h, 26h, 27h, 
+29h, and C0h through FFh.  All remaining command codes for write-once devices 
+are reserved for future standardization.
+
+12.3. Parameters for Write-Once Devices
+
+  Refer to the parameters for optical memory devices (see 15.3).
+
+12.4. Glossary for Write-Once Devices
+
+  Refer to the glossary for optical memory devices (see 15.4).
+
+
+
+
+
+
+
+
+
+

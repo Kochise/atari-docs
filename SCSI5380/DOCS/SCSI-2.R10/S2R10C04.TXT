@@ -1,0 +1,1760 @@
+4. Physical Characteristics
+
+  This section contains the physical definition of SCSI-2.  The connectors, 
+cables, signals, terminators, and bus timing values needed to implement the 
+interface are covered.
+
+4.1. Physical Description
+
+  SCSI devices are daisy-chained together using a common 50-conductor A cable 
+and, optionally, a 68-conductor B cable.  Both ends of each cable are 
+terminated.  All signals are common between all SCSI devices on the A cable.  
+In systems that employ the wide SCSI option, wide SCSI devices additionally 
+connect to the B cable.  Various width SCSI devices may be mixed.
+
+  IMPLEMENTORS NOTE:  X3T9.2 is documenting an alternate 16-bit single-cable 
+  solution and an alternate 32-bit solution and expects to be able to remove 
+  the B cable definition in a future version of SCSI.
+
+  Two driver/receiver alternatives are specified:
+  (1) Single-ended drivers and receivers, which allow a maximum cable length 
+of six meters (primarily for connection within a cabinet).
+  (2) Differential drivers and receivers, which allow a maximum cable length 
+of 25 meters (primarily for connection outside of a cabinet).
+
+  The single-ended and differential alternatives are mutually exclusive within 
+a system.
+
+  IMPLEMENTORS NOTE:  Use of single-ended drivers and receivers with the fast 
+  synchronous data transfer option is not recommended.
+
+4.2. Cable Requirements  
+
+  The characteristic impedance of the cable should be no less than 90 ohms and 
+no greater than 140 ohms.  The characteristic impedance of the cable used when 
+implementing the fast synchronous data transfer option is defined in 4.2.3.
+
+  NOTE:  There are successful single-ended implementations using cables with 
+  with less than 90 ohms characteristic impedance.  However, system integrity 
+  in single-ended implementations is improved when the characteristic 
+  impedance of the cable is greater than 90 ohms.  Cable parameters other than 
+  characteristic impedance are critical to system integrity.  The X3T9.2 Task 
+  Group is investigating alternative ways to specify cable parameters as a 
+  part of a future version of SCSI.
+
+  A minimum conductor size of 0.08042 square mm (28 AWG) should be used to 
+minimize noise effects and ensure proper distribution of terminator power.  
+A smaller conductor size may be used for signals other than terminator power. 
+
+  IMPLEMENTORS NOTES:
+  (1) To minimize discontinuities and signal reflections, cables of different 
+  impedances should not be used in the same bus.  Implementations may require 
+  trade-offs in shielding effectiveness, cable length, the number of loads, 
+  transfer rates, and cost to achieve satisfactory system operation. 
+  (2) To minimize discontinuities due to local impedance variation, a flat 
+  cable should be spaced at least 1.27 mm (0.050 in) from other cables, any 
+  other conductor, or the cable itself when the cable is folded.
+  (3) Regulatory agencies may require use of larger wire size.  
+
+4.2.1. Single-Ended Cable
+
+  A 50-conductor flat cable or 25-signal twisted-pair cable shall be used for 
+the A cable.  A 68-conductor flat cable or 34-signal twisted-pair cable shall 
+be used for the B cable if the wide SCSI option is implemented.  The maximum 
+cumulative cable length shall be 6.0 meters.  If twisted-pair cables are used, 
+then twisted pairs in the cable shall be wired to physically opposing contacts 
+in the connector.
+
+  A stub length of no more than 0.1 meters is allowed off the mainline 
+interconnection within any connected equipment or from any connected point.
+
+  IMPLEMENTORS NOTE:  Stub clustering should be avoided.  Stubs should be 
+  spaced at least 0.3 meters apart.
+
+  SCSI bus termination shall be at each end of the cable and may be internal 
+to the SCSI devices that are at the ends of the cable.
+
+4.2.2. Differential Cable
+
+  A 50-conductor flat cable or 25-signal twisted-pair cable shall be used for 
+the A cable.  A 68-conductor flat cable or 34-signal twisted-pair cable shall 
+be used for the B cable if the wide SCSI option is implemented.  The maximum 
+cumulative cable length shall be 25 meters.  If twisted-pair cables are used, 
+then twisted pairs in the cable shall be wired to physically opposing contacts 
+in the connector.
+
+  A stub length of no more than 0.2 meters is allowed off the mainline 
+interconnection within any connected equipment or from any connected point.
+
+  SCSI bus termination shall be at each end of the cable and may be internal 
+to the SCSI devices that are at the ends of the cable.
+
+  IMPLEMENTORS NOTE:  The use of twisted pair cable (either twisted-flat or 
+  discrete wire twisted pairs) is strongly recommended.  Without twisted 
+  pairs, even at slow data rates and very short distances, crosstalk between 
+  adjacent signals causes spurious pulses with differential signals.
+
+4.2.3. Cable Requirements for Fast Synchronous Data Transfer
+
+  In systems which use the fast synchronous data transfer option (see 4.8), 
+the A and B cables should meet the conductor size recommendation in 4.2.  The 
+cable should have an overall shield suitable for termination in a shielded 
+connector.
+
+
+
+
+
+
+
+
+  In such systems, the cables shall have the following electrical 
+characteristics:
+     Characteristic Impedance:  90 to 132 ohms
+     Signal Attenuation:  0.095 dB maximum per meter at 5 MHz
+     Pair-to-Pair Propagation Delay Delta:  0.20 ns maximum per meter
+     DC Resistance:  0.230 ohms maximum per meter at 20 degrees C
+
+
+4.3. Connector Requirements
+
+  Two types of connectors are defined: nonshielded and shielded.  The 
+nonshielded connectors are typically used for in-cabinet applications.  
+Shielded connectors are typically used for external applications where 
+electromagnetic compatibility (EMC) and electrostatic discharge (ESD) 
+protection may be required.  Either type of connector may be used with the 
+single-ended or differential drivers.
+
+4.3.1. Nonshielded Connector Requirements
+
+  Two nonshielded connector alternatives are specified for the A cable and one 
+nonshielded connector is specified for the B cable.
+
+4.3.1.1. Nonshielded Connector Alternative 1 - A Cable
+
+  The alternative 1 nonshielded high-density SCSI device connector for the A 
+cable (Figure 4-1) shall be a 50-conductor connector consisting of two rows of 
+25 female contacts with adjacent contacts 1.27 mm (0.05 in) apart.  The 
+nonmating portion of the connector is shown for reference only.
+
+  The alternative 1 nonshielded high-density cable connector for the A cable 
+(Figure 4-2) shall be a 50-conductor connector consisting of two rows of 25 
+male contacts with adjacent contacts 1.27 mm (0.05 in) apart.  The nonmating 
+portion of the connector is shown for reference only.
+
+4.3.1.2. Nonshielded Connector Alternative 2 - A Cable
+
+  The alternative 2 nonshielded low-density SCSI device connector for the A 
+cable (Figure 4-3) shall be a 50-conductor connector consisting of two rows of 
+25 male pins with adjacent pins 2.54 mm (0.1 in) apart.  A shroud and header 
+body should be used.  The nonmating portion of the connector is shown for 
+reference only.
+
+  The alternative 2 nonshielded low-density cable connector for the A cable 
+(Figure 4-4) shall be a 50-conductor connector consisting of two rows of 25 
+female contacts with adjacent contacts 2.54 mm (0.1 in) apart.  It is 
+recommended that keyed connectors be used.
+
+
+
+
+
+
+
+
+
+4.3.1.3. Nonshielded Connector - B Cable
+
+  The nonshielded high-density SCSI device connector for the B cable (Figure 
+4-1) shall be a 68-conductor connector consisting of two rows of 34 female 
+contacts with adjacent contacts 1.27 mm (0.05 in) apart.  The nonmating 
+portion of the connector is shown for reference only.
+
+  The nonshielded high-density cable connector for the B cable (Figure 4-2) 
+shall be a 68-conductor connector consisting of two rows of 34 male contacts 
+with adjacent contacts 1.27 mm (0.05 in) apart.  The nonmating portion of the 
+connector is shown for reference only.
+
+4.3.2. Shielded Connector Requirements
+
+  Two shielded connector alternatives are specified for the A cable and one 
+shielded connector is specified for the B cable.  The connector shielding 
+system should provide a dc resistance of less than 10 milliohms from the 
+cable shield at its termination point to the SCSI device enclosure.
+
+  In order to support daisy-chain connections, SCSI devices that use shielded 
+connectors should provide two shielded device connectors on the device 
+enclosure.  These two connectors may be wired "one-to-one" with a stub to the 
+SCSI device's drivers and receivers provided the maximum stub length is not 
+violated.  Alternatively, two cables may be run from the two shielded 
+connectors to the drivers and receivers so that the maximum stub length is not 
+violated.  The length of the cable within the device enclosure is included 
+when calculating the total cable length of the SCSI bus.
+
+  IMPLEMENTORS NOTE:  SCSI-1 defined three shielded connector systems in an 
+  appendix.  The alternative 1 shielded connector of SCSI-1 has been replaced 
+  by a high-density connector in this standard.  The alternative 2 shielded 
+  connector remains unchanged.  The EUROCARD Boxes shielded connector system 
+  of SCSI-1 has been deleted in this standard.
+
+4.3.2.1. Shielded Connector Alternative 1 - A Cable
+
+  The shielded high-density SCSI device connector for the A cable (Figure 4-5) 
+is a 50-conductor connector consisting of two rows of 25 female contacts with 
+adjacent contacts 1.27 mm (0.05 in) apart.  The nonmating portion of the 
+connector is shown for reference only.
+
+  The shielded high-density cable connector for the A cable (Figure 4-6) is a 
+50-conductor connector consisting of two rows of 25 male contacts with 
+adjacent contacts 1.27 mm (0.05 in) apart.  The nonmating portion of the 
+connector is shown for reference only.
+
+
+
+
+
+
+
+
+
+
+4.3.2.2. Shielded Connector Alternative 2 - A Cable
+
+  The shielded low-density device connector for the A cable (Figure 4-7) is a 
+50-conductor connector consisting of two rows of ribbon contacts spaced 2.16 
+mm (0.085 in) apart.  The nonmating portion of the connector is shown for 
+reference only.
+
+  The shielded low-density cable connector for the A cable (Figure 4-8) is a 
+50-conductor connector consisting of two rows of ribbon contacts spaced 2.16 
+mm (0.085 in) apart.  The nonmating portion of the connector is shown for 
+reference only.
+
+4.3.2.3. Shielded Connector - B Cable
+
+  The shielded high-density SCSI device connector for the B cable (Figure 4-5) 
+is a 68-conductor connector consisting of two rows of 34 female contacts with 
+adjacent contacts 1.27 mm (0.05 in) apart.  The nonmating portion of the 
+connector is shown for reference only.
+
+  The shielded high-density cable connector for the B cable (Figure 4-6) is a 
+68-conductor connector consisting of two rows of 34 male contacts with 
+adjacent contacts 1.27 mm (0.05 in) apart.  The nonmating portion of the 
+connector is shown for reference only.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   Figure 4-1: 50/68-Contact Nonshielded High-Density SCSI Device Connector
+                              (A Cable/B Cable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Figure 4-2: 50/68-Contact Nonshielded High-Density Cable Connector
+                              (A Cable/B Cable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Figure 4-3: 50-Contact Nonshielded Low-Density SCSI Device Connector
+                                  (A Cable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Figure 4-4: 50-Contact Nonshielded Low-Density Cable Connector
+                                  (A Cable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Figure 4-5: 50/68-Contact Shielded High-density SCSI Device Connector
+                              (A Cable/B Cable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Figure 4-6: 50/68-Contact Shielded High-density Cable Connector
+                              (A Cable/B Cable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Figure 4-7: 50-Contact Shielded Low-Density SCSI Device Connector
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         Figure 4-8: 50-Contact Shielded Low-Density Cable Connector
+
+4.3.3. Connector Contact Assignments
+
+  The connector contact assignments are defined in Tables 4-1 through 4-5.  
+Table 4-1 defines which of the other four tables to use and which set of 
+contact assignments to use.
+
+         Table 4-1: Cross-Reference to Connector Contact Assignments
+
+==============================================================================
+                              Driver/                        Contact
+                             Receiver           Connector  Assignment  Contact
+    Connector Type             Type      Cable    Figure      Table      Set
+------------------------------------------------------------------------------
+Nonshielded Alternative 1  Single-Ended    A    4-1 & 4-2      4-2        2
+Nonshielded Alternative 1  Single-Ended    B    4-1 & 4-2      4-3
+Nonshielded Alternative 1  Differential    A    4-1 & 4-2      4-4        2
+Nonshielded Alternative 1  Differential    B    4-1 & 4-2      4-5
+
+Nonshielded Alternative 2  Single-Ended    A    4-3 & 4-4      4-2        1
+Nonshielded Alternative 2  Differential    A    4-3 & 4-4      4-4        1
+
+Shielded Alternative 1     Single-Ended    A    4-5 & 4-6      4-2        2
+Shielded Alternative 1     Single-Ended    B    4-5 & 4-6      4-3
+Shielded Alternative 1     Differential    A    4-5 & 4-6      4-4        2
+Shielded Alternative 1     Differential    B    4-5 & 4-6      4-5
+
+Shielded Alternative 2     Single-Ended    A    4-7 & 4-8      4-2        2
+Shielded Alternative 2     Differential    A    4-7 & 4-8      4-4        2
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Table 4-2: Single-Ended Contact Assignments - A Cable
+
+==============================================================================
+                  Connector         Cable        Connector
+      Signal    Contact Number    Conductor    Contact Number    Signal      
+       Name      Set 2  Set 1      Number       Set 1  Set 2      Name       
+------------------------------------------------------------------------------
+      GROUND       1      1         1 |  2        2     26       -DB(0)        
+      GROUND       2      3         3 |  4        4     27       -DB(1)        
+      GROUND       3      5         5 |  6        6     28       -DB(2)      
+      GROUND       4      7         7 |  8        8     29       -DB(3)      
+      GROUND       5      9         9 | 10       10     30       -DB(4)      
+      GROUND       6     11        11 | 12       12     31       -DB(5)      
+      GROUND       7     13        13 | 14       14     32       -DB(6)      
+      GROUND       8     15        15 | 16       16     33       -DB(7)      
+      GROUND       9     17        17 | 18       18     34       -DB(P)      
+      GROUND      10     19        19 | 20       20     35       GROUND      
+      GROUND      11     21        21 | 22       22     36       GROUND      
+      RESERVED    12     23        23 | 24       24     37       RESERVED    
+       OPEN       13     25        25 | 26       26     38       TERMPWR     
+      RESERVED    14     27        27 | 28       28     39       RESERVED    
+      GROUND      15     29        29 | 30       30     40       GROUND      
+      GROUND      16     31        31 | 32       32     41       -ATN        
+      GROUND      17     33        33 | 34       34     42       GROUND      
+      GROUND      18     35        35 | 36       36     43       -BSY        
+      GROUND      19     37        37 | 38       38     44       -ACK        
+      GROUND      20     39        39 | 40       40     45       -RST        
+      GROUND      21     41        41 | 42       42     46       -MSG        
+      GROUND      22     43        43 | 44       44     47       -SEL        
+      GROUND      23     45        45 | 46       46     48       -C/D        
+      GROUND      24     47        47 | 48       48     49       -REQ        
+      GROUND      25     49        49 | 50       50     50       -I/O        
+==============================================================================
+
+NOTES:
+(1)  The minus sign next to a signal indicates active low.
+(2)  The conductor number refers to the conductor position when using 0.050-
+inch centerline flat ribbon cable with a low-density connector or when using 
+0.025-inch centerline flat ribbon cable with a high-density connector.  Other 
+cable types may be used to implement equivalent contact assignments.
+(3)  Two sets of contact assignments are shown.  Refer to Table 4-1 to 
+determine which set of contacts applies to each connector.
+(4)  See 4.4.4 for a definition of the RESERVED lines.
+
+
+
+
+
+
+
+
+
+
+
+
+            Table 4-3: Single-Ended Contact Assignments - B Cable
+
+==============================================================================
+                    Connector       Cable        Connector
+      Signal         Contact      Conductor       Contact        Signal      
+       Name           Number       Number          Number         Name       
+------------------------------------------------------------------------------
+      GROUND            1           1 |  2          35           GROUND  
+      GROUND            2           3 |  4          36           -DB(8)    
+      GROUND            3           5 |  6          37           -DB(9)  
+      GROUND            4           7 |  8          38           -DB(10) 
+      GROUND            5           9 | 10          39           -DB(11) 
+      GROUND            6          11 | 12          40           -DB(12) 
+      GROUND            7          13 | 14          41           -DB(13) 
+      GROUND            8          15 | 16          42           -DB(14) 
+      GROUND            9          17 | 18          43           -DB(15) 
+      GROUND           10          19 | 20          44           -DB(P1) 
+      GROUND           11          21 | 22          45           -ACKB   
+      GROUND           12          23 | 24          46           GROUND  
+      GROUND           13          25 | 26          47           -REQB   
+      GROUND           14          27 | 28          48           -DB(16) 
+      GROUND           15          29 | 30          49           -DB(17) 
+      GROUND           16          31 | 32          50           -DB(18) 
+     TERMPWRB          17          33 | 34          51           TERMPWRB
+     TERMPWRB          18          35 | 36          52           TERMPWRB
+      GROUND           19          37 | 38          53           -DB(19) 
+      GROUND           20          39 | 40          54           -DB(20) 
+      GROUND           21          41 | 42          55           -DB(21) 
+      GROUND           22          43 | 44          56           -DB(22) 
+      GROUND           23          45 | 46          57           -DB(23) 
+      GROUND           24          47 | 48          58           -DB(P2) 
+      GROUND           25          49 | 50          59           -DB(24) 
+      GROUND           26          51 | 52          60           -DB(25) 
+      GROUND           27          53 | 54          61           -DB(26) 
+      GROUND           28          55 | 56          62           -DB(27) 
+      GROUND           29          57 | 58          63           -DB(28) 
+      GROUND           30          59 | 60          64           -DB(29) 
+      GROUND           31          61 | 62          65           -DB(30) 
+      GROUND           32          63 | 64          66           -DB(31) 
+      GROUND           33          65 | 66          67           -DB(P3) 
+      GROUND           34          67 | 68          68           GROUND  
+==============================================================================
+
+NOTES:
+  (1)  The minus sign next to a signal indicates active low.
+  (2)  The conductor number refers to the conductor position when using 0.025-
+inch centerline flat ribbon cable.  Other cable types may be used to implement 
+equivalent contact assignments.
+
+  IMPLEMENTORS NOTE:  X3T9.2 is documenting an alternate 16-bit single-cable 
+  solution and an alternate 32-bit solution and expects to be able to remove 
+  the B cable definition in a future version of SCSI.
+
+
+
+            Table 4-4: Differential Contact Assignments - A Cable
+
+==============================================================================
+                  Connector         Cable        Connector
+      Signal    Contact Number    Conductor    Contact Number    Signal      
+       Name      Set 2  Set 1      Number       Set 1  Set 2      Name       
+------------------------------------------------------------------------------
+      GROUND       1      1         1 |  2        2     26       GROUND 
+      +DB(0)       2      3         3 |  4        4     27       -DB(0)       
+      +DB(1)       3      5         5 |  6        6     28       -DB(1)     
+      +DB(2)       4      7         7 |  8        8     29       -DB(2)     
+      +DB(3)       5      9         9 | 10       10     30       -DB(3)     
+      +DB(4)       6     11        11 | 12       12     31       -DB(4)     
+      +DB(5)       7     13        13 | 14       14     32       -DB(5)     
+      +DB(6)       8     15        15 | 16       16     33       -DB(6)     
+      +DB(7)       9     17        17 | 18       18     34       -DB(7)     
+      +DB(P)      10     19        19 | 20       20     35       -DB(P)     
+      DIFFSENS    11     21        21 | 22       22     36       GROUND     
+      RESERVED    12     23        23 | 24       24     37       RESERVED   
+      TERMPWR     13     25        25 | 26       26     38       TERMPWR    
+      RESERVED    14     27        27 | 28       28     39       RESERVED   
+      +ATN        15     29        29 | 30       30     40       -ATN       
+      GROUND      16     31        31 | 32       32     41       GROUND     
+      +BSY        17     33        33 | 34       34     42       -BSY       
+      +ACK        18     35        35 | 36       36     43       -ACK       
+      +RST        19     37        37 | 38       38     44       -RST       
+      +MSG        20     39        39 | 40       40     45       -MSG       
+      +SEL        21     41        41 | 42       42     46       -SEL       
+      +C/D        22     43        43 | 44       44     47       -C/D       
+      +REQ        23     45        45 | 46       46     48       -REQ       
+      +I/O        24     47        47 | 48       48     49       -I/O       
+      GROUND      25     49        49 | 50       50     50       GROUND     
+==============================================================================
+
+NOTES:
+  (1)  The conductor number refers to the conductor position when using 0.050-
+inch centerline flat ribbon cable with a low-density connector or when using 
+0.025-inch centerline flat ribbon cable with a high-density connector.  Other 
+cable types may be used to implement equivalent contact assignments.
+  (2)  Two sets of contact assignments are shown.  Refer to Table 4-1 to 
+determine which set of contacts applies to each connector.
+  (3)  See 4.4.4 for a definition of the RESERVED lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Table 4-5: Differential Contact Assignments - B Cable
+
+==============================================================================
+                    Connector       Cable        Connector
+      Signal         Contact      Conductor       Contact        Signal      
+       Name           Number       Number          Number         Name       
+------------------------------------------------------------------------------
+      GROUND            1           1 |  2          35           GROUND  
+      +DB(8)            2           3 |  4          36           -DB(8)    
+      +DB(9)            3           5 |  6          37           -DB(9)  
+      +DB(10)           4           7 |  8          38           -DB(10) 
+      +DB(11)           5           9 | 10          39           -DB(11) 
+      +DB(12)           6          11 | 12          40           -DB(12) 
+      +DB(13)           7          13 | 14          41           -DB(13) 
+      +DB(14)           8          15 | 16          42           -DB(14) 
+      +DB(15)           9          17 | 18          43           -DB(15) 
+      +DB(P1)          10          19 | 20          44           -DB(P1) 
+      +ACKB            11          21 | 22          45           -ACKB   
+      GROUND           12          23 | 24          46           DIFFSENS
+      +REQB            13          25 | 26          47           -REQB   
+      +DB(16)          14          27 | 28          48           -DB(16) 
+      +DB(17)          15          29 | 30          49           -DB(17) 
+      +DB(18)          16          31 | 32          50           -DB(18) 
+      TERMPWRB         17          33 | 34          51           TERMPWRB
+      TERMPWRB         18          35 | 36          52           TERMPWRB
+      +DB(19)          19          37 | 38          53           -DB(19) 
+      +DB(20)          20          39 | 40          54           -DB(20) 
+      +DB(21)          21          41 | 42          55           -DB(21) 
+      +DB(22)          22          43 | 44          56           -DB(22) 
+      +DB(23)          23          45 | 46          57           -DB(23) 
+      +DB(P2)          24          47 | 48          58           -DB(P2) 
+      +DB(24)          25          49 | 50          59           -DB(24) 
+      +DB(25)          26          51 | 52          60           -DB(25) 
+      +DB(26)          27          53 | 54          61           -DB(26) 
+      +DB(27)          28          55 | 56          62           -DB(27) 
+      +DB(28)          29          57 | 58          63           -DB(28) 
+      +DB(29)          30          59 | 60          64           -DB(29) 
+      +DB(30)          31          61 | 62          65           -DB(30) 
+      +DB(31)          32          63 | 64          66           -DB(31) 
+      +DB(P3)          33          65 | 66          67           -DB(P3) 
+      GROUND           34          67 | 68          68           GROUND  
+==============================================================================
+
+NOTE:  The conductor number refers to the conductor position when using 0.025-
+inch centerline flat ribbon cable.  Other cable types may be used to implement 
+equivalent contact assignments.
+
+  IMPLEMENTORS NOTE:  X3T9.2 is documenting an alternate 16-bit single-cable 
+  solution and an alternate 32-bit solution and expects to be able to remove 
+  the B cable definition in a future version of SCSI.
+
+
+
+
+
+4.4. Electrical Description
+
+  For the measurements in this section, SCSI bus termination is assumed to be 
+external to the SCSI device.  See 4.4.1 for the terminating requirements for 
+the RESERVED lines.  SCSI devices may have the provision for allowing optional 
+internal termination.
+
+4.4.1. Single-Ended Alternative
+
+  All signals not defined as RESERVED, GROUND, or TERMPWR shall be terminated 
+at both ends of the cable.  The implementor may choose one of the following 
+two methods to terminate each end (see Figure 4-9):
+
+  (1) The termination of each signal shall consist of 220 ohms (+_5%) to the 
+TERMPWR line and 330 ohms (+_5%) to ground.  Using resistors with +_1% tolerance 
+improves noise margins.
+  (2) The termination of each signal shall meet these requirements:
+     (a) The terminators shall each supply a characteristic impedance between 
+  100 and 132 ohms. 
+     (b) The terminators shall be powered by the TERMPWR line and may receive 
+  additional power from other sources but shall not require such additional 
+  power for proper operation (see 4.4.3).
+     (c) The current available to any signal line driver shall not exceed 
+  48 milliamps when the driver asserts the line and pulls it to 0.5 volts dc.  
+  Only 44.8 mA of this current shall be available from the two terminators.
+     (d) The voltage on all released signal lines shall be at least 2.5 volts 
+  dc when the TERMPWR line is within specified values (see 4.4.3). 
+     (e) These conditions shall be met with any legal configuration of targets 
+  and initiators as long as at least one device is supplying TERMPWR.
+
+  The first termination method above is the same as in SCSI-1.  The second 
+termination method is recommended for better signal quality.
+
+4.4.1.1. Output Characteristics
+  All signals shall use open-collector or three-state drivers.  Each signal 
+driven by an SCSI device shall have the following output characteristics when 
+measured at the SCSI device's connector:
+  VOL (Low-level output voltage) = 0.0 to 0.5 volts dc at 48 mA sinking 
+                                   (signal assertion)
+  VOH (High-level output voltage) = 2.5 to 5.25 volts dc (signal negation)
+
+4.4.1.2. Input Characteristics
+  SCSI devices with power on shall meet the following electrical 
+characteristics on each signal (including both receivers and passive drivers):
+  VIL (Low-level input voltage) = 0.0 to 0.8 volts dc (signal true)
+  VIH (High-level input voltage) = 2.0 to 5.25 volts dc (signal false)
+  IIL (Low-level input current) = -0.4 to 0.0 mA at VI = 0.5 volts dc
+  IIH (High-level input current) = 0.0 to 0.1 mA at VI = 2.7 volts dc
+  Minimum input hysteresis = 0.2 volts dc
+  Maximum input capacitance = 25 pF (measured at the device connector closest 
+                              to the stub, if any, within the device)
+
+  It is recommended that SCSI devices with power off also meet the above IIL 
+and IIH electrical characteristics on each signal.
+
+  To achieve maximum noise immunity and to assure proper operation with 
+complex cable configurations, it is recommended that the nominal switching 
+threshold be approximately 1.4 volts.
+
+4.4.2. Differential Alternative
+
+  All signals consist of two lines denoted +SIGNAL and -SIGNAL.  A signal is 
+true when +SIGNAL is more positive than -SIGNAL, and a signal is false when    
+-SIGNAL is more positive than +SIGNAL.  All assigned signals of the A and B 
+cables described in 4.6 shall be terminated at each end of the cable with a 
+terminator network as shown in Figure 4-10.  Resistor tolerances in the 
+terminator network shall be +_5% or less.
+
+  The DIFFSENS signal of the connector is used as an active high enable for 
+the differential drivers.  If a single-ended device or terminator is 
+inadvertently connected, this signal is grounded, disabling the differential 
+drivers (see Figure 4-11).
+
+  The characteristic impedance of differential terminators is 122 ohms.
+
+4.4.2.1. Output Characteristics
+  Each signal driven by an SCSI device shall have the following output 
+characteristics when measured at the SCSI device's connector:
+  VOL (Low-level output voltage) = 1.7 V maximum at IOL (Low-level output 
+                                   current) = 55 mA.
+  VOH (High-level output voltage) = 2.7 V minimum at IOH (High-level output 
+                                    current) = -55 mA.
+  VOD (Differential output voltage) = 1.0 V minimum with common-mode voltage 
+                                      ranges from -7 to +12 volts dc.
+
+  VOL and VOH shall be as measured between the output terminal and the SCSI 
+device's logic ground reference.
+
+  The output characteristics shall additionally conform to ISO 8482.
+
+4.4.2.2. Input Characteristics
+  SCSI devices shall meet the following electrical characteristics on each 
+signal (including both receivers and passive drivers):
+  II (Input current on either input) = +_ 2.0 mA maximum.
+  Maximum input capacitance = 25 pF.
+
+  The II requirement shall be met with the input voltage varying between -7 
+and +12 volts dc, with power on or off, and with the hysteresis equaling 35 
+millivolts, minimum.
+
+  The input characteristics shall additionally conform to ISO 8482.
+
+
+
+
+
+
+
+
+
+4.4.3. Terminator Power
+
+  SCSI initiators shall supply terminator power to the TERMPWR contact(s) and, 
+if it implements the wide SCSI option, to the TERMPWRB contacts.  This power 
+shall be supplied through a diode or similar semiconductor that prevents 
+backflow of power to the SCSI device.  Targets and SCSI devices that become 
+temporary initiators (e.g., targets which implement the COPY command or 
+asynchronous event notification) are not required to supply terminator power.  
+Any SCSI device may supply terminator power.  Interface error rates are lower 
+if the termination voltage is maintained at the extreme ends of the cable.
+
+  All terminators independent of location shall be powered from the TERMPWR 
+and TERMPWRB contact(s).  The use of keyed connectors is recommended in SCSI 
+devices that provide terminator power to prevent accidental grounding or 
+the incorrect connection of terminator power.
+
+  IMPLEMENTORS NOTE: Regulatory agencies may require limiting maximum (short 
+  circuit) current to the terminator power lines.  Recommended current 
+  limiting is 1.5 amperes for TERMPWR and 2 amperes for TERMPWRB.  For systems 
+  utilizing multiple initiators, the initiators may be configured with option 
+  straps or current limiting devices.  Maximum available current should not 
+  exceed 5 amperes.
+
+  SCSI devices shall sink no more than 1.0 mA from TERMPWR and no more than 
+1.0 mA from TERMPWRB except to power an optional internal terminator.
+
+  Single-ended SCSI devices providing terminator power on cable A shall have 
+the following characteristics:
+  VTerm = 4.25 to 5.25 volts dc
+          900 mA minimum source drive capability
+
+  Differential SCSI devices providing terminator power on cable A shall have 
+the following characteristics:
+  VTerm = 4.0 to 5.25 volts dc
+          600 mA minimum source drive capability
+
+   Single-ended SCSI devices providing terminator power on cable B shall have 
+the following characteristics:
+  VTerm = 4.25 to 5.25 volts dc
+          1500 mA minimum source drive capability
+
+  Differential SCSI devices providing terminator power on cable B shall have 
+the following characteristics:
+  VTerm = 4.0 to 5.25 volts dc
+          1000 mA minimum source drive capability
+
+  IMPLEMENTORS NOTE:  It is recommended that the terminator power lines be 
+  decoupled at each terminator with at least a 2.2 microfarad high-frequency 
+  capacitor to improve signal quality.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          Alternative 1 Termination
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          Alternative 2 Termination
+
+               Figure 4-9: Termination for Single-Ended Devices
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               Figure 4-10: Termination for Differential Devices
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              Figure 4-11: Differential Driver Protection Circuit
+
+4.4.4. RESERVED Lines
+
+  The lines labeled RESERVED in the A cable contact assignment tables (Table 
+4-2 and Table 4-4) shall be connected to ground in the bus terminator 
+assemblies or in the end devices on the SCSI cable.  The RESERVED lines should 
+be open in the other SCSI devices, but may be connected to ground.
+
+
+
+
+
+
+
+4.5. SCSI Bus
+
+  Communication on the SCSI bus is allowed between only two SCSI devices at 
+any given time.  There is a maximum of eight SCSI devices.  Each SCSI device 
+has an SCSI ID bit assigned as shown in Figure 4-12.  Three sample system 
+configurations are shown in Figure 4-13.
+
+  When two SCSI devices communicate on the SCSI bus, one acts as an initiator 
+and the other acts as a target.  The initiator originates an operation and the 
+target performs the operation.  An SCSI device usually has a fixed role as an 
+initiator or target, but some devices may be able to assume either role.
+
+  An initiator may address up to eight peripheral devices that are connected 
+to a target.  The target may be physically housed within the peripheral device 
+in which case the peripheral device is referred to as an embedded SCSI device.
+
+     DB(7) DB(6) DB(5) DB(4) DB(3) DB(2) DB(1) DB(0)  <-- DATA BUS
+     |     |     |     |     |     |     |     |
+     |     |     |     |     |     |     |     SCSI ID = 0
+     |     |     |     |     |     |     | 
+     |     |     |     |     |     |     SCSI ID = 1
+     |     |     |     |     |     |
+     |     |     |     |     |     SCSI ID = 2
+     |     |     |     |     |
+     |     |     |     |     SCSI ID = 3
+     |     |     |     |
+     |     |     |     SCSI ID = 4
+     |     |     |
+     |     |     SCSI ID = 5
+     |     |
+     |     SCSI ID = 6
+     |
+     SCSI ID = 7
+
+
+
+                           Figure 4-12: SCSI ID Bits
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    Figure 4-13: Sample SCSI Configurations
+
+  Up to eight SCSI devices can be supported on the SCSI bus.  They can be any 
+combination of initiators and targets provided there is at least one of each.
+
+  Certain SCSI bus functions are assigned to the initiator and certain SCSI 
+bus functions are assigned to the target.  The initiator may arbitrate for the 
+SCSI bus and select a particular target.  The target may request the transfer 
+of COMMAND, DATA, STATUS, or other information on the DATA BUS, and in some 
+cases it may arbitrate for the SCSI bus and reselect an initiator for the 
+purpose of continuing an operation.
+
+  Information transfers on the DATA BUS are asynchronous and follow a defined 
+REQ/ACK handshake protocol.  One byte of information may be transferred with 
+each handshake on the A cable and, if the wide data transfer option is 
+implemented, one or three bytes of information may be transferred with each 
+handshake on the B cable.  An option is defined for synchronous data transfer.
+
+4.6. SCSI Bus Signals
+
+  There are a total of 18 signals on the A cable and 29 signals on the B 
+cable.  A total of 11 signals are used for control and 36 are used for data 
+(messages, commands, status, and data), including parity.  These signals are 
+described as follows:
+
+BSY (BUSY).  An "OR-tied" signal that indicates that the bus is being used.
+
+SEL (SELECT).  An "OR-tied" signal used by an initiator to select a target or 
+by a target to reselect an initiator.
+
+  IMPLEMENTORS NOTE:  The SEL signal was not defined as "OR-tied" in SCSI-1.  
+  It has been defined as "OR-tied" in SCSI-2 in anticipation of needing 
+  another "OR-tied" signal for future standardization.  This does not cause an 
+  operational problem in mixing SCSI-1 and SCSI-2 devices.
+
+C/D  (CONTROL/DATA).  A signal driven by a target that indicates whether 
+CONTROL or DATA information is on the DATA BUS.  True indicates CONTROL.
+
+I/O (INPUT/OUTPUT).  A signal driven by a target that controls the direction 
+of data movement on the DATA BUS with respect to an initiator. True indicates 
+input to the initiator.  This signal is also used to distinguish between 
+SELECTION and RESELECTION phases.
+
+MSG (MESSAGE).  A signal driven by a target during the MESSAGE phase.
+
+REQ (REQUEST).  A signal driven by a target on the A cable to indicate a 
+request for a REQ/ACK data transfer handshake.
+
+REQB (REQUEST).  A signal driven by a target on the B cable to indicate a 
+request for a REQB/ACKB data transfer handshake.
+
+ACK (ACKNOWLEDGE).  A signal driven by an initiator on the A cable to indicate 
+an acknowledgment for a REQ/ACK data transfer handshake.
+
+ACKB (ACKNOWLEDGE).  A signal driven by an initiator on the B cable to 
+indicate an acknowledgment for a REQB/ACKB data transfer handshake.
+
+ATN (ATTENTION).  A signal driven by an initiator to indicate the ATTENTION 
+condition.
+
+RST (RESET).  An "OR-tied" signal that indicates the RESET condition.
+
+DB(7-0,P) (DATA BUS).  Eight data-bit signals, plus a parity-bit signal that 
+form a DATA BUS.  DB(7) is the most significant bit and has the highest 
+priority during the ARBITRATION phase.  Bit number, significance, and priority 
+decrease downward to DB(0).  A data bit is defined as one when the signal 
+value is true and is defined as zero when the signal value is false.  Data 
+parity DB(P) shall be odd.  Parity is undefined during the ARBITRATION phase.
+
+DB(31-8,P1,P2,P3) (DATA BUS).  Twenty-four data-bit signals, plus three 
+parity-bit signals that form an extension to the DATA BUS.   DB(P1,P2,P3) are 
+parity bits for DB(15-8), DB(23-16), and DB(31-24) respectively.  A data bit 
+is defined as one when the signal value is true and is defined as zero when 
+the signal value is false.  Data parity DB(Px) shall be odd.  
+
+4.6.1. Signal Values
+
+  Signals may assume true or false values.  There are two methods of driving 
+these signals.  In both cases, the signal shall be actively driven true, or 
+asserted.  In the case of OR-tied drivers, the driver does not drive the 
+signal to the false state, rather the bias circuitry of the bus terminators 
+pulls the signal false whenever it is released by the drivers at every SCSI 
+device.  If any driver is asserted, then the signal is true.  In the case of 
+non-OR-tied drivers, the signal may be actively driven false.  In this 
+standard, wherever the term negated is used, it means that the signal may be 
+actively driven false, or may be simply released (in which case the bias 
+circuitry pulls it false), at the option of the implementor.  The advantage to 
+actively driving signals false during information transfer is that the 
+transition from true to false occurs more quickly and the noise margin is much 
+higher than if the signal is simply released.  This facilitates reliable data 
+transfer at high rates, especially at the longer cable lengths used with 
+differential drivers. 
+
+4.6.2. OR-Tied Signals
+
+  The BSY, SEL, and RST signals shall be OR-tied only.  In the ordinary 
+operation of the bus, the BSY and RST signals may be simultaneously driven 
+true by several drivers.  No signals other than BSY, RST, and DB(P) are 
+simultaneously driven by two or more drivers, and any signal other than BSY, 
+SEL, and RST may employ OR-tied or non-OR-tied drivers.  DB(P) shall not be 
+driven false during the ARBITRATION phase but may be driven false in other 
+phases.  There is no operational problem in mixing OR-tied and non-OR-tied 
+drivers on signals other than BSY and RST.
+
+
+
+
+
+
+
+
+
+4.6.3. Signal Sources
+
+  Table 4-6 indicates which type of SCSI device is allowed to source each 
+signal.  No attempt is made to show if the source is driving asserted, driving 
+negated, or is passive.  All SCSI device drivers that are not active sources 
+shall be in the passive state.  The RST signal may be asserted by any SCSI 
+device at any time.
+
+
+                          Table 4-6: Signal Sources
+
+==============================================================================
+                         A Cable Signals                B Cable Signals
+                 -------------------------------    ------------------------
+                             C/D,
+                             I/O,
+                             MSG,  ACK,  DB(7-0)                DB(31-8),
+  Bus Phase      BSY   SEL   REQ   ATN   DB(P)      REQB  ACKB  DB(P1,P2,P3)
+  -----------    ----  ----  ----  ----  -------    ----  ----  ------------
+  BUS FREE       None  None  None  None  None       None  None  None
+  ARBITRATION    All   Win   None  None  S ID       None  None  None
+  SELECTION      I&T   Init  None  Init  Init       None  None  None
+  RESELECTION    I&T   Targ  Targ  Init  Targ       None  None  None
+  COMMAND        Targ  None  Targ  Init  Init       None  None  None
+  DATA IN        Targ  None  Targ  Init  Targ       Targ  Init  Targ
+  DATA OUT       Targ  None  Targ  Init  Init       Targ  Init  Init
+  STATUS         Targ  None  Targ  Init  Targ       None  None  None
+  MESSAGE IN     Targ  None  Targ  Init  Targ       None  None  None
+  MESSAGE OUT    Targ  None  Targ  Init  Init       None  None  None
+==============================================================================
+
+
+All:    The signal shall be driven by all SCSI devices that are actively 
+        arbitrating.
+
+S ID:   A unique data bit (the SCSI ID) shall be driven by each SCSI device 
+        that is actively arbitrating; the other seven data bits shall be 
+        released (i.e., not driven) by this SCSI device.  The parity bit 
+        (DB(P)) may be released or driven to the true state, but shall never 
+        be driven to the false state during this phase.
+
+I&T:    The signal shall be driven by the initiator, target, or both, as 
+        specified in the SELECTION phase and RESELECTION phase.
+
+Init:   If driven, this signal shall be driven only by the active initiator.
+
+None:   The signal shall be released; that is, not be driven by any SCSI 
+        device.  The bias circuitry of the bus terminators pulls the signal to 
+        the false state.
+
+Win:    The signal shall be driven by the one SCSI device that wins 
+        arbitration.
+
+Targ:   If the signal is driven, it shall be driven only by the active target.
+
+
+4.7. SCSI Bus Timing
+
+  Unless otherwise indicated, the delay-time measurements for each SCSI 
+device, shown in Table 4-7, shall be calculated from signal conditions 
+existing at that SCSI device's own SCSI bus connection.  Thus, these 
+measurements (except cable skew delay) can be made without considering delays 
+in the cable.  The timing characteristics of each signal are described in the 
+following paragraphs.
+
+                      Table 4-7: SCSI Bus Timing Values
+
+        ==============================================================
+        Arbitration Delay . . . . . . . . 2.4 microseconds
+        Assertion Period  . . . . . . . .  90 nanoseconds
+        Bus Clear Delay . . . . . . . . . 800 nanoseconds
+        Bus Free Delay  . . . . . . . . . 800 nanoseconds
+        Bus Set Delay . . . . . . . . . . 1.8 microseconds
+        Bus Settle Delay  . . . . . . . . 400 nanoseconds
+        Cable Skew Delay  . . . . . . . .  10 nanoseconds
+        Data Release Delay  . . . . . . . 400 nanoseconds
+        Deskew Delay  . . . . . . . . . .  45 nanoseconds  
+        Disconnection Delay . . . . . . . 200 microseconds
+        Hold Time . . . . . . . . . . . .  45 nanoseconds
+        Negation Period . . . . . . . . .  90 nanoseconds
+        Power-On to Selection Time  . . .  10 seconds recommended
+        Reset to Selection Time . . . . . 250 milliseconds recommended
+        Reset Hold Time . . . . . . . . .  25 microseconds
+        Selection Abort Time  . . . . . . 200 microseconds
+        Selection Time-out Delay  . . . . 250 milliseconds recommended
+        Transfer Period . . . . . . . . . set during an SDTR message
+        Fast Assertion Period . . . . . .  30 nanoseconds
+        Fast Cable Skew Delay . . . . . .   5 nanoseconds
+        Fast Deskew Delay . . . . . . . .  20 nanoseconds
+        Fast Hold Time  . . . . . . . . .  10 nanoseconds
+        Fast Negation Period  . . . . . .  30 nanoseconds
+        ==============================================================
+
+
+4.7.1. Arbitration Delay 
+
+  The minimum time an SCSI device shall wait from asserting BSY for 
+arbitration until the DATA BUS can be examined to see if arbitration has been 
+won.  There is no maximum time.
+
+4.7.2. Assertion Period 
+
+  The minimum time that a target shall assert REQ (or REQB) while using 
+synchronous data transfers.  Also, the minimum time that an initiator shall 
+assert ACK (or ACKB) while using synchronous data transfers.  REQB and ACKB 
+timings only apply to optional wide data transfers. 
+
+
+
+
+4.7.3. Bus Clear Delay 
+
+  The maximum time for an SCSI device to stop driving all bus signals after:
+  (1) The BUS FREE phase is detected (BSY and SEL both false for a bus settle 
+  delay)
+  (2) SEL is received from another SCSI device during the ARBITRATION phase
+  (3) The transition of RST to true.
+
+  For the first condition above, the maximum time for an SCSI device to clear 
+the bus is 1200 nanoseconds from BSY and SEL first becoming both false.  If an 
+SCSI device requires more than a bus settle delay to detect BUS FREE phase, it 
+shall clear the bus within a bus clear delay minus the excess time.
+
+4.7.4. Bus Free Delay 
+
+  The minimum time that an SCSI device shall wait from its detection of the 
+BUS FREE phase (BSY and SEL both false for a bus settle delay) until its 
+assertion of BSY when going to the ARBITRATION phase.
+
+4.7.5. Bus Set Delay 
+
+  The maximum time for an SCSI device to assert BSY and its SCSI ID bit on the 
+DATA BUS after it detects BUS FREE phase (BSY and SEL both false for a bus 
+settle delay) for the purpose of entering the ARBITRATION phase.
+
+4.7.6. Bus Settle Delay 
+
+  The minimum time to wait for the bus to settle after changing certain 
+control signals as called out in the protocol definitions.
+
+4.7.7. Cable Skew Delay 
+
+  The maximum difference in propagation time allowed between any two SCSI bus 
+signals measured between any two SCSI devices.
+
+4.7.8. Data Release Delay 
+
+  The maximum time for an initiator to release the DATA BUS signals following 
+the transition of the I/O signal from false to true.
+
+4.7.9. Deskew Delay 
+
+  The minimum time required for deskew of certain signals.
+
+4.7.10. Disconnection Delay 
+
+  The minimum time that a target shall wait after releasing BSY before 
+participating in an ARBITRATION phase when honoring a DISCONNECT message from 
+the initiator.
+
+
+
+
+
+
+4.7.11. Hold Time 
+
+  The minimum time added between the assertion of REQ (or REQB) or ACK (or 
+ACKB) and the changing of the data lines to provide hold time in the initiator 
+or target while using synchronous data transfers.  REQB and ACKB timings only 
+apply to optional wide data transfers. 
+
+4.7.12. Negation Period 
+
+  The minimum time that a target shall negate REQ (or REQB) while using 
+synchronous data transfers.  Also, the minimum time that an initiator shall 
+negate ACK (or ACKB) while using synchronous data transfers.  REQB and ACKB 
+timings only apply to optional wide data transfers. 
+
+4.7.13. Power-On to Selection Time 
+
+  The recommended maximum time from power application until an SCSI target is 
+able to respond with appropriate status and sense data to the TEST UNIT READY, 
+INQUIRY, and REQUEST SENSE commands.
+
+4.7.14. Reset to Selection Time 
+
+  The recommended maximum time after a hard RESET condition until an SCSI 
+target is able to respond with appropriate status and sense data to the TEST 
+UNIT READY, INQUIRY, and REQUEST SENSE commands.
+
+4.7.15. Reset Hold Time 
+
+  The minimum time for which RST is asserted.  There is no maximum time.
+
+4.7.16. Selection Abort Time 
+
+  The maximum time that a target (or initiator) shall take from its most 
+recent detection of being selected (or reselected) until asserting a BSY 
+response.  This time-out is required to ensure that a target (or initiator) 
+does not assert BSY after a SELECTION (or RESELECTION) phase has been aborted.  
+This is not the selection time-out period; see 5.1.3.1 and 5.1.4.2 for a 
+complete description.
+
+4.7.17. Selection Time-out Delay 
+
+  The minimum time that an initiator (or target) should wait for a BSY 
+response during the SELECTION (or RESELECTION) phase before starting the time-
+out procedure.  Note that this is only a recommended time period.
+
+4.7.18. Transfer Period 
+
+  The Transfer Period specifies the minimum time allowed between the leading 
+edges of successive REQ pulses and of successive ACK pulses while using 
+synchronous data transfers.  (See 5.1.5.2 and 5.6.21.)
+
+
+
+
+
+4.8. Fast Synchronous Transfer Option
+
+  When devices negotiate a synchronous data transfer period of less than 200 
+ns they are said to be using "fast synchronous data transfers".  Devices which 
+negotiate a synchronous data transfer period greater than 200 ns use timing 
+parameters specified in 4.7.  When a fast synchronous data transfer period is 
+negotiated, those specific times redefined in this section are used; those not 
+redefined remain the same.  The minimum synchronous data transfer period is 
+100 ns.
+
+4.8.1. Fast Assertion Period 
+
+  This value is the minimum time that a target shall assert REQ (or REQB) 
+while using fast synchronous data transfers.  Also, the minimum time that an 
+initiator shall assert ACK (or ACKB) while using fast synchronous data 
+transfers.  REQB and ACKB timings only apply to optional wide data transfers. 
+
+4.8.2. Fast Cable Skew Delay 
+
+  This value is the maximum difference in propagation time allowed between any 
+two SCSI bus signals measured between any two SCSI devices while using fast 
+synchronous data transfers.
+
+4.8.3. Fast Deskew Delay 
+
+  This value is the minimum time required for deskew of certain signals while 
+using fast synchronous data transfers.
+
+4.8.4. Fast Hold Time 
+
+  This value is the minimum time added between the assertion of REQ (or REQB) 
+or ACK (or ACKB) and the changing of the data lines to provide hold time in 
+the initiator or target, respectively, while using fast synchronous data 
+transfers.  REQB and ACKB timings only apply to optional wide data transfers. 
+
+4.8.5. Fast Negation Period 
+
+  This value is the minimum time that a target shall negate REQ (or REQB) 
+while using fast synchronous data transfers.  Also, the minimum time that an 
+initiator shall negate ACK (or ACKB) while using fast synchronous data 
+transfers.  REQB and ACKB timings only apply to optional wide data transfers. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

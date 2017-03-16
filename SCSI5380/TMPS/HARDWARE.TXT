@@ -1,0 +1,19 @@
+**************************************************************************
+SCSI - Controller 53C80
+**************************************************************************
+
+Dieser Schaltkreis ist an den (ACSI-) DMA - Controller angeschlossen. Ein
+Zugriff auf die 8 Register des 53C80 erfolgt „hnlich dem Zugriff auf den FDC.
+Die Registernummern sind :
+$88:  s_data   ; Aktueller Inhalt des SCSI-Datenbusses
+$89:  s_icr ; Initiator-Befehlsregister
+$8A:  s_mode   ; Betriebsartenregister
+$8B:  s_tcr ; Targetbefehlsregister
+$8C:  s_idstat ; Busstatusregister
+$8D:  s_dmastat   ; Statusregister
+$8E:  s_targcv ; Start Target-DMA-Eingabe
+$8F:  s_inircv ; Start Initiator-DMA-Eingabe
+
+Die Bedeutung der Register ist im Profibuch (10./11. Auflage,S 1358f)
+ beschrieben.
+
