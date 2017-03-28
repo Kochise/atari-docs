@@ -1,0 +1,2207 @@
+			   NCR 53C9X
+		     Advanced SCSI Controller
+
+General Description
+
+	The 53C9X FSC (Fast SCSI Controller) is a high performance
+CMOS device designed for SCSI (Small Computer Systems Interface).  It
+is a super-set of the 53C90A, providing fast SCSI operation, with
+additional commands and an additional configuration register.  The C9X
+is intended to directly replace a C90A in an existing design, allowing
+for easy upgrade to SCSI-2.  It is 100% compatible with existing
+53C90A software.
+
+	The C90 family reduces protocol overhead by performing
+critical SCSI algorithms, or sequences, in response to a single C90
+command.  The C9X will operate at sustained data transfer rates of 10
+MB/s in synchronous mode and 7 MB/s in asynchronous mode.
+
+	Independent of microprocessor intervention, the FSC performs
+arbitration, selection, or reselection.  It also independently handles
+message, command, status, and data transfer between the chip's 16-byte
+internal FIFO, or a buffer memory.
+
+Features
+
+	- ANSI X3.131-1986 SCSI and X3.131-199X SCSI-2 compatible
+	- Parity generation, optional checking
+	- Programmable transfer period
+	- Programmable offset
+	- SCSI-2 tagged-queueing
+	- 16-byte FIFO
+	- 12 MB/s DMA interface burst transfer rate (FASTCLK disabled)
+	- Up to 7 MB/s asynchronous SCSI
+	- Up to 10 MB/s synchronous fast SCSI and 5 MB/s normal SCSI
+	- Up to 13.3 MBPs DMA burst transfer rate (FASTCLK enabled)
+	- 10 to 40 MHz clock rate
+	- 24-bit transfer counter eliminates inter-sector transfer
+	  delays and allows single transfers up to 16MB
+	- High performance CMOS technology
+
+Pin Descriptions
+
+		Host Processor and DMA Interface Pins
+----------------------------------------------------------------------
+|  Signal  | Type | Description                                      |
+----------------------------------------------------------------------
+| DB7-DB0  | B    | Active-high data bus connected to the DMA        |
+|          |      | controller, CPU and buffer memory.  Each pad     |
+|          |      | contains a pull-up to Vdd (12.5K minimum).       |
+----------------------------------------------------------------------
+| RESET    | I    | Active-high chip reset.  Reset must be asserted  |
+|          |      | for two CLK periods, minimum, after the voltage  |
+|          |      | on the power pins has reached Vdd minimum.  This |
+|          |      | input must not be connected to RESETO.           |
+----------------------------------------------------------------------
+| RESETO   | O    | Active-high reset output.  This output is always |
+|          |      | asserted when the RESET input is true OR may be  |
+|          |      | asserted when the SCSI reset signal is active if |
+|          |      | bit 6 of the Config 1 register is cleared and the|
+|          |      | host has not serviced the interrupt (generated   |
+|          |      | because of SCSI reset) within 1-2ms (depending   |
+|          |      | on CLK frequency and clock conversion factor).   |
+|          |      | Refer to Bus Initiated Reset.                    |
+----------------------------------------------------------------------
+| INT/     | O    | Active-low, open drain interrupt signal to the   |
+|          |      | microprocessor.  It is latched on the rising     |
+|          |      | edge of CLK and may be cleared by reading the    |
+|          |      | interrupt register or by a host hardware reset,  |
+|          |      | or by a host software reset (but not by a SCSI   |
+|          |      | reset).  This output cannot be disabled          |
+|          |      | internally.                                      |
+----------------------------------------------------------------------
+| A3-A0    | I    | Active-high address bus which specifies one of   |
+|          |      | the FSC's internal registers for reading or      |
+|          |      | writing.  Used with CS/, ignored with DACK/.     |
+----------------------------------------------------------------------
+| CS/      | I    | Active-low chip-select signal that enables access|
+|          |      | to the FSC's internal registers.  CS/ accesses   |
+|          |      | any register, including the FIFO, while DACK/    |
+|          |      | accesses only the FIFO.  CS/ and DACK/ must      |
+|          |      | never be active at the same time.                |
+----------------------------------------------------------------------
+| RD/      | I    | Active-low read signal that enables FSC data onto|
+|          |      | DB7-DB0. CS/ or DACK/ must also be active.       |
+----------------------------------------------------------------------
+| WR/      | I    | Active-low write signal that strobes DB7-DB0 data|
+|          |      | into the FSC.  CS/ or DACK/ must also be active. |
+----------------------------------------------------------------------
+| DREQ     | O    | Tristate active-high DMA request to the DMA      |
+|          |      | controller.  DREQ will be true as long as the    |
+|          |      | FIFO has at least one byte to send to memory, or |
+|          |      | has room to receive at least one byte from       |
+|          |      | memory, depending on data direction.             |
+----------------------------------------------------------------------
+| DACK/    | I    | Active-low DMA acknowledge from the DMA          |
+|          |      | controller.  DACK/ accesses the FIFO only, while |
+|          |      | CS/ accesses any register, including the FIFO.   |
+|          |      | CS/ and DACK/ must never be active at the same   |
+|          |      | time.  DACK/ must toggle true then false for     |
+|          |      | every byte transferred.  Refer to DREQ Hi Z Bit  |
+|          |      | in Config 2.                                     |
+----------------------------------------------------------------------
+| CLK      | I    | Clock signal.  Generates internal core timing.   |
+|          |      | Maximum frequency is 40MHz (FASTCLK bit set) or  |
+|          |      | 25 MHz (FASTCLK bit reset).                      |
+----------------------------------------------------------------------
+
+			SCSI Bus Interface
+----------------------------------------------------------------------
+| SDI0/-   | B    | Schmitt trigger, active-low SCSI data/parity     |
+| SDI7/,   |      | bus.  These inputs are SCSI data bus signals.    |
+| SDIP/    |      |                                                  |
+----------------------------------------------------------------------
+| SDO0/-   | O    | 48 mA, open drain SCSI data parity bus.  These   |
+| SDO7/,   |      | outputs are active-low SCSI data signals.        |
+| SDOP     |      |                                                  |
+----------------------------------------------------------------------
+| SELO/    | O    | 48 mA, open drain SCSI select signal.  This      |
+|          |      | output is active-low.  Asserted by the FSC to    |
+|          |      | select a target or reselect an Initiator.        |
+----------------------------------------------------------------------
+| BSYO/    | O    | 48 mA, open drain SCSI busy signal.  This output |
+|          |      | is active-low.  Asserted by the FSC to gain use  |
+|          |      | of the SCSI bus.                                 |
+----------------------------------------------------------------------
+| REQO/    | O    | 48 mA, open drain, active-low SCSI request signal|
+|          |      | This output is only asserted when the FSC is in  |
+|          |      | target mode to request a data transfer over the  |
+|          |      | SCSI bus.                                        |
+----------------------------------------------------------------------
+| ACKO/    | O    | 48 mA, open drain, active-low SCSI acknowledge   |
+|          |      | signal.  This output is only asserted when the   |
+|          |      | FSC is in initiator mode to acknowledge a        |
+|          |      | request for a data transfer over the SCSI bus.   |
+----------------------------------------------------------------------
+| MSGO/    | O    | 48 mA, open drain, active-low SCSI phase signals.|
+| C/DO/,   |      | These outputs are only asserted when the FSC is  |
+| I/OO/,   |      | in target mode.                                  |
+----------------------------------------------------------------------
+| ATNO/    | O    | 48 mA, open drain, active-low SCSI attention     |
+|          |      | signal.  This output is only asserted when the   |
+|          |      | FSC is in initiator mode.  Alerts the Target     |
+|          |      | SCSI device that the FSC has a command or message|
+|          |      | transfer.                                        |
+----------------------------------------------------------------------
+| RSTO/    | O    | 48 mA, open drain SCSI reset signal.  In single- |
+|          |      | ended mode this output is active-low.  The FSC   |
+|          |      | drives this signal true only when the host       |
+|          |      | writes the SCSI bus reset command to the         |
+|          |      | command register.                                |
+----------------------------------------------------------------------
+| SELI/    | I    | Schmitt trigger, active-low SCSI select input.   |
+|          |      | Selects the FSC as a Target or Reselects the FSC |
+|          |      | as Initiator.                                    |
+----------------------------------------------------------------------
+| BSYI/    | I    | Schmitt trigger, active-low SCSI busy input.     |
+|          |      | Indicates to the FSC that the SCSI bus is in use.|
+----------------------------------------------------------------------
+| REQI/    | I    | Schmitt trigger, active-low SCSI request input.  |
+|          |      | Indicates to the FSC, as initiator, that a Target|
+|          |      | device is requesting a data transfer on the SCSI |
+|          |      | bus.                                             |
+----------------------------------------------------------------------
+| ACKI/    | I    | Schmitt trigger, active-low SCSI acknowledge     |
+|          |      | input.  Asserted by an initiator to acknowledge  |
+|          |      | a request by the FSC for a data transfer on the  |
+|          |      | SCSI bus.                                        |
+----------------------------------------------------------------------
+| MSGI/    | I    | Schmitt trigger, active-low SCSI message input.  |
+|          |      | Indicates to the FSC that a Target device has    |
+|          |      | initiated a SCSI Message In or Message Out phase.|
+----------------------------------------------------------------------
+| C/DI     | I    | Schmitt trigger SCSI control/data input. Signals |
+|          |      | that a Target device is transferring control or  |
+|          |      | data information on the SCSI bus.                |
+----------------------------------------------------------------------
+| I/OI     | I    | Schmitt trigger SCSI input/output input.  Alerts |
+|          |      | the FSC, as Initiator, that the direction of data|
+|          |      | movement on the SCSI bus is into the chip.  This |
+|          |      | signal also distinguishes between Selection and  |
+|          |      | Reselection phases.                              |
+----------------------------------------------------------------------
+| ATNI/    | I    | Schmitt trigger, active-low SCSI attention input.|
+|          |      | Indicates to the FSC that an Initiator device    |
+|          |      | is ready to transfer a message or a command.     |
+----------------------------------------------------------------------
+| RSTI/    | I    | Schmitt trigger, active-low SCSI reset signal.   |
+|          |      | When this input is true, the FSC will            |
+|          |      | automatically disconnect from the SCSI bus.      |
+----------------------------------------------------------------------
+| IGS      | O    | Active-high initiator group select signal.  This |
+|          |      | pin is high whenever the FSC is in initiator     |
+|          |      | mode.  Used to enable external drivers for the   |
+|          |      | Initiator signals ACKO/ and ATNO/.               |
+----------------------------------------------------------------------
+| TGS      | O    | Active-high target group select signal.  This    |
+|          |      | pin is high whenever the FSC is in target mode.  |
+|          |      | Used to enable external drivers for the Target   |
+|          |      | signals REGO/, MSGO/, C_DO/, and I_OO/.          |
+----------------------------------------------------------------------
+
+
+Functional Description
+
+	The FSC has a command set that allows it to perform common
+SCSI sequences at hardware spaeed without host intervention.  Its
+on-chip FIFO may be accessed simultaneously by the SCSI bus and either
+the host processor or the host DMA controller.  All command, data
+status, and message bytes pass through the FIFO on their way to or
+from the SCSI bus.  Most FSC commands have two versions: DMA and
+non-DMA.  When DMA instructions are used, data will pass between
+memory and the SCSI bus with the FIFO acting as a temporary storage
+when the DMA channel is temporarily shut down by a higher priority
+even such as DRAM refresh.
+
+	The FIFO also helps speed execution during non-DMA transfers.
+For example, in initiator role, the host processor will load the CDB
+(Command Descriptor Block) and optionally one or three message bytes
+into the FIFO, issue one of several selection commands and wait for an
+interrupt.  The FSC will wait for bus-free, arbitrate for the bus
+again and again until it acquires it, send the message bytes followed
+by the CDB, then generate an interrupt.  Meanwhile a multi-tasking
+host may continue with other tasks.
+
+	An 8-bit part unique ID code for the FSC is available in the
+Transfer Counter High register, at address 0Eh, when the following
+conditions are true:
+
+	- After power-up or chip reset
+	- Before the Transfer Counter High register is loaded
+	- The features Enable bit (bit 6 in the Configuration 2
+	  register) is set
+	- A DMA NOP command (80h) has been issued
+
+	The lower three bits indicate the revision level, while the
+upper five bits indicate the chip family code.
+
+	In target role, the host processor will enable selection, then
+wait for an interrupt.  Eventually, an initiator will select the FSC
+and will then automatically step through the arbitration, selection,
+and command phases before generating an interrupt.  When the interrupt
+occurs, the entire command descriptor block will be in the FIFO along
+with any message bytes sent by the initiator.  Combination commands
+such as these, are identified with the sequence suffix in the Table of
+FSC Commands.
+
+	After selection phase has been successfully completed, the FSC
+may transfer bytes in any of the SCSI information phases whether
+operating in initiator or a target role.  The FSC supports
+disconnect/reselect in both initiator and target roles, making high
+performance multi-threaded systems easy to implement.
+
+	The FSC may transfer data phase bytes across the bus
+synchronously, at speeds up to 10 MB/s, or asynchronously at speeds up
+to 7 MB/s.  Refer to Data Transfer Rate.  The difference between the
+two is transparent to the use except that the Synchronous Offset and
+the Synchronous Transfer Period registers must be programmed prior to
+synchronous data transfer.  The default, after hardware or software
+reset, is asynchronous transmission.
+
+	Data bytes will usually be transferred using DMA.  The host
+processor will program an external DMA controller, program the FSC
+transfer count, issue an FSC data transfer command (there are
+several), and then wait for an interrupt.  The DMA controller and the
+FSC will transfer all the data without host processor intervention.
+
+	To end the SCSI transaction, the FSC target will place a
+status byte and a message byte into the FIFO, then issue a single
+command (there are two to chose from) which will cause the FSC to
+first assert status phase, send the first byte, assert message in
+phase, send the second byte, disconnect from the SCSI bus (after the
+initiator releases ACK (Acknowledge)) and interrupt the host
+processor.
+
+	The end of a SCSI transaction is similar for an FSC initiator
+except that it receives two bytes into its FIFO.  The initiator
+prevents the target from disconnecting by holding ACK asserted on the
+bus while the host processor examines the status and message bytes.
+If both bytes are good, the message accepted command is used to
+instruct the FSC to release ACK, which allows the target to disconnect
+which causes the initiator to interrupt its host and report the
+disconnect.  If the status and message bytes are not good, the host
+should first issue the set ATN (Attention) command before issuing the
+message accepted command.  This instructs the FSC to assert ATN before
+releasing ACK, which should cause the target to request message out
+phase rather than disconnect.
+
+Bus Initiated Sequences
+
+	- Selection
+	- Reselection
+	- SCSI bus reset
+
+	Selection or reselection sequences occur in the disconnected
+state when the FSC is selected or reselected by another initiator or
+target, if the Enable Selection or Reselection command had previously
+been received by the FSC.
+
+	In addition to responding to bus initiated events, the FSC may
+initiate a bus event by using one of several selection or reselection
+commands.  If one of these commands starts executing, it will clear
+Enable Selection/Reselection after arbitration has been won.  Normally
+the host processor will have 250ms (ANSI recommended selection
+time-out period) after the chip disconnects from the bus to re-enable
+bus initiated events.  If the time-out is exceeded, an initiator or
+target which is attempting to connect to the FSC, may time-out and
+abort.
+
+	If, on the other hand, the bus initiated even occurs before
+the command starts executing, the FIFO and command register will be
+cleared, and any further writes by the host processor will be ignored
+until the interrupt register is read.  Since a selection/reselection
+command requires that something be placed in the FIFO, these bytes
+will be lost, as will any command written to the Command register.
+The interrupt handler that services a selection/reselection command
+will have to examine the bits in the Interrupt register to determine
+if the FSC selected another device, or if it was selected by another
+device.  The former case will cause a Function Complete interrupt, the
+latter case will cause a Selection/Reselection interrupt.
+
+Bus Initiated Selection
+
+	When the FSC has been selected as a target, the following data
+will be in its FIFO:
+
+	- Bus ID
+	- Identify message
+	- Optional two-byte command queuing message
+	- Command Descriptor Block (CDB)
+
+	The Bus ID will always be present and will always be one
+byte.  It is an un-encoded version of the state of the bus during
+selection phase.  Any SCSI data bits that were true during selection
+phase will be set.  The target ID (our ID) must always be set.  In
+arbitrating systems, the initiator ID must also be set.  The initiator
+ID is optional in non-arbitrating systems.
+
+	The identify message, if sent, will be placed in the FIFO and
+will always be one byte in SCSI-1 systems but may be one or three
+bytes in SCSI-2 systems.  If the initiator does not send an identify
+message (does not select with ATN), a null byte (00 hex) will be
+placed in the FIFO behind the bus ID, then begin requesting command
+phase bytes.  A detected parity error will cause the FSC to interrupt
+and stop, if parity checking is enabled.
+
+	If the initiator selects with ATN and the SCSI-2 bit is
+cleared, the FSC target will request one message byte and will place
+it in the FIFO behind the bus ID.  The FSC will then begin requesting
+command phase bytes unless the message byte is not a valid identify
+message, or a parity error is detected, which will cause the FSC to
+interrupt and stop.  The sequence step register should then be
+examined.
+
+	If the initiator selects with ATN and the SCSI-2 bit is set,
+the FSC will examine both the message byte and the ATN signal to
+determine how many bytes to request.  If the first byte is a valid
+identify message and if ATN goes false after receiving the first byte,
+the FSC will only request one message byte.  If the first byte is a
+valid identify message byte and ATN is still true, it will request two
+more message bytes.  The FSC will then begin requesting command phase
+bytes unless the first byte was not a valid identify message, or a
+parity error was detected, or ATN went false between the 2nd and 3rd
+bytes, or ATN remained true but the SCSI-2 bit was false, which will
+cause the FSC to interrupt and stop.  The sequence step register
+should then be examined.
+
+	The Command Descriptor Block (CDB) will be placed in the FIFO
+behind the message byte(s), assuming selection completed normally.
+The CDB may be 6, 10, or 12 bytes long.  Thus, in SCSI-2, the entire
+FIFO may be filled if a tagged-queue 12-byte command is used.
+
+Bus Initiated Reselection
+
+	The FSC will allow itself to be reselected as an initiator by
+a target if it has previously received the enable
+selection/reselection command.  If the sequence completes normally,
+the following information will be in the FIFO:
+
+	- Bus ID
+	- Identify message
+	- Optional 2-byte queue tag message
+
+	The bus ID is the same as the selection case, described
+above.  The identify message will always be present and always be one
+byte.  If queue tagging is enabled, and the target is sending a queue
+tag message, the target will also send two queue tag message bytes.
+
+Bus Initiated Reset
+
+	A bus initiated reset will be recognized by the FSC at any
+time.  The FSC will then disconnect from the bus and reset its
+internal sequencer.  If the SCSI reset reporting bit (Config 1
+register) is not set, the FSC will generate a SCSI reset detected
+interrupt.  If the host processor does not read the interrupt register
+within t1 milliseconds, the FSC will assert RESETO for t2
+microseconds.
+
+
+	INT/ ------\  |<---------- t1 ------------->|
+                    \ |                             |
+                     \|                             |
+                      ----------------------------------------------------
+                      |                             |         |
+                      |                             --------- |
+                                                   /|        \|
+	RESETO -----------------------------------/ |         \-------------
+                                                    |         |
+                                               ---> |  t2     | <---
+                                                    |         |
+	t1 = 2 (CLK period) (3841 CCF - 1)
+	t2 = 130 (CLK period) (CCF)
+
+	Where CCF = Clock Conversion Factor
+	Refer to Description or Write Register 09
+
+	For example, at CLK = 25 MHz
+	t1 = 1.5 milliseconds
+	t2 = 26 microseconds
+
+Data Transfer Rate
+
+	Performance claims for the FSC are based on it being directly
+connected to the SCSI bus with no external transceivers.  In
+differential mode, external transceivers are required and will slow
+asynchronous transmission by the propagation delay of the chosen
+transceiver but will not slow synchronous transmission.
+
+	The synchronous data transmission rate is equal to the CLK
+input frequency multiplied by the encoded value in the Synchronous
+Transfer Period register.  Sustained synchronous transfer rates of 10
+MB/s are attainable across the commercial voltage and temperature
+range.
+
+	The FSC can transfer synchronous SCSI data in both initiator
+and target modes at transfer rates up to 10 MB/s, using an input clock
+frequency of 40 MHz. The SCSI-1 and Fast SCSI-2 minimum timing
+requirements are listed in the following table:
+
+	----------------------------------------------------
+	|       Mode      | Setup |  Hold  | Assert/Negate |
+	----------------------------------------------------
+	|     SCSI-1      | 55 ns | 100 ns |      90 ns    |
+	----------------------------------------------------
+	| Single-ended    | 25 ns |  35 ns |      30 ns    |
+	| Fast SCSI-2     |       |        |               |
+	----------------------------------------------------
+
+	To support maximum Fast SCSI transfer rates and SCSI-1
+transfer requirements, the FASTSCSI (bit 1) and FASTCLK (bit 0) bits
+have been added to the Configuration 3 register.  They modify the SCSI
+state machine to provide fast and normal synchronous timings depending
+upon the clock frequency.
+
+	During synchronous SCSI tranfers, the assertion and
+deassertion of the REQ and ACK signals are programmable using the
+FASTCLK bit and other bits in the Synchronous Offset register.  The
+input clock duty cycle affects the half clock assertion/deassertion
+delays.  Note that DMA must be used for synchronous transfers.
+
+	The asynchronous transmission rate will vary with cable length
+and the CLK period.  The FSC can reach sustained transfer rates of 7
+MB/s on short (one-foot) cables using typical devices operating at or
+near nominal voltage and temperature.  The worst case asynchronous
+transmission rate over volatage, temperature, and process variations
+is 3 MB/s on a maximum length (six meters), single-ended cable and 4
+MB/s on a one-foot cable.
+
+	The asynchronous transmission rate is only slightly affected
+by the CLK frequency when sending data.  The FSC will drive the data
+bus for a minimum of one CLK period before asserting REQ or ACK.  The
+CLK frequency does not affect the asynchronous transfer rate when
+receiving data.
+
+	Two termination methods for single-ended mode are described in
+the ANSI SCSI-2 specification.  Alternative 1 reflects the SCSI-1
+specification, with 220 ohms to the TERMPWR line and 330 ohms to
+ground.  To improve the noise margins, 1% resistors should be used and
+TERMPWR should be between 5.0 V and 5.25 V.
+
+	Alternative 2 reflects the SCSI-2 specification, and is the
+recommended termination method.  An adjustable voltage regulator,
+powered by TERMPWR, supplies 2.85 V to 110 ohm 1% resistors.  This
+more closely matches the characteristics impedance of the cable,
+resulting in better signal quality.  Integrated versions from multiple
+vendors are available.
+
+Register Set
+
+----------------------------------------------------------------------
+| Address |          Read             |            Write             |
+----------------------------------------------------------------------
+|     0   | Transfer Counter Low      | Transfer Count Low           |
+----------------------------------------------------------------------
+|     1   | Transfer Counter Mid      | Transfer Count Mid           |
+----------------------------------------------------------------------
+|     2   | FIFO                      | FIFO                         |
+----------------------------------------------------------------------
+|     3   | Command                   | Command                      |
+----------------------------------------------------------------------
+|     4   | Status                    | Destination Bus ID           |
+----------------------------------------------------------------------
+|     5   | Interrupt                 | Select/Reselect Timeout      |
+----------------------------------------------------------------------
+|     6   | Sequence Step             | Synchronous Transfer Period  |
+----------------------------------------------------------------------
+|     7   | FIFO Flags                | Synchronous Offset           |
+----------------------------------------------------------------------
+|     8   | Configuration 1           | Configuration 1              |
+----------------------------------------------------------------------
+|     9   | Reserved                  | Clock Conversion Factor      |
+----------------------------------------------------------------------
+|     A   | Reserved                  | Test Mode                    |
+----------------------------------------------------------------------
+|     B   | Configuration 2           | Configuration 2              |
+----------------------------------------------------------------------
+|     C   | Configuration 3           | Configuration 3              |
+----------------------------------------------------------------------
+|     E   | Transfer Counter High     | Transfer Counter High        |
+----------------------------------------------------------------------
+
+	Some FSC registers have different meanings during reads than
+writes.  When CS/ is true, the register being accessed is determined
+by either RD/ WR/ together with the address pins A0-3.  The FIFO may
+be accessed using either CS/ or DACK/ together with RD/ or WR/.
+Address pins A0-A3 are ignored when DACK/ is active, but must be
+driven when CS/ is active.
+
+Transfer Count (Write Address 0, 1)
+
+	These two registers, together with teh Transfer Counter High
+register, form a 24-bit transfer count for DMA operations.  Transfer
+count specifies the number of bytes that are to be transferred over
+the SCSI bus.  Values written to these two registers will be stored
+internally and loaded into the transfer counter by any DMA command.
+These values remain unchanged while the transfer counter decrements.
+Thus, successive blocks of equal size may be transferred without
+reprogramming the count.  They may be reprogrammed any time after the
+previous DMA operation has started, whether it has finished or not.
+When the Features Enable bit (bit 6 in the Configuration 2 register)
+is clear, disabling the Transfer Count High register, a zero in
+registers 00h and 01h specifies a maximum length count of 64 K.  When
+the Features Enable bit is set, and the Transfer Count High register
+is enabled, zeros specify a maximum length. count of 16 MB.  These
+registers are not changed by any reset, and their states are
+unpredictable after power-up.
+
+Transfer Counter (Read Address 0, 1)
+
+	These registers combine with the Transfer Counter High
+register to form a 24-bit transfer counter for DMA operations.  A read
+from these two addresses will return the value currently in the
+counter.  DMA commands use the counter to terminate a transfer.  Any
+DMA command will load count into the counter.  A DMA NOP 80h will load
+the counter while the non-DMA NOP 00h will not.
+
+	With one exception, non-DMA commands do not use the counter.
+The exception is when the FSC has been selected, it decodes the group
+code field of the CDB (Command Descriptor Block), loads the counter
+with the number of bytes in the CDB, then decrements once for every
+byte received.
+
+	The transfer counter decrements on the leading edge of:
+
+		----------------------------------------
+		|   Target       | Decremented by      |
+		----------------------------------------
+		| Date in Phase  | DACK/               |
+		----------------------------------------
+		| Date out Phase | REQO/               |
+		----------------------------------------
+
+		------------------------------------------
+		|   Initiator          | Decremented by  |
+		------------------------------------------
+		| Synchronous data in  | DACK/           |
+		------------------------------------------
+		| Asynchronous data in | ACKO/           |
+		------------------------------------------
+		| Data out             | DACK/           |
+		------------------------------------------
+
+	NOTE: DACK/ can decrement the counter even if RD/ or WR/ do
+	      not go true.  False DACK/s can cause the counter to get
+	      out of sync with the data stream, leading to subtle
+	      errors that are difficult to trace.  When false DACK/s
+	      are expected to interfere with a temporarily suspended
+	      DMA operation, the DREQ Hi-Z bit in COnfig 2 should be
+	      set.
+
+FIFO Register (Read/Write Address 02)
+
+	The FIFO is a 16 by 9-bit first-in first-out buffer between
+the SCSI bus and memory.  It is accessible by the host processor at
+this address.  It is also accessible by an external DMA controller and
+by the SCSI bus.  The DMA may access the FIFO by asserting DACK/
+together with either RD/ or WR/.  When accessed by CS/, the address
+bits must be valid.  When accessed by DACK/, the address bits are
+ignored.  The bottor FIFO element and the FIFO flags are initialized
+to zero during hardware reset, software reset chip and at the
+beginning of bus initiated selection or reselection.  The contents of
+the rest of the FIFO are not changed by any reset, but when the flags
+are zero, successive FIFO reads will always access the bottom
+register.  It is cleared if the phase changes from an output phase to
+Synchronous Data In during the Transfer Pad or Transfer Information
+command.
+
+Command Register (Read/Write Address 03)
+
+	The command register is a two deep 8-bit read/write register
+used to give commands to the FSC.  Up to two commands may be stacked
+in the command register.  The second command may be written before the
+FSC completes (or even starts) the first.  Reset chip, reset SCSI bus
+and target stop DMA execute immediately, all others wait for the
+previous command to complete.  The last executed (or executing)
+command will remain in the command register and may be read by the
+host processor.  Reading the command register has no effect on its
+contents.  The command register will be cleared by any of the
+following conditions:
+
+	- Hardware, software or SCSI bus reset
+	- SCSI bus disconnect
+	- Bus-initiated selection or reselection
+	- Select command
+	- Reconnect command if ATN is set
+	- Select or reselect time-out
+	- Target terminate command
+	- Parity error detected in target mode
+	- Assertion of ATN in target mode
+	- Any phase change in initiator mode
+	- Illegal command
+
+	If two commands are placed in the command register, two
+interrupts may result.  If the first interrupt is not serviced before
+the second one finishes, the second interrupt is stacked behind the
+first.  When the interrupt register is read by the host to service the
+first interrupt, the contents status register, sequence step register,
+and interrupt register will change to describe the second interrupt.
+
+	If the Features Enable bit is not set, a SCSI Bus reset clears
+the Command register FIFO, but does not cause it to be held reset
+until the Interrupt register is read.  Then if the Command register is
+loaded while the register is in the reset condition, and before the
+Interrupt register is read, the chip attempts to execute the loaded
+command causing undesirable command execution.  This condition is
+avoided by setting the Features Enable bit.
+
+	-------------------------------------
+	| DMA |      Command                |
+	-------------------------------------
+	   7      6   5   4   3   2   1   0
+
+	Bit 7 (Enable DMA)
+
+	When bit 7 is not set, the command is a non-DMA instruction.
+When it is set, the command is a DMA instruction.  DMA instructions
+will load the internal byte counter with the value in the transfer
+count register (without changing the count register) then transfer
+data until that count decrements to zero.  If the transfer terminates
+prematurely, the bits in the status, sequence step, and interrupt
+registers will indicate why.
+
+	Bits 6-0 (Command Code)
+
+	The FSC commands are shown in Table 19.  Bits 4, 5, and 6
+specify a mode group.  Commands from the miscellaneous group may be
+issued at any time.  Commands from the disconnected, target or
+initiator groups will only be accepted by the FSC if it is in the same
+mode as the command when it falls to the bottom of the command FIFO.
+Otherwise, an illegal command interrupt will be generated.  For
+example, after hardware or software reset, the FSC will be in the
+disconnected state.  A command from either the target group or the
+initiator group will cause an illegal command interrupt.  An enable
+selection or reselection command by itself will not change modes.
+However, if another SCSI device then selects the FSC, it will be in
+the target state; if another device reselects the FSC, it will then be
+in the initiator state.  Similarly, any select command will place the
+FSC in initiator mode, while the reselect sequence command will place
+the FSC in target mode.
+
+Status Register (Read Address 04)
+
+	The status register contains important flags that indicate
+various conditions.  All but the phase bits are latched.  The phase
+bits are live indicators of the state of the SCSI bus.  All the
+latched bits except the terminal count are cleared by reading
+interrupt register.
+
+	----------------------------------------------
+	| INT | GE | PE | TC | VGC | MSG | C/D | I/O |
+	----------------------------------------------
+	   7    6    5    4    3     2      1     0
+                                     |      |     |
+                                     |      |     |
+                      -----------------------------
+                      |
+		      |
+                      V
+	--------------------------------------------------
+	|           Bits                 |  SCSI Phase   |
+	|   2         1             0    |               |
+	--------------------------------------------------
+	|   0         0             0    | Data Out      |
+	--------------------------------------------------
+	|   0         0             1    | Data In       |
+	--------------------------------------------------
+	|   0         1             0    | Command       |
+	--------------------------------------------------
+	|   0         1             1    | Status        |
+	--------------------------------------------------
+	|   1         0             0    | ANSI Reserved |
+	--------------------------------------------------
+	|   1         0             1    | ANSI Reserved |
+	--------------------------------------------------
+	|   1         1             0    | Message Out   |
+	--------------------------------------------------
+	|   1         1             1    | Message In    |
+	--------------------------------------------------
+
+	Bit 7 (Interrupt)
+
+	This bit is set whenever the FSC drives the INT output true.
+It may be polled.  It is buffered from the actual output, so that in
+wired-OR (shared interrupt) designs, this bit will indicate whether
+the FSC is attempting to interrupt the host processor.  Hardware reset
+or software reset chip or a read from the interrupt register will
+release an active INT signal and also clear this bit.
+
+	Bit 6 (GrossError)
+
+	This bit is set when one of the following has occurred:
+		- The top of the FIFO is overwritten
+		- The top of the command register has been overwritten
+		- Direction of DMA transfer is opposite to the direction
+		  of the SCSI transfer
+		- An unexpected phase change in initiator role during
+		  asynchronous data phase
+
+	Gross error does not cause an interrupt, it may be detected
+only while servicing another interrupt.  The bit is cleared by reading
+the Interrupt register if the interrupt output is asserted.  It will
+also be cleared by hardware reset, or software reset chip (but no SCSI
+reset).
+
+	Bit 5 (Parity Error)
+
+	This bit will be set if parity checking is enabled in the
+Config 1 register and the FSC detects a SCSI parity error on incoming
+command, data, status or message bytes.  It will be cleared by reading
+the interrupt register if the interrupt output is asserted.  Hardware
+reset or software reset chip will clear this bit (but not SCSI reset).
+
+	Bit 4 (Terminal COunt)
+
+	This bit is set when the transfer counter decrements to zero.
+It resets when the transfer count is loaded.  SInce a DMA NOP 80h
+command will load the transfer counter, it will also clear this bit.
+Note that a non-DMA NOP 00h will not load the counter and will not
+clear this bit.  Reading the interrupt register will not clear this
+bit.  Hardware reset of sortware reset chip will clear it (but not
+SCSI reset).
+
+	Bit 3 (Valid Group Code)
+
+	When the FSC is selected, it decodes the group code field in
+the first byte of the command descriptor block.  If the group code
+matches one defined in ANSI X3.131-1986, this bit will be set.  An
+undefined group code (designated reserved by the ANSI committee)
+leaves it not set.  If the SCSI-2 bit is set in the Config 2 register,
+Group 2 commands will be recognized as ten-byte commands and the bit
+will be set.  If the SCSI-2 bit is cleared, Group 2 commands will be
+treated as reserved commands.  Groups 3 and 4 are always treated as
+reserved commands.  A reserved Group command will cause the FSC to
+request 6 command bytes.  The FSC recognizes Group 6 as six-byte
+vendor unique commands and Group 7 as 10-byte vendor unique commands.
+The valid group code bit will be cleared by reading the interrupt
+register if the interrupt output is asserted.  It will also be cleared
+by hardware reset or software reset chip (but not SCSI reset).
+
+	Bits 2-0 (Phase Bits)
+
+	These bits indicate the phase on the SCSI bus at the time the
+register was read.  These bits are live, if the phase changes, so will
+these bits.  In target role, the FSC is driving theselines so they
+will not change if the read follows an interrupt.  In initiator role,
+the FSC will generate its interrupt only after the target asserts REQ
+(Request). The ANSI specification requires that the phase lines be
+valid before asserting REQ and remain valid until the initiator
+asserts ACK (Acknowledge).  Thus, these bits can be expected to be
+stable during any read that follows an interrupt.
+
+Destination ID (Write Address 04)
+
+	The least significant 3 bits of this register specify the
+encoded destination bus ID for a selection or reselection command.
+These bits are binary encoded, with 111 representing device ID 7,
+which appears as 80h on the SCSI bus.  The most significant 5 bits are
+reserved by NCR.  The destination ID is not changed by any reset, the
+states of these bits are unpredictable after power-up.
+
+Interrupt Register (Read Address 05)
+
+	This 8-bit register is used in conjunction with the status
+register and sequence step register to determine the cause of an
+interrupt.  Reading this register when the interrupt output is true
+will clear all three registers.  The entire interrupt register will be
+cleared (0) by hardware reset of software reset (but not SCSI reset).
+
+	-----------------------------------------------------
+	| SCSI | Ill | Dis | BS | FC | ReSEL | SELATN | SEL |
+	| RST  |     |     |    |    |       |        |     |
+	-----------------------------------------------------
+	   7      6     5    4    3     2         1      0
+
+	Bit 7 (SCSI Reset Detected)
+
+	This bit is set if the chip detects a reset on the SCSI bus,
+regardless of the status of the SCSI Reset Reporting Disable bit in
+the Config 1 register.  If the interrupt is not serviced within one or
+two milliseconds, the FSC resets the host.  Refer to Bus Initiated
+Selection.
+
+	Bit 6 (Illegal Command)
+
+	This bit is set when an unused code is placed in the command
+register or when the command is from a mode group different than the
+mode the FSC is currently in.  Command Code 7 in the Command Register
+will not generate an illegal command.  Refer to the Command Register
+definition.
+
+	Bit 5 (Disconnect)
+
+	In initiator mode, this bit is set when the target disconnects
+or a selection or reselection time-out occurs.  When the FSC is in
+target mode, this bit is set if a Terminate Sequence or Command
+Complete sequence command causes the FSC to disconnect from the bus.
+
+	Bit 4 (Bus Service)
+
+	This bit indicates that another device is requesting service.
+In target mode, it is set whenver the initiator asserts ATN
+(Attention).  In initiator mode, it is set whenever the target is
+requesting an information transfer phase.
+
+	Bit 3 (Function Complete)
+
+	This bit will be set after any target mode command has
+completed.  In initiator mode, it is set after a target has been
+selected (before transferring any command phase bytes), after Command
+Complete finishes, or after a Transfer Info command when the target is
+requesting message in phase.
+
+	Bit 2 (Reselected)
+
+	This bit is set during reselection phase to indicate that the
+FSC has been reselected as an initiator.
+
+	Bit 1 (Selected with ATN)
+
+	This bit is set during selection phase to indicate that the
+FSC has been selected as a target and that ATN was asserted on the
+SCSI bus.
+
+	Bit 0 (Selected)
+
+	This bit is set during selection phase to indicate that the
+FSC has been selected as a target and that ATN was false during
+selection.
+
+Time-Out (Write Address 05)
+
+	This 8-bit write-only register specifies the amount of time to
+wait for a response during selection or reselection.  (The FSC has no
+way to time-out if it never wins arbitration, it will keep trying
+indefinately until it wins).  The time-out register is normally loaded
+to specify a time-out period of 250 ms.  The Register Value (RV) may
+be calculated from:
+
+                   (Time-out period) (CLK frequency)
+	RV =   ----------------------------------------
+                    8192 (Clock conversion factor)
+
+	For example, at 25 MHz, the register value that given a 250 ms
+time-out period is 153 decimal or 99 hexadecimal.  The clock
+conversion factor is defined in the description of write address 9.
+The time-out register remains unchanged by any reset, the states of
+these bits are unpredictable after power-up.
+
+	Synchronous Transfer Period (Write address 6)
+
+	The lower five bits of this register specify the minimum time
+between leading edges of successive REQ (Request) or ACK (Acknowledge)
+pulses.  Synchronous data will be transmitted or received at the rate
+of one byte every N clocks (CLK).  N is related to the register as
+shown below.
+
+	------------------------------------
+	| Register Value | Clocks per Byte |
+	------------------------------------
+	|  0  0  1  0  0 |        4        |
+	------------------------------------
+	|  0  0  1  0  1 |        5        |
+	------------------------------------
+	|  0  0  1  1  0 |        6        |
+	------------------------------------
+	|  0  0  1  1  1 |        7        |
+	------------------------------------
+	|       ---      |       ---       |
+	------------------------------------
+	|       ---      |       ---       |
+	------------------------------------
+	|       ---      |       ---       |
+	------------------------------------
+	|  1  1  1  1  1 |        31       |
+	------------------------------------
+	|  0  0  0  0  0 |        32       |
+	------------------------------------
+	|  0  0  0  0  1 |        33       |
+	------------------------------------
+	|  0  0  0  1  0 |        34       |
+	------------------------------------
+	|  0  0  0  1  1 |        35       |
+	------------------------------------
+
+	Missing entries in the table above follow the binary code.
+The upper three bits are reserved.  This register defaults to 5 after
+hardware reset or software reset chip (but not SCSI reset).
+
+Sequence Step (Read Address 06)
+
+	The lower 3 bits of this register are used to indicate how far
+the internal sequencer was able to proceed in executing combination
+commands.  This counter will be incremented at certain points in
+various algorithms to aid in error recovery if the previous command
+does not complete normally.
+
+FIFO Flags (Read Address 07)
+
+	The least significant five bits of this register indicate how
+many bytes are currently in the FIFO.  The value is binary encoded.
+The flags should not be polled while transferring data because they
+will not be stable while the SCSI interface is changing the contents
+of the FIFO.
+
+	-------------------------------------------------
+	| SS2 | SS1 | SS0 | FF4 | FF3 | FF2 | FF1 | FF0 |
+	-------------------------------------------------
+	   7     6     5     4     3     2     1     0
+
+		SS = Sequence Step   FF = FIFO Flag
+
+	The upper three bits are duplicates of the sequence step
+register bits when operating in normal mode.
+
+	If test mode is enables, bit 5 is set to indicate that the
+offset counter is not zero.  Not zero means that synchronous data may
+continue to be transferred.  Zero means that the synchronous offset
+count has expired and the FSC will not transfer any more data until it
+receives an acknowledge.
+
+Synchronous Offset (Write Address 07)
+
+	The least significant four bits of this register specify
+whether the FSC will transfer data phase bytes synchronously or
+asynchronously.  Zero specifies asynchronous transfer.  Any other
+value specifies the synchronous offset;  the number of data phase
+bytes that may be sent synchronously without an acknowledge (either
+REQ or ACK), depending on whether the FSC is in initiator or target
+mode.
+
+	When transmitting to the SCSI bus, the FSC will stop sending
+bytes when it reaches this offset, and thereafter, send one byte for
+every acknowledge it receives from the other SCSI device.
+
+	When receiving from the SCSI bus, the FSC will send an
+acknowledge every time a byte is removed from its' FIFO on the DMA (or
+host processor) interface.  The maximum offset of 15 allows a
+receiving FSC to store data in its FIFO while the external DMA
+controller gains control of the memory bus.
+
+	The synchronous offset is cleared (0) by hardware reset or
+software reset chip (but not SCSI reset).
+
+Configuration 1 Register (Config 1) (Read/Write Address 08)
+
+	This 8-bit read/write register specifies various operating
+conditions for the FSC.  Any bit pattern written to this register may
+be read back and should be identical.
+
+	----------------------------------------------
+	|      | ___ |  P   | En P | Chip |  My  Bus |
+	| Slow | SRR | TEST | ChK  | Test |    ID    |
+	----------------------------------------------
+	   7      6     5      4       3    2   1  0
+
+	Bit 7 (Slow Cable Mode)
+
+	Slow cable mode will seldom be necessary.  It compensates for
+excessive capacitive loading on the SCSI data signals by inserting an
+extra CLK period between data being asserted on the bus and REQ or
+ACKbeing driven true.  This bit is cleared (0) by hardware reset or
+software reset chip (but not SCSI reset).
+
+	Bit 6 (SCSI Reset Reporting Interrupt DIsable)
+
+	This bit disables the reporting of a SCSI reset.  If the SCSI
+reset signal goes true when this bit is set, the FSC will disconnect
+from the SCSI bus and remain idle in the disconnected state without
+interrupting the host.  If the bit is not set, the FSC will respond to
+the SCSI reset by first interrupting the host, then resetting the host
+if the interrupt is not serviced within 1-2 ms (depending on CLK
+frequency and clock conversion factor.) Refer to Bus Initiated Reset.
+This bit is cleared (0) by hardware reset or software reset chip (but
+not SCSI reset).  The SCSI Reset Detected bit will be set if the chip
+detects a reset, regardless of the status of this bit.
+
+	Bit 5 (parity Test Mode)
+
+	Setting this bit will cause the parity signal to be a
+duplicate of data bit 7 when unloading the FIFO to the SCSI bus.  This
+allows parity errors to be created so that hardware and software may
+be tested.  This bit must not be set during normal operation.  Refer
+to Parity Checking and Generation.  This bit is cleared (0) by
+hardware reset or software reset chip (but not SCSI reset).
+
+	Bit 4
+
+	When this bit is set, the FSC will check parity on incoming
+SCSI bytes during any information transfer phase except when receiving
+badbytes.  Detected parity errors will cause a bit to be set in the
+status register but will not cause an interrupt.  In initiator role,
+bad parity will also set ATN (Attention) on the SCSI bus.  When this
+bit is not set, parity will not be checked;  the bit in the status
+register will not be set, and ATN will not be asserted.  Refer to
+Parity Checking and Generation.  This bit is cleared (0) by hardware
+reset or software reset chip (but not SCSI reset).
+
+	Bit 3 (Chip Test Mode Enable)
+
+	When this bit is set, the chip is placed in special test mode
+that enables the test register at address 0Ah.  Once it has been set,
+the chip must be reset (hard or soft but not SCSI) before normal
+operation can begin.  This bit should not be set during normal
+operation.  This bit is cleared (0) by hardware reset or software
+reset chip (but not SCSI reset).
+
+	Bit 2-0 (My Bus ID)
+
+	This bit field is the bus ID of this device.  It is the ID to
+which the FSC responds during bus initiated selection or reselection,
+and the ID that the FSC uses to arbitrate for the bus.  The name of
+this field has changed from bus ID on the C90, but its function
+remains the same.  This three bit field is binary encoded.  These bits
+are cleared by a hardware reset or software reset command (but not
+SCSI reset).
+
+Clock Conversion (Write Address 09)
+
+	This register must be set according to the CLK (clock) input
+frequency.  All timings longer than 400 ns depend on this register
+correctly agreeing with the CLK frequency.  The least significant
+three bits are binary encoded, and should be set to one of the
+following seven values:
+
+	-------------------------------------------------
+	| CLK Frequency (MHz) | Clock Conversion Factor |
+	-------------------------------------------------
+	|         10          |         010             |
+	-------------------------------------------------
+	|     10.01 to 15     |         011             |
+	-------------------------------------------------
+	|     15.01 to 20     |         100             |
+	-------------------------------------------------
+	|     20.01 to 25     |         101             |
+	-------------------------------------------------
+	|     25.01 to 30     |         110             |
+	-------------------------------------------------
+	|     30.01 to 35     |         111             |
+	-------------------------------------------------
+	|     35.01 to 40     |         000             |
+	-------------------------------------------------
+
+	This register must never be loaded with 1.  Hardware reset or
+software reset chip will set the clock conversion factor to 2.  SCSI
+reset will not affect it.  The upper 5 bits of this register are
+reserved.
+
+Test Register (Write Address 0A)
+
+	This register is enabled by setting the special test mode bit
+in config-1 at address 08.  After testmode has been entered, a
+hardware reset or software reset chip must occur before normal
+operation can begin.
+
+	-------------------------------------------------
+	|         Reserved         |  Hi Z  |  I  |  T  |
+	-------------------------------------------------
+	     7    6    5   4   3        2      1     0
+
+	Bit 2 (All Outputs to High-Impedance)
+
+	When this bit is set, all bidirectional and all output pins go
+to high-impedance and will not significantly load a TTL or compatible
+device.
+
+	Bit 1 (Initiator Mode)
+
+	When this bit is set, the FSC is artificially forced into
+initiator mode.  Any initiator command will be accepted by the FSC.
+For example, a set ATN command will cause ATN to be driven on the SCSI
+bus even if the FSC is disconnected.
+
+	Bit 0 (Target Mode)
+
+	When this bit is set, the FSC is artificially forced into
+target mode.  Any target command will be accepted by the FSC.  For
+example, a DMA command will load or unload the FIFO and set the SCSI
+phase, data and REQ signals even if arbitration and selection have not
+occurred.
+
+Configuration 2 (Config 2) (Read/Write Address 0B)
+
+	After hardware reset of software reset chip, the bits in this
+register are all cleared.  Any bit pattern written to this register
+may be read back and should be identical.
+
+	-------------------------------------------------------
+	| RES | FE | RES | DREQ HIZ | SCSI2 | BPA | RPE | DPE |
+	-------------------------------------------------------
+	   7    6     5        4        3      2     1     0
+
+	Bit 7 Reserved
+
+	Bit 6 Features Enable
+
+	When set, this bit will enable the following features:
+
+		- The SCSI phase is latched at each command
+		  completion.  This permits simpler software routines
+		  for stacked commands.  When the Features Enable bit
+		  is not set, the phase bits (bits 2-0 in the Status
+		  register) are live indicators of the state of the
+		  SCSI phase lines.
+
+		- During differential mode operation when the SCSI
+		  phase changes from in to out, the SCSI Data In and
+		  Parity lines are delayed two or three CLKs before
+		  asserting.  When the phase changes from out to in,
+		  the SCSI Data Out and Parity lines are delayed two
+		  or three CLKs before deasserting.  At 40 MHz, this
+		  provides a minimum of 50 ns turnoff time for the
+		  external transceivers.  This will improve the SCSI
+		  Data timings in differentialmode by preventing
+		  electrical bus contention between the chip and teh
+		  SCSI bus transceivers when the bus changes phase.
+
+		- The Transfer Counter High register at address 0Eh is
+		  enabled, which extends the transfer counter from 16
+		  to 24 bits.
+
+		- If other conditions are met, setting the Features
+		  Enable bit also allows the chip revision code to be
+		  read (see the Transfer Counter High register
+		  description for more information on this feature).
+
+	Bit 5 Reserved
+
+	Bit 4 (DREQ High-Impedance)
+
+	When this bit is set, the DREQ output (DMA Request) goes to
+high impedance and will not significantly load a TTL compatible
+device.  This is useful when several devices share the DMA request
+line (known as wired-OR).  When this bit is set, the FSC will ignore
+any activity on the DACK/ (DMA Acknowledge) input.
+
+	When this bit is cleared, the DREQ output will be driven to
+TTL high or low voltages.  When this bit is cleared, DACK/ is enabled
+to decrement the transfer counter and load or unload the FIFO,
+depending on WR/ or RD/.  DACK/ should not pulse true without RD/ or
+WR/ because the transfer counter may decrement without transferring
+any data.  Refer to Transfer Counter Register.
+
+	Bit 3 (SCSI-2)
+
+	Allows the FSC to support two new features adopted in SCSI-2:
+the three-byte message exchange for tagged-queuing and Group 2
+commands.
+
+	Tagged-Queuing
+
+	When this bit is set, and the FSC is selected with ATN
+(Attention), it will request either one or three message bytes
+depending on whether ATN remains true or goes false.  If ATN is still
+true after the first byte has been received, the FSC may request two
+more message bytes before switching to command phase.  If ATN goes
+false, it will request only one message byte then switch to command
+phase.  When this bit is not set, it will request a single message
+byte (as a target) when selected with ATN; and abort the selection
+sequence (as an initiator) if the target does not switch to command
+phase after one message byte has been transferred.  Refer to Bus
+Initiated Selection.
+
+	Group 2 Commands
+
+	When the SCSI-2 bit is set, Group 2 commands are recognized as
+10-byte commands.  Receiving a Group 2 command with this bit set will
+set the valid group code bit in the status register.  If the SCSI-2
+bit is not set the FSC will treat Group 2 commands as reserved
+commands, it will request only 6 bytes in command phase and will not
+set the valid group code status bit.
+
+	Bit 2 (Target Bad Parity Abort)
+
+	When this bit is set, the FSC will abort a receive command or
+receive data sequence when the FSC detects a parity error.
+
+	Bit 1 (Register Parity Enable)
+
+	When this bit is set, parity from the host DBP pin (53C90B
+only) will be loaded into the FIFO when CS/ and WR/ are both true.
+When this bit is not set the FSC generates parity from the host data
+bus when CS/ and WR/ are both true and places it in the FIFO along
+with the data from which it was generated.
+
+	When the FSC is moving data from the FIFO to the SCSI bus, it
+will flag outgoing parity errors if either this bit or the DMA parity
+enable bit is set.
+
+	Bit 0 (DMA parity Enable)
+
+	When this bit is set, parity from the host DBP pin (53C90B
+only) will be loaded into the FIFO when DACK/ and WR/ are both true.
+When this bit is not set, the FSC generates parity from the host data
+bus when DACK/ and WR/ are both true and places it in the FIFO along
+with the data from which it was generated.
+
+	When the FSC is moving data from the FIFO to the SCSI bus, it
+will flag outgoing parity errors if either this bit or the register
+parity enable bit are set.
+
+Configuration Register 3 (Read/Write Address 0C)
+
+	After a hardware reset or a Reset Chip command the bits in
+this register are all cleared.  Any bit pattern written to this
+register may be read back and should be identical.
+
+	----------------------------------------------------
+	| RES | RES | RES | IDM | QTE | CDB | FSCSI | FCLK |
+	----------------------------------------------------
+	   7     6     5     4     3     2      1       0
+
+	Bits 7-5 Reserved
+
+	Bit 4 ID Message Reserved Check
+
+	This bit allows a second level of checking for the validity of
+an ID message.  The most significant bit of an ID message byte is
+always checked, and must be one, or the chip interrupts.  When this
+bit is set, bits 5-3 of the ID message are also checked and must be
+zero, or the chip interrupts.  This check occurs in two cases: if the
+chip is selected with ATN true, or during reselection.  If the
+validation check fails, the selection or reselection halts and the
+chip generates an interrupt.
+
+	Bit 3 Queue Tag Enable
+
+	When this bit is set, the FSC can receive 3-byte messages
+during businitiated select with ATN.  This feature is also enabled by
+setting bit 3 in the Configuration 2 register.  The message bytes
+consist of a 1-byte Identify message and a 2-byte Queue Tag message.
+The middle byte is the tagged queue message itself and the last byte
+is the tag value (0 to 255).  When this bit is set, the second byte is
+cheked to see if it is a valid queue taggin message.  If the value of
+the byte is not 20h, 21h, or 22h, the sequence halts and an interrupt
+is generated.  When this bit is not set, the chip aborts the select
+with ATN sequence after it receives one Identify message byte, if ATN
+is still asserted.
+
+	Bit 2 CDB10
+
+	When this bit is set, 10-byte Group 2 commands are recognized
+as valid Command Descriptor Blocks (CDB). The target command sequence
+receives ten Group 2 commandbytes and sets the Valid Group Code bit
+(Status register, bit 3).  When this bit is not set, the target
+command sequence receives only six Group 2 command bytes and does not
+set the Valid Group Code bit.  The group code defines how manybytes to
+request while driving command phase.  This feature is also enabled or
+disabled by setting or clearing bit 3 in the Configuration 2 register.
+
+	Bit 1 FASTSCSI
+
+	Bit 0 FASTCLK
+
+	Bits one and zero in this register are used to inform the
+device that it is connected to a fast clock, and to select between
+Fast SCSI timings and SCSI-1 timings.  Fast SCSI operation requires a
+40 MHz clock.  A fast clock is on with a frequence greater than 25
+MHz.  These bits affect the SCSI transfer rate as follows:
+
+	----------------------------------------------------
+	| Bit 1 | Bit 0 | Min clocks/byte |  SyncTransfer  |
+	|       |       |  async |  sync  |     (MB/s)     |
+	----------------------------------------------------
+	|  X    |   0   |   2    |   5    |        5       |
+	----------------------------------------------------
+	|  0    |   1   |   3    |   8    |        5       |
+	----------------------------------------------------
+	|  1    |   1   |   3    |   4    |        10      |
+	----------------------------------------------------
+
+Transfer Counter High Register (Read Address 0E)
+
+	This register extends the transfer counter to 24 bits.  Like
+the other transfer counter registers, this register is not affected by
+any reset condition.  After power-up or a chip reset, and until
+Transfer Counter High register is loaded, the FSC part unique ID code
+is readable from this register.  The Transfer Counter High register is
+only enabled when the Features Enable bit (bit 6 in the Configuration
+2 register) is set.  Refer to the descriptions for Transfer Counter
+Low and Transfer Counter Mid for more information on the transfer
+counter.
+
+	An 8-bit part unique ID code for the FSC is available in the
+Transfer Counter High register when the following conditions are true:
+
+	- After power-up or chip reset
+	- Before the Transfer Counter High register is loaded
+	- The Features Enable bit (bit 6 in the Configuration 2
+	  register) is set
+	- A DMA NOP command (80h) has been issued
+
+	Bits 7-3 indicate the chip family code.  Bits 2-0 indicate the
+revision level of the chip.  At power-up, the FSC family code is zero
+and the revision level is two.
+
+Transfer Counter High Register (Read Address 0E)
+
+	This register extends the Transfer Count to 24 bits.  Like the
+other transfer count registers, this register is not affected by any
+reset condition.  This register is only enabled when the Features
+Enable bit (bit 6 in the Configuration 2 register) is set.  Refer to
+the description for Transfer Count Low and Transfer Count Mid for more
+information on the transfer count.
+
+Parity Checking and Generation
+
+	--------------------------------------------------
+	|     Register     | Bit | Bit Name              |
+	--------------------------------------------------
+	| Configuration 1  |  4  | Enable Prity Checking |
+	--------------------------------------------------
+	| Configuration 1  |  5  | Parity Test Mode      |
+	--------------------------------------------------
+	| Status           |  5  | Parity Error          |
+	--------------------------------------------------
+	| Configuration 2  |  0  | DMA Parity Enable     |
+	|                  |     | (N/A)                 |
+	--------------------------------------------------
+	| Configuration 2  |  1  | Register Parity Enable|
+	|                  |     | (N/A)                 |
+	--------------------------------------------------
+	| Configuration 2  |  2  | Target Bad Priority   |
+	|                  |     | Abort                 |
+	--------------------------------------------------
+
+	The FSC has six bits that control parity generation and
+checking.  If parity checking is disabled, the FSC does not check for
+parity errors.  In this document, the word "detected," in conjunction
+with "parity error," should be understood to imply that parity
+checking has previously been enabled.
+
+	In target role, detected parity errors will set the parity
+error status bit and clear the command register.  In initiator role,
+detected parity errors will set the parity error bit and assert ATN
+(Attention) prior to releasing ACK (Acknowledge).  Parity errors
+occurring on the first few bytes after a phase change to synchronous
+data in are handled slightly differently in initiator mode.  Refer to
+Initiator Commands.
+
+	If parity test mode is enabled, the parity bit is a duplicate
+of bit 7.  This is true both for data flowing from the FIFO to the
+SCSI Data Bus (SDB) and data flowing from the FIFO to the Host Data
+Bus (DB).
+
+	It may pass parity between SCSI and host buses without
+changing it or flagging errors; or may generate parity from the data
+byte.  Whether generated internally or externally, the parity bit is
+always loaded into the FIFO along with the data byte.  From there on
+itmoves through the FIFO alogn with the byte.  The FIFO may be
+accessed by three busses: SCSI bus, host processor bus, or host DMA
+bus.
+
+	When checking parity, the FSC checks at the edge of the
+board.  Parity errors are flagged as data comes into the FIFO from the
+SCSI bus, or as it leaves the FIFO on its way out the SCSI bus.
+
+Command Set
+
+	From the programmers point of view, DMA commands will move
+data between memory and the SCSI bus, non-DMA commands will move data
+between the FIFO and the SCSI bus.  Non-DMA commands require the host
+processor to move data between the FIFO and memory.  DMA commands
+require an external DMA controller to move data between the FIFO and
+memory.  A command with bit 7 set is a DMA command.  A command with
+bit 7 not set is a non-DMA command.  DMA commands will load the
+transfer counter with whatever value is in the transfer count
+register, so the value must be correct before issuing the command.
+
+----------------------------------------------------------------------
+| Command Register | Command Mnemonic                    | Interrupt |
+----------------------------------------------------------------------
+| 7 6 5 4  3 2 1 0 | Miscellaneous Group                 |           |
+|                  |-------------------------------------|           |
+| X 0 0 0  0 0 0 0 | NOP                                 |    No     |
+| X 0 0 0  0 0 0 1 | Flush FIFO                          |    No     |
+| X 0 0 0  0 0 1 0 | Reset Chip                          |    No     |
+| X 0 0 0  0 0 1 1 | Reset SCSI Bus                      |    No*    |
+|                  |-------------------------------------|           |
+|                  | Disconnected State Group            |           |
+|                  |-------------------------------------|           |
+| X 1 0 0  0 0 0 0 | Reselect Sequence                   |    Yes    |
+| X 1 0 0  0 0 0 1 | Select without ATN Sequence         |    Yes    |
+| X 1 0 0  0 0 1 0 | Select with ATN Sequence            |    Yes    |
+| X 1 0 0  0 0 1 1 | Select with ATN and Stop Sequence   |    Yes    |
+| X 1 0 0  0 1 0 0 | Enable Selection/Reselection        |    No     |
+| X 1 0 0  0 1 0 1 | Disable Selection/Reselection       |    Yes    |
+| X 1 0 0  0 1 1 0 | Select with ATN3                    |    Yes    |
+| X 1 0 0  0 1 1 1 | Reselect3 Sequence                  |    Yes    |
+|                  |-------------------------------------|           |
+|                  | Target State Group                  |           |
+|                  |-------------------------------------|           |
+| X 0 1 0  0 0 0 0 | Send Message                        |    Yes    |
+| X 0 1 0  0 0 0 1 | Send Status                         |    Yes    |
+| X 0 1 0  0 0 1 0 | Send Data                           |    Yes    |
+| X 0 1 0  0 0 1 1 | Disconnect Sequence                 |    Yes    |
+| X 0 1 0  0 1 0 0 | Terminate Sequence                  |    Yes    |
+| X 0 1 0  0 1 0 1 | Target Command Complete Sequence    |    Yes    |
+| X 0 1 0  0 1 1 1 | Disconnect                          |    No     |
+| X 0 1 0  1 0 0 0 | Receive Message                     |    Yes    |
+| X 0 1 0  1 0 0 1 | Receive Command Sequence            |    Yes    |
+| X 0 1 0  1 0 1 0 | Receive Data                        |    Yes    |
+| X 0 1 0  1 0 1 1 | Receive Command Sequence            |    Yes    |
+| X 0 0 0  0 1 0 0 | Target Abort DMA                    |    No**   |
+|                  |-------------------------------------|           |
+|                  | Initiator State Group               |           |
+|                  |-------------------------------------|           |
+| X 0 0 1  0 0 0 0 | Transfer Information                |    Yes    |
+| X 0 0 1  0 0 0 1 | Initiator Command Sequence Complete |    Yes    |
+| X 0 0 1  0 0 1 0 | Message Accepted                    |    Yes    |
+| X 0 0 1  1 0 0 0 | Transfer Pad                        |    Yes    |
+| X 0 0 1  1 0 1 0 | Set ATN                             |    No     |
+| X 0 0 1  1 0 1 1 | Reset ATN                           |    No     |
+----------------------------------------------------------------------
+|   * The command itself does not cause an interrupt, however,       |
+|     external connection of the RSTO/ pin to RSTI/ pin causes       |
+|     an interrupt if the SCSI reset reporting is not disabled       |
+|     in the configuration register.                                 |
+|  ** The command itself does not cause an interrupt, however, it    |
+|     may allow a stalled command to finish and generate an          |
+|     interrupt                                                      |
+----------------------------------------------------------------------
+
+Miscellaneous Commands
+
+	-------------------------------------------------
+	|   DMA   |  Non-DMA  | Mnemonic                |
+	-------------------------------------------------
+	|   80    |    00     | No-Operation (NOP)      |
+	-------------------------------------------------
+	|   81    |    01     | Flush FIFO              |
+	-------------------------------------------------
+	|   82    |    02     | Reset Chip              |
+	-------------------------------------------------
+	|   83    |    03     | Reset SCSI Bus          |
+	-------------------------------------------------
+
+	NOP
+
+	No-Operation.  The 53C9X requires this command only after
+hardware reset or software reset chip.  A DMA NOP 80h may be used to
+load the transfer counter with the value in the transfer count
+register.  No interrupt is generated from this command.
+
+	Flush FIFO
+
+	The Flush FIFO command initializes the FIFO to the empty
+condition by resetting the FIFO flags and setting the bottom byte of
+the FIFO to zero.
+
+	Reset Chip
+
+	This command resets all functions in the chip and returns it
+to a disconnected state.  The command has the same effect as a
+hardware reset, with the exception that reset chip cannot change
+between single-ended mode or differential mode.
+
+	Reset SCSI Bus
+
+	This command will assert the SCSI Reset Output (RSTO) signal
+for 25us, depending on CLK frequency and clock conversion factor.
+Refer to Bus Initiated Reset.  This command does not cause an
+interrupt;  however since RSTI will be externally connected to RSTO,
+an interrupt will be generated unless it is disabled in the Config 1
+register.
+
+Disconnected State Commands
+
+	-----------------------------------------------------
+	| DMA | Non-DMA | Mnemonic                          |
+	-----------------------------------------------------
+	| C0  |    40   | Reselect Sequence                 |
+	-----------------------------------------------------
+	| C1  |    41   | Select without ATN Sequence       |
+	-----------------------------------------------------
+	| C2  |    42   | Select with ATN Sequence          |
+	-----------------------------------------------------
+	| C3  |    43   | Select with ATN and Stop Sequence |
+	-----------------------------------------------------
+	| C4  |    44   | Enable Selection or Reselection   |
+	-----------------------------------------------------
+	| C5  |    45   | Disable Selection and Reselection |
+	-----------------------------------------------------
+	| C6  |    46   | Select with ATN3                  |
+	-----------------------------------------------------
+	| C7  |    47   | Reselect3 Sequence                |
+	-----------------------------------------------------
+
+	If any of the Disconnected State commands are received by the
+FSC when it is not in the disconnected state, the command will be
+ignored, the command register will be cleared, and the FSC will
+generate an illegal command interrupt.
+
+	Reselect Sequence
+
+	This command will cause the FSC target to arbitrate for the
+bus then enter reselection phase when it wins arbitration.  The
+identify message, required by SCSI protocol, must either be placed in
+the FIFO by the host processor before issuing the command or must be
+transferred by DMA, which involved setting the transfer count to one
+and setting up the external DMA controller.  In either case, the
+time-out and destination ID must have previously been set.  The
+sequence will terminate early if a reselect time-out occurs.
+
+	Select Without ATN Sequence
+
+	This command will cause the FSC initiator to arbitrate for the
+bus, enter selection phase when it wins, and send the CDB (Command
+Descriptor Block).  The 6, 10, or 12 byte CDB must have either been
+placed in the FIFO previously by the host processor ormust be
+transferred by DMA, which involved setting the transfer count to 6,
+10, or 12 and programming the external DMA controller.  In either
+case, the time-out and destination registers must have previously been
+set.  This command terminates early if a reselection time-out occurs,
+or the target does not assert command phase, or the target removes
+command phase too early.  If it terminates normally, a function
+complete/bus service interrupt will be generated.
+
+		Initiator Select without ATN
+------------------------------------------------------------------
+| Sequence | Interrupt       | Interpretation                    |
+|   Step   | Register        |                                   |
+------------------------------------------------------------------
+|  2 1 0   | 7 6 5 4 3 2 1 0 |                                   |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 1 0 0 0 0 0 | Arbitration complete;  selection  |
+|          |                 | time-out; disconnected            |
+------------------------------------------------------------------
+|  0 1 0   | 0 0 0 1 1 0 0 0 | Arbitration and selection complete|
+|          |                 | stopped because target did not    |
+|          |                 | assert command phase              |
+------------------------------------------------------------------
+|  0 1 1   | 0 0 0 1 1 0 0 0 | Stopped during command transfer   |
+|          |                 | because target prematurely changed|
+|          |                 | phase                             |
+------------------------------------------------------------------
+|  1 0 0   | 0 0 0 1 1 0 0 0 | Select sequence complete          |
+------------------------------------------------------------------
+
+		Target Selected without ATN
+------------------------------------------------------------------
+| Sequence | Interrupt       | Interpretation                    |
+|   Step   | Register        |                                   |
+------------------------------------------------------------------
+|  2 1 0   | 7 6 5 4 3 2 1 0 |                                   |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 0 0 0 0 1 | Selected, loaded bus ID into FIFO,|
+|          |                 | loaded null-byte message into FIFO|
+------------------------------------------------------------------
+|  0 0 1   | 0 0 0 0 0 0 0 1 | Stopped in command phase due to   |
+|          |                 | parity error; some command        |
+|          |                 | descriptor block bytes may not    |
+|          |                 | have been received; check FIFO    |
+|          |                 | flags                             |
+------------------------------------------------------------------
+|  0 0 1   | 0 0 0 1 0 0 0 1 | Same as above, initiator asserted |
+|          |                 | ATN in command phase              |
+------------------------------------------------------------------
+|  0 1 0   | 0 0 0 0 0 0 0 1 | Selected, received entire command |
+|          |                 | descriptor block; check valid     |
+|          |                 | group status bit                  |
+------------------------------------------------------------------
+|  0 1 0   | 0 0 0 1 0 0 0 1 | Same as above, initiator asserted |
+|          |                 | ATN in command phase              |
+------------------------------------------------------------------
+
+
+	Select with ATN sequence
+
+	This command will cause the FSC initiator to arbitrate for the
+bus, select a device with ATN true then send one message phase byte
+followed by 6, 10, or 12 command phase bytes.  The message and command
+bytes must have either been placed in the FIFO by the host processor
+or must be transferred by DMA, which involved setting the transfer
+counter to 7, 11, or 13 and programming the external DMA controller.
+In either case, the time-out and destination ID registers must have
+previously been programmed.  This command terminates early if: a
+select time-out occurs, target does not assert message phase followed
+by command phase, or target removes command phase early.  If it
+completes normally, a function complete and bus service interrupt will
+be generated.
+
+		Initiator Select with ATN
+------------------------------------------------------------------
+| Sequence | Interrupt       | Interpretation                    |
+|   Step   | Register        |                                   |
+------------------------------------------------------------------
+|  2 1 0   | 7 6 5 4 3 2 1 0 |                                   |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 0 0 0 1 0 | Arbitration complete; selection   |
+|          |                 | time-out; disconnected            |
+|          |                 | 
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 0 0 0 1 0 | Arbitration and selection complete|
+|          |                 | stopped because target did not    |
+|          |                 | assert message out phase; ATN     |
+|          |                 | being driven by FSC               |
+------------------------------------------------------------------
+|  0 1 0   | 0 0 0 1 0 0 1 0 | Message out complete; sent one    |
+|          |                 | message byte with ATN true, then  |
+|          |                 | released ATN; stopped because     |
+|          |                 | target did not assert command     |
+|          |                 | phase after message byte was sent |
+------------------------------------------------------------------
+|  0 1 1   | 0 0 0 0 0 0 1 0 | Stopped druing command transfer   |
+|          |                 | due to premature phase change;    |
+|          |                 | some CDB bytes may not have been  |
+|          |                 | sent; check FIFO flags            |
+------------------------------------------------------------------
+|  1 0 0   | 0 0 0 1 0 0 1 0 | Selection with ATN sequence       |
+|          |                 | complete                          |
+------------------------------------------------------------------
+
+
+
+	Target Selected with ATN SCSI-2 Bit Not Set
+------------------------------------------------------------------
+| Sequence | Interrupt       | Interpretation                    |
+|   Step   | Register        |                                   |
+------------------------------------------------------------------
+|  2 1 0   | 7 6 5 4 3 2 1 0 |                                   |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 0 0 0 1 0 | Selected with ATN, stored bus ID  |
+|          |                 | and one message byte; stopped     |
+|          |                 | either due to parity error or     |
+|          |                 | invalid ID message                |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 1 0 0 1 0 | Selected with ATN, stored bus ID  |
+|          |                 | and one message byte; stopped     |
+|          |                 | because ATN remained true after   |
+|          |                 | first message byte                |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 0 0 0 1 0 | Stopped in command phase due to   |
+|          |                 | parity error; some CDB bytes not  |
+|          |                 | received; check valid group code  |
+|          |                 | bit and FIFO flags                |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 1 0 0 1 0 | Stopped in command phase; parity  |
+|          |                 | error and ATN true.               |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 0 0 0 1 0 | Selection complete; received one  |
+|          |                 | message byte and the entire       |
+|          |                 | command descriptor block          |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 1 0 0 1 0 | Same as above, initiator asserted |
+|          |                 | ATN during command phase          |
+------------------------------------------------------------------
+
+	Target Selected with ATN SCSI-2 Bit Set
+------------------------------------------------------------------
+| Sequence | Interrupt       | Interpretation                    |
+|   Step   | Register        |                                   |
+------------------------------------------------------------------
+|  2 1 0   | 7 6 5 4 3 2 1 0 |                                   |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 0 0 0 1 0 | Selected with ATN, stored bus ID  |
+|          |                 | and one message byte; stopped     |
+|          |                 | due either to parity error or     |
+|          |                 | invalid ID message                |
+------------------------------------------------------------------
+|  1 0 0   | 0 0 0 0 0 0 1 0 | Parity error during second or     |
+|          |                 | third message byte                |
+------------------------------------------------------------------
+|  1 0 0   | 0 0 0 1 0 0 1 0 | ATN remained true after third     |
+|          |                 | message byte                      |
+------------------------------------------------------------------
+|  1 0 1   | 0 0 0 0 0 0 1 0 | Received three message bytes; then|
+|          |                 | stopped in command phase due to   |
+|          |                 | parity error; some CDB bytes not  |
+|          |                 | received; check valid group code  |
+|          |                 | bit and FIFO flags                |
+------------------------------------------------------------------
+|  1 0 1   | 0 0 0 1 0 0 1 0 | Stopped in command phasel; parity |
+|          |                 | error and ATN true                |
+------------------------------------------------------------------
+|  1 1 0   | 0 0 0 0 0 0 1 0 | Selection complete; received 3    |
+|          |                 | message bytes and the entire      |
+|          |                 | command descriptor block          |
+------------------------------------------------------------------
+
+	Select with ATN and Stop
+
+	This command should be used in place of the one above when
+multiple message pgase bytes are to be sent.  The command will select
+a target with ATN asserted, send one message byte, and generate bus
+service and function complete interrupts, and stop.
+
+		Initiator Select with ATN and Stop
+------------------------------------------------------------------
+| Sequence | Interrupt       | Interpretation                    |
+|   Step   | Register        |                                   |
+------------------------------------------------------------------
+|  2 1 0   | 7 6 5 4 3 2 1 0 |                                   |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 1 0 0 0 0 0 | Arbitration complete; selection   |
+|          |                 | time-out; disconnected            |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 1 1 0 0 0 | Arbitration and selection complete|
+|          |                 | stopped because target did not    |
+|          |                 | assert message out phase; ATN     |
+|          |                 | still asserted by FSC             |
+------------------------------------------------------------------
+|  0 0 1   | 0 0 0 1 1 0 0 0 | Message out complete; sent one    |
+|          |                 | byte; ATN on                      |
+------------------------------------------------------------------
+
+	Enable Selecion/Reselection
+
+	After receiving this command, the FSC will respond to bus
+initiated selection or reselection.  A command that causes the FSC to
+select or reselect will cancel this command.  The command must be
+re-issued within 250ms after the FSC disconnects to preserve ANSI
+recommended timings.  If DMA is enabled, incoming Command Descriptor
+Block will be placed in memory.  If DMA is not enabled, incoming
+information will remain in the FIFO.
+
+	Disable Selection/Reselection
+
+	This command disables an earlier Enable Selection/Reselection
+command.  If bus initiated selection or reselection has not yet begun
+when this command is received by the FSC, it will generate a function
+complete interrupt.  If bus initiated selection or reselection had
+already begun, this command (and every other command) will be
+ignored.  Refer to Bus Initiated Selection and Bus Initiated
+Reselection.
+
+	Select with ATN3 Sequence
+
+	This command is similar to the select with ATN command, but
+send three message bytes instead of one.  It will cause the FSC
+initiator to arbitrate for the bus, select a device with ATN true,
+send three message phase bytes, deassert ATN, then send 6, 10, or 12
+command phase bytes.  The message and command bytes must have either
+been placed in thte FIFO by the host processor or must be transferred
+by DMA; this involved setting the transfer count to 7, 11, or 13 and
+programming the external DMA controller.  In either case, the time-out
+and destination ID registers must have previously been programmed.
+This command terminates early if: a select time-out occurs, target
+does not assert message phase followed by command phase or target
+removes command phase early.  If it completes normally, a function
+complete and bus service interrupt will be generated.
+
+		Initiator Select with ATN3
+------------------------------------------------------------------
+| Sequence | Interrupt       | Interpretation                    |
+|   Step   | Register        |                                   |
+------------------------------------------------------------------
+|  2 1 0   | 7 6 5 4 3 2 1 0 |                                   |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 1 0 0 0 0 0 | Arbitration complete; selection   |
+|          |                 | time-out; disconnected            |
+------------------------------------------------------------------
+|  0 0 0   | 0 0 0 1 1 0 0 0 | Arbitration and selection complete|
+|          |                 | stopped because target did not    |
+|          |                 | assert message out phase; ATN     |
+|          |                 | still driven by FSC               |
+------------------------------------------------------------------
+|  0 1 0   | 0 0 0 1 1 0 0 0 | Sent 1, 2, or 3 message bytes;    |
+|          |                 | stopped because target prematurely|
+|          |                 | changd from message out phase or  |
+|          |                 | did not assert command phase      |
+|          |                 | after third message byte; ATN     |
+|          |                 | released only if third message    |
+|          |                 | byte was sent                     |
+------------------------------------------------------------------
+|  0 1 1   | 0 0 0 1 1 0 0 0 | Stopped during command transfer   |
+|          |                 | due to premature phase change;    |
+|          |                 | Some CDB bytes may not have been  |
+|          |                 | sent; check FIFO flags            |
+------------------------------------------------------------------
+|  1 0 0   | 0 0 0 1 1 0 0 0 | Select with ATN3 sequence complete|
+------------------------------------------------------------------
+
+Initiator Commands
+
+			Initiator Commands
+----------------------------------------------------------------------
+|  DMA  | Non-DMA | Mnemonic                                         |
+----------------------------------------------------------------------
+|  90   |   10    | Transfer Information                             |
+----------------------------------------------------------------------
+|  91   |   11    | Initiator Command Complete Sequence              |
+----------------------------------------------------------------------
+|  92   |   12    | Message Accepted                                 |
+----------------------------------------------------------------------
+|  98   |   18    | Transfer Pad                                     |
+----------------------------------------------------------------------
+|  9A   |   1A    | Set ATN (Attention)                              |
+----------------------------------------------------------------------
+|  --   |   1B    | Reset ATN (Attention)                            |
+----------------------------------------------------------------------
+
+	If the FSC is not in initiator state when it receives any of
+these commands, the command will be ignored, an illegal command
+interrupt will be generated, and the command register will be
+cleared.  Refer to Command Register.
+
+	If BSY goes false while the FSC is connected as an initiator,
+it will generate a disconnected interrupt.  The interrupt output will
+occur 1.5 to 3.5 CLK cycles after BSY goes false.
+
+	When the FSC receives the last byte of a message in phase, it
+will leave ACK (Acknowledge) asserted on the bus to prevent the target
+from sending any more bytes until the initiator decides to accept or
+reject the message.  For non-DMA commands, evey byte is presumed to be
+the last byte.  For DMA commands, the transfer counter signals the
+last byte.
+
+	If parity checking is enabled and the FSC detects a parity
+error while in initiator mode, it will automatically assert ATN prior
+to deasserting ACK for the byte which has the error.  The one
+exception is after a phase change to synchronous data in, described
+below.
+
+	If the synchronous offset register is non-zero (synchronous)
+and the phase changes to data in, the DMA interface is immediately
+disabled and the reporting of a parity error during data in phase is
+delayed.  The phase, change to data, in will: latch the FIFO flags to
+indicate how many bytes were in the FIFO (these bytes will be lost),
+clear the FIFO, load the FIFO with the first data in byte, generate an
+interrupt, and continue to load the FIFO with incoming data in bytes
+as long as the target sends them, but not more than the specified
+offset.  To continue receiving data in bytes, the host processor would
+normally issue the transfer information command to re-enable the DMA
+interface.  If parity checking is enabled, and a parity error occurred
+on a previous input phase (message in or status), then the parity
+error flag will be set in the status register, and ATN (Attention)
+will be set on the SCSI bus.  If a parity error occurred during the
+data in phase, the parity bit will not be set, nor will ATN be
+asserted until after the FSC receives the subsequent transfer
+information command.
+
+	Transfer Information
+
+	This command can be used to send or receive any information
+phase bytes, but is most often used for data transfer.  For
+synchronous transfer, DMA must be used.  The FSC will continue to
+transfer information until one of the following terminating events
+occurs:
+	- Transfer is complete.  This successful completion will
+	  create a bus service interrupt.  For a DMA transfer info,
+	  the transfer is complete when the transfer count decrements
+	  to zero and the FIFO is empty and the target asserts REQ
+	  (Request) for the next byte.  For non-DMA transfer info in
+	  which the FSC is sending bytes to the SCSI bus, transfer is
+	  complete when the FIFO empties and the target asserts REQ
+	  for the next byte.  Thus, non-DMA transfer info commands
+	  will generate an interrupt for every byte received.
+
+	- If the phase is message out, the FSC removes ATN prior to
+	  asserting ACK for the last byte of the message.  For
+	  non-DMA, the FIFO flags indicate the last byte.  For DMA,
+	  the transfer counter indicates the last byte.
+
+	- Target changes phase.  The FSC clears the command register
+	  and generates a bus service interrupt, after the target
+	  asserts REQ for the next byte.
+
+	- Target releases BSY (Busy).  The FSC generates a
+	  disconnected interrupt.
+
+	- The FSC receives the last byte of a message in phase.  (For
+	  non-DMA every byte is assumed to be the last byte.  For DMA,
+	  the transfer counter signals the last byte.)  The FSC leaves
+	  ACK (Acknowledge) asserted and generates a function complete
+	  interrupt.
+
+	All message in and status phase transfers are handled one byte
+at a time.  If DMA is enabled, the next byte will not be received
+until the current byte has been written to buffer memory and the FIFO
+is empty.  If DMA is not enabled, each byte will create an interrupt.
+
+	Initiator Command Complete Sequence
+
+	This command will cause the FSC to receive a status byte
+followed by a message byte.  It terminates early if the target does
+not assert message in phase, or if the target disconnects.  After
+receiving the message byte,  the FSC leaves ACK asserted on the bus to
+allow the initiator to assert ATN if the message is unacceptable.
+
+	Message Accepted
+
+	This command releases the ACK signal on the SCSI bus.  Any of
+the commands that receive bytes during message phase will leave ACK
+asserted after receiving the last message byte.  To accept the
+message, issue this command.  To reject the message, set ATN, then
+issue this command.
+
+	Transfer Pad
+
+	Transfer Pad is usually an error recovery technique.  It is
+useful when a target requests more bytes than an initiator has to
+send, or when an initiator must receive and discard a number of bytes
+from a target.
+
+	When transmitting to the SCSI bus, Transfer Pad will fill the
+FIFO with null bytes and send them to the SCSI bus.  When receiving
+from the SCSI bus, Transfer Pad will receive bytes, place them on the
+top of the FIFO and discard them from the bottom of the FIFO.
+
+	When sending pad bytes to the SCSI bus, DMA must be enabled.
+No DMA requests are actually made, but the FSC uses the transfer
+counter to end the transfer.
+
+	The command terminates under the same conditions as the
+transfer info command, except that the FSC does not leave ACK asserted
+on the last byte of a message in phase.  If the command terminates
+early (due to phase change or disconnect) the FIFO may contain bad
+bytes.
+
+	Set ATN
+
+	This command asserts attention on the SCSI bus.  No interrupt
+is generated from this command.  ATN stays asserted until the last
+byte of a message out phase.  DMA commands use the transfer counter to
+indicate the last byte.  For non-DMA commands, every byte is assumed
+to be the last byte.  ATN will also be released if the target
+prematurely disconnects.
+
+	Reset ATN
+
+	This command causes ATN to be released.  It does not cause an
+interrupt.
+
+	This command must not be used when connected to a device
+supporting the Common Command Set (CCS).  The FSC obeys CCS protocol
+by releasing ATN on the last byte of a message out phase.  The Reset
+ATN command is provided for older devices that do not respond properly
+to the ATN condition.
+
+	Target Commands
+
+			Target Commands
+----------------------------------------------------------------------
+| DMA | Non-DMA | Mnemonic                                           |
+----------------------------------------------------------------------
+| A0  |   20    | Send Message                                       |
+----------------------------------------------------------------------
+| A1  |   21    | Send Status                                        |
+----------------------------------------------------------------------
+| A2  |   22    | Send Data                                          |
+----------------------------------------------------------------------
+| A3  |   23    | Disconnect Sequence                                |
+----------------------------------------------------------------------
+| A4  |   24    | Terminate Sequence                                 |
+----------------------------------------------------------------------
+| A5  |   25    | Target Command Complete Sequence                   |
+----------------------------------------------------------------------
+| A7  |   27    | Disconnect                                         |
+----------------------------------------------------------------------
+| A8  |   28    | Receive Message Sequence                           |
+----------------------------------------------------------------------
+| A9  |   29    | Receive Command                                    |
+----------------------------------------------------------------------
+| AA  |   2A    | Receive Data                                       |
+----------------------------------------------------------------------
+| AB  |   2B    | Receive Command Sequence                           |
+----------------------------------------------------------------------
+| 84  |   04    | Target Abort DMA                                   |
+----------------------------------------------------------------------
+
+	If the FSC receives any of these commands when it is not in
+target state, it will ignore the command, clear the command register,
+and generate an illegal command interrupt.  Refer to Command Register.
+
+	Normal completion of these commands will cause a function
+complete interrupt.  If ATN is asserted, the bus service will be set
+in the status register.  If the FSC was idle when ATN was asserted, a
+bus service interrupt will be generated, the function complete bit
+will be zero, and the command register will be cleared.
+
+	Send Message
+
+	This command will cause the FSC to assert message in phase and
+send bytes until the FIFO is empty and the transfer counter is zero
+(if DMA).
+
+	Send Status
+
+	This command will cause the FSC to assert status phase and
+send bytes until the FIFO is empty and the transfer counter is zero
+(if DMA).
+
+	Send Data
+
+	This command will cause the FSC to assert data in phase and
+send bytes until the FIFO is empty and the transfer counter is zero
+(if DMA).
+
+	Disconnect Sequence
+
+	This command will cause the FSC to assert message in phase,
+send two bytes, then disconnect from the SCSI bus.  Normally, the
+first byte will be a save data pointers message and the second will be
+a disconnect message.  If ATN is asserted by the initiator, the bus
+service and function complete bits will be set; an interrupt will be
+generated, but the FSC will not disconnect.
+
+	Terminate Sequence
+
+	This command will cause the FSC to first assert status phase,
+send one byte; then assert message in phase and send one more byte.
+If ATN is asserted by the initiator, the bus service and function
+complete bits will be set, an interrupt will be generated, but the FSC
+will not disconnect.
+
+			Target Terminate Sequence
+----------------------------------------------------------------------
+| Sequence Step | Interrupt Register | Interpretation                |
+----------------------------------------------------------------------
+|    2  1  0    |   7 6 5 4 3 2 1 0  |                               |
+--------------------------------------                               |
+|    0  0  0    |   0 0 0 1 1 0 0 0  | Sent status byte; stopped     |
+|               |                    | because initiator set ATN     |
+----------------------------------------------------------------------
+|    0  0  1    |   0 0 0 1 1 0 0 0  | Sent status and message bytes |
+|               |                    | stopped because initiator set |
+|               |                    | ATN                           |
+----------------------------------------------------------------------
+|    0  1  0    |   0 0 1 0 1 0 0 0  | Terminate sequence complete;  |
+|               |                    | disconnected; bus is free;    |
+----------------------------------------------------------------------
+
+	Target Command Complete Sequence
+
+	This command is similar to terminate sequence, but is used for
+linked commands.  It will cause the FSC to first assert status phase,
+send one byte, then assert message in phase and send one more byte.
+The message byte will normally be a command complete message.  If ATN
+is asserted by the initiator, ths bus service and function complete
+bits will be set; an interrupt will be generated, but the FSC will not
+disconnect.
+
+		Target Command Complete Sequence
+----------------------------------------------------------------------
+| Sequence Step | Interrupt Register | Interpretation                |
+----------------------------------------------------------------------
+|    2  1  0    |   7 6 5 4 3 2 1 0  |                               |
+--------------------------------------                               |
+|    0  0  0    |   0 0 0 1 1 0 0 0  | Sent status byte; stopped     |
+|               |                    | because initiator set ATN     |
+----------------------------------------------------------------------
+|    0  0  1    |   0 0 0 1 1 0 0 0  | Sent status and message bytes |
+|               |                    | stopped because initiator set |
+|               |                    | ATN                           |
+----------------------------------------------------------------------
+|    0  1  0    |   0 0 0 0 1 0 0 0  | Command complete sequence     |
+|               |                    | complete                      |
+----------------------------------------------------------------------
+
+	Disconnect
+
+	This command causes the FSC to release all SCSI bus signals
+except RSTO.  The FSC returns to the disconnected state without
+generating an interrupt.
+
+		Target Disconnect Sequence
+
+----------------------------------------------------------------------
+| Sequence Step | Interrupt Register | Interpretation                |
+----------------------------------------------------------------------
+|    2  1  0    |   7 6 5 4 3 2 1 0  |                               |
+--------------------------------------                               |
+|    0  0  0    |   0 0 0 1 1 0 0 0  | Sent one message byte; stopped|
+|               |                    | because initiator set ATN     |
+----------------------------------------------------------------------
+|    0  0  1    |   0 0 0 1 1 0 0 0  | Sent two message bytes;       |
+|               |                    | stopped because initiator set |
+|               |                    | ATN                           |
+----------------------------------------------------------------------
+|    0  1  0    |   0 0 1 0 1 0 0 0  | Disconnect sequence complete; |
+|               |                    | disconnected; bus is free     |
+----------------------------------------------------------------------
+
+	Receive Message Sequence
+
+	This command allows the target to request message bytes from
+the initiator SCSI device.  The SCSI bus phase lines are set to the
+Message Out phase, and the target receives bytes from the initiator
+through the SCSI bus.  A function complete interrupt is generated upon
+command completion; if ATN is still asserted, the bus service
+interrupt is set and the Command Register is cleared.  If a parity
+error is detected, the 53C9X receives message bytes and discards them
+until ATN is false, a function complete interrupt is generated, and
+the Command Register is cleared.
+
+	Receive Command
+
+	This command will cause the FSC to assert command phase and
+receive bytes from the initiator.  For non-DMA Receive command, only
+one byte per interrupt may be received.  DMA Receive command will
+interrupt after the transfer counter decrements to zero.
+
+		Target Receive Command
+----------------------------------------------------------------------
+| Sequence Step | Interrupt Register | Interpretation                |
+----------------------------------------------------------------------
+|    2  1  0    |   7 6 5 4 3 2 1 0  |                               |
+--------------------------------------                               |
+|    0  0  1    |   0 0 0 0 1 0 0 0  | Stopped during command        |
+|               |                    | transfer due to parity error; |
+|               |                    | check FIFO flags              |
+----------------------------------------------------------------------
+|    0  0  1    |   0 0 0 1 1 0 0 0  | Stopped during command        |
+|               |                    | transfer due to parity error; |
+|               |                    | ATN asserted by initiator     |
+----------------------------------------------------------------------
+|    0  1  0    |   0 0 0 0 1 0 0 0  | Received entire command       |
+|               |                    | descriptor block              |
+----------------------------------------------------------------------
+|    0  1  0    |   0 0 0 1 1 0 0 0  | Received entire CDB, initiator|
+|               |                    | asserted ATN                  |
+----------------------------------------------------------------------
+
+	Receive Data
+
+	This command will cause the FSC to assert data out phase and
+receive bytes from the initiator.  For non-DMA Receive Data, only one
+byte per interrupt may be received.  DMA Receive Data will interrupt
+after the transfer counter decrements to zero.
+
+	Receive Command Sequence
+
+	This command will cause the FSC to assert command phase and
+receive a number of bytes, which will vary according to the group code
+field of the first byte.  If the SCSI2 bit is set in the COnfig 2
+register, Group 2 commands will be recognized as 10-byte commands.  If
+the SCSI2 bit is cleared, Group 2 commands will be recognized as
+reserved commands.  Groups 3 and 4 are always reserved.  The FSC will
+request 6 bytes for reserved commands, 6 bytes for Group 6 vendor
+unique commands, and 10 bytes for Group 7 vendor unique commands.
+
+	Target Stop DMA
+
+	This command allows the host processor to stop a DMA data
+transfer command. The FSC must be in target state when this command
+falls to the bottom of the command FIFO or an illegal command
+interrupt will be generated.  Target stop DMA may only be used when
+all of the following are true.
+
+	1. Either a Target Send Data or Target Receive Data command
+	   are currently executing.
+
+	2. The DMA controller has stopped.
+
+	3. The FSC is in steady state, that is:
+		a. Send data--the FIFO is empty
+		b. Receive asynchronous data--the FIFO is full or the
+		   transfer counter is zero.
+		c. Receive sync data--the transfer counter is zero or
+		   the synchronous offset max bit (read register 06,
+		   bit 3) is not set.
+
+	Upon receiving this command, the FSC will reset the DMA
+interface (release DREQ) then terminate the current command.  It will
+not generate its interrupt until the rest of the completion criteria
+are met.
+
+	1. Send asynchronous data--completes immediately.
+	2. Send synchronous data--completes when the offset counter is
+	   zero.
+	3. Receive asynchronous data--completes immediately.  There
+	   will be data in the FIFO which should be removed by the
+	   host processor.
+	4. Receive synchronous data--completed when all outstanding
+	   SCSI ACKs have been received.  The offset counter is
+	   seperate from the transfer counter.  There will be data in
+	   the FIFO which should be removed by the host processor.
+
