@@ -1,0 +1,179 @@
+familly : 68k, 68000, 680x0
+company : motorola, freescale
+--------------------------------------------
+brand : 68000
+type : base
+forked : 68000
+revision : 
+codename : 
+description : 16-/32-Bit Microprocessor
+
+architechture : havard
+busdata : 16
+busaddr : 23
+busalign : 2
+endianess : big
+cache : none
+speed : 8, 12, 16
+cores : 68000
+
+cpubase : 68000
+cpuext : none
+cpuspecific : none
+--------------------------------------------
+MC68000 — 16-/32-Bit Microprocessor
+MC68EC000 — 16-/32-Bit Embedded Controller
+MC68HC000 — Low Power 16-/32-Bit Microprocessor
+
+MC68008 — 16-Bit Microprocessor with 8-Bit Data Bus
+
+MC68010 — 16-/32-Bit Virtual Memory Microprocessor
+
+MC68020 — 32-Bit Virtual Memory Microprocessor
+MC68EC020 — 32-Bit Embedded Controller
+
+MC68030 — Second-Generation 32-Bit Enhanced Microprocessor
+MC68EC030 — 32-Bit Embedded Controller
+
+MC68040 — Third-Generation 32-Bit Microprocessor
+MC68LC040 — Third-Generation 32-Bit Microprocessor
+MC68EC040 — 32-Bit Embedded Controller
+
+MC68060 — Fourth-Generation 32-Bit Microprocessor
+MC68LC060 — Fourth-Generation 32-Bit Microprocessor
+MC68EC060 — 32-Bit Embedded Controller
+
+MC68330 — Integrated CPU32 Processor
+MC68340 — Integrated Processor with DMA
+
+MC68851 — Paged Memory Management Unit
+
+MC68881 — Floating-Point Coprocessor
+MC68882 — Enhanced Floating-Point Coprocessor
+--------------------------------------------
+operand size
+
+.A-Ascii packed or unpacked
+.B—Byte Operands
+.W—Word Operands
+.L—Long-Word Operands
+
+
+.S—Single-Precision Real Operands
+.D—Double-Precision Real Operands
+.X—Extended-Precision Real Operands
+.P—Packed BCD Real Operands
+
+
+--------------------------------------------
+operand field
+
+mode
+register
+irt
+wis
+sf
+bs
+is
+bd
+iis
+
+
+
+
+--------------------------------------------
+register 68000
+
+D0-7 : 32-alu-index
+A0-A6 : 32-base-index
+A7-USP-SSP-ISP-MSP : 32-stack
+PC : 32-base
+
+SR-CCR : 8:8-status
+--------------------------------------------
+register FPU
+
+FP0-7 : 80-alu
+FPCR : 16-status
+  ENABLE
+  MODE
+
+FPSR : 32-status
+  FPCC
+  QUOTIENT
+  EXC
+  AEXC
+  
+FPIAR : 32-base
+--------------------------------------------
+cpu mode
+
+S
+0 : supervisor
+1 : user
+
+M
+0 : master
+1 : interrupt
+
+
+--------------------------------------------
+Register general
+
+
+AC1, AC0 = Access Control Registers
+
+ACUSR = Access Control Unit Status Register
+
+CAAR = Cache Address Register
+CACR = Cache Control Register
+DACR1, DACR0 = Data Access Control Registers
+DFC = Destination Function Code Register
+DTT1, DTT0 = Data Transparent Translation Registers
+IACR1, IACR0 = Instruction Access Control Registers
+
+
+ITT1, ITT0 = Instruction Transparent Translation Registers
+MSP = Master Stack Pointer Register
+SFC = Source Function Code Register
+SR = Status Register
+SSP/ISP = Supervisor and Interrupt Stack Pointer
+TT1, TT0 = Transparent Translation Registers
+VBR = Vector Base Register
+--------------------------------------------
+register pmmu
+
+CAL = Current Access Level Register
+CRP = CPU Root Pointer
+DRP = DMA Root Pointer
+PCSR = PMMU Control Register
+PMMUSR = Paged Memory Management Unit Status Register
+MMUSR = Memory Management Unit Status Register
+SCC = Stack Change Control Register
+SRP = Supervisor Root Pointer Register
+TC = Translation Control Register
+URP = User Root Pointer
+VAL = Valid Access Level Register
+
+--------------------------------------------
+data format
+
+--------------------------------------------
+fpu data format
+
+sign : expo : mantissa
+
+zero = _:0:0
+infi = _:max:0
+qnan = _:max:1_
+snan = _:max:0_
+
+
+
+--------------------------------------------
+stack frame
+
+
+
+
+
