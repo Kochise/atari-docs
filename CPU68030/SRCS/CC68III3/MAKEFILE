@@ -1,0 +1,98 @@
+HDR = \
+c.h expr.h gen.h cglbdec.h
+
+SRC = \
+analyze.c expr.c init.c optimize.c func.c \
+intexpr.c searchkw.c cglbdef.c list.c \
+stmt.c cmain.c genstmt.c memmgt.c \
+symbol.c decl.c getsym.c genicode.c
+
+SRC68K = \
+gen68k.c peep68k.c reg68k.c genffp.c
+
+SRC386 = \
+gen386.c peep386.c reg386.c
+
+OBJ = \
+analyze.o expr.o init.o optimize.o func.o \
+intexpr.o searchkw.o cglbdef.o list.o \
+stmt.o cmain.o genstmt.o memmgt.o \
+symbol.o decl.o getsym.o genicode.o
+
+OBJ68K = \
+gen68k.o peep68k.o reg68k.o genffp.o
+
+OBJ386 = \
+gen386.o peep386.o reg386.o
+
+default:
+	@echo "You must specify a target"
+
+CC=	cc
+#
+# NOTE
+#
+# moving the binary to /usr/local/bin serves my needs on the
+# workstation where I am developing c68/c386.
+# Under MINIX, you will omit these two lines
+#
+# Since different targets require different CFLAGS, I call
+# the make command recursively.
+# This requires that a make-command given here reaches this
+# Makefile.
+ack:
+	make "CFLAGS= -g -DMC68000" c68ack
+	cp c68ack /usr/local/bin/c68
+	rm c68ack
+
+gas:
+	make "CFLAGS= -g -DMC68000" c68gas
+	cp c68gas /usr/local/bin/c68
+	rm c68gas
+
+386:
+	make "CFLAGS= -g -DINTEL_386 -DSUN_ASM_SYNTAX" c386gas
+	cp c386gas /usr/local/bin/c386
+	rm c386gas
+
+clean:
+	rm -f *.o *.s c68.list c68.icode *.i test* c68
+	rm -f c386.list c386.icode c386
+#
+#
+# possible flags:
+# -DMC68000        generate code for MC68000 CPU
+# -DINTEL_386      generate code for i386    CPU
+# -DICODE          activate icode option
+# -DVERBOSE        be noisy
+# -DNOFLOAT        the compiler itself does not use floating point
+#                  (I hope that this works now)
+# -DSUN_ASM_SYNTAX generate code for Sun386i-as in out386_gas.c
+#
+# with -DNOFLOAT, the compiler cannot generate FP constants
+#
+# Do 'make clean' when changing the target CPU or another option
+# since the files in $(SRC) and $(HDR) contain #ifdefs
+#
+# This makes the ACK version of C68: -DMC68000 necessary
+#
+c68ack:	$(SRC) $(SRC68K) $(HDR) $(OBJ) $(OBJ68K) out68k_ack.c out68k_ack.o
+	$(CC) $(CFLAGS) -o c68ack $(OBJ) $(OBJ68K) out68k_ack.o
+#
+# This makes the GAS version of c68: -DMC68000 necessary
+#
+c68gas:	$(SRC) $(SRC68K) $(HDR) $(OBJ) $(OBJ68K) out68k_gas.o
+	$(CC) $(CFLAGS) -o c68gas $(OBJ) $(OBJ68K) out68k_gas.o
+#
+# This makes the Sun version of C386: -DINTEL_386 necessary
+# give -DSUN_ASM_SYNTAX to get a Sun version, otherwise you get a GAS version
+#
+c386gas: $(SRC) $(SRC386) $(HDR) $(OBJ) $(OBJ386) out386_gas.o
+	$(CC) $(CFLAGS) -o c386gas $(OBJ) $(OBJ386) out386_gas.o
+#
+# dependencies
+#
+$(OBJ):		$(HDR)
+$(OBJ68K):	$(HDR)
+$(OBJ386):	$(HDR)
+$(OBJOUT):	$(HDR)

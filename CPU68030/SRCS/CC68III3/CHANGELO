@@ -1,0 +1,193 @@
+Jan 7, 1991:
+c68/c386 Version III
+====================
+
+changes:
+
+- Full support for double data type in the front end
+- enum type abandoned (are ints now)
+
+- support for alloca in 68k and 386 code generators:
+  saved registers are restored via references to the frame pointer, not
+  the stack pointer
+
+- bug fixes
+
+If compiled with -DNOFLOAT, the compiler does not use floating-point
+stuff and cannot generate floating-point constants.
+(At least, no floating point code is generated. Floating point declarations
+are not bracketed)
+
+Patchlevel 1:
+=============
+
+Jan 9,1991: (problems reported by NETlanders)
+Excessive popping of the floating point stack now fixed.
+reference to save_mask in a target-independent part of genstmt removed.
+
+The FP-stack pop-off in gen386.c was not correct -- lead to
+additional fstp %st(0) instructions. --- fixed.
+
+Jan 10,1991:
+improved constant optimizations,
+e.g. (1.0 > 2.0) is a legal constant integer expression.
+optimize.c has changes so dramatically that is will be included as
+as whole in the next patch.
+
+Jan 16,1991:
+changed all long constants like (long)65535 to 65535l since someone
+complained (long)65535 would yield -1l with his compiler
+
+Jan 17,1991:
+added \a and \v in getsym.c, getsch()
+removed the support function from the user's namespace
+support functions now begin with a dot. This dot suppresses a translation
+which may take place in outlate()
+
+Jan 18,1991:
+nofpu stuff redesigned, module which implements the support functions
+on the 80387 hardware stack coded and tested.
+Argument passing to support functions now via %ecx (not via the stack)
+if possible. This is not possible for the 68000 compiler since there
+is no free register.
+
+rounded up .lcomm and .comm storage requests to a multiple of AL_DEFAULT
+since someone told me that the 'by hand'-alignment will not work with all
+assemblers. This only affects out68k_gas.c and out68k_sun.c
+
+Renamed out386_sun.c into out386_gas.c since there was so much confusion.
+Added some #ifdef SUN_ASM_SYNTAX to overcome the differences between
+Sun and GAS syntax.
+
+Wrote a file compiler.doc which tells what c68/c386 is.
+
+Jan 23, 1991:
+options can be given to in the form -Qoption, e.g. -Qshort or -Qnoshort.
+This may make setting up a cc easier since cc now knows immedeately
+which option to pass to c68/c386.
+
+Jan 24, 1991:
+added bt_void to function alignment() in decl.c:
+there was a bug report that
+   typdef void t;
+wont work.
+
+Jan 30, 1991:
+peep_tst in peep68k.c:
+There was a bug that lead to a nil pointer reference (the second operand
+to a clr instruction was referenced)
+
+Feb 1, 1991:
+allowed an expression like
+   i ? void_function() : 0; (expr.c, gen68k.c, gen386.c)
+
+or x = i ? y : z; where x,y,z are structures. (gen68k.c)
+
+It was necessary to do the strip-off on structures (which makes the expr.
+gen. routines return a pointer to the structure, rather than the struc.
+itself) in g_deref(). This code used to reside in g_assign, but when
+structs may appear with in ? :, then there is another case.
+
+Casts of constants to 'void' are now possible.
+
+In gen386.c, this was already handled more carefully.
+
+---
+
+some changes to make the compiler error-robust, e.g. no code generation
+is attempted if the parser has discovered syntax errors for this function
+If c68/c386 gets a signal on ANY input, report it to me.
+The compiler should not dump core even on plain english text or FORTRAN
+programs
+
+---
+
+Feb 8, 1991:
+Fixed the calculation of act_line which always was 1 too high.
+
+Feb 13, 1991:
+Added missigng validate-call in gen386.c, g_lsh()/g_rsh()/g_aslsh()/g_asrsh()
+
+Feb 20, 1991:
+Made MAX_PARAM a symbolic constant in c.h. It is used in decl.c; this
+is the maximum number of parameters a function may have.
+
+Feb 28, 1991:
+Fixed genswitch in genstmt.c: use sign-extension to 32 bits for signed types
+
+Mar 1, 1991:
+========> This version is my internal (SCCS-)Version 3.5 and this version
+========> is submitted to the net as c68 VIII, patchlevel 1
+
+Mar 3, 1991:
+genffp.c:
+added a semicolon to 'return 0' in the NOFLOAT section
+
+out386_gas.c:
+added code for prepending underscores...
+default setup: prepend underscores in the GAS version, do not prepend
+               underscores in the Sun version
+
+<passim>:
+tried to eliminate ALL floating-point stuff when NOFLOAT is defined.
+
+Mar 12, 1991:
+updated ACK support library, has to be hand-translated to GAS syntax
+
+Mar 13, 1991:
+Optimization of move #0 --> clr is not safe on the 68000 except if the
+destination is a data reg.
+
+Mar 22, 1991:
+save head and tail in expr.c, primary() when doing casts since this may
+occur inside a declaration: e.g.
+
+long buf[32/(int)sizeof(long)]; was wrong (the size was 16, not 32)
+
+Apr 1, 1991:
+In the expression a[b], allowed b to be a pointer and a to be an integral
+value, this makes a[b] equivalent to *(a+b).
+
+Apr 2, 1991:
+allowed static initializations of unions: the first variant is initialized.
+
+========> This version is my internal (SCCS-)Version 3.6 and this version
+========> is submitted to the net as c68 VIII, patchlevel 2
+
+Apr 25, 1991:
+corrected floatingpoint stuff in gen386.c
+
+Apr 26, 1991:
+(due to bug report from bruce) correctet something in g_assign in gen386.c
+
+Apr 27, 1991:
+slight change to support DECUS cpp in getsym.c to keep act_file valid
+
+Apr 29, 1991:
+reorganized the code: the code gen now may allocate storage in the stack
+frame (for internal use) at random -- this will be used e.g. for functions
+returning structs or for intermediate FP results to keep the 387 stack
+clean
+
+May 1, 1991:
+out68k_ack.c: adding a filler byte to the string pool if its total
+length is uneven. The ACK assembler may produce an object file where
+the length of the .text section is uneven. This may bomb the linker.
+(I do not think the source of this error is in c68, but anyway, this
+is the quickest workaround for me).
+
+May 2, 1991:
+getsym.c: allowed 0e0 as a number
+
+========> This version is my internal (SCCS-)Version 3.8 and this version
+========> is submitted to the net as c68 VIII, patchlevel 3
+========> Changes to the library (support) functions:
+
+- I got lib68k_gas from the net, a nice guy converted the ACK stuff to GAS
+- The file support.s for c386 now implements a large software stack for use
+  with -Qnofpu.	However, the actual calculation is still done using the 387.
+  If someone has FP functions in 386 GAS assembler, it is easy enough to	  get t
+  change this module to use functions like __muldf3 etc. from the GNU stuff,
+  if someone has implemented these functions.
+- As far as I recall, lib68k_ack is unchanged.
+

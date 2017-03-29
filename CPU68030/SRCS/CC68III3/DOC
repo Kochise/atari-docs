@@ -1,0 +1,190 @@
+Path: thp!uni-koeln!unido!fauern!ira.uka.de!sol.ctr.columbia.edu!spool.mu.edu!sdd.hp.com!zaphod.mps.ohio-state.edu!wuarchive!udel!mmdf
+From: HBO043%DJUKFA11.BITNET@cunyvm.cuny.edu (Christoph van Wuellen)
+Newsgroups: comp.os.minix
+Subject: 68000 and 386 C compiler: doc page
+Message-ID: <46246@nigel.ee.udel.edu>
+Date: 1 Mar 91 18:37:59 GMT
+Sender: mmdf@ee.udel.edu
+Lines: 181
+
+68000 and i386 C Compiler     ---  Version III patchlevel 1   (III.1)
+=========================          ..................................
+
+This compiler consists of various modules that build up a
+front end -- these modules are common to all versions of
+this compiler -- consisting of parser, analyzer and optimizer,
+of modules that are specific for the target processor,
+namely *68k.c (for the 68000) and *386.c (for the i386),
+and of assembly language output modules that are further
+dependent on the (syntax of the) target assembler.
+
+The specific modules are:
+
+gen386.c, reg386.c, peep386.c
+=============================
+
+Code generator modules for the i386 processor, namely
+code generator (gen386.c), register allocator (reg386.c),
+and peephole optimizer (peep386.c)
+
+out386_gas.c     <<--this file was called out386_sun.c in Version III.0)
+============
+
+At this moment, this is the only output module for the i386 compiler.
+It generates assembler files compatible with the GNU GAS assembler.
+If compiled with -DSUN_ASM_SYNTAX, the output is compatible with the
+Sun386i-Assembler. There are very little differences between the Sun
+and the GAS assembler
+
+gen68k.c, reg68k.c, peep68k.c
+=============================
+
+Code generator (gen68k.c), register allocator (reg68k.c), and
+peephole optimizer (peep68k.c) for the 68000 compiler.
+
+out68k_ack.c
+============
+
+Output module for the ACK assembler as supplied with the MINIX
+operating system.
+
+out68k_gas.c
+============
+
+Output module for the GAS assembler.
+
+out68k_cpm.c
+============
+
+Output module for the CP/M-68K assembler. This is the same assembler
+as supplied with the developement package for the ATARI and thus,
+this module is also compatible with the ALCYON and SOZOBON assembler.
+
+The module contains some other dirty tricks such as a very special
+translation of external symbols (which helped me to install some
+software in spite of the fact that external names are truncated to
+eight characters) etc.
+It has not been maintained since very long, since I stopped working
+with CP/M-68K.
+
+Compile-time options
+====================
+
+There are several symbols you can define at compile time to control
+the behaviour of the compiler.
+
+-DICODE		enables the -Qicode option (see below)
+
+-DVERBOSE	the compiler will generate diagnostics while compiling
+                when compiled with this option. This should be a
+                run-time option.
+
+-DMC68000       The compiler will be a 68000 compiler
+
+-DINTEL_386     The compiler will be a i386 compiler
+
+Although you can compile, say, gen68k.c with -DINTEL_386 (this produces
+an 'empty' object file), you must only compile one of the alternate
+output modules. This may be fixed in the future at the expense of
+additional -Dxxxxx options, e.g. -DACK might only activate code
+in out68k_ack.c, not in the other 68k output modules.
+
+
+INVOCATION OF THE COMPILER
+==========================
+
+Normally, you will call this compiler from a driver such as cc.
+This chapter gives you the necessary information to patch the
+internal tables of cc as to support this compiler.
+
+The compiler is basically called with two arguments, the input-file
+and the output-file.
+The input file contains PREPROCESSED C-sources and is normally the
+output of cpp, the C preprocessor.
+The output file contains the assembly language file.
+
+To compile a source, source.c, to an object file you could type the
+commands (this example works under MINIX-68K)
+
+/usr/lib/cpp source.c > TMPFILE.i
+/usr/lib/c68 TMPFILE.i TMPFILE.s
+rm TMPFILE.i
+/usr/bin/as - -o source.o TMPFILE.s
+rm TMPFILE.s
+
+In fact, c68 together with cpp replaces cem, opt, and cg.
+
+c68/c386 may also be given some options. The syntax is:
+
+c68 <option>.... infile outfile
+
+All options begin with -Q, such that cc knows quickly which option
+(which is given to cc originally) is meant to be supplied to c68/c386.
+
+Not all options are accepted on all targets. The i386 compiler does not
+support 16-bit ints because this is incompatible with stack alignment.
+The 68000 compiler does not have FPU support because there is no FPU
+for the 68000.
+
+List of options:
+================
+
+-Qlist          Generate a file, c68.list or c386.list, which
+                lists the preprocessed input file, symbol tables,
+                and error spots. Primarily used for compiler debugging.
+
+-Qnolist        Do not generate a list file (Default).
+
+-Qicode         Generate a file, c68.icode or c386.icode, which
+                dumps the parse tree in human-readable format.
+                Only accepted if the compiler is itself compiled with
+                -DICODE. This is used for compiler debugging.
+
+-Qnoicode       Do not dump the parse tree (Default).
+                Only accepted if the compiler is itself compiled with
+                -DICODE. This is used for compiler debugging.
+
+-Qshort         Use 16-bit ints. Default for the 68000 compiler.
+
+-Qnoshort       Use 32-bit ints. Default for the i386 compiler.
+
+-Qwarn          Print all warning mesages.
+
+-Qnowarn        Suppress (most of the) warning messages (default).
+
+-Qreg           Allocate variables to registers automatically.
+                Variables declared with the register attribute
+                are allocated first, even if the compiler
+                considers them less important.
+
+-Qnoreg         Allocate only variables with have a register
+                attribute to register variables. This might be
+                important if you have problems with automatically
+                allocated register variables in conjunction with
+                longjmp().
+
+                One of the next patches will support a volatile
+                attributes which prevents variables from being
+                mapped to registers. This is an ANSI extension, but
+                easy to implement. If you have problems with longjmp(),
+                try if -Qnoreg helps.
+
+-Qopt           Perform optimizations. Of course, this is the default.
+
+-Qnoopt         Do not perform ANY optimization. Useful only for
+                compiler debugging. -Qnoopt includes -Qnoreg.
+
+-Qfpu		Generate inline FPU code. This is the default for
+                the i386 compiler.
+
+-Qnofpu		Generate library calls for doing floating point
+                operations. This is the default for the 68000 compiler.
+
+===========================================
+
+Christoph van Wuellen
+Lehrstuhl fuer Theoretische Chemie
+Ruhr Universitaet
+4630 Bochum
+
+Germany
