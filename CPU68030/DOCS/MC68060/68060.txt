@@ -1,0 +1,307 @@
+ This File Jetted Thru:       ._______________.
+                              |               |
+    :   _ _               C a n a d i a n   M i s t
+   _|____ /                   |               |
+    |\  //\______________/\___|__________/\___|__/\__________/\______
+    : \// ___________ _ /___  _ /____ _ /___  _ /________ _ /___  _ /
+       /  /____/      //   /  //      //   /  //   /      //   /  //
+      /______ /___/   /___/__ /___/   /______ /___/___/   /___/__ /
+     /_ _   \/   /____ /    \/|  /____ /    \/|      /____ /Sk!n\/
+                     \/       |      \/       |          \/
+                   ___________|_____/\________|_/\______  
+  Head Slave Dr¡ver\___________  _ /___/  _____// _____/Co Slave Drivers
+  ~~~~~~~~~~~~~~~~~    /   /  /  //   /\___  \/.  /_    ~~~~~~~~~~~~~~~~
+                      /___/__/  ./___/_______/____ //\ :  Silver/Faith
+   Flux of FA|TH            /____ /           |. \//__\|_ Mike Hammer
+                              | \/          / || /_ _  |  Mr.B & AirBomb
+  ·---------------·           |            // |:       :  Fahrenheit/Mst
+                          F a i t h       U S H Q !
+                             _|_______________|_
+            68030 33.3 Mhz    |       |       |   250+ Megs Online
+
+       Node 1:  +1-616-866-6964               NoDe 2:  +1-616-866-8651
+.............................................................................
+
+        MOTOROLA                    Order this document by MC68060/D
+::::::: SEMICONDUCTOR ::::::::::::::::::::::::::::::::::::::::::::::
+
+                                MC68060
+
+        PRODUCT BRIEF
+        FOURTH-GENENERATION 32-BIT MICROPROCESSOR
+
+        The MC68060 is a Superscalar, high-performance,32-bit
+microprocessor providing a low-power mode of operation. The MC68060 is
+fully compatible with all previous members of the M68000 familly. The
+MC68060 features dual on-chip caches, fully independent demand-paged memory
+management units (MMUs) for both instructions and data, dual integer
+execution pipelines, on-chip floating-point unit (FFU), and a branch target
+cache. A high degree of instruction execution parallelism is achieved
+through the use of a full internal Harvard architecture, multiple internal
+buses, independent execution units, and dual instruction issue within the
+instruction execution controller. Power management is also a key part of th
+MC68060 architecture. The MC68060 offers a low-power mode of operation that
+is accessed through the LPSTOP instruction, allowing for full power-down
+capability. The MC68060 desing is fully static so that when circuits are
+not in use, they do not draw power. Each unit can be disabled so that power
+is used only when the unit is enabled and executing an instruction. Fig 1
+illustrate a block diagram of the MC68060.
+
+Complete code compatibility with the M68000 family allows the designer to
+draw on existing code and past experience to bring product to market
+quickly. There is also a broad base of established development tools,
+including real-time kernels,operating systems,languages,and applications,to
+assist in product design.The functionality provided by the MC68060 makes it
+the ideal choice for a range of high-performance computing applications as
+well as many portable applications that require low power and high
+performance. The MC68060's high level of integration results in high
+performance while reducing overall system power consumption.
+
+The following is a list of primary features for the MC68060:
+
+        o 100% User-Mode compatible with MC68040
+        o Three times the performance of a 25-MHz MC68040
+        o Superscalar implementation of M68000 Architecture
+        o Dual nteger nstruction execution improves performance
+        o IEEE-Compatible On-Chip FPU
+        o Branch target cache minimizes branch latency
+        o independent instruction and Data MMUs
+        o Dual 8-Kbyte on-chip caches
+                - Separate Data and instruction caches
+                - Simultaneous Acces
+        o Bus snooping
+        o Full 32-bit nonmultiplexed address and data bus
+                - 32-bit bus maximizes data throughput
+                - Nonmultiplexed bus simplifies design
+                - Four-deep write buffer to maximize write bandwidth
+                - MC68040-Compatible bus provides simple hardware migration
+                  path
+        o Concurrent operation of integer Unit,MMUs,Caches,Bus Controller,
+          integer pipelines,and FPU provides High Performance
+        o Power consumption control
+                - Static HCMOS technology reduces power in normal operation
+                - low-voltage operation at 3.3v
+                - LPSTOP provides an idle state for lowest stanby current
+        o 50 MHZ and 66 MHZ
+        o Packaging
+                - Ceramic Pin Grid Array (PGA)
+                - Ceramic Quad Flat Pack (CQFP)
+
+                        INTEGER UNIT
+The MC68060's integer unit carries out logical and arithmetic operations.
+The integer unit contains an instruction fetch controller,an instruction
+execution controller,and a branch target cache. The superscalar design of
+the MC 68060 provides dual execution pipelines in the instruction execution
+controller,providing simultaneous execution.
+
+The superscalar operation of the integer unit can be disabled in
+software,turnig off the second execution pipeline for debugging. Disabling
+the superscalar operation also lowers power consumtion
+
+                        INSTRUCTION FETCH CONTROLLER
+The instruction fetch controller contains an instruction fetch pipeline and
+the logic that interfaces to the branch target cache. The instruction fetch
+pipeline consists of four stages,providing the ability to prefetch
+instructions in advance of their actual use in the instruction execution
+controller. The continuous fetching of instructions keeps the instruction
+execution controller busy for the greatest possible performance. Every
+instruction passes through each of the four stages before entering the
+instruction execution controller. The four stages in the instruction fetch
+pipeline are :
+
+1. Instruction address calculation - The virtual address of the instruction
+   is determined.
+
+2. Instruction fetch - The instruction is fetched from memory.
+
+3. Early Decode - The instruction is pre-decoded for pipeline control
+   information.
+
+4. Instuction buffer - The instruction and its pipeline control information
+   are buffered until the integer execution pipeline is ready to process
+   the instruction.
+
+                        BRANCH TARGET CACHE
+The branch target cache plays a major role in achieving the performance
+levels of the MC68060. The concept of the branch target cache is to provide
+a mechanism that allows the instruction fetch pipeline to detect and chage
+the instruction stream before the change of flow affects the instruction
+execution controller.
+
+The branch target cache is examined for a valid branch entry after each
+instruction fetch address is generated in the instruction fetch pipeline.
+If a hit does not occur in the branch target cache, the instruction fetch
+pipeline continues to fetch instructions sequentially. If a hit occurs in
+the branch target cache, indicating a branch taken instruction, the current
+instruction stream is discarded an a new instruction stream is fetched
+starting at the location indicated by the branch target cache.
+
+                INSTRUCTION EXECUTION CONTROLLER
+
+The instruction execution controller contains dual integer execution
+pipelines,interface logic to the FPU, and control logic for data written to
+the data cache and MMU. The superscalar desing of the dual integer
+execution pipelines provide for simultaneous instruction execution,which
+allows for processing more than one instruction during each machine clock
+cycles. The net effect of this is a software invisible pipeline capable of
+sustained execution rates of less than one machine clock cycle per
+instruction for the M68000 instruction set.
+
+The instruction execution controller's control logic pulls an instruction
+pair from the instruction buffer every machine clock cycle,stopping only if
+the instruction information is not available or if an integer execution
+pipeline hold condition exists. The six stages in the dual integer
+execution pipelines are :
+
+1. Instuction Decode - the instruction is fully decoded.
+2. Effective adress calculation - if the instruction calls for data from
+   memory, the location of the data is calculated.
+3. Effective address fetch - data is fetched from the memory location.
+4. Integer execution - the data is manipulated during execution.
+5. Data available - the result is available.
+6. Write-Back - The resulting data is weritten back to on-chip caches or
+   external memory.
+
+The MC68060 is optimized for most integer instructions to execute in one
+machine clock cycle. If during the instruction decode stage,the instruction
+is determined to be a floating-point instruction, it will be passed to the
+FPU after the effective address fetch stage. If data is to be written to
+either the on-chip caches or external memory after instruction execution,
+the write-back stage holds the data until memory is ready to receive it.
+Temporarily holding data in the werit-back stage adds to the overall
+performance of the MC68060 by not slowing down pipeline operations.
+
+                        FLOATING-POINT UNIT
+Floating-point is distinguished from integer math, wich deals only with
+whole numbers and fixed decimal point locations. The IEEE-compatible
+MC68060 FPU computes numeric calculations with a variable decimal point
+location. The MC68060 features a built in FPU that is MC68040,MC68881/882
+compatible. Consolidating this important function on-chip speeds up overall
+processing and eliminates the interfacing overhead associated with external
+accelerators. The MC68060's FPU operates in parallel with the integer unit.
+The FPU can also be disabled in software to reduce system power
+consumption.
+
+                        FLOATING-POINT EMULATION
+The MC68060 implements the most frequently used M68000 familly
+floating-point instructis,data types, and data formats in hardware for the
+highest performance. The remaining instructions are emulated in software
+with the M68060 FPSP to provide complete IEEE compatibility. The M68060FPSP
+provides the following features :
+        o Arithmetic and transcendental instructions
+        o IEEE-compliant exception handlers
+        o Unimplemented data type and data format handlers
+
+                        MEMORY MANAGEMENT UNITS
+The MC68060 contains independent istruction and data MMUs. Each MMU
+contains a cache memory called the address translation cache (ATC). The
+full addressing range of the MC68060 is 4 Gbytes (4,294,967,296 bytes).
+Even though most MC68060 systems implement a much smaller physical memory,
+by using virtual memory techniques, the system can appear to have a full 
+4 Gbytes of physical memory available to each user program. Each MMU fully
+supports demand-paged virtual-memory operating systems with either 4 or 8
+Kbytes page sizes. Each MMU protects supervisor areas from accesses by user
+programs and provides write protection on a page-by-page basis. For maximum
+efficiency, each MMU operates in parrallel with other processor activities.
+The MMUs can be disabled for emulator and debugging support.
+
+                        ADRESS TRANSLATION
+The 64-entry, four-way, set-associative ATCs store recently used
+logical-to-physical address translation information as page descriptors for
+instruction and data accesses. Each MMU initiates address translation by
+searching for a descriptor containing the address translation information
+in the ATC. If the descriptor does not reside in the ATC, the MMU performs
+external bus cycles through the bus controller to search the translation
+tables in physical memory. After being located,the page descriptor is
+loaded into the ATC, and the address is correctly translated for the acces.
+
+                        INSTUCTION AND DATA CACHES
+Studies have shown that typical programs spend much of their execution time
+in a few main routines or tight loops. Earlier members of the M68000 family
+took advantage of this locality-of-reference phenomenon to varying degrees.
+The MC68060 takes further advantage of cache technology with its
+two,independent,on chip physical caches, one for instruction and one for
+data. The caches reduce the processor's external bus activity and increase
+CPU throughput by lowering the effective memory acces time. For a typical
+system desing, the large caches of the MC68060 yield a very high hit rate,
+providing a substantial increase in system performance.
+
+The autonomous nature of the caches allows instruction-stream fetches,
+data-stream fetches, and external accesses to occur simultaneously with
+instruction execution. For example, if the MC68060 requires both an
+instruction access and an external peripheral access and if the instruction
+is redident in the on-chip cache, the peripheral acces proceeds unimpeded
+rather than being queued behind the instruction fetch. If a data operand is
+also required and it is resident in the data cache, it can be accessed
+without hindering either the instruction acces or the external peripheral
+access. The parallelism inherent in the MC68060 also allows multiple
+instructions that do not require any external accesses to execute
+concurrently while the processor is performing an external access for a
+previous instruction.
+
+Each MC68060 cache is 8kbytes, accessed by physical addresses. The data
+cache can be configured as write-through or deferred copyback on a page
+basis. This choice allows for optimizing the system desing for high
+performance if deferred copyback is used.
+
+Cachability of data in each memory page is controlled by two bits in the
+page descriptor., Cachable pages can be either write-through or copyback,
+with no write-allocate for misses to write-through pages.
+
+The MC68060 implements a four-entry write buffer that maximizes system
+performance by decoupling the integer pipeline from the external system
+bus. When needed, the write buffer allows the pipeline to generate writes
+every clock cycle,even if the system bus runs at a slower speed than the
+processor.
+
+                        CACHE ORGANIZATION
+The instruction and data caches are each organized as 4-way set
+associative, with 16 byte lines. Each line of data has associated with it
+an address tag and state information that shows the line's validity. In the
+data cache, the state information indicates whether the line is invalid,
+valid , or dirty.
+
+                        CACHE COHERENCY
+The Mc68060 has the ability to watch or snoop the external bus during
+accesses by other bus masters, maintaining coherency between the MC68060's
+caches and external memory systems. External bus cycles can be flagged on
+the bus as snoopable or nonsnoopable. When an external cycle is marked as
+snoopable, the bus snooper checks the caches and invalidates the matching
+data. Although the integer execution units and the bus snooper circuit have
+acces to the on-chip caches, the snooper has priority over the execution
+units.
+
+                        BUS CONTROLLER
+The bus is implemented as a nonmultiplexed, fully synchronous protocol that
+is clocked off the rising edge of the input clock. The bus controller
+operates concurrently with all other fuctional units of the MC68060 to
+maximize system throughput. The timing of the bus is fully configurable to
+match external memory requirements.
+
+                        IEEE 1149.1 TEST
+To aid in system diagnostics, the MC68060 includes dedicated
+user-accessible test logic that is fully compliant with the IEEE 1149.1
+standard for boundary scan testability, often referred to as Joint Test
+Action Group (JTAG).
+
+                        POWER CONSUMPTION MANAGEMENT
+The MC68060 is very power efficient due to the static logic and power
+managment designed into the basic architecture. Each stage of the integer
+unit pipelines and the FPU pipeline draws power only when an instruction is
+executing, and the cache arrays draw power only when an access is made. The
+FPU, secondary integer execution pipeline, branch target cache, and
+instruction and data caches can be disabled to reduce overall power usage.
+The 3.3-V power supply reduces current consumption by 40-60% over that of
+microprocessors using a 5-V power supply.
+
+The MC68060 has additional methods for dynamically controlling power
+consumption during operation. Running a special LPSTOP instruction shuts
+down the active circuits in the processor, halting instruction execution.
+Power consumption in this standby mode is greatly reduced. Processing and
+power consumption can be resumed by resetting the processor or by
+generating an interrupt. The frequency of operation can be lowered to
+reduce current consumption while the device is in LPSTOP mode.
+
+                        PHYSICAL
+The MC68060 will be available as 50 MHz and 66 MHz versions, with 3.3-V
+supply voltage, and in ceramic PGA, and CQFP packaging configurations.
