@@ -1,0 +1,115 @@
+
+This is own compilation of C68, dating back around 1999.
+At the time I didn't bother implementing floating point support.
+
+contents
+--------
+
+cc/       the compiler driver, adapted from ACK
+libmisc/  library files missing from minix
+lib68k/   C68 integer support lib
+libieee/  C68 floating point support lib  
+c68       the compiler executable
+c68src/   the compiler sources
+
+Installing
+----------
+
+put the compiler executable in /usr/lib/c68:
+
+  su bin
+  cp c68 /usr/lib/c68
+  chmod 655 /usr/lib/c68
+  exit
+  
+build and install the driver
+
+  cd cc
+  make
+  su bin
+  make install
+  exit
+  cd ..
+
+add some missing files to the library: 
+
+  cd libmisc
+  make
+  su bin
+  make install
+  exit
+  cd ..
+
+add 68k support files to the library: 
+
+  cd lib68k
+  make
+  make 68ktest
+  su bin
+  make install
+  exit
+  cd ..
+
+You can also add the floating point support files. They're probably
+buggy since ieeetest report lots of errors, but they're needed to
+recompile c68 from sources...
+
+add 68k support files to the library: 
+
+  cd libieee
+  make
+  su bin
+  make install
+  exit
+  cd ..
+
+At this point, the compiler "works". To test it, the best is to
+recompile it with itself, just to be sure:
+
+  cd c68src
+  make
+  su bin
+  cp c68 /usr/lib/c68
+  chmod 655 /usr/lib/c68
+  exit
+
+
+Notes
+-----
+
+I tested this procedure on a pristine Atari Minix 1.5 from the
+Prentice-hall floppy images. It works enough to recompile
+c68 by itself. This probably means that it is good enough to
+recompile any later version of itself, but I can't guarantee it.
+
+I'm sorry that the floating point stuff does't work, but I didn't
+try to fix it anyway. 
+
+Since C68 doesn't include a preprocessor, the compiler driver here
+uses the old ACK cpp, which is not the best solution. You may 
+need to #define __STDC__ when compiling programs. Even thus 
+you still don't get the proper CPP behaviour.
+
+Also, the sources here were slightly altered by myself, in 
+undocumented ways. Don't rely on these sources, instead go get the
+recent C68 source from the web.
+
+Future work
+-----------
+
+I recently started again some work on C68. I've now got a version
+of GNU CPP that compiles on minix; I'm planning to write a better
+driver and libraries. just mail me if you're interested.
+
+The first time
+--------------
+
+the original c68 executable was bootstrapped by compiling it
+with gcc on an x86 machine, thhen using this compiler to compile 
+itself, and finally taking the results of this second compilation
+to minix and assemble it all with ACK assembler and linker.
+
+From then on I used one C68 executable to build the next one.
+
+Laurent Vogel <lvl@club-internet.fr>
+

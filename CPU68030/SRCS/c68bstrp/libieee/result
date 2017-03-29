@@ -1,0 +1,274 @@
+
+IEEEtest v1.20		(c)1992-1996, D.J.Walker	Thu Oct 28 02:45:21 1999
+
+
+---------------- simple assignments -------------
+
+ float (xf=10.0):  sign=0,  exp= 82  mant=400000
+double (xd=10.0):  sign=0,  exp=402 mant=4000000000000
+ float (xf = -xf):  sign=1,  exp= 82  mant=400000
+double (xd = -xd):  sign=1,  exp=402 mant=4000000000000
+
+---------------- arithmetic operators -------------
+
+double (double add (1.0+1.0)):  sign=0,  exp=400 mant=0000000000000
+double (double sub (2.0-1.0)):  sign=0,  exp=3FF mant=0000000000000
+
+ float (float add (1.0+1.0)):  sign=0,  exp= 80  mant=000000
+ float (float sub (2.0-1.0)):  sign=0,  exp= 7F  mant=000000
+
+double (multiply 2.0 * 2.0):  sign=0,  exp=401 mant=0000000000000
+double (divide   4.0 / 2.0):  sign=0,  exp=400 mant=0000000000000
+
+ float (multiply 2.0 * 2.0):  sign=0,  exp= 81  mant=000000
+ float (divide   4.0 / 2.0):  sign=0,  exp= 80  mant=000000
+
+---------------- operator assignment -------------
+
+double (plus assign     1.0 += 1.0):  sign=0,  exp=400 mant=0000000000000
+double (minus assign    2.0 -= 1.0):  sign=0,  exp=3FF mant=0000000000000
+double (multiply assign 1.0 *= 2.0):  sign=0,  exp=400 mant=0000000000000
+double (divide assign   2.0 /= 2.0):  sign=0,  exp=3FF mant=0000000000000
+
+ float (plus assign)    1.0 += 1.0):  sign=0,  exp= 80  mant=000000
+ float (minus assign    2.0 -= 1.0):  sign=0,  exp= 7F  mant=000000
+ float (multiply assign 1.0 *= 2.0):  sign=0,  exp= 80  mant=000000
+ float (divide assign   2.0 /= 2.0):  sign=0,  exp= 7F  mant=000000
+
+---------------- arithmetic compares -------------
+
+double compare (equal       ) is	1	0
+double compare (not equal   ) is	1	0
+double compare (less than   ) is	1	0
+double compare (greater than) is	1	0
+
+ float compare (equal       ) is	1	0
+ float compare (not equal   ) is	1	0
+ float compare (less than   ) is	1	0
+ float compare (greater than) is	1	0
+
+---------------- logical compares -------------
+
+double test true=1, false=0
+float  test true=1, false=0
+
+---------------- conversions (fp to fp )-------------
+
+ float (from double:  1.0):  sign=0,  exp= 7F  mant=000000
+ float (from double: -1.0):  sign=1,  exp= 7F  mant=000000
+double (from float:  1.0):  sign=0,  exp=3FF mant=0000000000000
+double (from float: -1.0):  sign=1,  exp=3FF mant=0000000000000
+
+---------------- conversions (integers to fp) -------------
+
+double ( long(1) to double):  sign=0,  exp=3FF mant=0000000000000
+double (  int(1) to double):  sign=0,  exp=3FF mant=0000000000000
+double (ulong(1) to double):  sign=0,  exp=3FF mant=0000000000000
+double ( uint(1) to double):  sign=0,  exp=3FF mant=0000000000000
+ float ( long(1) to float):  sign=0,  exp= 7F  mant=000000
+ float (  int(1) to float):  sign=0,  exp= 7F  mant=000000
+ float (ulong(1) to float):  sign=0,  exp= 7F  mant=000000
+ float ( uint(1) to float):  sign=0,  exp= 7F  mant=000000
+
+double ( long(-1) to double):  sign=1,  exp=3FF mant=0000000000000
+double (  int(-1) to double):  sign=1,  exp=3FF mant=0000000000000
+double (ulong(-1) to double):  sign=0,  exp=41E mant=FFFFFFFE00000
+double ( uint(-1) to double):  sign=0,  exp=40E mant=FFFE000000000
+ float ( long(-1) to float):  sign=1,  exp= 7F  mant=000000
+ float (  int(-1) to float):  sign=1,  exp= 7F  mant=000000
+ float (ulong(-1) to float):  sign=0,  exp= 9E  mant=FFFFFE
+ float ( uint(-1) to float):  sign=0,  exp= 8E  mant=FFFE00
+
+---------------- conversions (fp to integers )-------------
+
+double(1.1) to int   = 1
+double(1.1) to long  = 1
+double(1.1) to uint  = 1
+double(1.1) to ulong = 1
+double(-1.1) to int   = -1
+double(-1.1) to long  = -1
+double(-1.1) to uint  = -1
+double(-1.1) to ulong = -1
+float(1.1) to int   = 1
+float(1.1) to long  = 1
+float(1.1) to uint  = 1
+float(1.1) to ulong = 1
+float(-1.1) to int   = -1
+float(-1.1) to long  = -1
+float(-1.1) to uint  = -1
+float(-1.1) to ulong = -1
+
+---------------- post-increment/post-decrment -------------
+
+double (double:  1.0):  sign=0,  exp=3FF mant=0000000000000
+ float (float:  1.0):  sign=0,  exp= 7F  mant=000000
+double (double:  (++)  1.0):  sign=0,  exp=3FF mant=0000000000000
+double (         (new) 2.0):  sign=0,  exp=400 mant=0000000000000
+double (double:  (--)  2.0):  sign=0,  exp=400 mant=0000000000000
+double (         (new) 1.0):  sign=0,  exp=3FF mant=0000000000000
+ float (float:   (++)  1.0):  sign=0,  exp= 7F  mant=000000
+ float (         (new) 2.0):  sign=0,  exp= 80  mant=000000
+ float (float:   (--)  2.0):  sign=0,  exp= 80  mant=000000
+ float (         (new) 1.0):  sign=0,  exp= 7F  mant=000000
+
+---------------- int op= fp (op = mul/div) -------------
+
+
+Test of 'double' variants
+
+c(=10) *= 1.2.  Result=12      OK
+s(=10) *= 1.2.  Result=12      OK
+i(=10) *= 1.2.  Result=12      OK
+l(=10) *= 1.2.  Result=12      OK
+b.s(=10) *= 1.2.  Result=10      **** ERROR ****
+uc(=10) *= 1.2.  Result=12      OK
+us(=10) *= 1.2.  Result=12      OK
+ui(=10) *= 1.2.  Result=12      OK
+ul(=10) *= 1.2.  Result=12      OK
+b.u(=10) *= 1.2.  Result=10      **** ERROR ****
+c(=10) *= -1.2.  Result=-12      OK
+s(=10) *= -1.2.  Result=-12      OK
+i(=10) *= -1.2.  Result=-12      OK
+l(=10) *= -1.2.  Result=-12      OK
+b.s(=10) *= -1.2.  Result=10      **** ERROR ****
+uc(=10) *= -1.2.  Result=244      OK
+us(=10) *= -1.2.  Result=-12      OK
+ui(=10) *= -1.2.  Result=-12      OK
+ul(=10) *= -1.2.  Result=-12      OK
+b.u(=10) *= -1.2.  Result=10      **** ERROR ****
+c(=10) /= 1.2.  Result=8      OK
+c(=10) /= 1.2.  Result=8      OK
+s(=10) /= 1.2.  Result=8      OK
+i(=10) /= 1.2.  Result=8      OK
+l(=10) /= 1.2.  Result=8      OK
+b.s(=10) /= 1.2.  Result=10      **** ERROR ****
+uc(=10) /= 1.2.  Result=8      OK
+us(=10) /= 1.2.  Result=8      OK
+ui(=10) /= 1.2.  Result=8      OK
+ul(=10) /= 1.2.  Result=8      OK
+b.u(=10) /= 1.2.  Result=10      **** ERROR ****
+c(=10) /= -1.2.  Result=-8      OK
+s(=10) /= -1.2.  Result=-8      OK
+i(=10) /= -1.2.  Result=-8      OK
+l(=10) /= -1.2.  Result=-8      OK
+b.s(=10) /= -1.2.  Result=10      **** ERROR ****
+uc(=10) /= -1.2.  Result=248      OK
+us(=10) /= -1.2.  Result=-8      OK
+ui(=10) /= -1.2.  Result=-8      OK
+ul(=10) /= -1.2.  Result=-8      OK
+b.u(=10) /= -1.2.  Result=10      **** ERROR ****
+
+Test of 'float' variants
+
+c(=10) *= 1.2.  Result=12      OK
+s(=10) *= 1.2.  Result=12      OK
+i(=10) *= 1.2.  Result=12      OK
+l(=10) *= 1.2.  Result=12      OK
+b.s(=10) *= 1.2.  Result=10      **** ERROR ****
+uc(=10) *= 1.2.  Result=12      OK
+us(=10) *= 1.2.  Result=12      OK
+ui(=10) *= 1.2.  Result=12      OK
+ul(=10) *= 1.2.  Result=12      OK
+b.u(=10) *= 1.2.  Result=10      **** ERROR ****
+c(=10) *= -1.2.  Result=-12      OK
+s(=10) *= -1.2.  Result=-12      OK
+i(=10) *= -1.2.  Result=-12      OK
+l(=10) *= -1.2.  Result=-12      OK
+b.s(=10) *= -1.2.  Result=10      **** ERROR ****
+uc(=10) *= -1.2.  Result=244      OK
+us(=10) *= -1.2.  Result=-12      OK
+ui(=10) *= -1.2.  Result=-12      OK
+ul(=10) *= -1.2.  Result=-12      OK
+b.u(=10) *= -1.2.  Result=10      **** ERROR ****
+c(=10) /= 1.2.  Result=8      OK
+c(=10) /= 1.2.  Result=8      OK
+s(=10) /= 1.2.  Result=8      OK
+i(=10) /= 1.2.  Result=8      OK
+l(=10) /= 1.2.  Result=8      OK
+b.s(=10) /= 1.2.  Result=10      **** ERROR ****
+uc(=10) /= 1.2.  Result=8      OK
+us(=10) /= 1.2.  Result=8      OK
+ui(=10) /= 1.2.  Result=8      OK
+ul(=10) /= 1.2.  Result=8      OK
+b.u(=10) /= 1.2.  Result=10      **** ERROR ****
+c(=10) /= -1.2.  Result=-8      OK
+s(=10) /= -1.2.  Result=-8      OK
+i(=10) /= -1.2.  Result=-8      OK
+l(=10) /= -1.2.  Result=-8      OK
+b.s(=10) /= -1.2.  Result=10      **** ERROR ****
+uc(=10) /= -1.2.  Result=248      OK
+us(=10) /= -1.2.  Result=-8      OK
+ui(=10) /= -1.2.  Result=-8      OK
+ul(=10) /= -1.2.  Result=-8      OK
+b.u(=10) /= -1.2.  Result=10      **** ERROR ****
+
+---------------- frexp -------------
+
+yd.d=frexp (xd.d(=+3.4), &i)
+    ?     double (xd.d):  sign=0,  exp=400 mant=B333333333333
+    ?     double (yd.d):  sign=0,  exp=3FE mant=B333333333333
+    2     integer (i)
+
+yd.d=frexp (xd.d(=-3.4), &i)
+   ?  double (xd.d):  sign=1,  exp=400 mant=B333333333333
+   ?  double (yd.d):  sign=1,  exp=3FE mant=B333333333333
+   2      integer (i)
+
+yd.d=frexp (xd.d(=+0.34), &i)
+    ? double (xd.d):  sign=0,  exp=3FD mant=5C28F5C28F5C2
+    ? double (yd.d):  sign=0,  exp=3FE mant=5C28F5C28F5C2
+    -1     integer (i)
+
+yd.d=frexp (xd.d(=0.0), &i)
+    ?     double (xd.d):  sign=0,  exp=000 mant=0000000000000
+    ?     double (yd.d):  sign=0,  exp=000 mant=0000000000000
+    0     integer (i)
+
+---------------- ldexp -------------
+
+yd.d=ldexp (xd.d(=+0.85), 2)
+    ?     double (xd.d):  sign=0,  exp=3FE mant=B333333333333
+    ?     double (yd.d):  sign=0,  exp=400 mant=B333333333333
+
+yd.d=ldexp (xd.d(=-0.85), 2)
+   ?  double (xd.d):  sign=1,  exp=3FE mant=B333333333333
+   ?  double (yd.d):  sign=1,  exp=400 mant=B333333333333
+
+yd.d=ldexp (xd.d(=0.0), 0)
+    ?     double (xd.d):  sign=0,  exp=000 mant=0000000000000
+    ?     double (yd.d):  sign=0,  exp=000 mant=0000000000000
+
+---------------- modf -------------
+
+yd.d=modf (xd.d(=+3.4), &zd.d)
+    ?     double (xd.d):  sign=0,  exp=400 mant=B333333333333
+    ?     double (yd.d):  sign=0,  exp=3FD mant=9999999999998
+    ?     double (zd.d):  sign=0,  exp=400 mant=8000000000000
+
+yd.d=modf (xd.d(=-3.4), &zd.d)
+   ?  double (xd.d):  sign=1,  exp=400 mant=B333333333333
+   ?  double (yd.d):  sign=1,  exp=3FD mant=9999999999998
+   ?  double (zd.d):  sign=1,  exp=400 mant=8000000000000
+
+yd.d=modf (xd.d(=0.0), &zd.d)
+   ?  double (xd.d):  sign=0,  exp=000 mant=0000000000000
+   ?  double (yd.d):  sign=0,  exp=000 mant=0000000000000
+   ?  double (zd.d):  sign=0,  exp=000 mant=0000000000000
+---------------- modff -------------
+
+yf.f=modff (xf.f(=+3.4), &zf.f)
+    ?      float (xf.f):  sign=0,  exp= 80  mant=B33334
+    ?      float (yf.f):  sign=0,  exp= 7D  mant=9999A0
+    ?      float (zf.f):  sign=0,  exp= 80  mant=800000
+
+yf.f=modff (xf.f(=-3.4), &zf.f)
+   ?   float (xf.f):  sign=1,  exp= 80  mant=B33334
+   ?   float (yf.f):  sign=1,  exp= 7D  mant=9999A0
+   ?   float (zf.f):  sign=1,  exp= 80  mant=800000
+
+yf.f=modff (xf.f(=0.0), &zf.f)
+   ?   float (xf.f):  sign=0,  exp= 00  mant=000000
+   ?   float (yf.f):  sign=0,  exp= 00  mant=000000
+   ?   float (zf.f):  sign=0,  exp= 00  mant=000000
+
+
