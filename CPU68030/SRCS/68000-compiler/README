@@ -1,0 +1,10 @@
+
+to compile:
+  type "make"
+  it creates a file "asm" (the assembler compiler)
+
+to execute:
+  type "./asm file.s", where file.s is an assembler file source
+  it creates a file file.x (the 68000 executable)
+
+Distributed under GNU GPL2 Licence
