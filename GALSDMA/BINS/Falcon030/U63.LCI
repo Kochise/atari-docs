@@ -1,0 +1,57 @@
+%ID
+U63
+   
+%TYP
+GAL16V8
+
+%PINS
+
+CPUCLK8	:1
+xDSACK0	:2
+Z3A	:3
+HIGHZ	:4
+EDSP	:5
+DLYDAS030	:6
+xBERR	:7
+xDTACK	:8
+xAS	:9
+
+EDTACK	:13
+P14	:14
+EBERR	:15
+EXPAND	:17
+P18	:18
+xDSACK1	:19    
+    
+%LOGIC
+
+!xDSACK1.OE      = P18;
+!xDSACK         = !xAS;
+
+P18.OE       = VCC ;
+P18          = !Z3A * !HIGHZ * !xAS
+              + !HIGHZ * EXPAND * !EDSP * DLYDAS030 * !xDTACK * !xAS
+              + !HIGHZ * DLYDAS030 * !EDTACK * !xAS ;
+
+!EXPAND.OE      = GND * GND;
+!EXPAND         = GND * GND;
+
+P16         <- DLYDAS030 * !xAS;
+
+!EBERR.OE      = xDSACK0 * EXPAND * !EDSP * DLYDAS030 * EDTACK * !xAS;
+!EBERR         = !xBERR * !xDTACK
+              + xDSACK0 * EDTACK * P12
+              + !EBERR * !xAS;
+
+P14.OE       = VCC;
+P14          = !Z3A * HIGHZ * !xAS
+              + HIGHZ * EXPAND * !EDSP * DLYDAS030 * !xDTACK * !xAS
+              + !xDSACK0 * HIGHZ * !xAS
+              + !xDSACK1 * HIGHZ * !xAS;
+
+!EDTACK.OE      = P14;
+!EDTACK         = !xAS;
+
+P12         <- EXPAND * !EDSP * P16 * !xBERR * !xAS
+              + !xAS * P12;
+%END

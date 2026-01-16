@@ -1,0 +1,56 @@
+%ID
+U67
+   
+%TYP
+GAL16V8
+
+%PINS
+
+P1	:1
+FC2	:2
+FC1	:3
+FC0	:4
+A19	:5
+A18	:6
+A17	:7
+A16	:8
+xVPA	:9
+
+xDSP	:12
+P13	:13
+QD	:14
+QC	:15
+QB	:16
+QA	:17
+P18	:18
+E	:19	
+     
+%LOGIC
+
+!E.OE      = VCC;
+!E         = FC2 * FC1 * FC0 * A19 * A18 * A17 * A16 * !xVPA;
+
+P18.OE     = VCC;
+P18        = !P13; 'inverted cpuclk8'
+
+QA         <- !QB * !QC
+           + QB * QC;
+
+QB         <- QA * !QC
+           + !QA * QB;
+
+QC        <- QA * QC
+              + !QA * QB
+              + !QA * QB * xVPA
+              + !QA * QB * !QD;
+
+QD         <- xVPA;
+
+!P13.OE    = GND * GND;
+!P13       = GND * GND; 'make it as input'
+
+!xDSP.OE   = VCC;
+!xDSP      = FC2 * FC1 * !FC0 * A19 * A18 * A17 * A16
+           + FC2 * !FC1 * FC0 * A19 * A18 * A17 * A16;
+           
+%END

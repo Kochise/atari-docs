@@ -1,0 +1,66 @@
+%ID
+U62
+   
+%TYP
+GAL16V8
+
+%PINS
+
+CPUCLK8	:1
+xVPA	:2
+xDS030	:3
+QA	:4
+QB	:5
+QC	:6
+QD	:7
+HIGHZ	:8
+SIZ0	:9
+
+SIZ1	:12
+A0	:13
+Z3A	:14
+RxW	:15
+P16	:16
+xVMA	:17
+xLDS	:18
+xUDS	:19
+
+%LOGIC
+
+!xUDS.OE     = !HIGHZ ; 	
+!xUDS	     = !xDS030 * !A0	 
+             + !xDS030 * RxW ;
+
+!xLDS.OE     = !HIGHZ ;
+!xLDS        = !xDS030 * SIZ1
+             + !xDS030 * !SIZ0
+             + !xDS030 * A0
+             + !xDS030 * RxW ;
+
+xVMA.OE      = VCC ; 
+xVMA         = xVPA ;
+
+P16.OE       = VCC ;
+P16          = !xVPA * QA * !QC
+             + !xVPA * QB * P16
+             + !xDS030 * P16 * !HIGHZ
+             + !xLDS * P16 * HIGHZ
+             + !xUDS * P16 * HIGHZ
+             + !xVPA * QB * !QC * QD ;
+
+!RxW.OE      = GND * GND ; 'make it an input'
+!RxW         = GND * GND ;
+
+!Z3A.OE      = VCC;
+!Z3A         = !xVPA * !QB * P16 * QC
+             + !xDS030 * !Z3A * !HIGHZ
+             + !xLDS * !Z3A * HIGHZ
+             + !xUDS * !Z3A * HIGHZ;
+
+A0.OE        = HIGHZ ;
+A0           = xUDS ;
+
+!SIZ1.OE     = GND * GND ; 'make it an input'
+!SIZ1        = GND * GND ;
+
+%END
